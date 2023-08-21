@@ -1,5 +1,5 @@
 import { RequestClient } from "./request-client";
-import { chainFromJSON, ChainJSON } from "./types";
+import { Chain, chainFromJSON, ChainJSON } from "./types";
 
 export const SKIP_API_URL = "https://api.skip.money/v1";
 
@@ -10,7 +10,7 @@ export class SkipAPIClient {
     this.requestClient = new RequestClient(apiURL);
   }
 
-  async chains() {
+  async chains(): Promise<Chain[]> {
     const response = await this.requestClient.get<{ chains: ChainJSON[] }>(
       "/info/chains",
     );
