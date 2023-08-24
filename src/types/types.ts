@@ -50,3 +50,13 @@ export type ModuleVersionInfo = {
   version: string;
   sum: string;
 };
+
+export type SwapVenueJSON = {
+  name: string;
+  chain_id: string;
+};
+
+export type SwapVenue = {
+  name: string;
+  chainID: string;
+};

@@ -118,4 +118,43 @@ describe("client", () => {
       ] as Chain[]);
     });
   });
+
+  describe("/v1/fungible/venues", () => {
+    it("handles 200 OK", async () => {
+      server.use(
+        rest.get("https://api.skip.money/v1/fungible/venues", (_, res, ctx) => {
+          return res(
+            ctx.status(200),
+            ctx.json({
+              venues: [
+                {
+                  name: "neutron-astroport",
+                  chain_id: "neutron-1",
+                },
+                {
+                  name: "osmosis-poolmanager",
+                  chain_id: "osmosis-1",
+                },
+              ],
+            }),
+          );
+        }),
+      );
+
+      const client = new SkipAPIClient(SKIP_API_URL);
+
+      const response = await client.venues();
+
+      expect(response).toEqual([
+        {
+          name: "neutron-astroport",
+          chainID: "neutron-1",
+        },
+        {
+          name: "osmosis-poolmanager",
+          chainID: "osmosis-1",
+        },
+      ]);
+    });
+  });
 });
