@@ -1,4 +1,11 @@
-import { Chain, ChainJSON, FeeAsset, FeeAssetJSON } from "./types";
+import {
+  Chain,
+  ChainJSON,
+  FeeAsset,
+  FeeAssetJSON,
+  SwapVenue,
+  SwapVenueJSON,
+} from "./types";
 
 export function chainFromJSON(chainJSON: ChainJSON): Chain {
   return {
@@ -41,5 +48,19 @@ export function feeAssetToJSON(feeAsset: FeeAsset): FeeAssetJSON {
   return {
     denom: feeAsset.denom,
     gas_price: feeAsset.gasPrice,
+  };
+}
+
+export function swapVenueFromJSON(swapVenueJSON: SwapVenueJSON): SwapVenue {
+  return {
+    name: swapVenueJSON.name,
+    chainID: swapVenueJSON.chain_id,
+  };
+}
+
+export function swapVenueToJSON(swapVenue: SwapVenue): SwapVenueJSON {
+  return {
+    name: swapVenue.name,
+    chain_id: swapVenue.chainID,
   };
 }

@@ -3,6 +3,8 @@ import {
   chainToJSON,
   feeAssetFromJSON,
   feeAssetToJSON,
+  swapVenueFromJSON,
+  swapVenueToJSON,
 } from "../converters";
 import { ChainJSON, FeeAssetJSON } from "../types";
 
@@ -216,6 +218,30 @@ describe("converters", () => {
         average: "0.025",
         high: "0.04",
       },
+    });
+  });
+
+  test("swapVenueFromJSON", () => {
+    const swapVenueJSON = {
+      name: "neutron-astroport",
+      chain_id: "neutron-1",
+    };
+
+    expect(swapVenueFromJSON(swapVenueJSON)).toEqual({
+      name: "neutron-astroport",
+      chainID: "neutron-1",
+    });
+  });
+
+  test("swapVenueToJSON", () => {
+    const swapVenue = {
+      name: "neutron-astroport",
+      chainID: "neutron-1",
+    };
+
+    expect(swapVenueToJSON(swapVenue)).toEqual({
+      name: "neutron-astroport",
+      chain_id: "neutron-1",
     });
   });
 });

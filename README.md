@@ -30,7 +30,7 @@ npm run test -- --coverage
 
 **Fungible:**
 
-- [ ] `/fungible/venues`
+- [x] `/fungible/venues`
 - [ ] `/fungible/assets`
 - [ ] `/fungible/assets_from_source`
 - [ ] `/fungible/route`
