@@ -3,12 +3,16 @@ import {
   Asset,
   assetFromJSON,
   AssetJSON,
+  AssetsFromSourceRequest,
+  AssetsFromSourceRequestJSON,
+  assetsFromSourceRequestToJSON,
   AssetsRequest,
   AssetsRequestJSON,
   assetsRequestToJSON,
   Chain,
   chainFromJSON,
   ChainJSON,
+  SwapVenue,
   swapVenueFromJSON,
   SwapVenueJSON,
 } from "./types";
@@ -22,7 +26,7 @@ export class SkipAPIClient {
     this.requestClient = new RequestClient(apiURL);
   }
 
-  async assets(options: AssetsRequest = {}) {
+  async assets(options: AssetsRequest = {}): Promise<Record<string, Asset[]>> {
     const response = await this.requestClient.get<
       {
         chain_to_assets_map: Record<string, { assets: AssetJSON[] }>;
@@ -39,6 +43,25 @@ export class SkipAPIClient {
     );
   }
 
+  async assetsFromSource(
+    options: AssetsFromSourceRequest,
+  ): Promise<Record<string, Asset[]>> {
+    const response = await this.requestClient.post<
+      {
+        dest_assets: Record<string, { assets: AssetJSON[] }>;
+      },
+      AssetsFromSourceRequestJSON
+    >("/fungible/assets_from_source", assetsFromSourceRequestToJSON(options));
+
+    return Object.entries(response.dest_assets).reduce(
+      (acc, [chainID, { assets }]) => {
+        acc[chainID] = assets.map((asset) => assetFromJSON(asset));
+        return acc;
+      },
+      {} as Record<string, Asset[]>,
+    );
+  }
+
   async chains(): Promise<Chain[]> {
     const response = await this.requestClient.get<{ chains: ChainJSON[] }>(
       "/info/chains",
@@ -47,7 +70,7 @@ export class SkipAPIClient {
     return response.chains.map((chain) => chainFromJSON(chain));
   }
 
-  async venues() {
+  async venues(): Promise<SwapVenue[]> {
     const response = await this.requestClient.get<{ venues: SwapVenueJSON[] }>(
       "/fungible/venues",
     );

@@ -1,5 +1,7 @@
 import {
   assetFromJSON,
+  assetsFromSourceRequestFromJSON,
+  assetsFromSourceRequestToJSON,
   assetsRequestFromJSON,
   assetsRequestToJSON,
   assetToJSON,
@@ -65,6 +67,34 @@ test("assetToJSON", () => {
     logo_uri:
       "https://raw.githubusercontent.com/cosmostation/chainlist/main/chain/osmosis/asset/osmo.png",
     decimals: 6,
+  });
+});
+
+test("assetsFromSourceRequestFromJSON", () => {
+  const assetsFromSourceRequestJSON = {
+    source_asset_denom: "uosmo",
+    source_asset_chain_id: "osmosis-1",
+    allow_multi_tx: true,
+  };
+
+  expect(assetsFromSourceRequestFromJSON(assetsFromSourceRequestJSON)).toEqual({
+    sourceAssetDenom: "uosmo",
+    sourceAssetChainID: "osmosis-1",
+    allowMultiTx: true,
+  });
+});
+
+test("assetsFromSourceRequestToJSON", () => {
+  const assetsFromSourceRequest = {
+    sourceAssetDenom: "uosmo",
+    sourceAssetChainID: "osmosis-1",
+    allowMultiTx: true,
+  };
+
+  expect(assetsFromSourceRequestToJSON(assetsFromSourceRequest)).toEqual({
+    source_asset_denom: "uosmo",
+    source_asset_chain_id: "osmosis-1",
+    allow_multi_tx: true,
   });
 });
 

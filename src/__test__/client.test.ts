@@ -337,6 +337,153 @@ describe("client", () => {
     });
   });
 
+  describe("/v1/fungible/assets_from_source", () => {
+    it("handles 200 OK", async () => {
+      server.use(
+        rest.post(
+          "https://api.skip.money/v1/fungible/assets_from_source",
+          (_, res, ctx) => {
+            return res(
+              ctx.status(200),
+              ctx.json({
+                dest_assets: {
+                  "osmosis-1": {
+                    assets: [
+                      {
+                        denom:
+                          "ibc/14F9BC3E44B8A9C1BE1FB08980FAB87034C9905EF17CF2F5008FC085218811CC",
+                        chain_id: "cosmoshub-4",
+                        origin_denom: "uosmo",
+                        origin_chain_id: "osmosis-1",
+                        trace: "transfer/channel-141",
+                        symbol: "OSMO",
+                        name: "OSMO",
+                        logo_uri:
+                          "https://raw.githubusercontent.com/cosmostation/chainlist/main/chain/osmosis/asset/osmo.png",
+                        decimals: 6,
+                      },
+                    ],
+                  },
+                  "neutron-1": {
+                    assets: [
+                      {
+                        denom:
+                          "ibc/376222D6D9DAE23092E29740E56B758580935A6D77C24C2ABD57A6A78A1F3955",
+                        chain_id: "neutron-1",
+                        origin_denom: "uosmo",
+                        origin_chain_id: "osmosis-1",
+                        trace: "transfer/channel-10",
+                        symbol: "OSMO",
+                        name: "OSMO",
+                        logo_uri:
+                          "https://raw.githubusercontent.com/cosmostation/chainlist/main/chain/osmosis/asset/osmo.png",
+                        decimals: 6,
+                      },
+                    ],
+                  },
+                },
+              }),
+            );
+          },
+        ),
+      );
+
+      const client = new SkipAPIClient(SKIP_API_URL);
+
+      const assetsFromSource = await client.assetsFromSource({
+        sourceAssetChainID: "osmosis-1",
+        sourceAssetDenom: "uosmo",
+      });
+
+      expect(assetsFromSource).toEqual({
+        "osmosis-1": [
+          {
+            denom:
+              "ibc/14F9BC3E44B8A9C1BE1FB08980FAB87034C9905EF17CF2F5008FC085218811CC",
+            chainID: "cosmoshub-4",
+            originDenom: "uosmo",
+            originChainID: "osmosis-1",
+            trace: "transfer/channel-141",
+            symbol: "OSMO",
+            name: "OSMO",
+            logoURI:
+              "https://raw.githubusercontent.com/cosmostation/chainlist/main/chain/osmosis/asset/osmo.png",
+            decimals: 6,
+          },
+        ],
+        "neutron-1": [
+          {
+            denom:
+              "ibc/376222D6D9DAE23092E29740E56B758580935A6D77C24C2ABD57A6A78A1F3955",
+            chainID: "neutron-1",
+            originDenom: "uosmo",
+            originChainID: "osmosis-1",
+            trace: "transfer/channel-10",
+            symbol: "OSMO",
+            name: "OSMO",
+            logoURI:
+              "https://raw.githubusercontent.com/cosmostation/chainlist/main/chain/osmosis/asset/osmo.png",
+            decimals: 6,
+          },
+        ],
+      });
+    });
+
+    it("handles 400 Bad Request", async () => {
+      server.use(
+        rest.post(
+          "https://api.skip.money/v1/fungible/assets_from_source",
+          (_, res, ctx) => {
+            return res(
+              ctx.status(400),
+              ctx.json({
+                code: 3,
+                message: "Invalid source_asset_chain_id",
+                details: [],
+              }),
+            );
+          },
+        ),
+      );
+
+      const client = new SkipAPIClient(SKIP_API_URL);
+
+      await expect(
+        client.assetsFromSource({
+          sourceAssetChainID: "osmosis-1",
+          sourceAssetDenom: "uosmo",
+        }),
+      ).rejects.toThrow("Invalid source_asset_chain_id");
+    });
+
+    it("handles 500 Internal Server Error", async () => {
+      server.use(
+        rest.post(
+          "https://api.skip.money/v1/fungible/assets_from_source",
+          (_, res, ctx) => {
+            return res(
+              ctx.status(500),
+              ctx.json({
+                code: 2,
+                message: "internal server error",
+                details: [],
+              }),
+            );
+          },
+        ),
+      );
+
+      const client = new SkipAPIClient(SKIP_API_URL);
+
+      await expect(
+        client.assetsFromSource({
+          sourceAssetChainID: "osmosis-1",
+          sourceAssetDenom: "uosmo",
+        }),
+      ).rejects.toThrow("internal server error");
+    });
+  });
+
   describe("/v1/fungible/venues", () => {
     it("handles 200 OK", async () => {
       server.use(
