@@ -1,0 +1,10 @@
+#!/usr/bin/env sh
+. "$(dirname -- "$0")/_/husky.sh"
+
+echo "Running prettier..."
+
+npx prettier . --write --log-level warn
+
+echo "Running eslint..."
+
+npx eslint . --fix
