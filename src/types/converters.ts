@@ -1,4 +1,8 @@
 import {
+  Asset,
+  AssetJSON,
+  AssetsRequest,
+  AssetsRequestJSON,
   Chain,
   ChainJSON,
   FeeAsset,
@@ -6,6 +10,54 @@ import {
   SwapVenue,
   SwapVenueJSON,
 } from "./types";
+
+export function assetFromJSON(assetJSON: AssetJSON): Asset {
+  return {
+    denom: assetJSON.denom,
+    chainID: assetJSON.chain_id,
+    originDenom: assetJSON.origin_denom,
+    originChainID: assetJSON.origin_chain_id,
+    trace: assetJSON.trace,
+    symbol: assetJSON.symbol,
+    name: assetJSON.name,
+    logoURI: assetJSON.logo_uri,
+    decimals: assetJSON.decimals,
+  };
+}
+
+export function assetToJSON(asset: Asset): AssetJSON {
+  return {
+    denom: asset.denom,
+    chain_id: asset.chainID,
+    origin_denom: asset.originDenom,
+    origin_chain_id: asset.originChainID,
+    trace: asset.trace,
+    symbol: asset.symbol,
+    name: asset.name,
+    logo_uri: asset.logoURI,
+    decimals: asset.decimals,
+  };
+}
+
+export function assetsRequestFromJSON(
+  assetsRequestJSON: AssetsRequestJSON,
+): AssetsRequest {
+  return {
+    chainID: assetsRequestJSON.chain_id,
+    nativeOnly: assetsRequestJSON.native_only,
+    includeNoMetadataAssets: assetsRequestJSON.include_no_metadata_assets,
+  };
+}
+
+export function assetsRequestToJSON(
+  assetsRequest: AssetsRequest,
+): AssetsRequestJSON {
+  return {
+    chain_id: assetsRequest.chainID,
+    native_only: assetsRequest.nativeOnly,
+    include_no_metadata_assets: assetsRequest.includeNoMetadataAssets,
+  };
+}
 
 export function chainFromJSON(chainJSON: ChainJSON): Chain {
   return {
