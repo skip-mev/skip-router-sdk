@@ -1,6 +1,8 @@
 import {
   Asset,
   AssetJSON,
+  AssetsFromSourceRequest,
+  AssetsFromSourceRequestJSON,
   AssetsRequest,
   AssetsRequestJSON,
   Chain,
@@ -36,6 +38,26 @@ export function assetToJSON(asset: Asset): AssetJSON {
     name: asset.name,
     logo_uri: asset.logoURI,
     decimals: asset.decimals,
+  };
+}
+
+export function assetsFromSourceRequestFromJSON(
+  assetsFromSourceRequestJSON: AssetsFromSourceRequestJSON,
+): AssetsFromSourceRequest {
+  return {
+    sourceAssetDenom: assetsFromSourceRequestJSON.source_asset_denom,
+    sourceAssetChainID: assetsFromSourceRequestJSON.source_asset_chain_id,
+    allowMultiTx: assetsFromSourceRequestJSON.allow_multi_tx,
+  };
+}
+
+export function assetsFromSourceRequestToJSON(
+  assetsFromSourceRequest: AssetsFromSourceRequest,
+): AssetsFromSourceRequestJSON {
+  return {
+    source_asset_denom: assetsFromSourceRequest.sourceAssetDenom,
+    source_asset_chain_id: assetsFromSourceRequest.sourceAssetChainID,
+    allow_multi_tx: assetsFromSourceRequest.allowMultiTx,
   };
 }
 

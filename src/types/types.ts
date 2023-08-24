@@ -26,6 +26,18 @@ export type Asset = {
   decimals?: number;
 };
 
+export type AssetsFromSourceRequestJSON = {
+  source_asset_denom: string;
+  source_asset_chain_id: string;
+  allow_multi_tx?: boolean;
+};
+
+export type AssetsFromSourceRequest = {
+  sourceAssetDenom: string;
+  sourceAssetChainID: string;
+  allowMultiTx?: boolean;
+};
+
 export type AssetsRequestJSON = {
   chain_id?: string;
   native_only?: boolean;
