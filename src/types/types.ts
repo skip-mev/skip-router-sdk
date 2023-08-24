@@ -1,3 +1,43 @@
+export type AssetJSON = {
+  denom: string;
+  chain_id: string;
+
+  origin_denom: string;
+  origin_chain_id: string;
+  trace: string;
+
+  symbol?: string;
+  name?: string;
+  logo_uri?: string;
+  decimals?: number;
+};
+
+export type Asset = {
+  denom: string;
+  chainID: string;
+
+  originDenom: string;
+  originChainID: string;
+  trace: string;
+
+  symbol?: string;
+  name?: string;
+  logoURI?: string;
+  decimals?: number;
+};
+
+export type AssetsRequestJSON = {
+  chain_id?: string;
+  native_only?: boolean;
+  include_no_metadata_assets?: boolean;
+};
+
+export type AssetsRequest = {
+  chainID?: string;
+  nativeOnly?: boolean;
+  includeNoMetadataAssets?: boolean;
+};
+
 export type Chain = {
   chainName: string;
   chainID: string;

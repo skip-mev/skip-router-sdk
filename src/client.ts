@@ -1,5 +1,11 @@
 import { RequestClient } from "./request-client";
 import {
+  Asset,
+  assetFromJSON,
+  AssetJSON,
+  AssetsRequest,
+  AssetsRequestJSON,
+  assetsRequestToJSON,
   Chain,
   chainFromJSON,
   ChainJSON,
@@ -14,6 +20,23 @@ export class SkipAPIClient {
 
   constructor(apiURL: string) {
     this.requestClient = new RequestClient(apiURL);
+  }
+
+  async assets(options: AssetsRequest = {}) {
+    const response = await this.requestClient.get<
+      {
+        chain_to_assets_map: Record<string, { assets: AssetJSON[] }>;
+      },
+      AssetsRequestJSON
+    >("/fungible/assets", assetsRequestToJSON(options));
+
+    return Object.entries(response.chain_to_assets_map).reduce(
+      (acc, [chainID, { assets }]) => {
+        acc[chainID] = assets.map((asset) => assetFromJSON(asset));
+        return acc;
+      },
+      {} as Record<string, Asset[]>,
+    );
   }
 
   async chains(): Promise<Chain[]> {

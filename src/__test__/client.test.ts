@@ -119,6 +119,224 @@ describe("client", () => {
     });
   });
 
+  describe("/v1/fungible/assets", () => {
+    it("handles 200 OK", async () => {
+      server.use(
+        rest.get("https://api.skip.money/v1/fungible/assets", (_, res, ctx) => {
+          return res(
+            ctx.status(200),
+            ctx.json({
+              chain_to_assets_map: {
+                "cosmoshub-4": {
+                  assets: [
+                    {
+                      denom:
+                        "ibc/6B8A3F5C2AD51CD6171FA41A7E8C35AD594AB69226438DB94450436EA57B3A89",
+                      chain_id: "cosmoshub-4",
+                      origin_denom: "ustrd",
+                      origin_chain_id: "stride-1",
+                      trace: "transfer/channel-391",
+                      symbol: "STRD",
+                      name: "STRD",
+                      logo_uri:
+                        "https://raw.githubusercontent.com/cosmostation/chainlist/main/chain/stride/asset/strd.png",
+                      decimals: 6,
+                    },
+                    {
+                      denom: "uatom",
+                      chain_id: "cosmoshub-4",
+                      origin_denom: "uatom",
+                      origin_chain_id: "cosmoshub-4",
+                      trace: "",
+                      symbol: "ATOM",
+                      name: "ATOM",
+                      logo_uri:
+                        "https://raw.githubusercontent.com/cosmostation/chainlist/main/chain/cosmos/asset/atom.png",
+                      decimals: 6,
+                    },
+                  ],
+                },
+                "osmosis-1": {
+                  assets: [
+                    {
+                      denom: "uosmo",
+                      chain_id: "osmosis-1",
+                      origin_denom: "uosmo",
+                      origin_chain_id: "osmosis-1",
+                      trace: "",
+                      symbol: "OSMO",
+                      name: "OSMO",
+                      logo_uri:
+                        "https://raw.githubusercontent.com/cosmostation/chainlist/main/chain/osmosis/asset/osmo.png",
+                      decimals: 6,
+                    },
+                  ],
+                },
+              },
+            }),
+          );
+        }),
+      );
+
+      const client = new SkipAPIClient(SKIP_API_URL);
+
+      const assets = await client.assets();
+
+      expect(assets).toEqual({
+        "cosmoshub-4": [
+          {
+            denom:
+              "ibc/6B8A3F5C2AD51CD6171FA41A7E8C35AD594AB69226438DB94450436EA57B3A89",
+            chainID: "cosmoshub-4",
+            originDenom: "ustrd",
+            originChainID: "stride-1",
+            trace: "transfer/channel-391",
+            symbol: "STRD",
+            name: "STRD",
+            logoURI:
+              "https://raw.githubusercontent.com/cosmostation/chainlist/main/chain/stride/asset/strd.png",
+            decimals: 6,
+          },
+          {
+            denom: "uatom",
+            chainID: "cosmoshub-4",
+            originDenom: "uatom",
+            originChainID: "cosmoshub-4",
+            trace: "",
+            symbol: "ATOM",
+            name: "ATOM",
+            logoURI:
+              "https://raw.githubusercontent.com/cosmostation/chainlist/main/chain/cosmos/asset/atom.png",
+            decimals: 6,
+          },
+        ],
+        "osmosis-1": [
+          {
+            denom: "uosmo",
+            chainID: "osmosis-1",
+            originDenom: "uosmo",
+            originChainID: "osmosis-1",
+            trace: "",
+            symbol: "OSMO",
+            name: "OSMO",
+            logoURI:
+              "https://raw.githubusercontent.com/cosmostation/chainlist/main/chain/osmosis/asset/osmo.png",
+            decimals: 6,
+          },
+        ],
+      });
+    });
+
+    it("handles 200 OK - with parameters", async () => {
+      server.use(
+        rest.get(
+          "https://api.skip.money/v1/fungible/assets",
+          (req, res, ctx) => {
+            const chainID = req.url.searchParams.get("chain_id");
+            const nativeOnly = req.url.searchParams.get("native_only");
+            const includeNoMetadataAssets = req.url.searchParams.get(
+              "include_no_metadata_assets",
+            );
+
+            if (chainID && nativeOnly && includeNoMetadataAssets) {
+              return res(
+                ctx.status(200),
+                ctx.json({
+                  chain_to_assets_map: {
+                    "osmosis-1": {
+                      assets: [
+                        {
+                          denom: "uosmo",
+                          chain_id: "osmosis-1",
+                          origin_denom: "uosmo",
+                          origin_chain_id: "osmosis-1",
+                          trace: "",
+                          symbol: "OSMO",
+                          name: "OSMO",
+                          logo_uri:
+                            "https://raw.githubusercontent.com/cosmostation/chainlist/main/chain/osmosis/asset/osmo.png",
+                          decimals: 6,
+                        },
+                      ],
+                    },
+                  },
+                }),
+              );
+            }
+
+            return res(
+              ctx.status(500),
+              ctx.json({ message: "should not have reached this" }),
+            );
+          },
+        ),
+      );
+
+      const client = new SkipAPIClient(SKIP_API_URL);
+
+      const assets = await client.assets({
+        chainID: "osmosis-1",
+        nativeOnly: true,
+        includeNoMetadataAssets: true,
+      });
+
+      expect(assets).toEqual({
+        "osmosis-1": [
+          {
+            denom: "uosmo",
+            chainID: "osmosis-1",
+            originDenom: "uosmo",
+            originChainID: "osmosis-1",
+            trace: "",
+            symbol: "OSMO",
+            name: "OSMO",
+            logoURI:
+              "https://raw.githubusercontent.com/cosmostation/chainlist/main/chain/osmosis/asset/osmo.png",
+            decimals: 6,
+          },
+        ],
+      });
+    });
+
+    it("handles 400 Bad Request", async () => {
+      server.use(
+        rest.get("https://api.skip.money/v1/fungible/assets", (_, res, ctx) => {
+          return res(
+            ctx.status(400),
+            ctx.json({
+              code: 3,
+              message: "Invalid chain_id",
+              details: [],
+            }),
+          );
+        }),
+      );
+
+      const client = new SkipAPIClient(SKIP_API_URL);
+
+      await expect(client.assets()).rejects.toThrow("Invalid chain_id");
+    });
+
+    it("handles 500 Internal Server Error", async () => {
+      server.use(
+        rest.get("https://api.skip.money/v1/fungible/assets", (_, res, ctx) => {
+          return res(
+            ctx.status(500),
+            ctx.json({
+              code: 2,
+              message: "internal server error",
+              details: [],
+            }),
+          );
+        }),
+      );
+
+      const client = new SkipAPIClient(SKIP_API_URL);
+
+      await expect(client.assets()).rejects.toThrow("internal server error");
+    });
+  });
+
   describe("/v1/fungible/venues", () => {
     it("handles 200 OK", async () => {
       server.use(
