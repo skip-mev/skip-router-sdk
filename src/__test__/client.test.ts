@@ -484,6 +484,68 @@ describe("client", () => {
     });
   });
 
+  describe("/v1/fungible/recommend_assets", () => {
+    it("handles 200 OK", async () => {
+      server.use(
+        rest.post(
+          "https://api.skip.money/v1/fungible/recommend_assets",
+          (_, res, ctx) => {
+            return res(
+              ctx.status(200),
+              ctx.json({
+                recommendations: [
+                  {
+                    asset: {
+                      denom:
+                        "ibc/14F9BC3E44B8A9C1BE1FB08980FAB87034C9905EF17CF2F5008FC085218811CC",
+                      chain_id: "cosmoshub-4",
+                      origin_denom: "uosmo",
+                      origin_chain_id: "osmosis-1",
+                      trace: "transfer/channel-141",
+                      symbol: "OSMO",
+                      name: "OSMO",
+                      logo_uri:
+                        "https://raw.githubusercontent.com/cosmostation/chainlist/main/chain/osmosis/asset/osmo.png",
+                      decimals: 6,
+                    },
+                    reason: "MOST_LIQUID",
+                  },
+                ],
+              }),
+            );
+          },
+        ),
+      );
+
+      const client = new SkipAPIClient(SKIP_API_URL);
+
+      const response = await client.recommendAssets({
+        sourceAssetChainID: "osmosis-1",
+        sourceAssetDenom: "uosmo",
+        destChainID: "cosmoshub-4",
+      });
+
+      expect(response).toEqual([
+        {
+          asset: {
+            denom:
+              "ibc/14F9BC3E44B8A9C1BE1FB08980FAB87034C9905EF17CF2F5008FC085218811CC",
+            chainID: "cosmoshub-4",
+            originDenom: "uosmo",
+            originChainID: "osmosis-1",
+            trace: "transfer/channel-141",
+            symbol: "OSMO",
+            name: "OSMO",
+            logoURI:
+              "https://raw.githubusercontent.com/cosmostation/chainlist/main/chain/osmosis/asset/osmo.png",
+            decimals: 6,
+          },
+          reason: "MOST_LIQUID",
+        },
+      ]);
+    });
+  });
+
   describe("/v1/fungible/venues", () => {
     it("handles 200 OK", async () => {
       server.use(

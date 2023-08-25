@@ -1,6 +1,8 @@
 import {
   Asset,
   AssetJSON,
+  AssetRecommendation,
+  AssetRecommendationJSON,
   AssetsFromSourceRequest,
   AssetsFromSourceRequestJSON,
   AssetsRequest,
@@ -9,6 +11,8 @@ import {
   ChainJSON,
   FeeAsset,
   FeeAssetJSON,
+  RecommendAssetsRequest,
+  RecommendAssetsRequestJSON,
   SwapVenue,
   SwapVenueJSON,
 } from "./types";
@@ -38,6 +42,24 @@ export function assetToJSON(asset: Asset): AssetJSON {
     name: asset.name,
     logo_uri: asset.logoURI,
     decimals: asset.decimals,
+  };
+}
+
+export function assetRecommendationFromJSON(
+  assetRecommendationJSON: AssetRecommendationJSON,
+): AssetRecommendation {
+  return {
+    asset: assetFromJSON(assetRecommendationJSON.asset),
+    reason: assetRecommendationJSON.reason,
+  };
+}
+
+export function assetRecommendationToJSON(
+  assetRecommendation: AssetRecommendation,
+): AssetRecommendationJSON {
+  return {
+    asset: assetToJSON(assetRecommendation.asset),
+    reason: assetRecommendation.reason,
   };
 }
 
@@ -122,6 +144,28 @@ export function feeAssetToJSON(feeAsset: FeeAsset): FeeAssetJSON {
   return {
     denom: feeAsset.denom,
     gas_price: feeAsset.gasPrice,
+  };
+}
+
+export function recommendAssetsRequestFromJSON(
+  recommendAssetsRequestJSON: RecommendAssetsRequestJSON,
+): RecommendAssetsRequest {
+  return {
+    sourceAssetDenom: recommendAssetsRequestJSON.source_asset_denom,
+    sourceAssetChainID: recommendAssetsRequestJSON.source_asset_chain_id,
+    destChainID: recommendAssetsRequestJSON.dest_chain_id,
+    reason: recommendAssetsRequestJSON.reason,
+  };
+}
+
+export function recommendAssetsRequestToJSON(
+  recommendAssetsRequest: RecommendAssetsRequest,
+): RecommendAssetsRequestJSON {
+  return {
+    source_asset_denom: recommendAssetsRequest.sourceAssetDenom,
+    source_asset_chain_id: recommendAssetsRequest.sourceAssetChainID,
+    dest_chain_id: recommendAssetsRequest.destChainID,
+    reason: recommendAssetsRequest.reason,
   };
 }
 

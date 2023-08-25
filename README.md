@@ -32,10 +32,10 @@ npm run test -- --coverage
 
 - [x] `/fungible/venues`
 - [x] `/fungible/assets`
-- [ ] `/fungible/assets_from_source`
+- [x] `/fungible/assets_from_source`
 - [ ] `/fungible/route`
 - [ ] `/fungible/msgs`
-- [ ] `/fungible/recommend_assets`
+- [x] `/fungible/recommend_assets`
 
 **Transaction:**
 

@@ -3,6 +3,8 @@ import {
   Asset,
   assetFromJSON,
   AssetJSON,
+  assetRecommendationFromJSON,
+  AssetRecommendationJSON,
   AssetsFromSourceRequest,
   AssetsFromSourceRequestJSON,
   assetsFromSourceRequestToJSON,
@@ -12,6 +14,8 @@ import {
   Chain,
   chainFromJSON,
   ChainJSON,
+  RecommendAssetsRequest,
+  recommendAssetsRequestToJSON,
   SwapVenue,
   swapVenueFromJSON,
   SwapVenueJSON,
@@ -68,6 +72,16 @@ export class SkipAPIClient {
     );
 
     return response.chains.map((chain) => chainFromJSON(chain));
+  }
+
+  async recommendAssets(options: RecommendAssetsRequest) {
+    const response = await this.requestClient.post<{
+      recommendations: AssetRecommendationJSON[];
+    }>("/fungible/recommend_assets", recommendAssetsRequestToJSON(options));
+
+    return response.recommendations.map((recommendation) =>
+      assetRecommendationFromJSON(recommendation),
+    );
   }
 
   async venues(): Promise<SwapVenue[]> {

@@ -1,3 +1,5 @@
+export type Reason = "UNKNOWN" | "BASE_TOKEN" | "MOST_LIQUID" | "DIRECT";
+
 export type AssetJSON = {
   denom: string;
   chain_id: string;
@@ -36,6 +38,16 @@ export type AssetsFromSourceRequest = {
   sourceAssetDenom: string;
   sourceAssetChainID: string;
   allowMultiTx?: boolean;
+};
+
+export type AssetRecommendation = {
+  asset: Asset;
+  reason: Reason;
+};
+
+export type AssetRecommendationJSON = {
+  asset: AssetJSON;
+  reason: Reason;
 };
 
 export type AssetsRequestJSON = {
@@ -101,6 +113,20 @@ export type ModuleVersionInfo = {
   path: string;
   version: string;
   sum: string;
+};
+
+export type RecommendAssetsRequestJSON = {
+  source_asset_denom: string;
+  source_asset_chain_id: string;
+  dest_chain_id: string;
+  reason?: Reason;
+};
+
+export type RecommendAssetsRequest = {
+  sourceAssetDenom: string;
+  sourceAssetChainID: string;
+  destChainID: string;
+  reason?: Reason;
 };
 
 export type SwapVenueJSON = {

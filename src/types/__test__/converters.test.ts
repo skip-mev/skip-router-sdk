@@ -1,5 +1,7 @@
 import {
   assetFromJSON,
+  assetRecommendationFromJSON,
+  assetRecommendationToJSON,
   assetsFromSourceRequestFromJSON,
   assetsFromSourceRequestToJSON,
   assetsRequestFromJSON,
@@ -9,10 +11,19 @@ import {
   chainToJSON,
   feeAssetFromJSON,
   feeAssetToJSON,
+  recommendAssetsRequestFromJSON,
+  recommendAssetsRequestToJSON,
   swapVenueFromJSON,
   swapVenueToJSON,
 } from "../converters";
-import { ChainJSON, FeeAssetJSON } from "../types";
+import {
+  AssetRecommendation,
+  AssetRecommendationJSON,
+  ChainJSON,
+  FeeAssetJSON,
+  RecommendAssetsRequest,
+  RecommendAssetsRequestJSON,
+} from "../types";
 
 test("assetFromJSON", () => {
   const assetJSON = {
@@ -67,6 +78,74 @@ test("assetToJSON", () => {
     logo_uri:
       "https://raw.githubusercontent.com/cosmostation/chainlist/main/chain/osmosis/asset/osmo.png",
     decimals: 6,
+  });
+});
+
+test("assetRecommendationFromJSON", () => {
+  const assetRecommendationJSON: AssetRecommendationJSON = {
+    asset: {
+      denom: "uosmo",
+      chain_id: "osmosis-1",
+      origin_denom: "uosmo",
+      origin_chain_id: "osmosis-1",
+      trace: "",
+      symbol: "OSMO",
+      name: "OSMO",
+      logo_uri:
+        "https://raw.githubusercontent.com/cosmostation/chainlist/main/chain/osmosis/asset/osmo.png",
+      decimals: 6,
+    },
+    reason: "MOST_LIQUID",
+  };
+
+  expect(assetRecommendationFromJSON(assetRecommendationJSON)).toEqual({
+    asset: {
+      denom: "uosmo",
+      chainID: "osmosis-1",
+      originDenom: "uosmo",
+      originChainID: "osmosis-1",
+      trace: "",
+      symbol: "OSMO",
+      name: "OSMO",
+      logoURI:
+        "https://raw.githubusercontent.com/cosmostation/chainlist/main/chain/osmosis/asset/osmo.png",
+      decimals: 6,
+    },
+    reason: "MOST_LIQUID",
+  });
+});
+
+test("assetRecommendationToJSON", () => {
+  const assetRecommendation: AssetRecommendation = {
+    asset: {
+      denom: "uosmo",
+      chainID: "osmosis-1",
+      originDenom: "uosmo",
+      originChainID: "osmosis-1",
+      trace: "",
+      symbol: "OSMO",
+      name: "OSMO",
+      logoURI:
+        "https://raw.githubusercontent.com/cosmostation/chainlist/main/chain/osmosis/asset/osmo.png",
+      decimals: 6,
+    },
+    reason: "MOST_LIQUID",
+  };
+
+  expect(assetRecommendationToJSON(assetRecommendation)).toEqual({
+    asset: {
+      denom: "uosmo",
+      chain_id: "osmosis-1",
+      origin_denom: "uosmo",
+      origin_chain_id: "osmosis-1",
+      trace: "",
+      symbol: "OSMO",
+      name: "OSMO",
+      logo_uri:
+        "https://raw.githubusercontent.com/cosmostation/chainlist/main/chain/osmosis/asset/osmo.png",
+      decimals: 6,
+    },
+    reason: "MOST_LIQUID",
   });
 });
 
@@ -335,6 +414,38 @@ test("feeAssetToJSON", () => {
       average: "0.025",
       high: "0.04",
     },
+  });
+});
+
+test("recommendAssetsRequestFromJSON", () => {
+  const recommendAssetsRequestJSON: RecommendAssetsRequestJSON = {
+    source_asset_denom: "uosmo",
+    source_asset_chain_id: "osmosis-1",
+    dest_chain_id: "neutron-1",
+    reason: "MOST_LIQUID",
+  };
+
+  expect(recommendAssetsRequestFromJSON(recommendAssetsRequestJSON)).toEqual({
+    sourceAssetDenom: "uosmo",
+    sourceAssetChainID: "osmosis-1",
+    destChainID: "neutron-1",
+    reason: "MOST_LIQUID",
+  });
+});
+
+test("recommendAssetsRequestToJSON", () => {
+  const recommendAssetsRequest: RecommendAssetsRequest = {
+    sourceAssetDenom: "uosmo",
+    sourceAssetChainID: "osmosis-1",
+    destChainID: "neutron-1",
+    reason: "MOST_LIQUID",
+  };
+
+  expect(recommendAssetsRequestToJSON(recommendAssetsRequest)).toEqual({
+    source_asset_denom: "uosmo",
+    source_asset_chain_id: "osmosis-1",
+    dest_chain_id: "neutron-1",
+    reason: "MOST_LIQUID",
   });
 });
 
