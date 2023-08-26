@@ -52,5 +52,5 @@ jobs:
       - name: start
         run: helm repo update && helm search repo starship/devnet --version 0.1.36 && helm install -f starship.yaml tutorial starship/devnet --version 0.1.31 --wait
 
-      # - name: e2e
-      #   run: npm run e2e:test
+      - name: e2e
+        run: npm run e2e:test
