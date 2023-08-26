@@ -7,7 +7,7 @@ chains:
       rpc: 26653
     resources:
       cpu: "0.2"
-      memory: "200M"      
+      memory: "200M"
 
   - name: gaia-1
     type: cosmos
@@ -17,7 +17,7 @@ chains:
       rpc: 26657
     resources:
       cpu: "0.2"
-      memory: "200M"      
+      memory: "200M"
 
 relayers:
   - name: osmos-gaia
@@ -28,7 +28,7 @@ relayers:
       - gaia-1
     resources:
       cpu: "0.1"
-      memory: "100M"      
+      memory: "100M"
 
 explorer:
   enabled: false
@@ -39,4 +39,4 @@ registry:
     rest: 8081
   resources:
     cpu: "0.1"
-    memory: "100M"    
+    memory: "100M"
