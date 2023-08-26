@@ -29,6 +29,10 @@ import {
   routeRequestToJSON,
   routeResponseFromJSON,
   routeResponseToJSON,
+  submitTxRequestFromJSON,
+  submitTxRequestToJSON,
+  submitTxResponseFromJSON,
+  submitTxResponseToJSON,
   swapExactCoinInFromJSON,
   swapExactCoinInToJSON,
   swapExactCoinOutFromJSON,
@@ -54,6 +58,8 @@ import {
   PostHandlerJSON,
   RecommendAssetsRequest,
   RecommendAssetsRequestJSON,
+  SubmitTxRequestJSON,
+  SubmitTxResponseJSON,
   SwapExactCoinInJSON,
   TransferJSON,
 } from "../types";
@@ -1671,5 +1677,53 @@ test("multiChainMsgToJSON", () => {
     path: ["osmosis-1", "cosmoshub-4"],
     msg: "message",
     msg_type_url: "/cosmos.bank.v1beta1.MsgSend",
+  });
+});
+
+test("submitTxRequestFromJSON", () => {
+  const submitTxRequestJSON: SubmitTxRequestJSON = {
+    tx: "txbytes123",
+    chain_id: "osmosis-1",
+  };
+
+  expect(submitTxRequestFromJSON(submitTxRequestJSON)).toEqual({
+    tx: "txbytes123",
+    chainID: "osmosis-1",
+  });
+});
+
+test("submitTxRequestToJSON", () => {
+  const submitTxRequest = {
+    tx: "txbytes123",
+    chainID: "osmosis-1",
+  };
+
+  expect(submitTxRequestToJSON(submitTxRequest)).toEqual({
+    tx: "txbytes123",
+    chain_id: "osmosis-1",
+  });
+});
+
+test("submitTxResponseFromJSON", () => {
+  const submitTxResponseJSON: SubmitTxResponseJSON = {
+    tx_hash: "txid123",
+    success: true,
+  };
+
+  expect(submitTxResponseFromJSON(submitTxResponseJSON)).toEqual({
+    txHash: "txid123",
+    success: true,
+  });
+});
+
+test("submitTxResponseToJSON", () => {
+  const submitTxResponse = {
+    txHash: "txid123",
+    success: true,
+  };
+
+  expect(submitTxResponseToJSON(submitTxResponse)).toEqual({
+    tx_hash: "txid123",
+    success: true,
   });
 });

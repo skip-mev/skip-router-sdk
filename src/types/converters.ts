@@ -29,6 +29,10 @@ import {
   RouteRequestJSON,
   RouteResponse,
   RouteResponseJSON,
+  SubmitTxRequest,
+  SubmitTxRequestJSON,
+  SubmitTxResponse,
+  SubmitTxResponseJSON,
   Swap,
   SwapExactCoinIn,
   SwapExactCoinInJSON,
@@ -572,5 +576,41 @@ export function multiChainMsgToJSON(
     path: multiChainMsg.path,
     msg: multiChainMsg.msg,
     msg_type_url: multiChainMsg.msgTypeURL,
+  };
+}
+
+export function submitTxRequestFromJSON(
+  submitTxRequestJSON: SubmitTxRequestJSON,
+): SubmitTxRequest {
+  return {
+    tx: submitTxRequestJSON.tx,
+    chainID: submitTxRequestJSON.chain_id,
+  };
+}
+
+export function submitTxRequestToJSON(
+  submitTxRequest: SubmitTxRequest,
+): SubmitTxRequestJSON {
+  return {
+    tx: submitTxRequest.tx,
+    chain_id: submitTxRequest.chainID,
+  };
+}
+
+export function submitTxResponseFromJSON(
+  submitTxResponseJSON: SubmitTxResponseJSON,
+): SubmitTxResponse {
+  return {
+    txHash: submitTxResponseJSON.tx_hash,
+    success: submitTxResponseJSON.success,
+  };
+}
+
+export function submitTxResponseToJSON(
+  submitTxResponse: SubmitTxResponse,
+): SubmitTxResponseJSON {
+  return {
+    tx_hash: submitTxResponse.txHash,
+    success: submitTxResponse.success,
   };
 }

@@ -28,6 +28,10 @@ import {
   RouteResponse,
   routeResponseFromJSON,
   RouteResponseJSON,
+  SubmitTxRequestJSON,
+  SubmitTxResponse,
+  submitTxResponseFromJSON,
+  SubmitTxResponseJSON,
   SwapVenue,
   swapVenueFromJSON,
   SwapVenueJSON,
@@ -118,6 +122,21 @@ export class SkipAPIClient {
     return response.recommendations.map((recommendation) =>
       assetRecommendationFromJSON(recommendation),
     );
+  }
+
+  async submitTransaction(
+    chainID: string,
+    tx: string,
+  ): Promise<SubmitTxResponse> {
+    const response = await this.requestClient.post<
+      SubmitTxResponseJSON,
+      SubmitTxRequestJSON
+    >("/tx/submit", {
+      chain_id: chainID,
+      tx: tx,
+    });
+
+    return submitTxResponseFromJSON(response);
   }
 
   async venues(): Promise<SwapVenue[]> {

@@ -39,6 +39,6 @@ npm run test -- --coverage
 
 **Transaction:**
 
-- [ ] `/tx/submit`
+- [x] `/tx/submit`
 - [ ] `/tx/track`
 - [ ] `/tx/status`

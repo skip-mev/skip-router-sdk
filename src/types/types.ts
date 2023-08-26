@@ -403,3 +403,23 @@ export type MsgsResponseJSON = {
 export type MsgsResponse = {
   msgs: MultiChainMsg[];
 };
+
+export type SubmitTxRequestJSON = {
+  tx: string;
+  chain_id: string;
+};
+
+export type SubmitTxRequest = {
+  tx: string;
+  chainID: string;
+};
+
+export type SubmitTxResponseJSON = {
+  success: boolean;
+  tx_hash: string;
+};
+
+export type SubmitTxResponse = {
+  success: boolean;
+  txHash: string;
+};
