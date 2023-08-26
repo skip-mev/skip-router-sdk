@@ -1,4 +1,6 @@
 import {
+  Affiliate,
+  AffiliateJSON,
   Asset,
   AssetJSON,
   AssetRecommendation,
@@ -9,10 +11,18 @@ import {
   AssetsRequestJSON,
   Chain,
   ChainJSON,
+  CosmWasmContractMsg,
+  CosmWasmContractMsgJSON,
   FeeAsset,
   FeeAssetJSON,
+  MsgsRequest,
+  MsgsRequestJSON,
+  MultiChainMsg,
+  MultiChainMsgJSON,
   Operation,
   OperationJSON,
+  PostHandler,
+  PostHandlerJSON,
   RecommendAssetsRequest,
   RecommendAssetsRequestJSON,
   RouteRequest,
@@ -32,6 +42,20 @@ import {
   Transfer,
   TransferJSON,
 } from "./types";
+
+export function affiliateFromJSON(affiliateJSON: AffiliateJSON): Affiliate {
+  return {
+    address: affiliateJSON.address,
+    basisPointsFee: affiliateJSON.basis_points_fee,
+  };
+}
+
+export function affiliateToJSON(affiliate: Affiliate): AffiliateJSON {
+  return {
+    address: affiliate.address,
+    basis_points_fee: affiliate.basisPointsFee,
+  };
+}
 
 export function assetFromJSON(assetJSON: AssetJSON): Asset {
   return {
@@ -438,5 +462,115 @@ export function routeResponseToJSON(
       : undefined,
 
     txs_required: routeResponse.txsRequired,
+  };
+}
+
+export function cosmWasmContractMsgFromJSON(
+  cosmWasmContractMsgJSON: CosmWasmContractMsgJSON,
+): CosmWasmContractMsg {
+  return {
+    contractAddress: cosmWasmContractMsgJSON.contract_address,
+    msg: cosmWasmContractMsgJSON.msg,
+  };
+}
+
+export function cosmWasmContractMsgToJSON(
+  cosmWasmContractMsg: CosmWasmContractMsg,
+): CosmWasmContractMsgJSON {
+  return {
+    contract_address: cosmWasmContractMsg.contractAddress,
+    msg: cosmWasmContractMsg.msg,
+  };
+}
+
+export function postHandlerFromJSON(
+  postHandlerJSON: PostHandlerJSON,
+): PostHandler {
+  if ("wasm_msg" in postHandlerJSON) {
+    return {
+      wasmMsg: cosmWasmContractMsgFromJSON(postHandlerJSON.wasm_msg),
+    };
+  }
+
+  return {
+    autopilotMsg: postHandlerJSON.autopilot_msg,
+  };
+}
+
+export function postHandlerToJSON(postHandler: PostHandler): PostHandlerJSON {
+  if ("wasmMsg" in postHandler) {
+    return {
+      wasm_msg: cosmWasmContractMsgToJSON(postHandler.wasmMsg),
+    };
+  }
+
+  return {
+    autopilot_msg: postHandler.autopilotMsg,
+  };
+}
+
+export function msgsRequestFromJSON(
+  msgsRequestJSON: MsgsRequestJSON,
+): MsgsRequest {
+  return {
+    sourceAssetDenom: msgsRequestJSON.source_asset_denom,
+    sourceAssetChainID: msgsRequestJSON.source_asset_chain_id,
+    destAssetDenom: msgsRequestJSON.dest_asset_denom,
+    destAssetChainID: msgsRequestJSON.dest_asset_chain_id,
+    amountIn: msgsRequestJSON.amount_in,
+    amountOut: msgsRequestJSON.amount_out,
+    addressList: msgsRequestJSON.address_list,
+    operations: msgsRequestJSON.operations.map(operationFromJSON),
+
+    estimatedAmountOut: msgsRequestJSON.estimated_amount_out,
+    slippageTolerancePercent: msgsRequestJSON.slippage_tolerance_percent,
+    affiliates: msgsRequestJSON.affiliates?.map(affiliateFromJSON),
+
+    postRouteHandler:
+      msgsRequestJSON.post_route_handler &&
+      postHandlerFromJSON(msgsRequestJSON.post_route_handler),
+  };
+}
+
+export function msgsRequestToJSON(msgsRequest: MsgsRequest): MsgsRequestJSON {
+  return {
+    source_asset_denom: msgsRequest.sourceAssetDenom,
+    source_asset_chain_id: msgsRequest.sourceAssetChainID,
+    dest_asset_denom: msgsRequest.destAssetDenom,
+    dest_asset_chain_id: msgsRequest.destAssetChainID,
+    amount_in: msgsRequest.amountIn,
+    amount_out: msgsRequest.amountOut,
+    address_list: msgsRequest.addressList,
+    operations: msgsRequest.operations.map(operationToJSON),
+
+    estimated_amount_out: msgsRequest.estimatedAmountOut,
+    slippage_tolerance_percent: msgsRequest.slippageTolerancePercent,
+    affiliates: msgsRequest.affiliates?.map(affiliateToJSON),
+
+    post_route_handler:
+      msgsRequest.postRouteHandler &&
+      postHandlerToJSON(msgsRequest.postRouteHandler),
+  };
+}
+
+export function multiChainMsgFromJSON(
+  multiChainMsgJSON: MultiChainMsgJSON,
+): MultiChainMsg {
+  return {
+    chainID: multiChainMsgJSON.chain_id,
+    path: multiChainMsgJSON.path,
+    msg: multiChainMsgJSON.msg,
+    msgTypeURL: multiChainMsgJSON.msg_type_url,
+  };
+}
+
+export function multiChainMsgToJSON(
+  multiChainMsg: MultiChainMsg,
+): MultiChainMsgJSON {
+  return {
+    chain_id: multiChainMsg.chainID,
+    path: multiChainMsg.path,
+    msg: multiChainMsg.msg,
+    msg_type_url: multiChainMsg.msgTypeURL,
   };
 }

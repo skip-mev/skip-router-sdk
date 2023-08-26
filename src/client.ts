@@ -14,6 +14,12 @@ import {
   Chain,
   chainFromJSON,
   ChainJSON,
+  MsgsRequest,
+  MsgsRequestJSON,
+  msgsRequestToJSON,
+  MsgsResponseJSON,
+  MultiChainMsg,
+  multiChainMsgFromJSON,
   RecommendAssetsRequest,
   recommendAssetsRequestToJSON,
   RouteRequest,
@@ -78,6 +84,18 @@ export class SkipAPIClient {
     );
 
     return response.chains.map((chain) => chainFromJSON(chain));
+  }
+
+  async messages(options: MsgsRequest): Promise<MultiChainMsg[]> {
+    const response = await this.requestClient.post<
+      MsgsResponseJSON,
+      MsgsRequestJSON
+    >("/fungible/msgs", {
+      ...msgsRequestToJSON(options),
+      slippage_tolerance_percent: options.slippageTolerancePercent ?? "0",
+    });
+
+    return response.msgs.map((msg) => multiChainMsgFromJSON(msg));
   }
 
   async route(options: RouteRequest): Promise<RouteResponse> {

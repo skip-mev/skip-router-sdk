@@ -34,7 +34,7 @@ npm run test -- --coverage
 - [x] `/fungible/assets`
 - [x] `/fungible/assets_from_source`
 - [x] `/fungible/route`
-- [ ] `/fungible/msgs`
+- [x] `/fungible/msgs`
 - [x] `/fungible/recommend_assets`
 
 **Transaction:**

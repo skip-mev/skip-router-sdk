@@ -1,5 +1,15 @@
 export type Reason = "UNKNOWN" | "BASE_TOKEN" | "MOST_LIQUID" | "DIRECT";
 
+export type AffiliateJSON = {
+  basis_points_fee: string;
+  address: string;
+};
+
+export type Affiliate = {
+  basisPointsFee: string;
+  address: string;
+};
+
 export type AssetJSON = {
   denom: string;
   chain_id: string;
@@ -291,4 +301,105 @@ export type RouteResponse = {
   swapVenue?: SwapVenue;
 
   txsRequired: number;
+};
+
+export type CosmWasmContractMsgJSON = {
+  contract_address: string;
+  msg: string;
+};
+
+export type CosmWasmContractMsg = {
+  contractAddress: string;
+  msg: string;
+};
+
+export type AutopilotAction = "LIQUID_STAKE" | "CLAIM";
+
+export type AutopilotMsg = {
+  receiver: string;
+  action: AutopilotAction;
+};
+
+export type PostHandlerJSON =
+  | { wasm_msg: CosmWasmContractMsgJSON }
+  | { autopilot_msg: AutopilotMsg };
+
+export type PostHandler =
+  | { wasmMsg: CosmWasmContractMsg }
+  | { autopilotMsg: AutopilotMsg };
+
+//   message MsgsRequest {
+//     string source_asset_denom = 1;
+//     string source_asset_chain_id = 2;
+//     string dest_asset_denom = 3;
+//     string dest_asset_chain_id = 4;
+//     string amount_in = 5;
+//     string amount_out = 6;
+//     repeated string address_list = 7;
+//     map<string, string> chain_ids_to_addresses = 8;
+//     repeated Operation operations = 9;
+
+//     optional string estimated_amount_out = 10;
+//     optional string slippage_tolerance_percent = 11;
+//     repeated Affiliate affiliates = 12;
+
+//     PostHandler post_route_handler = 13;
+
+//     string client_id = 14;
+// }
+
+export type MsgsRequestJSON = {
+  source_asset_denom: string;
+  source_asset_chain_id: string;
+  dest_asset_denom: string;
+  dest_asset_chain_id: string;
+  amount_in: string;
+  amount_out: string;
+  address_list: string[];
+  operations: OperationJSON[];
+
+  estimated_amount_out?: string;
+  slippage_tolerance_percent?: string;
+  affiliates?: AffiliateJSON[];
+
+  post_route_handler?: PostHandlerJSON;
+};
+
+export type MsgsRequest = {
+  sourceAssetDenom: string;
+  sourceAssetChainID: string;
+  destAssetDenom: string;
+  destAssetChainID: string;
+  amountIn: string;
+  amountOut: string;
+  addressList: string[];
+  operations: Operation[];
+
+  estimatedAmountOut?: string;
+  slippageTolerancePercent?: string;
+  affiliates?: Affiliate[];
+
+  postRouteHandler?: PostHandler;
+};
+
+export type MultiChainMsgJSON = {
+  chain_id: string;
+  path: string[];
+  msg: string;
+  msg_type_url: string;
+};
+
+export type MultiChainMsg = {
+  chainID: string;
+  path: string[];
+  msg: string;
+  msgTypeURL: string;
+};
+
+export type MsgsResponseJSON = {
+  msgs: MultiChainMsgJSON[];
+};
+
+export type MsgsResponse = {
+  msgs: MultiChainMsg[];
 };

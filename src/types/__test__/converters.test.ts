@@ -1,4 +1,6 @@
 import {
+  affiliateFromJSON,
+  affiliateToJSON,
   assetFromJSON,
   assetRecommendationFromJSON,
   assetRecommendationToJSON,
@@ -9,10 +11,18 @@ import {
   assetToJSON,
   chainFromJSON,
   chainToJSON,
+  cosmWasmContractMsgFromJSON,
+  cosmWasmContractMsgToJSON,
   feeAssetFromJSON,
   feeAssetToJSON,
+  msgsRequestFromJSON,
+  msgsRequestToJSON,
+  multiChainMsgFromJSON,
+  multiChainMsgToJSON,
   operationFromJSON,
   operationToJSON,
+  postHandlerFromJSON,
+  postHandlerToJSON,
   recommendAssetsRequestFromJSON,
   recommendAssetsRequestToJSON,
   routeRequestFromJSON,
@@ -33,15 +43,44 @@ import {
   transferToJSON,
 } from "../converters";
 import {
+  AffiliateJSON,
   AssetRecommendation,
   AssetRecommendationJSON,
   ChainJSON,
   FeeAssetJSON,
+  MsgsRequestJSON,
+  MultiChainMsgJSON,
+  PostHandler,
+  PostHandlerJSON,
   RecommendAssetsRequest,
   RecommendAssetsRequestJSON,
   SwapExactCoinInJSON,
   TransferJSON,
 } from "../types";
+
+test("affiliateFromJSON", () => {
+  const affiliateJSON: AffiliateJSON = {
+    address: "cosmos1xv9tklw7d82sezh9haa573wufgy59vmwe6xxe5",
+    basis_points_fee: "100",
+  };
+
+  expect(affiliateFromJSON(affiliateJSON)).toEqual({
+    address: "cosmos1xv9tklw7d82sezh9haa573wufgy59vmwe6xxe5",
+    basisPointsFee: "100",
+  });
+});
+
+test("affiliateToJSON", () => {
+  const affiliate = {
+    address: "cosmos1xv9tklw7d82sezh9haa573wufgy59vmwe6xxe5",
+    basisPointsFee: "100",
+  };
+
+  expect(affiliateToJSON(affiliate)).toEqual({
+    address: "cosmos1xv9tklw7d82sezh9haa573wufgy59vmwe6xxe5",
+    basis_points_fee: "100",
+  });
+});
 
 test("assetFromJSON", () => {
   const assetJSON = {
@@ -1272,5 +1311,365 @@ test("routeResponseToJSON", () => {
     estimated_amount_out: "54906",
     swap_venue: { name: "osmosis-poolmanager", chain_id: "osmosis-1" },
     txs_required: 1,
+  });
+});
+
+test("cosmWasmContractMsgFromJSON", () => {
+  const cosmWasmContractMsgJSON = {
+    contract_address: "cosmos1xv9tklw7d82sezh9haa573wufgy59vmwe6xxe5",
+    msg: "cosmwasm message",
+  };
+
+  expect(cosmWasmContractMsgFromJSON(cosmWasmContractMsgJSON)).toEqual({
+    contractAddress: "cosmos1xv9tklw7d82sezh9haa573wufgy59vmwe6xxe5",
+    msg: "cosmwasm message",
+  });
+});
+
+test("cosmWasmContractMsgToJSON", () => {
+  const cosmWasmContractMsg = {
+    contractAddress: "cosmos1xv9tklw7d82sezh9haa573wufgy59vmwe6xxe5",
+    msg: "cosmwasm message",
+  };
+
+  expect(cosmWasmContractMsgToJSON(cosmWasmContractMsg)).toEqual({
+    contract_address: "cosmos1xv9tklw7d82sezh9haa573wufgy59vmwe6xxe5",
+    msg: "cosmwasm message",
+  });
+});
+
+test("postHandlerFromJSON - wasm msg", () => {
+  const postHandlerJSON = {
+    wasm_msg: {
+      contract_address: "cosmos1xv9tklw7d82sezh9haa573wufgy59vmwe6xxe5",
+      msg: "cosmwasm message",
+    },
+  };
+
+  expect(postHandlerFromJSON(postHandlerJSON)).toEqual({
+    wasmMsg: {
+      contractAddress: "cosmos1xv9tklw7d82sezh9haa573wufgy59vmwe6xxe5",
+      msg: "cosmwasm message",
+    },
+  });
+});
+
+test("postHandlerFromJSON - autopilot msg", () => {
+  const postHandlerJSON: PostHandlerJSON = {
+    autopilot_msg: {
+      receiver: "cosmos1xv9tklw7d82sezh9haa573wufgy59vmwe6xxe5",
+      action: "LIQUID_STAKE",
+    },
+  };
+
+  expect(postHandlerFromJSON(postHandlerJSON)).toEqual({
+    autopilotMsg: {
+      receiver: "cosmos1xv9tklw7d82sezh9haa573wufgy59vmwe6xxe5",
+      action: "LIQUID_STAKE",
+    },
+  });
+});
+
+test("postHandlerToJSON - wasm msg", () => {
+  const postHandler = {
+    wasmMsg: {
+      contractAddress: "cosmos1xv9tklw7d82sezh9haa573wufgy59vmwe6xxe5",
+      msg: "cosmwasm message",
+    },
+  };
+
+  expect(postHandlerToJSON(postHandler)).toEqual({
+    wasm_msg: {
+      contract_address: "cosmos1xv9tklw7d82sezh9haa573wufgy59vmwe6xxe5",
+      msg: "cosmwasm message",
+    },
+  });
+});
+
+test("postHandlerToJSON - autopilot msg", () => {
+  const postHandler: PostHandler = {
+    autopilotMsg: {
+      receiver: "cosmos1xv9tklw7d82sezh9haa573wufgy59vmwe6xxe5",
+      action: "LIQUID_STAKE",
+    },
+  };
+
+  expect(postHandlerToJSON(postHandler)).toEqual({
+    autopilot_msg: {
+      receiver: "cosmos1xv9tklw7d82sezh9haa573wufgy59vmwe6xxe5",
+      action: "LIQUID_STAKE",
+    },
+  });
+});
+
+test("msgsRequestFromJSON", () => {
+  const msgsRequestJSON: MsgsRequestJSON = {
+    source_asset_denom: "uosmo",
+    source_asset_chain_id: "osmosis-1",
+    dest_asset_denom: "uatom",
+    dest_asset_chain_id: "cosmoshub-4",
+    amount_in: "1000000",
+    amount_out: "54906",
+    address_list: [
+      "cosmos1xv9tklw7d82sezh9haa573wufgy59vmwe6xxe5",
+      "cosmos1xv9tklw7d82sezh9haa573wufgy59vmwe6xxe5",
+    ],
+    operations: [
+      {
+        swap: {
+          swap_in: {
+            swap_venue: {
+              name: "neutron-astroport",
+              chain_id: "neutron-1",
+            },
+            swap_operations: [
+              {
+                pool: "pool-0",
+                denom_in: "uosmo",
+                denom_out: "uatom",
+              },
+            ],
+            swap_amount_in: "1000000",
+          },
+          estimated_affiliate_fee: "1000000",
+        },
+      },
+      {
+        transfer: {
+          port: "transfer",
+          channel: "channel-0",
+          chain_id: "osmosis-1",
+          pfm_enabled: true,
+          dest_denom: "uatom",
+          supports_memo: true,
+        },
+      },
+    ],
+
+    estimated_amount_out: "54906",
+    slippage_tolerance_percent: "0.01",
+    affiliates: [
+      {
+        address: "cosmos1xv9tklw7d82sezh9haa573wufgy59vmwe6xxe5",
+        basis_points_fee: "100",
+      },
+    ],
+    post_route_handler: {
+      wasm_msg: {
+        contract_address: "cosmos1xv9tklw7d82sezh9haa573wufgy59vmwe6xxe5",
+        msg: "cosmwasm message",
+      },
+    },
+  };
+
+  expect(msgsRequestFromJSON(msgsRequestJSON)).toEqual({
+    sourceAssetDenom: "uosmo",
+    sourceAssetChainID: "osmosis-1",
+    destAssetDenom: "uatom",
+    destAssetChainID: "cosmoshub-4",
+    amountIn: "1000000",
+    amountOut: "54906",
+    addressList: [
+      "cosmos1xv9tklw7d82sezh9haa573wufgy59vmwe6xxe5",
+      "cosmos1xv9tklw7d82sezh9haa573wufgy59vmwe6xxe5",
+    ],
+    operations: [
+      {
+        swap: {
+          swapIn: {
+            swapVenue: {
+              name: "neutron-astroport",
+              chainID: "neutron-1",
+            },
+            swapOperations: [
+              {
+                pool: "pool-0",
+                denomIn: "uosmo",
+                denomOut: "uatom",
+              },
+            ],
+            swapAmountIn: "1000000",
+          },
+          estimatedAffiliateFee: "1000000",
+        },
+      },
+      {
+        transfer: {
+          port: "transfer",
+          channel: "channel-0",
+          chainID: "osmosis-1",
+          pfmEnabled: true,
+          destDenom: "uatom",
+          supportsMemo: true,
+        },
+      },
+    ],
+
+    estimatedAmountOut: "54906",
+    slippageTolerancePercent: "0.01",
+    affiliates: [
+      {
+        address: "cosmos1xv9tklw7d82sezh9haa573wufgy59vmwe6xxe5",
+        basisPointsFee: "100",
+      },
+    ],
+    postRouteHandler: {
+      wasmMsg: {
+        contractAddress: "cosmos1xv9tklw7d82sezh9haa573wufgy59vmwe6xxe5",
+        msg: "cosmwasm message",
+      },
+    },
+  });
+});
+
+test("msgsRequestToJSON", () => {
+  const msgsRequest = {
+    sourceAssetDenom: "uosmo",
+    sourceAssetChainID: "osmosis-1",
+    destAssetDenom: "uatom",
+    destAssetChainID: "cosmoshub-4",
+    amountIn: "1000000",
+    amountOut: "54906",
+    addressList: [
+      "cosmos1xv9tklw7d82sezh9haa573wufgy59vmwe6xxe5",
+      "cosmos1xv9tklw7d82sezh9haa573wufgy59vmwe6xxe5",
+    ],
+    operations: [
+      {
+        swap: {
+          swapIn: {
+            swapVenue: {
+              name: "neutron-astroport",
+              chainID: "neutron-1",
+            },
+            swapOperations: [
+              {
+                pool: "pool-0",
+                denomIn: "uosmo",
+                denomOut: "uatom",
+              },
+            ],
+            swapAmountIn: "1000000",
+          },
+          estimatedAffiliateFee: "1000000",
+        },
+      },
+      {
+        transfer: {
+          port: "transfer",
+          channel: "channel-0",
+          chainID: "osmosis-1",
+          pfmEnabled: true,
+          destDenom: "uatom",
+          supportsMemo: true,
+        },
+      },
+    ],
+
+    estimatedAmountOut: "54906",
+    slippageTolerancePercent: "0.01",
+    affiliates: [
+      {
+        address: "cosmos1xv9tklw7d82sezh9haa573wufgy59vmwe6xxe5",
+        basisPointsFee: "100",
+      },
+    ],
+    postRouteHandler: {
+      wasmMsg: {
+        contractAddress: "cosmos1xv9tklw7d82sezh9haa573wufgy59vmwe6xxe5",
+        msg: "cosmwasm message",
+      },
+    },
+  };
+
+  expect(msgsRequestToJSON(msgsRequest)).toEqual({
+    source_asset_denom: "uosmo",
+    source_asset_chain_id: "osmosis-1",
+    dest_asset_denom: "uatom",
+    dest_asset_chain_id: "cosmoshub-4",
+    amount_in: "1000000",
+    amount_out: "54906",
+    address_list: [
+      "cosmos1xv9tklw7d82sezh9haa573wufgy59vmwe6xxe5",
+      "cosmos1xv9tklw7d82sezh9haa573wufgy59vmwe6xxe5",
+    ],
+    operations: [
+      {
+        swap: {
+          swap_in: {
+            swap_venue: {
+              name: "neutron-astroport",
+              chain_id: "neutron-1",
+            },
+            swap_operations: [
+              {
+                pool: "pool-0",
+                denom_in: "uosmo",
+                denom_out: "uatom",
+              },
+            ],
+            swap_amount_in: "1000000",
+          },
+          estimated_affiliate_fee: "1000000",
+        },
+      },
+      {
+        transfer: {
+          port: "transfer",
+          channel: "channel-0",
+          chain_id: "osmosis-1",
+          pfm_enabled: true,
+          dest_denom: "uatom",
+          supports_memo: true,
+        },
+      },
+    ],
+
+    estimated_amount_out: "54906",
+    slippage_tolerance_percent: "0.01",
+    affiliates: [
+      {
+        address: "cosmos1xv9tklw7d82sezh9haa573wufgy59vmwe6xxe5",
+        basis_points_fee: "100",
+      },
+    ],
+    post_route_handler: {
+      wasm_msg: {
+        contract_address: "cosmos1xv9tklw7d82sezh9haa573wufgy59vmwe6xxe5",
+        msg: "cosmwasm message",
+      },
+    },
+  });
+});
+
+test("multiChainMsgFromJSON", () => {
+  const multiChainMsgJSON: MultiChainMsgJSON = {
+    chain_id: "osmosis-1",
+    path: ["osmosis-1", "cosmoshub-4"],
+    msg: "message",
+    msg_type_url: "/cosmos.bank.v1beta1.MsgSend",
+  };
+
+  expect(multiChainMsgFromJSON(multiChainMsgJSON)).toEqual({
+    chainID: "osmosis-1",
+    path: ["osmosis-1", "cosmoshub-4"],
+    msg: "message",
+    msgTypeURL: "/cosmos.bank.v1beta1.MsgSend",
+  });
+});
+
+test("multiChainMsgToJSON", () => {
+  const multiChainMsg = {
+    chainID: "osmosis-1",
+    path: ["osmosis-1", "cosmoshub-4"],
+    msg: "message",
+    msgTypeURL: "/cosmos.bank.v1beta1.MsgSend",
+  };
+
+  expect(multiChainMsgToJSON(multiChainMsg)).toEqual({
+    chain_id: "osmosis-1",
+    path: ["osmosis-1", "cosmoshub-4"],
+    msg: "message",
+    msg_type_url: "/cosmos.bank.v1beta1.MsgSend",
   });
 });

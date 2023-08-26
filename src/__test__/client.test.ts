@@ -546,6 +546,86 @@ describe("client", () => {
     });
   });
 
+  describe("/v1/fungible/msgs", () => {
+    it("handles 200 OK", async () => {
+      server.use(
+        rest.post("https://api.skip.money/v1/fungible/msgs", (_, res, ctx) => {
+          return res(
+            ctx.status(200),
+            ctx.json({
+              msgs: [
+                {
+                  chain_id: "osmosis-1",
+                  path: ["osmosis-1", "cosmoshub-4"],
+                  msg: '{"sender":"osmo1f2f9vryyu53gr8vhsksn66kugnxaa7k8jdpk0e","contract":"osmo1rc6h59ev8m7mdpg584v7m5t24k2ut3dy5nekjw4mdsfjysyjvv3q65m8pj","msg":{"swap_and_action":{"user_swap":{"swap_exact_coin_in":{"operations":[{"denom_in":"uosmo","denom_out":"ibc/27394FB092D2ECCD56123C74F36E4C1F926001CEADA9CA97EA622B25F41E5EB2","pool":"1"}],"swap_venue_name":"osmosis-poolmanager"}},"min_coin":{"denom":"ibc/27394FB092D2ECCD56123C74F36E4C1F926001CEADA9CA97EA622B25F41E5EB2","amount":"54946"},"timeout_timestamp":1693012979767514087,"post_swap_action":{"ibc_transfer":{"ibc_info":{"memo":"","receiver":"cosmos1f2f9vryyu53gr8vhsksn66kugnxaa7k86kjxet","recover_address":"osmo1f2f9vryyu53gr8vhsksn66kugnxaa7k8jdpk0e","source_channel":"channel-0"}}},"affiliates":[]}},"funds":[{"denom":"uosmo","amount":"1000000"}]}',
+                  msg_type_url: "/cosmwasm.wasm.v1.MsgExecuteContract",
+                },
+              ],
+            }),
+          );
+        }),
+      );
+
+      const client = new SkipAPIClient(SKIP_API_URL);
+
+      const response = await client.messages({
+        sourceAssetDenom: "uosmo",
+        sourceAssetChainID: "osmosis-1",
+        destAssetDenom: "uatom",
+        destAssetChainID: "cosmoshub-4",
+        amountIn: "1000000",
+        amountOut: "54946",
+        operations: [
+          {
+            swap: {
+              swapIn: {
+                swapVenue: {
+                  name: "osmosis-poolmanager",
+                  chainID: "osmosis-1",
+                },
+                swapOperations: [
+                  {
+                    pool: "1",
+                    denomIn: "uosmo",
+                    denomOut:
+                      "ibc/27394FB092D2ECCD56123C74F36E4C1F926001CEADA9CA97EA622B25F41E5EB2",
+                  },
+                ],
+                swapAmountIn: "1000000",
+              },
+              estimatedAffiliateFee:
+                "0ibc/27394FB092D2ECCD56123C74F36E4C1F926001CEADA9CA97EA622B25F41E5EB2",
+            },
+          },
+          {
+            transfer: {
+              port: "transfer",
+              channel: "channel-0",
+              chainID: "osmosis-1",
+              pfmEnabled: true,
+              destDenom: "uatom",
+              supportsMemo: true,
+            },
+          },
+        ],
+        addressList: [
+          "osmo1f2f9vryyu53gr8vhsksn66kugnxaa7k8jdpk0e",
+          "cosmos1f2f9vryyu53gr8vhsksn66kugnxaa7k86kjxet",
+        ],
+        estimatedAmountOut: "54946",
+      });
+
+      expect(response).toEqual([
+        {
+          chainID: "osmosis-1",
+          path: ["osmosis-1", "cosmoshub-4"],
+          msg: '{"sender":"osmo1f2f9vryyu53gr8vhsksn66kugnxaa7k8jdpk0e","contract":"osmo1rc6h59ev8m7mdpg584v7m5t24k2ut3dy5nekjw4mdsfjysyjvv3q65m8pj","msg":{"swap_and_action":{"user_swap":{"swap_exact_coin_in":{"operations":[{"denom_in":"uosmo","denom_out":"ibc/27394FB092D2ECCD56123C74F36E4C1F926001CEADA9CA97EA622B25F41E5EB2","pool":"1"}],"swap_venue_name":"osmosis-poolmanager"}},"min_coin":{"denom":"ibc/27394FB092D2ECCD56123C74F36E4C1F926001CEADA9CA97EA622B25F41E5EB2","amount":"54946"},"timeout_timestamp":1693012979767514087,"post_swap_action":{"ibc_transfer":{"ibc_info":{"memo":"","receiver":"cosmos1f2f9vryyu53gr8vhsksn66kugnxaa7k86kjxet","recover_address":"osmo1f2f9vryyu53gr8vhsksn66kugnxaa7k8jdpk0e","source_channel":"channel-0"}}},"affiliates":[]}},"funds":[{"denom":"uosmo","amount":"1000000"}]}',
+          msgTypeURL: "/cosmwasm.wasm.v1.MsgExecuteContract",
+        },
+      ]);
+    });
+  });
+
   describe("/v1/fungible/route", () => {
     it("handles 200 OK", async () => {
       server.use(
