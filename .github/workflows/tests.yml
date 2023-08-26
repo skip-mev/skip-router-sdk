@@ -39,10 +39,11 @@ jobs:
       # - Port forward all ports to localhost for next steps to connect
       - name: infra
         id: starship-action
-        uses: cosmology-tech/starship-action@0.2.12
+        uses: cosmology-tech/starship-action@v1
         with:
           values: starship.yaml
           port-forward: true
           version: 0.1.38
+
       - name: e2e
         run: npm run e2e:test

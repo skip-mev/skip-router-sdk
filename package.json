@@ -7,8 +7,6 @@
     "build": "tsc -p tsconfig.json --outDir dist --module commonjs || true",
     "test": "jest --testPathPattern=src/",
     "prepare": "husky install",
-    "e2e:deps": "make setup",
-    "e2e:kind": "make setup-kind",
     "e2e:start": "make start",
     "e2e:setup": "make setup && make setup-kind",
     "e2e:stop": "make stop",
