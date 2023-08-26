@@ -16,6 +16,12 @@ import {
   ChainJSON,
   RecommendAssetsRequest,
   recommendAssetsRequestToJSON,
+  RouteRequest,
+  RouteRequestJSON,
+  routeRequestToJSON,
+  RouteResponse,
+  routeResponseFromJSON,
+  RouteResponseJSON,
   SwapVenue,
   swapVenueFromJSON,
   SwapVenueJSON,
@@ -72,6 +78,18 @@ export class SkipAPIClient {
     );
 
     return response.chains.map((chain) => chainFromJSON(chain));
+  }
+
+  async route(options: RouteRequest): Promise<RouteResponse> {
+    const response = await this.requestClient.post<
+      RouteResponseJSON,
+      RouteRequestJSON
+    >("/fungible/route", {
+      ...routeRequestToJSON(options),
+      cumulative_affiliate_fee_bps: options.cumulativeAffiliateFeeBPS ?? "0",
+    });
+
+    return routeResponseFromJSON(response);
   }
 
   async recommendAssets(options: RecommendAssetsRequest) {

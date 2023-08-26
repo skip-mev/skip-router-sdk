@@ -546,6 +546,120 @@ describe("client", () => {
     });
   });
 
+  describe("/v1/fungible/route", () => {
+    it("handles 200 OK", async () => {
+      server.use(
+        rest.post("https://api.skip.money/v1/fungible/route", (_, res, ctx) => {
+          return res(
+            ctx.status(200),
+            ctx.json({
+              source_asset_denom: "uosmo",
+              source_asset_chain_id: "osmosis-1",
+              dest_asset_denom: "uatom",
+              dest_asset_chain_id: "cosmoshub-4",
+              amount_in: "1000000",
+              amount_out: "54906",
+              operations: [
+                {
+                  swap: {
+                    swap_in: {
+                      swap_venue: {
+                        name: "neutron-astroport",
+                        chain_id: "neutron-1",
+                      },
+                      swap_operations: [
+                        {
+                          pool: "pool-0",
+                          denom_in: "uosmo",
+                          denom_out: "uatom",
+                        },
+                      ],
+                      swap_amount_in: "1000000",
+                    },
+                    estimated_affiliate_fee: "1000000",
+                  },
+                },
+                {
+                  transfer: {
+                    port: "transfer",
+                    channel: "channel-0",
+                    chain_id: "osmosis-1",
+                    pfm_enabled: true,
+                    dest_denom: "uatom",
+                    supports_memo: true,
+                  },
+                },
+              ],
+              chain_ids: ["osmosis-1", "cosmoshub-4"],
+              does_swap: true,
+              estimated_amount_out: "54906",
+              swap_venue: {
+                name: "osmosis-poolmanager",
+                chain_id: "osmosis-1",
+              },
+              txs_required: 1,
+            }),
+          );
+        }),
+      );
+
+      const client = new SkipAPIClient(SKIP_API_URL);
+
+      const response = await client.route({
+        sourceAssetChainID: "osmosis-1",
+        sourceAssetDenom: "uosmo",
+        destAssetChainID: "cosmoshub-4",
+        destAssetDenom: "uatom",
+        amountIn: "1000000",
+      });
+
+      expect(response).toEqual({
+        sourceAssetDenom: "uosmo",
+        sourceAssetChainID: "osmosis-1",
+        destAssetDenom: "uatom",
+        destAssetChainID: "cosmoshub-4",
+        amountIn: "1000000",
+        amountOut: "54906",
+        operations: [
+          {
+            swap: {
+              swapIn: {
+                swapVenue: {
+                  name: "neutron-astroport",
+                  chainID: "neutron-1",
+                },
+                swapOperations: [
+                  {
+                    pool: "pool-0",
+                    denomIn: "uosmo",
+                    denomOut: "uatom",
+                  },
+                ],
+                swapAmountIn: "1000000",
+              },
+              estimatedAffiliateFee: "1000000",
+            },
+          },
+          {
+            transfer: {
+              port: "transfer",
+              channel: "channel-0",
+              chainID: "osmosis-1",
+              pfmEnabled: true,
+              destDenom: "uatom",
+              supportsMemo: true,
+            },
+          },
+        ],
+        chainIDs: ["osmosis-1", "cosmoshub-4"],
+        doesSwap: true,
+        estimatedAmountOut: "54906",
+        swapVenue: { name: "osmosis-poolmanager", chainID: "osmosis-1" },
+        txsRequired: 1,
+      });
+    });
+  });
+
   describe("/v1/fungible/venues", () => {
     it("handles 200 OK", async () => {
       server.use(

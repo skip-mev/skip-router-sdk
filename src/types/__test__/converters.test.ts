@@ -11,10 +11,26 @@ import {
   chainToJSON,
   feeAssetFromJSON,
   feeAssetToJSON,
+  operationFromJSON,
+  operationToJSON,
   recommendAssetsRequestFromJSON,
   recommendAssetsRequestToJSON,
+  routeRequestFromJSON,
+  routeRequestToJSON,
+  routeResponseFromJSON,
+  routeResponseToJSON,
+  swapExactCoinInFromJSON,
+  swapExactCoinInToJSON,
+  swapExactCoinOutFromJSON,
+  swapExactCoinOutToJSON,
+  swapFromJSON,
+  swapOperationFromJSON,
+  swapOperationToJSON,
+  swapToJSON,
   swapVenueFromJSON,
   swapVenueToJSON,
+  transferFromJSON,
+  transferToJSON,
 } from "../converters";
 import {
   AssetRecommendation,
@@ -23,6 +39,8 @@ import {
   FeeAssetJSON,
   RecommendAssetsRequest,
   RecommendAssetsRequestJSON,
+  SwapExactCoinInJSON,
+  TransferJSON,
 } from "../types";
 
 test("assetFromJSON", () => {
@@ -470,5 +488,789 @@ test("swapVenueToJSON", () => {
   expect(swapVenueToJSON(swapVenue)).toEqual({
     name: "neutron-astroport",
     chain_id: "neutron-1",
+  });
+});
+
+test("routeRequestFromJSON - given amount in", () => {
+  const routeRequestJSON = {
+    source_asset_chain_id: "osmosis-1",
+    source_asset_denom: "uosmo",
+    dest_asset_chain_id: "cosmoshub-4",
+    dest_asset_denom: "uatom",
+    amount_in: "1000000",
+
+    cumulative_affiliate_fee_bps: "100",
+    swap_venue: {
+      name: "neutron-astroport",
+      chain_id: "neutron-1",
+    },
+  };
+
+  expect(routeRequestFromJSON(routeRequestJSON)).toEqual({
+    sourceAssetChainID: "osmosis-1",
+    sourceAssetDenom: "uosmo",
+    destAssetChainID: "cosmoshub-4",
+    destAssetDenom: "uatom",
+    amountIn: "1000000",
+
+    cumulativeAffiliateFeeBPS: "100",
+    swapVenue: {
+      name: "neutron-astroport",
+      chainID: "neutron-1",
+    },
+  });
+});
+
+test("routeRequestFromJSON - given amount out", () => {
+  const routeRequestJSON = {
+    source_asset_chain_id: "osmosis-1",
+    source_asset_denom: "uosmo",
+    dest_asset_chain_id: "cosmoshub-4",
+    dest_asset_denom: "uatom",
+    amount_out: "1000000",
+
+    cumulative_affiliate_fee_bps: "100",
+    swap_venue: {
+      name: "neutron-astroport",
+      chain_id: "neutron-1",
+    },
+  };
+
+  expect(routeRequestFromJSON(routeRequestJSON)).toEqual({
+    sourceAssetChainID: "osmosis-1",
+    sourceAssetDenom: "uosmo",
+    destAssetChainID: "cosmoshub-4",
+    destAssetDenom: "uatom",
+    amountOut: "1000000",
+
+    cumulativeAffiliateFeeBPS: "100",
+    swapVenue: {
+      name: "neutron-astroport",
+      chainID: "neutron-1",
+    },
+  });
+});
+
+test("routeRequestToJSON - given amount in", () => {
+  const routeRequest = {
+    sourceAssetChainID: "osmosis-1",
+    sourceAssetDenom: "uosmo",
+    destAssetChainID: "cosmoshub-4",
+    destAssetDenom: "uatom",
+    amountIn: "1000000",
+
+    cumulativeAffiliateFeeBPS: "100",
+    swapVenue: {
+      name: "neutron-astroport",
+      chainID: "neutron-1",
+    },
+  };
+
+  expect(routeRequestToJSON(routeRequest)).toEqual({
+    source_asset_chain_id: "osmosis-1",
+    source_asset_denom: "uosmo",
+    dest_asset_chain_id: "cosmoshub-4",
+    dest_asset_denom: "uatom",
+    amount_in: "1000000",
+
+    cumulative_affiliate_fee_bps: "100",
+    swap_venue: {
+      name: "neutron-astroport",
+      chain_id: "neutron-1",
+    },
+  });
+});
+
+test("routeRequestToJSON - given amount out", () => {
+  const routeRequest = {
+    sourceAssetChainID: "osmosis-1",
+    sourceAssetDenom: "uosmo",
+    destAssetChainID: "cosmoshub-4",
+    destAssetDenom: "uatom",
+    amountOut: "1000000",
+
+    cumulativeAffiliateFeeBPS: "100",
+    swapVenue: {
+      name: "neutron-astroport",
+      chainID: "neutron-1",
+    },
+  };
+
+  expect(routeRequestToJSON(routeRequest)).toEqual({
+    source_asset_chain_id: "osmosis-1",
+    source_asset_denom: "uosmo",
+    dest_asset_chain_id: "cosmoshub-4",
+    dest_asset_denom: "uatom",
+    amount_out: "1000000",
+
+    cumulative_affiliate_fee_bps: "100",
+    swap_venue: {
+      name: "neutron-astroport",
+      chain_id: "neutron-1",
+    },
+  });
+});
+
+test("transferFromJSON", () => {
+  const transferJSON: TransferJSON = {
+    port: "transfer",
+    channel: "channel-0",
+    chain_id: "osmosis-1",
+    pfm_enabled: true,
+    dest_denom: "uatom",
+    supports_memo: true,
+  };
+
+  expect(transferFromJSON(transferJSON)).toEqual({
+    port: "transfer",
+    channel: "channel-0",
+    chainID: "osmosis-1",
+    pfmEnabled: true,
+    destDenom: "uatom",
+    supportsMemo: true,
+  });
+});
+
+test("transferToJSON", () => {
+  const transfer = {
+    port: "transfer",
+    channel: "channel-0",
+    chainID: "osmosis-1",
+    pfmEnabled: true,
+    destDenom: "uatom",
+    supportsMemo: true,
+  };
+
+  expect(transferToJSON(transfer)).toEqual({
+    port: "transfer",
+    channel: "channel-0",
+    chain_id: "osmosis-1",
+    pfm_enabled: true,
+    dest_denom: "uatom",
+    supports_memo: true,
+  });
+});
+
+test("swapOperationFromJSON", () => {
+  const swapOperationJSON = {
+    pool: "pool-0",
+    denom_in: "uosmo",
+    denom_out: "uatom",
+  };
+
+  expect(swapOperationFromJSON(swapOperationJSON)).toEqual({
+    pool: "pool-0",
+    denomIn: "uosmo",
+    denomOut: "uatom",
+  });
+});
+
+test("swapOperationToJSON", () => {
+  const swapOperation = {
+    pool: "pool-0",
+    denomIn: "uosmo",
+    denomOut: "uatom",
+  };
+
+  expect(swapOperationToJSON(swapOperation)).toEqual({
+    pool: "pool-0",
+    denom_in: "uosmo",
+    denom_out: "uatom",
+  });
+});
+
+test("swapExactCoinInFromJSON", () => {
+  const swapExactCoinInJSON: SwapExactCoinInJSON = {
+    swap_venue: {
+      name: "neutron-astroport",
+      chain_id: "neutron-1",
+    },
+    swap_operations: [
+      {
+        pool: "pool-0",
+        denom_in: "uosmo",
+        denom_out: "uatom",
+      },
+    ],
+    swap_amount_in: "1000000",
+  };
+
+  expect(swapExactCoinInFromJSON(swapExactCoinInJSON)).toEqual({
+    swapVenue: {
+      name: "neutron-astroport",
+      chainID: "neutron-1",
+    },
+    swapOperations: [
+      {
+        pool: "pool-0",
+        denomIn: "uosmo",
+        denomOut: "uatom",
+      },
+    ],
+    swapAmountIn: "1000000",
+  });
+});
+
+test("swapExactCoinInToJSON", () => {
+  const swapExactCoinIn = {
+    swapVenue: {
+      name: "neutron-astroport",
+      chainID: "neutron-1",
+    },
+    swapOperations: [
+      {
+        pool: "pool-0",
+        denomIn: "uosmo",
+        denomOut: "uatom",
+      },
+    ],
+    swapAmountIn: "1000000",
+  };
+
+  expect(swapExactCoinInToJSON(swapExactCoinIn)).toEqual({
+    swap_venue: {
+      name: "neutron-astroport",
+      chain_id: "neutron-1",
+    },
+    swap_operations: [
+      {
+        pool: "pool-0",
+        denom_in: "uosmo",
+        denom_out: "uatom",
+      },
+    ],
+    swap_amount_in: "1000000",
+  });
+});
+
+test("swapExactCoinOutFromJSON", () => {
+  const swapExactCoinOutJSON = {
+    swap_venue: {
+      name: "neutron-astroport",
+      chain_id: "neutron-1",
+    },
+    swap_operations: [
+      {
+        pool: "pool-0",
+        denom_in: "uosmo",
+        denom_out: "uatom",
+      },
+    ],
+    swap_amount_out: "1000000",
+  };
+
+  expect(swapExactCoinOutFromJSON(swapExactCoinOutJSON)).toEqual({
+    swapVenue: {
+      name: "neutron-astroport",
+      chainID: "neutron-1",
+    },
+    swapOperations: [
+      {
+        pool: "pool-0",
+        denomIn: "uosmo",
+        denomOut: "uatom",
+      },
+    ],
+    swapAmountOut: "1000000",
+  });
+});
+
+test("swapExactCoinOutToJSON", () => {
+  const swapExactCoinOut = {
+    swapVenue: {
+      name: "neutron-astroport",
+      chainID: "neutron-1",
+    },
+    swapOperations: [
+      {
+        pool: "pool-0",
+        denomIn: "uosmo",
+        denomOut: "uatom",
+      },
+    ],
+    swapAmountOut: "1000000",
+  };
+
+  expect(swapExactCoinOutToJSON(swapExactCoinOut)).toEqual({
+    swap_venue: {
+      name: "neutron-astroport",
+      chain_id: "neutron-1",
+    },
+    swap_operations: [
+      {
+        pool: "pool-0",
+        denom_in: "uosmo",
+        denom_out: "uatom",
+      },
+    ],
+    swap_amount_out: "1000000",
+  });
+});
+
+test("swapFromJSON - swap in", () => {
+  const swapJSON = {
+    swap_in: {
+      swap_venue: {
+        name: "neutron-astroport",
+        chain_id: "neutron-1",
+      },
+      swap_operations: [
+        {
+          pool: "pool-0",
+          denom_in: "uosmo",
+          denom_out: "uatom",
+        },
+      ],
+      swap_amount_in: "1000000",
+    },
+    estimated_affiliate_fee: "1000000",
+  };
+
+  expect(swapFromJSON(swapJSON)).toEqual({
+    swapIn: {
+      swapVenue: {
+        name: "neutron-astroport",
+        chainID: "neutron-1",
+      },
+      swapOperations: [
+        {
+          pool: "pool-0",
+          denomIn: "uosmo",
+          denomOut: "uatom",
+        },
+      ],
+      swapAmountIn: "1000000",
+    },
+    estimatedAffiliateFee: "1000000",
+  });
+});
+
+test("swapFromJSON - swap out", () => {
+  const swapJSON = {
+    swap_out: {
+      swap_venue: {
+        name: "neutron-astroport",
+        chain_id: "neutron-1",
+      },
+      swap_operations: [
+        {
+          pool: "pool-0",
+          denom_in: "uosmo",
+          denom_out: "uatom",
+        },
+      ],
+      swap_amount_out: "1000000",
+    },
+    estimated_affiliate_fee: "1000000",
+  };
+
+  expect(swapFromJSON(swapJSON)).toEqual({
+    swapOut: {
+      swapVenue: {
+        name: "neutron-astroport",
+        chainID: "neutron-1",
+      },
+      swapOperations: [
+        {
+          pool: "pool-0",
+          denomIn: "uosmo",
+          denomOut: "uatom",
+        },
+      ],
+      swapAmountOut: "1000000",
+    },
+    estimatedAffiliateFee: "1000000",
+  });
+});
+
+test("swapToJSON - swap in", () => {
+  const swap = {
+    swapIn: {
+      swapVenue: {
+        name: "neutron-astroport",
+        chainID: "neutron-1",
+      },
+      swapOperations: [
+        {
+          pool: "pool-0",
+          denomIn: "uosmo",
+          denomOut: "uatom",
+        },
+      ],
+      swapAmountIn: "1000000",
+    },
+    estimatedAffiliateFee: "1000000",
+  };
+
+  expect(swapToJSON(swap)).toEqual({
+    swap_in: {
+      swap_venue: {
+        name: "neutron-astroport",
+        chain_id: "neutron-1",
+      },
+      swap_operations: [
+        {
+          pool: "pool-0",
+          denom_in: "uosmo",
+          denom_out: "uatom",
+        },
+      ],
+      swap_amount_in: "1000000",
+    },
+    estimated_affiliate_fee: "1000000",
+  });
+});
+
+test("swapToJSON - swap out", () => {
+  const swap = {
+    swapOut: {
+      swapVenue: {
+        name: "neutron-astroport",
+        chainID: "neutron-1",
+      },
+      swapOperations: [
+        {
+          pool: "pool-0",
+          denomIn: "uosmo",
+          denomOut: "uatom",
+        },
+      ],
+      swapAmountOut: "1000000",
+    },
+    estimatedAffiliateFee: "1000000",
+  };
+
+  expect(swapToJSON(swap)).toEqual({
+    swap_out: {
+      swap_venue: {
+        name: "neutron-astroport",
+        chain_id: "neutron-1",
+      },
+      swap_operations: [
+        {
+          pool: "pool-0",
+          denom_in: "uosmo",
+          denom_out: "uatom",
+        },
+      ],
+      swap_amount_out: "1000000",
+    },
+    estimated_affiliate_fee: "1000000",
+  });
+});
+
+test("operationFromJSON - transfer", () => {
+  const operationJSON = {
+    transfer: {
+      port: "transfer",
+      channel: "channel-0",
+      chain_id: "osmosis-1",
+      pfm_enabled: true,
+      dest_denom: "uatom",
+      supports_memo: true,
+    },
+  };
+
+  expect(operationFromJSON(operationJSON)).toEqual({
+    transfer: {
+      port: "transfer",
+      channel: "channel-0",
+      chainID: "osmosis-1",
+      pfmEnabled: true,
+      destDenom: "uatom",
+      supportsMemo: true,
+    },
+  });
+});
+
+test("operationFromJSON - swap", () => {
+  const operationJSON = {
+    swap: {
+      swap_in: {
+        swap_venue: {
+          name: "neutron-astroport",
+          chain_id: "neutron-1",
+        },
+        swap_operations: [
+          {
+            pool: "pool-0",
+            denom_in: "uosmo",
+            denom_out: "uatom",
+          },
+        ],
+        swap_amount_in: "1000000",
+      },
+      estimated_affiliate_fee: "1000000",
+    },
+  };
+
+  expect(operationFromJSON(operationJSON)).toEqual({
+    swap: {
+      swapIn: {
+        swapVenue: {
+          name: "neutron-astroport",
+          chainID: "neutron-1",
+        },
+        swapOperations: [
+          {
+            pool: "pool-0",
+            denomIn: "uosmo",
+            denomOut: "uatom",
+          },
+        ],
+        swapAmountIn: "1000000",
+      },
+      estimatedAffiliateFee: "1000000",
+    },
+  });
+});
+
+test("operationToJSON - transfer", () => {
+  const operation = {
+    transfer: {
+      port: "transfer",
+      channel: "channel-0",
+      chainID: "osmosis-1",
+      pfmEnabled: true,
+      destDenom: "uatom",
+      supportsMemo: true,
+    },
+  };
+
+  expect(operationToJSON(operation)).toEqual({
+    transfer: {
+      port: "transfer",
+      channel: "channel-0",
+      chain_id: "osmosis-1",
+      pfm_enabled: true,
+      dest_denom: "uatom",
+      supports_memo: true,
+    },
+  });
+});
+
+test("operationToJSON - swap", () => {
+  const operation = {
+    swap: {
+      swapIn: {
+        swapVenue: {
+          name: "neutron-astroport",
+          chainID: "neutron-1",
+        },
+        swapOperations: [
+          {
+            pool: "pool-0",
+            denomIn: "uosmo",
+            denomOut: "uatom",
+          },
+        ],
+        swapAmountIn: "1000000",
+      },
+      estimatedAffiliateFee: "1000000",
+    },
+  };
+
+  expect(operationToJSON(operation)).toEqual({
+    swap: {
+      swap_in: {
+        swap_venue: {
+          name: "neutron-astroport",
+          chain_id: "neutron-1",
+        },
+        swap_operations: [
+          {
+            pool: "pool-0",
+            denom_in: "uosmo",
+            denom_out: "uatom",
+          },
+        ],
+        swap_amount_in: "1000000",
+      },
+      estimated_affiliate_fee: "1000000",
+    },
+  });
+});
+
+test("routeResponseFromJSON", () => {
+  const routeResponseJSON = {
+    source_asset_denom: "uosmo",
+    source_asset_chain_id: "osmosis-1",
+    dest_asset_denom: "uatom",
+    dest_asset_chain_id: "cosmoshub-4",
+    amount_in: "1000000",
+    amount_out: "54906",
+    operations: [
+      {
+        swap: {
+          swap_in: {
+            swap_venue: {
+              name: "neutron-astroport",
+              chain_id: "neutron-1",
+            },
+            swap_operations: [
+              {
+                pool: "pool-0",
+                denom_in: "uosmo",
+                denom_out: "uatom",
+              },
+            ],
+            swap_amount_in: "1000000",
+          },
+          estimated_affiliate_fee: "1000000",
+        },
+      },
+      {
+        transfer: {
+          port: "transfer",
+          channel: "channel-0",
+          chain_id: "osmosis-1",
+          pfm_enabled: true,
+          dest_denom: "uatom",
+          supports_memo: true,
+        },
+      },
+    ],
+    chain_ids: ["osmosis-1", "cosmoshub-4"],
+    does_swap: true,
+    estimated_amount_out: "54906",
+    swap_venue: { name: "osmosis-poolmanager", chain_id: "osmosis-1" },
+    txs_required: 1,
+  };
+
+  expect(routeResponseFromJSON(routeResponseJSON)).toEqual({
+    sourceAssetDenom: "uosmo",
+    sourceAssetChainID: "osmosis-1",
+    destAssetDenom: "uatom",
+    destAssetChainID: "cosmoshub-4",
+    amountIn: "1000000",
+    amountOut: "54906",
+    operations: [
+      {
+        swap: {
+          swapIn: {
+            swapVenue: {
+              name: "neutron-astroport",
+              chainID: "neutron-1",
+            },
+            swapOperations: [
+              {
+                pool: "pool-0",
+                denomIn: "uosmo",
+                denomOut: "uatom",
+              },
+            ],
+            swapAmountIn: "1000000",
+          },
+          estimatedAffiliateFee: "1000000",
+        },
+      },
+      {
+        transfer: {
+          port: "transfer",
+          channel: "channel-0",
+          chainID: "osmosis-1",
+          pfmEnabled: true,
+          destDenom: "uatom",
+          supportsMemo: true,
+        },
+      },
+    ],
+    chainIDs: ["osmosis-1", "cosmoshub-4"],
+    doesSwap: true,
+    estimatedAmountOut: "54906",
+    swapVenue: { name: "osmosis-poolmanager", chainID: "osmosis-1" },
+    txsRequired: 1,
+  });
+});
+
+test("routeResponseToJSON", () => {
+  const routeResponse = {
+    sourceAssetDenom: "uosmo",
+    sourceAssetChainID: "osmosis-1",
+    destAssetDenom: "uatom",
+    destAssetChainID: "cosmoshub-4",
+    amountIn: "1000000",
+    amountOut: "54906",
+    operations: [
+      {
+        swap: {
+          swapIn: {
+            swapVenue: {
+              name: "neutron-astroport",
+              chainID: "neutron-1",
+            },
+            swapOperations: [
+              {
+                pool: "pool-0",
+                denomIn: "uosmo",
+                denomOut: "uatom",
+              },
+            ],
+            swapAmountIn: "1000000",
+          },
+          estimatedAffiliateFee: "1000000",
+        },
+      },
+      {
+        transfer: {
+          port: "transfer",
+          channel: "channel-0",
+          chainID: "osmosis-1",
+          pfmEnabled: true,
+          destDenom: "uatom",
+          supportsMemo: true,
+        },
+      },
+    ],
+    chainIDs: ["osmosis-1", "cosmoshub-4"],
+    doesSwap: true,
+    estimatedAmountOut: "54906",
+    swapVenue: { name: "osmosis-poolmanager", chainID: "osmosis-1" },
+    txsRequired: 1,
+  };
+
+  expect(routeResponseToJSON(routeResponse)).toEqual({
+    source_asset_denom: "uosmo",
+    source_asset_chain_id: "osmosis-1",
+    dest_asset_denom: "uatom",
+    dest_asset_chain_id: "cosmoshub-4",
+    amount_in: "1000000",
+    amount_out: "54906",
+    operations: [
+      {
+        swap: {
+          swap_in: {
+            swap_venue: {
+              name: "neutron-astroport",
+              chain_id: "neutron-1",
+            },
+            swap_operations: [
+              {
+                pool: "pool-0",
+                denom_in: "uosmo",
+                denom_out: "uatom",
+              },
+            ],
+            swap_amount_in: "1000000",
+          },
+          estimated_affiliate_fee: "1000000",
+        },
+      },
+      {
+        transfer: {
+          port: "transfer",
+          channel: "channel-0",
+          chain_id: "osmosis-1",
+          pfm_enabled: true,
+          dest_denom: "uatom",
+          supports_memo: true,
+        },
+      },
+    ],
+    chain_ids: ["osmosis-1", "cosmoshub-4"],
+    does_swap: true,
+    estimated_amount_out: "54906",
+    swap_venue: { name: "osmosis-poolmanager", chain_id: "osmosis-1" },
+    txs_required: 1,
   });
 });
