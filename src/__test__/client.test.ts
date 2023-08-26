@@ -834,4 +834,142 @@ describe("client", () => {
       });
     });
   });
+
+  describe("transactionStatus", () => {
+    it("handles 200 OK", async () => {
+      server.use(
+        rest.get("https://api.skip.money/v1/tx/status", (_, res, ctx) => {
+          return res(
+            ctx.status(200),
+            ctx.json({
+              status: "STATE_COMPLETED",
+              transfer_sequence: [
+                {
+                  src_chain_id: "axelar-dojo-1",
+                  dst_chain_id: "osomosis-1",
+                  state: "TRANSFER_SUCCESS",
+                  packet: {
+                    send_tx: {
+                      chain_id: "axelar-dojo-1",
+                      tx_hash:
+                        "AAEA76709215A808AF6D7FC2B8FBB8746BC1F196E46FFAE84B79C6F6CD0A79C9",
+                    },
+                    receive_tx: {
+                      chain_id: "osmosis-1",
+                      tx_hash:
+                        "082A6C8024998EC277C2B90BFDDB323CCA506C24A6730C658B9B6DC653198E3D",
+                    },
+                    acknowledge_tx: {
+                      chain_id: "axelar-dojo-1",
+                      tx_hash:
+                        "C9A36F94A5B2CA9C7ABF20402561E46FD8B80EBAC4F0D5B7C01F978E34285CCA",
+                    },
+                    timeout_tx: null,
+                    error: null,
+                  },
+                },
+                {
+                  src_chain_id: "osmosis-1",
+                  dst_chain_id: "cosmoshub-4",
+                  state: "TRANSFER_SUCCESS",
+                  packet: {
+                    send_tx: {
+                      chain_id: "osmosis-1",
+                      tx_hash:
+                        "082A6C8024998EC277C2B90BFDDB323CCA506C24A6730C658B9B6DC653198E3D",
+                    },
+                    receive_tx: {
+                      chain_id: "cosmoshub-4",
+                      tx_hash:
+                        "913E2542EBFEF2E885C19DD9C4F8ECB6ADAFFE59D60BB108FAD94FBABF9C5671",
+                    },
+                    acknowledge_tx: {
+                      chain_id: "osmosis-1",
+                      tx_hash:
+                        "1EDB2886E6FD59D6B9C096FBADB1A52585745694F4DFEE3A3CD3FF0153307EBC",
+                    },
+                    timeout_tx: null,
+                    error: null,
+                  },
+                },
+              ],
+              next_blocking_transfer: null,
+              transfer_asset_release: {
+                chain_id: "cosmoshub-4",
+                denom: "uatom",
+              },
+              error: null,
+            }),
+          );
+        }),
+      );
+
+      const client = new SkipAPIClient(SKIP_API_URL);
+
+      const response = await client.transactionStatus(
+        "cosmoshub-4",
+        "tx_hash123",
+      );
+
+      expect(response).toEqual({
+        status: "STATE_COMPLETED",
+        transferSequence: [
+          {
+            srcChainID: "axelar-dojo-1",
+            dstChainID: "osomosis-1",
+            state: "TRANSFER_SUCCESS",
+            packet: {
+              sendTx: {
+                chainID: "axelar-dojo-1",
+                txHash:
+                  "AAEA76709215A808AF6D7FC2B8FBB8746BC1F196E46FFAE84B79C6F6CD0A79C9",
+              },
+              receiveTx: {
+                chainID: "osmosis-1",
+                txHash:
+                  "082A6C8024998EC277C2B90BFDDB323CCA506C24A6730C658B9B6DC653198E3D",
+              },
+              acknowledgeTx: {
+                chainID: "axelar-dojo-1",
+                txHash:
+                  "C9A36F94A5B2CA9C7ABF20402561E46FD8B80EBAC4F0D5B7C01F978E34285CCA",
+              },
+              timeoutTx: null,
+              error: null,
+            },
+          },
+          {
+            srcChainID: "osmosis-1",
+            dstChainID: "cosmoshub-4",
+            state: "TRANSFER_SUCCESS",
+            packet: {
+              sendTx: {
+                chainID: "osmosis-1",
+                txHash:
+                  "082A6C8024998EC277C2B90BFDDB323CCA506C24A6730C658B9B6DC653198E3D",
+              },
+              receiveTx: {
+                chainID: "cosmoshub-4",
+                txHash:
+                  "913E2542EBFEF2E885C19DD9C4F8ECB6ADAFFE59D60BB108FAD94FBABF9C5671",
+              },
+              acknowledgeTx: {
+                chainID: "osmosis-1",
+                txHash:
+                  "1EDB2886E6FD59D6B9C096FBADB1A52585745694F4DFEE3A3CD3FF0153307EBC",
+              },
+              timeoutTx: null,
+              error: null,
+            },
+          },
+        ],
+        nextBlockingTransfer: null,
+        transferAssetRelease: {
+          chainID: "cosmoshub-4",
+          denom: "uatom",
+        },
+        error: null,
+      });
+    });
+  });
 });

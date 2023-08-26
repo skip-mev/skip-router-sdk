@@ -443,3 +443,114 @@ export type TrackTxResponse = {
   success: boolean;
   txHash: string;
 };
+
+export type TxStatusRequestJSON = {
+  tx_hash: string;
+  chain_id: string;
+};
+
+export type TxStatusRequest = {
+  txHash: string;
+  chainID: string;
+};
+
+export type StatusState =
+  | "STATE_UNKNOWN"
+  | "STATE_SUBMITTED"
+  | "STATE_PENDING"
+  | "STATE_RECEIVED"
+  | "STATE_COMPLETED"
+  | "STATE_ABANDONED";
+
+export type ChainTransactionJSON = {
+  chain_id: string;
+  tx_hash: string;
+};
+
+export type ChainTransaction = {
+  chainID: string;
+  txHash: string;
+};
+
+export type PacketError = {
+  code: number;
+  message: string;
+};
+
+export type TransferState =
+  | "TRANSFER_UNKNOWN"
+  | "TRANSFER_PENDING"
+  | "TRANSFER_RECEIVED"
+  | "TRANSFER_SUCCESS"
+  | "TRANSFER_FAILURE";
+
+export type PacketJSON = {
+  send_tx: ChainTransactionJSON | null;
+  receive_tx: ChainTransactionJSON | null;
+  acknowledge_tx: ChainTransactionJSON | null;
+  timeout_tx: ChainTransactionJSON | null;
+
+  error: PacketError | null;
+};
+
+export type Packet = {
+  sendTx: ChainTransaction | null;
+  receiveTx: ChainTransaction | null;
+  acknowledgeTx: ChainTransaction | null;
+  timeoutTx: ChainTransaction | null;
+
+  error: PacketError | null;
+};
+
+export type TransferInfoJSON = {
+  src_chain_id: string;
+  dst_chain_id: string;
+  state: TransferState;
+  packet: PacketJSON;
+};
+
+export type TransferInfo = {
+  srcChainID: string;
+  dstChainID: string;
+  state: TransferState;
+  packet: Packet;
+};
+
+export type NextBlockingTransferJSON = {
+  transfer_sequence_index: number;
+};
+
+export type NextBlockingTransfer = {
+  transferSequenceIndex: number;
+};
+
+export type TransferAssetReleaseJSON = {
+  chain_id: string;
+  denom: string;
+};
+
+export type TransferAssetRelease = {
+  chainID: string;
+  denom: string;
+};
+
+export type TxStatusResponseJSON = {
+  status: StatusState;
+  next_blocking_transfer: NextBlockingTransferJSON | null;
+  transfer_sequence: TransferInfoJSON[];
+  transfer_asset_release: TransferAssetReleaseJSON | null;
+  error: StatusError | null;
+};
+
+export type TxStatusResponse = {
+  status: StatusState;
+  nextBlockingTransfer: NextBlockingTransfer | null;
+  transferSequence: TransferInfo[];
+  transferAssetRelease: TransferAssetRelease | null;
+  error: StatusError | null;
+};
+
+export type StatusError = {
+  code: number;
+  message: string;
+};

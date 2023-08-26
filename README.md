@@ -41,4 +41,4 @@ npm run test -- --coverage
 
 - [x] `/tx/submit`
 - [x] `/tx/track`
-- [ ] `/tx/status`
+- [x] `/tx/status`

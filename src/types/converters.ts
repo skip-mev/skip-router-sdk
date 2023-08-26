@@ -11,6 +11,8 @@ import {
   AssetsRequestJSON,
   Chain,
   ChainJSON,
+  ChainTransaction,
+  ChainTransactionJSON,
   CosmWasmContractMsg,
   CosmWasmContractMsgJSON,
   FeeAsset,
@@ -19,8 +21,12 @@ import {
   MsgsRequestJSON,
   MultiChainMsg,
   MultiChainMsgJSON,
+  NextBlockingTransfer,
+  NextBlockingTransferJSON,
   Operation,
   OperationJSON,
+  Packet,
+  PacketJSON,
   PostHandler,
   PostHandlerJSON,
   RecommendAssetsRequest,
@@ -48,7 +54,15 @@ import {
   TrackTxResponse,
   TrackTxResponseJSON,
   Transfer,
+  TransferAssetRelease,
+  TransferAssetReleaseJSON,
+  TransferInfo,
+  TransferInfoJSON,
   TransferJSON,
+  TxStatusRequest,
+  TxStatusRequestJSON,
+  TxStatusResponse,
+  TxStatusResponseJSON,
 } from "./types";
 
 export function affiliateFromJSON(affiliateJSON: AffiliateJSON): Affiliate {
@@ -652,5 +666,157 @@ export function trackTxResponseToJSON(
   return {
     tx_hash: trackResponse.txHash,
     success: trackResponse.success,
+  };
+}
+
+export function txStatusRequestFromJSON(
+  txStatusRequestJSON: TxStatusRequestJSON,
+): TxStatusRequest {
+  return {
+    txHash: txStatusRequestJSON.tx_hash,
+    chainID: txStatusRequestJSON.chain_id,
+  };
+}
+
+export function txStatusRequestToJSON(
+  txStatusRequest: TxStatusRequest,
+): TxStatusRequestJSON {
+  return {
+    tx_hash: txStatusRequest.txHash,
+    chain_id: txStatusRequest.chainID,
+  };
+}
+
+export function chainTransactionFromJSON(
+  chainTransactionJSON: ChainTransactionJSON,
+): ChainTransaction {
+  return {
+    txHash: chainTransactionJSON.tx_hash,
+    chainID: chainTransactionJSON.chain_id,
+  };
+}
+
+export function chainTransactionToJSON(
+  chainTransaction: ChainTransaction,
+): ChainTransactionJSON {
+  return {
+    tx_hash: chainTransaction.txHash,
+    chain_id: chainTransaction.chainID,
+  };
+}
+
+export function packetFromJSON(packetJSON: PacketJSON): Packet {
+  return {
+    sendTx: packetJSON.send_tx && chainTransactionFromJSON(packetJSON.send_tx),
+    receiveTx:
+      packetJSON.receive_tx && chainTransactionFromJSON(packetJSON.receive_tx),
+    acknowledgeTx:
+      packetJSON.acknowledge_tx &&
+      chainTransactionFromJSON(packetJSON.acknowledge_tx),
+    timeoutTx:
+      packetJSON.timeout_tx && chainTransactionFromJSON(packetJSON.timeout_tx),
+
+    error: packetJSON.error,
+  };
+}
+
+export function packetToJSON(packet: Packet): PacketJSON {
+  return {
+    send_tx: packet.sendTx && chainTransactionToJSON(packet.sendTx),
+    receive_tx: packet.receiveTx && chainTransactionToJSON(packet.receiveTx),
+    acknowledge_tx:
+      packet.acknowledgeTx && chainTransactionToJSON(packet.acknowledgeTx),
+    timeout_tx: packet.timeoutTx && chainTransactionToJSON(packet.timeoutTx),
+
+    error: packet.error,
+  };
+}
+
+export function transferInfoFromJSON(
+  transferInfoJSON: TransferInfoJSON,
+): TransferInfo {
+  return {
+    srcChainID: transferInfoJSON.src_chain_id,
+    dstChainID: transferInfoJSON.dst_chain_id,
+    state: transferInfoJSON.state,
+    packet: transferInfoJSON.packet && packetFromJSON(transferInfoJSON.packet),
+  };
+}
+
+export function transferInfoToJSON(
+  transferInfo: TransferInfo,
+): TransferInfoJSON {
+  return {
+    src_chain_id: transferInfo.srcChainID,
+    dst_chain_id: transferInfo.dstChainID,
+    state: transferInfo.state,
+    packet: transferInfo.packet && packetToJSON(transferInfo.packet),
+  };
+}
+
+export function nextBlockingTransferFromJSON(
+  nextBlockingTransferJSON: NextBlockingTransferJSON,
+): NextBlockingTransfer {
+  return {
+    transferSequenceIndex: nextBlockingTransferJSON.transfer_sequence_index,
+  };
+}
+
+export function nextBlockingTransferToJSON(
+  nextBlockingTransfer: NextBlockingTransfer,
+): NextBlockingTransferJSON {
+  return {
+    transfer_sequence_index: nextBlockingTransfer.transferSequenceIndex,
+  };
+}
+
+export function transferAssetReleaseFromJSON(
+  transferAssetReleaseJSON: TransferAssetReleaseJSON,
+): TransferAssetRelease {
+  return {
+    chainID: transferAssetReleaseJSON.chain_id,
+    denom: transferAssetReleaseJSON.denom,
+  };
+}
+
+export function transferAssetReleaseToJSON(
+  transferAssetRelease: TransferAssetRelease,
+): TransferAssetReleaseJSON {
+  return {
+    chain_id: transferAssetRelease.chainID,
+    denom: transferAssetRelease.denom,
+  };
+}
+
+export function txStatusResponseFromJSON(
+  statusResponseJSON: TxStatusResponseJSON,
+): TxStatusResponse {
+  return {
+    status: statusResponseJSON.status,
+    nextBlockingTransfer:
+      statusResponseJSON.next_blocking_transfer &&
+      nextBlockingTransferFromJSON(statusResponseJSON.next_blocking_transfer),
+    transferSequence:
+      statusResponseJSON.transfer_sequence.map(transferInfoFromJSON),
+    transferAssetRelease:
+      statusResponseJSON.transfer_asset_release &&
+      transferAssetReleaseFromJSON(statusResponseJSON.transfer_asset_release),
+    error: statusResponseJSON.error,
+  };
+}
+
+export function txStatusResponseToJSON(
+  statusResponse: TxStatusResponse,
+): TxStatusResponseJSON {
+  return {
+    status: statusResponse.status,
+    next_blocking_transfer:
+      statusResponse.nextBlockingTransfer &&
+      nextBlockingTransferToJSON(statusResponse.nextBlockingTransfer),
+    transfer_sequence: statusResponse.transferSequence.map(transferInfoToJSON),
+    transfer_asset_release:
+      statusResponse.transferAssetRelease &&
+      transferAssetReleaseToJSON(statusResponse.transferAssetRelease),
+    error: statusResponse.error,
   };
 }

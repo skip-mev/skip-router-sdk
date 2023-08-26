@@ -11,6 +11,8 @@ import {
   assetToJSON,
   chainFromJSON,
   chainToJSON,
+  chainTransactionFromJSON,
+  chainTransactionToJSON,
   cosmWasmContractMsgFromJSON,
   cosmWasmContractMsgToJSON,
   feeAssetFromJSON,
@@ -19,8 +21,12 @@ import {
   msgsRequestToJSON,
   multiChainMsgFromJSON,
   multiChainMsgToJSON,
+  nextBlockingTransferFromJSON,
+  nextBlockingTransferToJSON,
   operationFromJSON,
   operationToJSON,
+  packetFromJSON,
+  packetToJSON,
   postHandlerFromJSON,
   postHandlerToJSON,
   recommendAssetsRequestFromJSON,
@@ -47,17 +53,28 @@ import {
   trackTxRequestToJSON,
   trackTxResponseFromJSON,
   trackTxResponseToJSON,
+  transferAssetReleaseFromJSON,
+  transferAssetReleaseToJSON,
   transferFromJSON,
+  transferInfoFromJSON,
+  transferInfoToJSON,
   transferToJSON,
+  txStatusRequestFromJSON,
+  txStatusRequestToJSON,
+  txStatusResponseFromJSON,
+  txStatusResponseToJSON,
 } from "../converters";
 import {
   AffiliateJSON,
   AssetRecommendation,
   AssetRecommendationJSON,
   ChainJSON,
+  ChainTransactionJSON,
   FeeAssetJSON,
   MsgsRequestJSON,
   MultiChainMsgJSON,
+  NextBlockingTransferJSON,
+  PacketJSON,
   PostHandler,
   PostHandlerJSON,
   RecommendAssetsRequest,
@@ -67,7 +84,13 @@ import {
   SwapExactCoinInJSON,
   TrackTxRequestJSON,
   TrackTxResponseJSON,
+  TransferAssetReleaseJSON,
+  TransferInfo,
+  TransferInfoJSON,
   TransferJSON,
+  TxStatusRequestJSON,
+  TxStatusResponse,
+  TxStatusResponseJSON,
 } from "../types";
 
 test("affiliateFromJSON", () => {
@@ -1779,5 +1802,529 @@ test("trackTxResponseToJSON", () => {
   expect(trackTxResponseToJSON(trackResponse)).toEqual({
     tx_hash: "txid123",
     success: true,
+  });
+});
+
+test("txStatusRequestFromJSON", () => {
+  const txStatusJSON: TxStatusRequestJSON = {
+    tx_hash: "txid123",
+    chain_id: "osmosis-1",
+  };
+
+  expect(txStatusRequestFromJSON(txStatusJSON)).toEqual({
+    txHash: "txid123",
+    chainID: "osmosis-1",
+  });
+});
+
+test("txStatusRequestToJSON", () => {
+  const txStatus = {
+    txHash: "txid123",
+    chainID: "osmosis-1",
+  };
+
+  expect(txStatusRequestToJSON(txStatus)).toEqual({
+    tx_hash: "txid123",
+    chain_id: "osmosis-1",
+  });
+});
+
+test("chainTransactionFromJSON", () => {
+  const chainTransactionJSON: ChainTransactionJSON = {
+    tx_hash: "txid123",
+    chain_id: "osmosis-1",
+  };
+
+  expect(chainTransactionFromJSON(chainTransactionJSON)).toEqual({
+    txHash: "txid123",
+    chainID: "osmosis-1",
+  });
+});
+
+test("chainTransactionToJSON", () => {
+  const chainTransaction = {
+    txHash: "txid123",
+    chainID: "osmosis-1",
+  };
+
+  expect(chainTransactionToJSON(chainTransaction)).toEqual({
+    tx_hash: "txid123",
+    chain_id: "osmosis-1",
+  });
+});
+
+test("packetFromJSON", () => {
+  const packetJSON: PacketJSON = {
+    send_tx: {
+      chain_id: "axelar-dojo-1",
+      tx_hash:
+        "AAEA76709215A808AF6D7FC2B8FBB8746BC1F196E46FFAE84B79C6F6CD0A79C9",
+    },
+    receive_tx: {
+      chain_id: "osmosis-1",
+      tx_hash:
+        "082A6C8024998EC277C2B90BFDDB323CCA506C24A6730C658B9B6DC653198E3D",
+    },
+    acknowledge_tx: {
+      chain_id: "axelar-dojo-1",
+      tx_hash:
+        "C9A36F94A5B2CA9C7ABF20402561E46FD8B80EBAC4F0D5B7C01F978E34285CCA",
+    },
+    timeout_tx: null,
+    error: null,
+  };
+
+  expect(packetFromJSON(packetJSON)).toEqual({
+    sendTx: {
+      chainID: "axelar-dojo-1",
+      txHash:
+        "AAEA76709215A808AF6D7FC2B8FBB8746BC1F196E46FFAE84B79C6F6CD0A79C9",
+    },
+    receiveTx: {
+      chainID: "osmosis-1",
+      txHash:
+        "082A6C8024998EC277C2B90BFDDB323CCA506C24A6730C658B9B6DC653198E3D",
+    },
+    acknowledgeTx: {
+      chainID: "axelar-dojo-1",
+      txHash:
+        "C9A36F94A5B2CA9C7ABF20402561E46FD8B80EBAC4F0D5B7C01F978E34285CCA",
+    },
+    timeoutTx: null,
+    error: null,
+  });
+});
+
+test("packetToJSON", () => {
+  const packet = {
+    sendTx: {
+      chainID: "axelar-dojo-1",
+      txHash:
+        "AAEA76709215A808AF6D7FC2B8FBB8746BC1F196E46FFAE84B79C6F6CD0A79C9",
+    },
+    receiveTx: {
+      chainID: "osmosis-1",
+      txHash:
+        "082A6C8024998EC277C2B90BFDDB323CCA506C24A6730C658B9B6DC653198E3D",
+    },
+    acknowledgeTx: {
+      chainID: "axelar-dojo-1",
+      txHash:
+        "C9A36F94A5B2CA9C7ABF20402561E46FD8B80EBAC4F0D5B7C01F978E34285CCA",
+    },
+    timeoutTx: null,
+    error: null,
+  };
+
+  expect(packetToJSON(packet)).toEqual({
+    send_tx: {
+      chain_id: "axelar-dojo-1",
+      tx_hash:
+        "AAEA76709215A808AF6D7FC2B8FBB8746BC1F196E46FFAE84B79C6F6CD0A79C9",
+    },
+    receive_tx: {
+      chain_id: "osmosis-1",
+      tx_hash:
+        "082A6C8024998EC277C2B90BFDDB323CCA506C24A6730C658B9B6DC653198E3D",
+    },
+    acknowledge_tx: {
+      chain_id: "axelar-dojo-1",
+      tx_hash:
+        "C9A36F94A5B2CA9C7ABF20402561E46FD8B80EBAC4F0D5B7C01F978E34285CCA",
+    },
+    timeout_tx: null,
+    error: null,
+  });
+});
+
+test("transferInfoFromJSON", () => {
+  const transferInfoJSON: TransferInfoJSON = {
+    src_chain_id: "axelar-dojo-1",
+    dst_chain_id: "osomosis-1",
+    state: "TRANSFER_SUCCESS",
+    packet: {
+      send_tx: {
+        chain_id: "axelar-dojo-1",
+        tx_hash:
+          "AAEA76709215A808AF6D7FC2B8FBB8746BC1F196E46FFAE84B79C6F6CD0A79C9",
+      },
+      receive_tx: {
+        chain_id: "osmosis-1",
+        tx_hash:
+          "082A6C8024998EC277C2B90BFDDB323CCA506C24A6730C658B9B6DC653198E3D",
+      },
+      acknowledge_tx: {
+        chain_id: "axelar-dojo-1",
+        tx_hash:
+          "C9A36F94A5B2CA9C7ABF20402561E46FD8B80EBAC4F0D5B7C01F978E34285CCA",
+      },
+      timeout_tx: null,
+      error: null,
+    },
+  };
+
+  expect(transferInfoFromJSON(transferInfoJSON)).toEqual({
+    srcChainID: "axelar-dojo-1",
+    dstChainID: "osomosis-1",
+    state: "TRANSFER_SUCCESS",
+    packet: {
+      sendTx: {
+        chainID: "axelar-dojo-1",
+        txHash:
+          "AAEA76709215A808AF6D7FC2B8FBB8746BC1F196E46FFAE84B79C6F6CD0A79C9",
+      },
+      receiveTx: {
+        chainID: "osmosis-1",
+        txHash:
+          "082A6C8024998EC277C2B90BFDDB323CCA506C24A6730C658B9B6DC653198E3D",
+      },
+      acknowledgeTx: {
+        chainID: "axelar-dojo-1",
+        txHash:
+          "C9A36F94A5B2CA9C7ABF20402561E46FD8B80EBAC4F0D5B7C01F978E34285CCA",
+      },
+      timeoutTx: null,
+      error: null,
+    },
+  });
+});
+
+test("transferInfoToJSON", () => {
+  const transferInfo: TransferInfo = {
+    srcChainID: "axelar-dojo-1",
+    dstChainID: "osomosis-1",
+    state: "TRANSFER_SUCCESS",
+    packet: {
+      sendTx: {
+        chainID: "axelar-dojo-1",
+        txHash:
+          "AAEA76709215A808AF6D7FC2B8FBB8746BC1F196E46FFAE84B79C6F6CD0A79C9",
+      },
+      receiveTx: {
+        chainID: "osmosis-1",
+        txHash:
+          "082A6C8024998EC277C2B90BFDDB323CCA506C24A6730C658B9B6DC653198E3D",
+      },
+      acknowledgeTx: {
+        chainID: "axelar-dojo-1",
+        txHash:
+          "C9A36F94A5B2CA9C7ABF20402561E46FD8B80EBAC4F0D5B7C01F978E34285CCA",
+      },
+      timeoutTx: null,
+      error: null,
+    },
+  };
+
+  expect(transferInfoToJSON(transferInfo)).toEqual({
+    src_chain_id: "axelar-dojo-1",
+    dst_chain_id: "osomosis-1",
+    state: "TRANSFER_SUCCESS",
+    packet: {
+      send_tx: {
+        chain_id: "axelar-dojo-1",
+        tx_hash:
+          "AAEA76709215A808AF6D7FC2B8FBB8746BC1F196E46FFAE84B79C6F6CD0A79C9",
+      },
+      receive_tx: {
+        chain_id: "osmosis-1",
+        tx_hash:
+          "082A6C8024998EC277C2B90BFDDB323CCA506C24A6730C658B9B6DC653198E3D",
+      },
+      acknowledge_tx: {
+        chain_id: "axelar-dojo-1",
+        tx_hash:
+          "C9A36F94A5B2CA9C7ABF20402561E46FD8B80EBAC4F0D5B7C01F978E34285CCA",
+      },
+      timeout_tx: null,
+      error: null,
+    },
+  });
+});
+
+test("nextBlockingTransferFromJSON", () => {
+  const nextBlockingTransferJSON: NextBlockingTransferJSON = {
+    transfer_sequence_index: 1,
+  };
+
+  expect(nextBlockingTransferFromJSON(nextBlockingTransferJSON)).toEqual({
+    transferSequenceIndex: 1,
+  });
+});
+
+test("nextBlockingTransferToJSON", () => {
+  const nextBlockingTransfer = {
+    transferSequenceIndex: 1,
+  };
+
+  expect(nextBlockingTransferToJSON(nextBlockingTransfer)).toEqual({
+    transfer_sequence_index: 1,
+  });
+});
+
+test("transferAssetReleaseFromJSON", () => {
+  const transferAssetReleaseJSON: TransferAssetReleaseJSON = {
+    chain_id: "osmosis-1",
+    denom: "uosmo",
+  };
+
+  expect(transferAssetReleaseFromJSON(transferAssetReleaseJSON)).toEqual({
+    chainID: "osmosis-1",
+    denom: "uosmo",
+  });
+});
+
+test("transferAssetReleaseToJSON", () => {
+  const transferAssetRelease = {
+    chainID: "osmosis-1",
+    denom: "uosmo",
+  };
+
+  expect(transferAssetReleaseToJSON(transferAssetRelease)).toEqual({
+    chain_id: "osmosis-1",
+    denom: "uosmo",
+  });
+});
+
+test("txStatusResponseFromJSON", () => {
+  const statusResponseJSON: TxStatusResponseJSON = {
+    status: "STATE_COMPLETED",
+    transfer_sequence: [
+      {
+        src_chain_id: "axelar-dojo-1",
+        dst_chain_id: "osomosis-1",
+        state: "TRANSFER_SUCCESS",
+        packet: {
+          send_tx: {
+            chain_id: "axelar-dojo-1",
+            tx_hash:
+              "AAEA76709215A808AF6D7FC2B8FBB8746BC1F196E46FFAE84B79C6F6CD0A79C9",
+          },
+          receive_tx: {
+            chain_id: "osmosis-1",
+            tx_hash:
+              "082A6C8024998EC277C2B90BFDDB323CCA506C24A6730C658B9B6DC653198E3D",
+          },
+          acknowledge_tx: {
+            chain_id: "axelar-dojo-1",
+            tx_hash:
+              "C9A36F94A5B2CA9C7ABF20402561E46FD8B80EBAC4F0D5B7C01F978E34285CCA",
+          },
+          timeout_tx: null,
+          error: null,
+        },
+      },
+      {
+        src_chain_id: "osmosis-1",
+        dst_chain_id: "cosmoshub-4",
+        state: "TRANSFER_SUCCESS",
+        packet: {
+          send_tx: {
+            chain_id: "osmosis-1",
+            tx_hash:
+              "082A6C8024998EC277C2B90BFDDB323CCA506C24A6730C658B9B6DC653198E3D",
+          },
+          receive_tx: {
+            chain_id: "cosmoshub-4",
+            tx_hash:
+              "913E2542EBFEF2E885C19DD9C4F8ECB6ADAFFE59D60BB108FAD94FBABF9C5671",
+          },
+          acknowledge_tx: {
+            chain_id: "osmosis-1",
+            tx_hash:
+              "1EDB2886E6FD59D6B9C096FBADB1A52585745694F4DFEE3A3CD3FF0153307EBC",
+          },
+          timeout_tx: null,
+          error: null,
+        },
+      },
+    ],
+    next_blocking_transfer: null,
+    transfer_asset_release: {
+      chain_id: "cosmoshub-4",
+      denom: "uatom",
+    },
+    error: null,
+  };
+
+  expect(txStatusResponseFromJSON(statusResponseJSON)).toEqual({
+    status: "STATE_COMPLETED",
+    transferSequence: [
+      {
+        srcChainID: "axelar-dojo-1",
+        dstChainID: "osomosis-1",
+        state: "TRANSFER_SUCCESS",
+        packet: {
+          sendTx: {
+            chainID: "axelar-dojo-1",
+            txHash:
+              "AAEA76709215A808AF6D7FC2B8FBB8746BC1F196E46FFAE84B79C6F6CD0A79C9",
+          },
+          receiveTx: {
+            chainID: "osmosis-1",
+            txHash:
+              "082A6C8024998EC277C2B90BFDDB323CCA506C24A6730C658B9B6DC653198E3D",
+          },
+          acknowledgeTx: {
+            chainID: "axelar-dojo-1",
+            txHash:
+              "C9A36F94A5B2CA9C7ABF20402561E46FD8B80EBAC4F0D5B7C01F978E34285CCA",
+          },
+          timeoutTx: null,
+          error: null,
+        },
+      },
+      {
+        srcChainID: "osmosis-1",
+        dstChainID: "cosmoshub-4",
+        state: "TRANSFER_SUCCESS",
+        packet: {
+          sendTx: {
+            chainID: "osmosis-1",
+            txHash:
+              "082A6C8024998EC277C2B90BFDDB323CCA506C24A6730C658B9B6DC653198E3D",
+          },
+          receiveTx: {
+            chainID: "cosmoshub-4",
+            txHash:
+              "913E2542EBFEF2E885C19DD9C4F8ECB6ADAFFE59D60BB108FAD94FBABF9C5671",
+          },
+          acknowledgeTx: {
+            chainID: "osmosis-1",
+            txHash:
+              "1EDB2886E6FD59D6B9C096FBADB1A52585745694F4DFEE3A3CD3FF0153307EBC",
+          },
+          timeoutTx: null,
+          error: null,
+        },
+      },
+    ],
+    nextBlockingTransfer: null,
+    transferAssetRelease: {
+      chainID: "cosmoshub-4",
+      denom: "uatom",
+    },
+    error: null,
+  });
+});
+
+test("txStatusResponseToJSON", () => {
+  const statusResponse: TxStatusResponse = {
+    status: "STATE_COMPLETED",
+    transferSequence: [
+      {
+        srcChainID: "axelar-dojo-1",
+        dstChainID: "osomosis-1",
+        state: "TRANSFER_SUCCESS",
+        packet: {
+          sendTx: {
+            chainID: "axelar-dojo-1",
+            txHash:
+              "AAEA76709215A808AF6D7FC2B8FBB8746BC1F196E46FFAE84B79C6F6CD0A79C9",
+          },
+          receiveTx: {
+            chainID: "osmosis-1",
+            txHash:
+              "082A6C8024998EC277C2B90BFDDB323CCA506C24A6730C658B9B6DC653198E3D",
+          },
+          acknowledgeTx: {
+            chainID: "axelar-dojo-1",
+            txHash:
+              "C9A36F94A5B2CA9C7ABF20402561E46FD8B80EBAC4F0D5B7C01F978E34285CCA",
+          },
+          timeoutTx: null,
+          error: null,
+        },
+      },
+      {
+        srcChainID: "osmosis-1",
+        dstChainID: "cosmoshub-4",
+        state: "TRANSFER_SUCCESS",
+        packet: {
+          sendTx: {
+            chainID: "osmosis-1",
+            txHash:
+              "082A6C8024998EC277C2B90BFDDB323CCA506C24A6730C658B9B6DC653198E3D",
+          },
+          receiveTx: {
+            chainID: "cosmoshub-4",
+            txHash:
+              "913E2542EBFEF2E885C19DD9C4F8ECB6ADAFFE59D60BB108FAD94FBABF9C5671",
+          },
+          acknowledgeTx: {
+            chainID: "osmosis-1",
+            txHash:
+              "1EDB2886E6FD59D6B9C096FBADB1A52585745694F4DFEE3A3CD3FF0153307EBC",
+          },
+          timeoutTx: null,
+          error: null,
+        },
+      },
+    ],
+    nextBlockingTransfer: null,
+    transferAssetRelease: {
+      chainID: "cosmoshub-4",
+      denom: "uatom",
+    },
+    error: null,
+  };
+
+  expect(txStatusResponseToJSON(statusResponse)).toEqual({
+    status: "STATE_COMPLETED",
+    transfer_sequence: [
+      {
+        src_chain_id: "axelar-dojo-1",
+        dst_chain_id: "osomosis-1",
+        state: "TRANSFER_SUCCESS",
+        packet: {
+          send_tx: {
+            chain_id: "axelar-dojo-1",
+            tx_hash:
+              "AAEA76709215A808AF6D7FC2B8FBB8746BC1F196E46FFAE84B79C6F6CD0A79C9",
+          },
+          receive_tx: {
+            chain_id: "osmosis-1",
+            tx_hash:
+              "082A6C8024998EC277C2B90BFDDB323CCA506C24A6730C658B9B6DC653198E3D",
+          },
+          acknowledge_tx: {
+            chain_id: "axelar-dojo-1",
+            tx_hash:
+              "C9A36F94A5B2CA9C7ABF20402561E46FD8B80EBAC4F0D5B7C01F978E34285CCA",
+          },
+          timeout_tx: null,
+          error: null,
+        },
+      },
+      {
+        src_chain_id: "osmosis-1",
+        dst_chain_id: "cosmoshub-4",
+        state: "TRANSFER_SUCCESS",
+        packet: {
+          send_tx: {
+            chain_id: "osmosis-1",
+            tx_hash:
+              "082A6C8024998EC277C2B90BFDDB323CCA506C24A6730C658B9B6DC653198E3D",
+          },
+          receive_tx: {
+            chain_id: "cosmoshub-4",
+            tx_hash:
+              "913E2542EBFEF2E885C19DD9C4F8ECB6ADAFFE59D60BB108FAD94FBABF9C5671",
+          },
+          acknowledge_tx: {
+            chain_id: "osmosis-1",
+            tx_hash:
+              "1EDB2886E6FD59D6B9C096FBADB1A52585745694F4DFEE3A3CD3FF0153307EBC",
+          },
+          timeout_tx: null,
+          error: null,
+        },
+      },
+    ],
+    next_blocking_transfer: null,
+    transfer_asset_release: {
+      chain_id: "cosmoshub-4",
+      denom: "uatom",
+    },
+    error: null,
   });
 });
