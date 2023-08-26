@@ -50,7 +50,7 @@ jobs:
         run: npm run e2e:setup
 
       - name: start
-        run: npm run e2e:start
+        run: helm repo add starship https://cosmology-tech.github.io/starship && helm repo update && helm search repo starship/devnet --version 0.1.36 && helm install -f starship.yaml tutorial starship/devnet --version 0.1.31 --wait
 
       # - name: e2e
       #   run: npm run e2e:test
