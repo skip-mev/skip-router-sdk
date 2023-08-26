@@ -49,5 +49,8 @@ jobs:
       - name: setup
         run: npm run e2e:setup
 
+      - name: start
+        run: npm run e2e:start
+
       # - name: e2e
       #   run: npm run e2e:test
