@@ -423,3 +423,23 @@ export type SubmitTxResponse = {
   success: boolean;
   txHash: string;
 };
+
+export type TrackTxRequestJSON = {
+  tx_hash: string;
+  chain_id: string;
+};
+
+export type TrackTxRequest = {
+  txHash: string;
+  chainID: string;
+};
+
+export type TrackTxResponseJSON = {
+  success: boolean;
+  tx_hash: string;
+};
+
+export type TrackTxResponse = {
+  success: boolean;
+  txHash: string;
+};

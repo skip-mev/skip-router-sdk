@@ -43,6 +43,10 @@ import {
   swapToJSON,
   swapVenueFromJSON,
   swapVenueToJSON,
+  trackTxRequestFromJSON,
+  trackTxRequestToJSON,
+  trackTxResponseFromJSON,
+  trackTxResponseToJSON,
   transferFromJSON,
   transferToJSON,
 } from "../converters";
@@ -61,6 +65,8 @@ import {
   SubmitTxRequestJSON,
   SubmitTxResponseJSON,
   SwapExactCoinInJSON,
+  TrackTxRequestJSON,
+  TrackTxResponseJSON,
   TransferJSON,
 } from "../types";
 
@@ -1723,6 +1729,54 @@ test("submitTxResponseToJSON", () => {
   };
 
   expect(submitTxResponseToJSON(submitTxResponse)).toEqual({
+    tx_hash: "txid123",
+    success: true,
+  });
+});
+
+test("trackTxRequestFromJSON", () => {
+  const trackRequestJSON: TrackTxRequestJSON = {
+    tx_hash: "txid123",
+    chain_id: "osmosis-1",
+  };
+
+  expect(trackTxRequestFromJSON(trackRequestJSON)).toEqual({
+    txHash: "txid123",
+    chainID: "osmosis-1",
+  });
+});
+
+test("trackTxRequestToJSON", () => {
+  const trackRequest = {
+    txHash: "txid123",
+    chainID: "osmosis-1",
+  };
+
+  expect(trackTxRequestToJSON(trackRequest)).toEqual({
+    tx_hash: "txid123",
+    chain_id: "osmosis-1",
+  });
+});
+
+test("trackTxResponseFromJSON", () => {
+  const trackResponseJSON: TrackTxResponseJSON = {
+    tx_hash: "txid123",
+    success: true,
+  };
+
+  expect(trackTxResponseFromJSON(trackResponseJSON)).toEqual({
+    txHash: "txid123",
+    success: true,
+  });
+});
+
+test("trackTxResponseToJSON", () => {
+  const trackResponse = {
+    txHash: "txid123",
+    success: true,
+  };
+
+  expect(trackTxResponseToJSON(trackResponse)).toEqual({
     tx_hash: "txid123",
     success: true,
   });

@@ -806,4 +806,32 @@ describe("client", () => {
       });
     });
   });
+
+  describe("trackTransaction", () => {
+    it("handles 200 OK", async () => {
+      server.use(
+        rest.post("https://api.skip.money/v1/tx/track", (_, res, ctx) => {
+          return res(
+            ctx.status(200),
+            ctx.json({
+              tx_hash: "tx_hash123",
+              success: true,
+            }),
+          );
+        }),
+      );
+
+      const client = new SkipAPIClient(SKIP_API_URL);
+
+      const response = await client.trackTransaction(
+        "cosmoshub-4",
+        "tx_hash123",
+      );
+
+      expect(response).toEqual({
+        txHash: "tx_hash123",
+        success: true,
+      });
+    });
+  });
 });

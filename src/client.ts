@@ -35,6 +35,10 @@ import {
   SwapVenue,
   swapVenueFromJSON,
   SwapVenueJSON,
+  TrackTxRequestJSON,
+  TrackTxResponse,
+  trackTxResponseFromJSON,
+  TrackTxResponseJSON,
 } from "./types";
 
 export const SKIP_API_URL = "https://api.skip.money/v1";
@@ -137,6 +141,21 @@ export class SkipAPIClient {
     });
 
     return submitTxResponseFromJSON(response);
+  }
+
+  async trackTransaction(
+    chainID: string,
+    txHash: string,
+  ): Promise<TrackTxResponse> {
+    const response = await this.requestClient.post<
+      TrackTxResponseJSON,
+      TrackTxRequestJSON
+    >("/tx/track", {
+      chain_id: chainID,
+      tx_hash: txHash,
+    });
+
+    return trackTxResponseFromJSON(response);
   }
 
   async venues(): Promise<SwapVenue[]> {

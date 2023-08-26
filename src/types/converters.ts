@@ -43,6 +43,10 @@ import {
   SwapOperationJSON,
   SwapVenue,
   SwapVenueJSON,
+  TrackTxRequest,
+  TrackTxRequestJSON,
+  TrackTxResponse,
+  TrackTxResponseJSON,
   Transfer,
   TransferJSON,
 } from "./types";
@@ -612,5 +616,41 @@ export function submitTxResponseToJSON(
   return {
     tx_hash: submitTxResponse.txHash,
     success: submitTxResponse.success,
+  };
+}
+
+export function trackTxRequestFromJSON(
+  trackRequestJSON: TrackTxRequestJSON,
+): TrackTxRequest {
+  return {
+    txHash: trackRequestJSON.tx_hash,
+    chainID: trackRequestJSON.chain_id,
+  };
+}
+
+export function trackTxRequestToJSON(
+  trackRequest: TrackTxRequest,
+): TrackTxRequestJSON {
+  return {
+    tx_hash: trackRequest.txHash,
+    chain_id: trackRequest.chainID,
+  };
+}
+
+export function trackTxResponseFromJSON(
+  trackResponseJSON: TrackTxResponseJSON,
+): TrackTxResponse {
+  return {
+    txHash: trackResponseJSON.tx_hash,
+    success: trackResponseJSON.success,
+  };
+}
+
+export function trackTxResponseToJSON(
+  trackResponse: TrackTxResponse,
+): TrackTxResponseJSON {
+  return {
+    tx_hash: trackResponse.txHash,
+    success: trackResponse.success,
   };
 }
