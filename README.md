@@ -33,7 +33,7 @@ npm run test -- --coverage
 - [x] `/fungible/venues`
 - [x] `/fungible/assets`
 - [x] `/fungible/assets_from_source`
-- [ ] `/fungible/route`
+- [x] `/fungible/route`
 - [ ] `/fungible/msgs`
 - [x] `/fungible/recommend_assets`
 
