@@ -5,6 +5,9 @@ chains:
     ports:
       rest: 1313
       rpc: 26653
+    resources:
+      cpu: "0.2"
+      memory: "200M"      
 
   - name: gaia-1
     type: cosmos
@@ -12,7 +15,10 @@ chains:
     ports:
       rest: 1317
       rpc: 26657
- 
+    resources:
+      cpu: "0.2"
+      memory: "200M"      
+
 relayers:
   - name: osmos-gaia
     type: hermes
@@ -20,11 +26,28 @@ relayers:
     chains:
       - osmosis-1
       - gaia-1
- 
+    resources:
+      cpu: "0.1"
+      memory: "100M"      
+
 explorer:
   enabled: false
- 
+
 registry:
   enabled: true
   ports:
     rest: 8081
+    grpc: 9091
+  resources:
+    cpu: "0.1"
+    memory: "100M"
+
+exposer:
+  resources:
+    cpu: "0.1"
+    memory: "100M"
+
+faucet:
+  resources:
+    cpu: "0.1"
+    memory: "100M"
