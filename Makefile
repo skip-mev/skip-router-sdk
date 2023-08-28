@@ -16,7 +16,7 @@ start: install port-forward
 
 .PHONY: test
 test:
-	yarn run e2e:test
+	npm run e2e:test
 
 .PHONY: stop
 stop: stop-forward delete
