@@ -2,7 +2,7 @@ HELM_NAME = skip-router
 HELM_FILE = starship.yaml
 HELM_REPO = starship
 HELM_CHART = devnet
-HELM_VERSION = v0.1.38
+HELM_VERSION = 0.1.38
 
 ###############################################################################
 ###                              All commands                               ###
