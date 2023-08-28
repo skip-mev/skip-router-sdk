@@ -50,7 +50,7 @@ jobs:
         run: npm run e2e:setup
 
       - name: start
-        run: helm repo update && helm search repo starship/devnet --version 0.1.36 && helm install -f starship.yaml skip-router starship/devnet --version 0.1.31 --wait && make port-forward
+        run: helm repo update && helm search repo starship/devnet --version 0.1.36 && helm install -f starship.yaml skip-router starship/devnet --version 0.1.36 --wait && make port-forward
 
       - name: e2e
         run: npm run e2e:test
