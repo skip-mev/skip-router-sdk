@@ -5,8 +5,13 @@
   "main": "index.js",
   "scripts": {
     "build": "tsc -p tsconfig.json --outDir dist --module commonjs || true",
-    "test": "jest",
-    "prepare": "husky install"
+    "test": "jest --testPathPattern=src/",
+    "prepare": "husky install",
+    "e2e:start": "make start",
+    "e2e:setup": "make setup && make setup-kind",
+    "e2e:stop": "make stop",
+    "e2e:clean": "make stop clean",
+    "e2e:test": "jest --testPathPattern=tests/ --runInBand --verbose --bail"
   },
   "author": "",
   "license": "ISC",

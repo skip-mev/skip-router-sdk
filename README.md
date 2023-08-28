@@ -2,7 +2,7 @@
 
 WIP SDK for the Skip API. Not ready for use.
 
-## Running Tests
+## Running Unit Tests
 
 To run tests simply run:
 
@@ -22,23 +22,30 @@ Get Coverage:
 npm run test -- --coverage
 ```
 
-## Endpoints
+## Running e2e Tests
 
-**Info:**
+e2e tests depend on [Starship](https://starship.cosmology.tech/) to test interactions with various blockchains.
 
-- [x] `/info/chains`
+Setup and install Starship dependencies:
 
-**Fungible:**
+```bash
+npm run e2e:setup
+```
 
-- [x] `/fungible/venues`
-- [x] `/fungible/assets`
-- [x] `/fungible/assets_from_source`
-- [x] `/fungible/route`
-- [x] `/fungible/msgs`
-- [x] `/fungible/recommend_assets`
+Start the Starship devnets:
 
-**Transaction:**
+```bash
+npm run e2e:start
+```
 
-- [x] `/tx/submit`
-- [x] `/tx/track`
-- [x] `/tx/status`
+Run the e2e tests:
+
+```bash
+npm run e2e:test # or npm run e2e:test -- --watch
+```
+
+Stop the Starship devnets:
+
+```bash
+npm run e2e:stop
+```
