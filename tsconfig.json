@@ -2,7 +2,7 @@
   "compilerOptions": {
     "strict": true,
     "baseUrl": ".",
-    "rootDir": "src",
+    "rootDir": ".",
     "skipLibCheck": true,
     "emitDeclarationOnly": false,
     "declaration": true,

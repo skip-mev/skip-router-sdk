@@ -328,26 +328,6 @@ export type PostHandler =
   | { wasmMsg: CosmWasmContractMsg }
   | { autopilotMsg: AutopilotMsg };
 
-//   message MsgsRequest {
-//     string source_asset_denom = 1;
-//     string source_asset_chain_id = 2;
-//     string dest_asset_denom = 3;
-//     string dest_asset_chain_id = 4;
-//     string amount_in = 5;
-//     string amount_out = 6;
-//     repeated string address_list = 7;
-//     map<string, string> chain_ids_to_addresses = 8;
-//     repeated Operation operations = 9;
-
-//     optional string estimated_amount_out = 10;
-//     optional string slippage_tolerance_percent = 11;
-//     repeated Affiliate affiliates = 12;
-
-//     PostHandler post_route_handler = 13;
-
-//     string client_id = 14;
-// }
-
 export type MsgsRequestJSON = {
   source_asset_denom: string;
   source_asset_chain_id: string;
