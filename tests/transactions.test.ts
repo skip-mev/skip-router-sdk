@@ -1,21 +1,30 @@
 import { Secp256k1HdWallet } from "@cosmjs/amino";
+import { FaucetClient } from "@cosmjs/faucet-client";
 import { coin, DirectSecp256k1HdWallet } from "@cosmjs/proto-signing";
 import { isDeliverTxFailure, isDeliverTxSuccess } from "@cosmjs/stargate";
 
 import { SKIP_API_URL, SkipAPIClient } from "../src";
-import { COSMOSHUB_ENDPOINT, OSMOSIS_ENDPOINT } from "./utils";
+import {
+  COSMOSHUB_ENDPOINT,
+  COSMOSHUB_FAUCET,
+  OSMOSIS_ENDPOINT,
+  OSMOSIS_FAUCET,
+} from "./utils";
 
 describe("transaction execution", () => {
   it("signs and executes an IBC transfer", async () => {
     const client = new SkipAPIClient(SKIP_API_URL);
 
     const signer = await DirectSecp256k1HdWallet.fromMnemonic(
-      "razor dog gown public private couple ecology paper flee connect local robot diamond stay rude join sound win ribbon soup kidney glass robot vehicle",
+      "opinion knife other balcony surge more bamboo canoe romance ask argue teach anxiety adjust spike mystery wolf alone torch tail six decide wash alley",
     );
 
     const accounts = await signer.getAccounts();
 
     const signerAddress = accounts[0].address;
+
+    const faucet = new FaucetClient(COSMOSHUB_FAUCET);
+    await faucet.credit(signerAddress, "uatom");
 
     const timeout = BigInt(Date.now()) * BigInt(1000000);
 
@@ -43,12 +52,15 @@ describe("transaction execution", () => {
     const client = new SkipAPIClient(SKIP_API_URL);
 
     const signer = await Secp256k1HdWallet.fromMnemonic(
-      "razor dog gown public private couple ecology paper flee connect local robot diamond stay rude join sound win ribbon soup kidney glass robot vehicle",
+      "opinion knife other balcony surge more bamboo canoe romance ask argue teach anxiety adjust spike mystery wolf alone torch tail six decide wash alley",
     );
 
     const accounts = await signer.getAccounts();
 
     const signerAddress = accounts[0].address;
+
+    const faucet = new FaucetClient(COSMOSHUB_FAUCET);
+    await faucet.credit(signerAddress, "uatom");
 
     const timeout = BigInt(Date.now()) * BigInt(1000000);
 
@@ -74,7 +86,7 @@ describe("transaction execution", () => {
 
   it("signs and executes a cosmwasm execute message", async () => {
     const signer = await DirectSecp256k1HdWallet.fromMnemonic(
-      "razor dog gown public private couple ecology paper flee connect local robot diamond stay rude join sound win ribbon soup kidney glass robot vehicle",
+      "opinion knife other balcony surge more bamboo canoe romance ask argue teach anxiety adjust spike mystery wolf alone torch tail six decide wash alley",
       {
         prefix: "osmo",
       },
@@ -82,6 +94,9 @@ describe("transaction execution", () => {
 
     const accounts = await signer.getAccounts();
     const signerAddress = accounts[0].address;
+
+    const faucet = new FaucetClient(OSMOSIS_FAUCET);
+    await faucet.credit(signerAddress, "uosmo");
 
     const client = new SkipAPIClient(SKIP_API_URL);
 
@@ -113,7 +128,7 @@ describe("transaction execution", () => {
     const client = new SkipAPIClient(SKIP_API_URL);
 
     const signer = await Secp256k1HdWallet.fromMnemonic(
-      "razor dog gown public private couple ecology paper flee connect local robot diamond stay rude join sound win ribbon soup kidney glass robot vehicle",
+      "opinion knife other balcony surge more bamboo canoe romance ask argue teach anxiety adjust spike mystery wolf alone torch tail six decide wash alley",
       {
         prefix: "osmo",
       },
@@ -122,6 +137,9 @@ describe("transaction execution", () => {
     const accounts = await signer.getAccounts();
 
     const signerAddress = accounts[0].address;
+
+    const faucet = new FaucetClient(OSMOSIS_FAUCET);
+    await faucet.credit(signerAddress, "uosmo");
 
     const message = {
       chainID: "osmosis-1",

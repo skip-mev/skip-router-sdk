@@ -27,6 +27,8 @@
     "cosmjs-types": "^0.8.0"
   },
   "devDependencies": {
+    "@cosmjs/faucet": "^0.31.1",
+    "@cosmjs/faucet-client": "^0.31.1",
     "@types/jest": "^29.5.3",
     "@typescript-eslint/eslint-plugin": "^6.4.0",
     "@typescript-eslint/parser": "^6.4.0",
