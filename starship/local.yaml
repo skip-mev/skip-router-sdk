@@ -5,7 +5,7 @@ chains:
     ports:
       rest: 1313
       rpc: 26653
-      faucet: 8082 
+      faucet: 8082
 
   - name: gaia-1
     type: cosmos
@@ -13,7 +13,7 @@ chains:
     ports:
       rest: 1317
       rpc: 26657
-      faucet: 8083     
+      faucet: 8083
 
 relayers:
   - name: osmos-gaia

@@ -5,7 +5,7 @@ chains:
     ports:
       rest: 1313
       rpc: 26653
-      faucet: 8082      
+      faucet: 8082
     resources:
       cpu: "0.2"
       memory: "200M"
