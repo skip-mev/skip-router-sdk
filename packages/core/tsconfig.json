@@ -2,7 +2,7 @@
   "compilerOptions": {
     "strict": true,
     "baseUrl": ".",
-    "rootDir": ".",
+    "rootDir": "src",
     "skipLibCheck": true,
     "emitDeclarationOnly": false,
     "declaration": true,
@@ -19,7 +19,8 @@
     "jsx": "react",
     "paths": {
       "@/*": ["src/*"]
-    }
+    },
+    "outDir": "dist"
   },
   "include": ["src/**/*"],
   "exclude": ["node_modules", "**/*.test.ts", "**/*.test.tsx"]
