@@ -1,36 +1,14 @@
 {
-  "name": "skip-sdk",
+  "name": "skip-router",
   "version": "1.0.0",
-  "description": "",
-  "main": "index.js",
+  "workspaces": [
+    "packages/*"
+  ],
   "scripts": {
-    "build": "tsc -p tsconfig.json --outDir dist --module commonjs || true",
-    "test": "jest --testPathPattern=src/",
-    "prepare": "husky install",
-    "e2e:start": "make start",
-    "e2e:setup": "make setup && make setup-kind",
-    "e2e:stop": "make stop",
-    "e2e:clean": "make stop clean",
-    "e2e:test": "jest --testPathPattern=tests/ --runInBand --verbose --bail"
-  },
-  "author": "",
-  "license": "ISC",
-  "dependencies": {
-    "axios": "^1.4.0"
+    "build": "turbo run build",
+    "test": "turbo run test"
   },
   "devDependencies": {
-    "@types/jest": "^29.5.3",
-    "@typescript-eslint/eslint-plugin": "^6.4.0",
-    "@typescript-eslint/parser": "^6.4.0",
-    "eslint": "^8.47.0",
-    "eslint-config-prettier": "^9.0.0",
-    "eslint-plugin-prettier": "^5.0.0",
-    "eslint-plugin-simple-import-sort": "^10.0.0",
-    "husky": "^8.0.0",
-    "jest": "^29.6.2",
-    "msw": "^1.2.3",
-    "prettier": "^3.0.2",
-    "ts-jest": "^29.1.1",
-    "typescript": "^5.1.6"
+    "turbo": "^1.10.13"
   }
 }
