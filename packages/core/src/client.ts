@@ -25,14 +25,28 @@ import {
   SigningStargateClient,
   StdFee,
 } from "@cosmjs/stargate";
+import { createTxRaw } from "@evmos/proto";
+import { createTxIBCMsgTransfer, Sender, TxContext } from "@evmos/transactions";
+import {
+  ChainRestTendermintApi,
+  createTransaction,
+  getTxRawFromTxRawOrDirectSignResponse,
+} from "@injectivelabs/sdk-ts";
+import {
+  BigNumberInBase,
+  DEFAULT_BLOCK_TIMEOUT_HEIGHT,
+} from "@injectivelabs/utils";
 import { SignMode } from "cosmjs-types/cosmos/tx/signing/v1beta1/signing";
 import { TxRaw } from "cosmjs-types/cosmos/tx/v1beta1/tx";
 import { MsgExecuteContract } from "cosmjs-types/cosmwasm/wasm/v1/tx";
+import { MsgTransfer } from "cosmjs-types/ibc/applications/transfer/v1/tx";
+import Long from "long";
 
 import { RequestClient } from "./request-client";
 import {
   getAccountNumberAndSequence,
   getEncodeObjectFromMultiChainMessage,
+  getEncodeObjectFromMultiChainMessageInjective,
   getGasAmountForMessage,
 } from "./transactions";
 import {
@@ -169,6 +183,7 @@ export class SkipAPIClient {
     const { accountNumber, sequence } = await getAccountNumberAndSequence(
       signerAddress,
       options.rpcEndpoint,
+      message.chainID,
     );
 
     const gas = getGasAmountForMessage(message);
@@ -217,26 +232,25 @@ export class SkipAPIClient {
     fee: StdFee,
     { accountNumber, sequence, chainId }: SignerData,
   ): Promise<TxRaw> {
-    // TODO: Uncomment when EVMOS and Injective are supported
-    // if (multiChainMessage.chain_id.includes("evmos")) {
-    //   return this.signMultiChainMessageDirectEvmos(
-    //     signerAddress,
-    //     signer,
-    //     multiChainMessage,
-    //     fee,
-    //     { accountNumber, sequence, chainId }
-    //   );
-    // }
+    if (multiChainMessage.chainID.includes("evmos")) {
+      return this.signMultiChainMessageDirectEvmos(
+        signerAddress,
+        signer,
+        multiChainMessage,
+        fee,
+        { accountNumber, sequence, chainId },
+      );
+    }
 
-    // if (multiChainMessage.chain_id.includes("injective")) {
-    //   return this.signMultiChainMessageDirectInjective(
-    //     signerAddress,
-    //     signer,
-    //     multiChainMessage,
-    //     fee,
-    //     { accountNumber, sequence, chainId }
-    //   );
-    // }
+    if (multiChainMessage.chainID.includes("injective")) {
+      return this.signMultiChainMessageDirectInjective(
+        signerAddress,
+        signer,
+        multiChainMessage,
+        fee,
+        { accountNumber, sequence, chainId },
+      );
+    }
 
     const accounts = await signer.getAccounts();
     const accountFromSigner = accounts.find(
@@ -289,6 +303,151 @@ export class SkipAPIClient {
       authInfoBytes: signed.authInfoBytes,
       signatures: [fromBase64(signature.signature)],
     });
+  }
+
+  // TODO: This is previously existing code, just moved to a new function.
+  // Using signMultiChainMessageDirect on evmos DOES currently fail.
+  // I need to investigate what exactly is even different about this and hopefully remove it all together.
+  async signMultiChainMessageDirectEvmos(
+    signerAddress: string,
+    signer: OfflineDirectSigner,
+    multiChainMessage: MultiChainMsg,
+    fee: StdFee,
+    { accountNumber, sequence, chainId }: SignerData,
+  ) {
+    const accounts = await signer.getAccounts();
+    const accountFromSigner = accounts.find(
+      (account) => account.address === signerAddress,
+    );
+
+    if (!accountFromSigner) {
+      throw new Error("Failed to retrieve account from signer");
+    }
+
+    const message = getEncodeObjectFromMultiChainMessage(multiChainMessage);
+
+    const pk = Buffer.from(accountFromSigner.pubkey).toString("base64");
+
+    const chain = {
+      chainId: 9001,
+      cosmosChainId: chainId,
+    };
+
+    const sender: Sender = {
+      accountAddress: signerAddress,
+      sequence: sequence,
+      accountNumber: accountNumber,
+      pubkey: pk,
+    };
+
+    const _fee = {
+      amount: fee.amount[0].amount,
+      denom: fee.amount[0].denom,
+      gas: fee.gas,
+    };
+
+    const memo = "";
+
+    const context: TxContext = {
+      chain,
+      sender,
+      fee: _fee,
+      memo,
+    };
+
+    const msg = message.value as MsgTransfer;
+
+    const tx = createTxIBCMsgTransfer(context, {
+      sourcePort: msg.sourcePort,
+      sourceChannel: msg.sourceChannel,
+      receiver: msg.receiver,
+      timeoutTimestamp: msg.timeoutTimestamp?.toString() ?? "",
+      memo: msg.memo,
+      amount: msg.token?.amount ?? "0",
+      denom: msg.token?.denom ?? "aevmos",
+      revisionNumber: 0,
+      revisionHeight: 0,
+    });
+
+    const { signDirect } = tx;
+
+    const signResponse = await signer.signDirect(sender.accountAddress, {
+      bodyBytes: signDirect.body.toBinary(),
+      authInfoBytes: signDirect.authInfo.toBinary(),
+      chainId: chain.cosmosChainId,
+      accountNumber: new Long(sender.accountNumber),
+    });
+
+    if (!signResponse) {
+      throw new Error("Signature failed");
+    }
+
+    const signatures = [
+      new Uint8Array(Buffer.from(signResponse.signature.signature, "base64")),
+    ];
+
+    const { signed } = signResponse;
+
+    const signedTx = createTxRaw(
+      signed.bodyBytes,
+      signed.authInfoBytes,
+      signatures,
+    );
+
+    return signedTx.message;
+  }
+
+  // TODO: This is previously existing code, just moved to a new function.
+  // Using signMultiChainMessageDirect on injective DOES currently fail.
+  // I need to investigate what exactly is even different about this and hopefully remove it all together.
+  async signMultiChainMessageDirectInjective(
+    signerAddress: string,
+    signer: OfflineDirectSigner,
+    multiChainMessage: MultiChainMsg,
+    fee: StdFee,
+    { accountNumber, sequence, chainId }: SignerData,
+  ) {
+    const accounts = await signer.getAccounts();
+    const accountFromSigner = accounts.find(
+      (account) => account.address === signerAddress,
+    );
+
+    if (!accountFromSigner) {
+      throw new Error("Failed to retrieve account from signer");
+    }
+
+    /** Block Details */
+    const chainRestTendermintApi = new ChainRestTendermintApi(
+      "https://lcd.injective.network",
+    );
+    const latestBlock = await chainRestTendermintApi.fetchLatestBlock();
+    const latestHeight = latestBlock.header.height;
+    const timeoutHeight = new BigNumberInBase(latestHeight).plus(
+      DEFAULT_BLOCK_TIMEOUT_HEIGHT,
+    );
+
+    const pk = Buffer.from(accountFromSigner.pubkey).toString("base64");
+
+    const message =
+      getEncodeObjectFromMultiChainMessageInjective(multiChainMessage);
+
+    const { signDoc } = createTransaction({
+      pubKey: pk,
+      chainId: chainId,
+      message: [message],
+      sequence,
+      accountNumber,
+      timeoutHeight: timeoutHeight.toNumber(),
+      fee,
+    });
+
+    const directSignResponse = await signer.signDirect(
+      signerAddress,
+      // @ts-expect-error TODO: Fix this
+      signDoc,
+    );
+
+    return getTxRawFromTxRawOrDirectSignResponse(directSignResponse);
   }
 
   async signMultiChainMessageAmino(
