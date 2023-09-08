@@ -1,80 +1,28 @@
 import { toUtf8 } from "@cosmjs/encoding";
 import { EncodeObject } from "@cosmjs/proto-signing";
-import { StargateClient } from "@cosmjs/stargate";
-import {
-  ChainRestAuthApi,
-  MsgExecuteContract as MsgExecuteContractInjective,
-  Msgs,
-  MsgTransfer as MsgTransferInjective,
-} from "@injectivelabs/sdk-ts";
-import axios from "axios";
+import MsgTransferInjective from "@injectivelabs/sdk-ts/dist/cjs/core/modules/ibc/msgs/MsgTransfer";
+import { Msgs } from "@injectivelabs/sdk-ts/dist/cjs/core/modules/msgs";
+import MsgExecuteContractInjective from "@injectivelabs/sdk-ts/dist/cjs/core/modules/wasm/msgs/MsgExecuteContract";
 import { MsgExecuteContract } from "cosmjs-types/cosmwasm/wasm/v1/tx";
 import { MsgTransfer } from "cosmjs-types/ibc/applications/transfer/v1/tx";
 
 import { MultiChainMsg } from "./types";
 
-export async function getAccountNumberAndSequence(
-  address: string,
-  endpoint: string,
-  chainID: string,
-) {
-  if (chainID.includes("evmos")) {
-    return getAccountNumberAndSequenceEvmos(address, endpoint);
-  }
+// async function getAccountNumberAndSequenceInjective(
+//   address: string,
+//   endpoint: string,
+// ) {
+//   const chainRestAuthApi = new ChainRestAuthApi(endpoint);
 
-  if (chainID.includes("injective")) {
-    return getAccountNumberAndSequenceInjective(address, endpoint);
-  }
+//   const accountDetailsResponse = await chainRestAuthApi.fetchAccount(address);
 
-  const client = await StargateClient.connect(endpoint);
-
-  const account = await client.getAccount(address);
-
-  if (!account) {
-    throw new Error("Failed to retrieve account");
-  }
-
-  client.disconnect();
-
-  return {
-    accountNumber: account.accountNumber,
-    sequence: account.sequence,
-  };
-}
-
-async function getAccountNumberAndSequenceEvmos(
-  address: string,
-  endpoint: string,
-) {
-  const response = await axios.get(
-    `${endpoint}/cosmos/auth/v1beta1/accounts/${address}`,
-  );
-
-  const accountNumber = response.data.account.base_account
-    .account_number as number;
-  const sequence = response.data.account.base_account.sequence as number;
-
-  return {
-    accountNumber,
-    sequence,
-  };
-}
-
-async function getAccountNumberAndSequenceInjective(
-  address: string,
-  endpoint: string,
-) {
-  const chainRestAuthApi = new ChainRestAuthApi(endpoint);
-
-  const accountDetailsResponse = await chainRestAuthApi.fetchAccount(address);
-
-  return {
-    accountNumber: parseInt(
-      accountDetailsResponse.account.base_account.account_number,
-    ),
-    sequence: parseInt(accountDetailsResponse.account.base_account.sequence),
-  };
-}
+//   return {
+//     accountNumber: parseInt(
+//       accountDetailsResponse.account.base_account.account_number,
+//     ),
+//     sequence: parseInt(accountDetailsResponse.account.base_account.sequence),
+//   };
+// }
 
 export function getEncodeObjectFromMultiChainMessage(
   message: MultiChainMsg,

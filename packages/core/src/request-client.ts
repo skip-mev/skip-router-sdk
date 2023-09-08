@@ -1,19 +1,13 @@
 import axios from "axios";
 import { AxiosError, AxiosInstance } from "axios";
-import https from "https";
 
 // Request clients wraps the axios client and handles error responses
 export class RequestClient {
   private httpClient: AxiosInstance;
 
   constructor(baseURL: string) {
-    const agent = new https.Agent({
-      keepAlive: true,
-    });
-
     this.httpClient = axios.create({
       baseURL,
-      httpsAgent: agent,
     });
   }
 

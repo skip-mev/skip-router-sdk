@@ -12,8 +12,6 @@
     "turbo": "^1.10.13"
   },
   "dependencies": {
-    "@evmos/proto": "^0.2.1",
-    "@evmos/transactions": "^0.3.2",
     "@injectivelabs/sdk-ts": "^1.12.1",
     "@injectivelabs/utils": "^1.12.1"
   }

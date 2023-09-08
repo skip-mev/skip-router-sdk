@@ -15,14 +15,6 @@ chains:
       rpc: 26657
       faucet: 8083
 
-  - name: evmos-9001-2
-    type: evmos
-    numValidators: 1
-    ports:
-      rest: 1318
-      rpc: 26658
-      faucet: 8084
-
 relayers:
   - name: osmos-gaia
     type: hermes
