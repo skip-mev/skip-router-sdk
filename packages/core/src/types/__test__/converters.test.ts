@@ -1942,7 +1942,7 @@ test("transferInfoFromJSON", () => {
     src_chain_id: "axelar-dojo-1",
     dst_chain_id: "osomosis-1",
     state: "TRANSFER_SUCCESS",
-    packet: {
+    packet_txs: {
       send_tx: {
         chain_id: "axelar-dojo-1",
         tx_hash:
@@ -1967,7 +1967,7 @@ test("transferInfoFromJSON", () => {
     srcChainID: "axelar-dojo-1",
     dstChainID: "osomosis-1",
     state: "TRANSFER_SUCCESS",
-    packet: {
+    packetTXs: {
       sendTx: {
         chainID: "axelar-dojo-1",
         txHash:
@@ -1994,7 +1994,7 @@ test("transferInfoToJSON", () => {
     srcChainID: "axelar-dojo-1",
     dstChainID: "osomosis-1",
     state: "TRANSFER_SUCCESS",
-    packet: {
+    packetTXs: {
       sendTx: {
         chainID: "axelar-dojo-1",
         txHash:
@@ -2019,7 +2019,7 @@ test("transferInfoToJSON", () => {
     src_chain_id: "axelar-dojo-1",
     dst_chain_id: "osomosis-1",
     state: "TRANSFER_SUCCESS",
-    packet: {
+    packet_txs: {
       send_tx: {
         chain_id: "axelar-dojo-1",
         tx_hash:
@@ -2093,7 +2093,7 @@ test("txStatusResponseFromJSON", () => {
         src_chain_id: "axelar-dojo-1",
         dst_chain_id: "osomosis-1",
         state: "TRANSFER_SUCCESS",
-        packet: {
+        packet_txs: {
           send_tx: {
             chain_id: "axelar-dojo-1",
             tx_hash:
@@ -2117,7 +2117,7 @@ test("txStatusResponseFromJSON", () => {
         src_chain_id: "osmosis-1",
         dst_chain_id: "cosmoshub-4",
         state: "TRANSFER_SUCCESS",
-        packet: {
+        packet_txs: {
           send_tx: {
             chain_id: "osmosis-1",
             tx_hash:
@@ -2153,7 +2153,7 @@ test("txStatusResponseFromJSON", () => {
         srcChainID: "axelar-dojo-1",
         dstChainID: "osomosis-1",
         state: "TRANSFER_SUCCESS",
-        packet: {
+        packetTXs: {
           sendTx: {
             chainID: "axelar-dojo-1",
             txHash:
@@ -2177,7 +2177,7 @@ test("txStatusResponseFromJSON", () => {
         srcChainID: "osmosis-1",
         dstChainID: "cosmoshub-4",
         state: "TRANSFER_SUCCESS",
-        packet: {
+        packetTXs: {
           sendTx: {
             chainID: "osmosis-1",
             txHash:
@@ -2215,7 +2215,7 @@ test("txStatusResponseToJSON", () => {
         srcChainID: "axelar-dojo-1",
         dstChainID: "osomosis-1",
         state: "TRANSFER_SUCCESS",
-        packet: {
+        packetTXs: {
           sendTx: {
             chainID: "axelar-dojo-1",
             txHash:
@@ -2239,7 +2239,7 @@ test("txStatusResponseToJSON", () => {
         srcChainID: "osmosis-1",
         dstChainID: "cosmoshub-4",
         state: "TRANSFER_SUCCESS",
-        packet: {
+        packetTXs: {
           sendTx: {
             chainID: "osmosis-1",
             txHash:
@@ -2275,7 +2275,7 @@ test("txStatusResponseToJSON", () => {
         src_chain_id: "axelar-dojo-1",
         dst_chain_id: "osomosis-1",
         state: "TRANSFER_SUCCESS",
-        packet: {
+        packet_txs: {
           send_tx: {
             chain_id: "axelar-dojo-1",
             tx_hash:
@@ -2299,7 +2299,7 @@ test("txStatusResponseToJSON", () => {
         src_chain_id: "osmosis-1",
         dst_chain_id: "cosmoshub-4",
         state: "TRANSFER_SUCCESS",
-        packet: {
+        packet_txs: {
           send_tx: {
             chain_id: "osmosis-1",
             tx_hash:
