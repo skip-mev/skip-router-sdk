@@ -13,7 +13,13 @@ import {
 
 describe("transaction execution", () => {
   it("signs and executes an IBC transfer", async () => {
-    const client = new SkipAPIClient(SKIP_API_URL);
+    const client = new SkipAPIClient(SKIP_API_URL, {
+      endpointOptions: {
+        getRpcEndpointForChain: async () => {
+          return COSMOSHUB_ENDPOINT;
+        },
+      },
+    });
 
     const signer = await DirectSecp256k1HdWallet.fromMnemonic(
       "opinion knife other balcony surge more bamboo canoe romance ask argue teach anxiety adjust spike mystery wolf alone torch tail six decide wash alley",
@@ -40,16 +46,19 @@ describe("transaction execution", () => {
       signer,
       message,
       coin(1000000, "uatom"),
-      {
-        rpcEndpoint: COSMOSHUB_ENDPOINT,
-      },
     );
 
     expect(isDeliverTxSuccess(tx)).toBe(true);
   });
 
   it("signs and executes an IBC transfer (amino)", async () => {
-    const client = new SkipAPIClient(SKIP_API_URL);
+    const client = new SkipAPIClient(SKIP_API_URL, {
+      endpointOptions: {
+        getRpcEndpointForChain: async () => {
+          return COSMOSHUB_ENDPOINT;
+        },
+      },
+    });
 
     const signer = await Secp256k1HdWallet.fromMnemonic(
       "opinion knife other balcony surge more bamboo canoe romance ask argue teach anxiety adjust spike mystery wolf alone torch tail six decide wash alley",
@@ -76,9 +85,6 @@ describe("transaction execution", () => {
       signer,
       message,
       coin(1000000, "uatom"),
-      {
-        rpcEndpoint: COSMOSHUB_ENDPOINT,
-      },
     );
 
     expect(isDeliverTxSuccess(tx)).toBe(true);
@@ -98,7 +104,13 @@ describe("transaction execution", () => {
     const faucet = new FaucetClient(OSMOSIS_FAUCET);
     await faucet.credit(signerAddress, "uosmo");
 
-    const client = new SkipAPIClient(SKIP_API_URL);
+    const client = new SkipAPIClient(SKIP_API_URL, {
+      endpointOptions: {
+        getRpcEndpointForChain: async () => {
+          return OSMOSIS_ENDPOINT;
+        },
+      },
+    });
 
     const message = {
       chainID: "osmosis-1",
@@ -112,9 +124,6 @@ describe("transaction execution", () => {
       signer,
       message,
       coin(1000000, "uosmo"),
-      {
-        rpcEndpoint: OSMOSIS_ENDPOINT,
-      },
     );
 
     // CheckTx must pass but the execution will fail in DeliverTx due to invalid contract address
@@ -125,7 +134,13 @@ describe("transaction execution", () => {
   });
 
   it("signs and executes a cosmwasm execute message (amino)", async () => {
-    const client = new SkipAPIClient(SKIP_API_URL);
+    const client = new SkipAPIClient(SKIP_API_URL, {
+      endpointOptions: {
+        getRpcEndpointForChain: async () => {
+          return OSMOSIS_ENDPOINT;
+        },
+      },
+    });
 
     const signer = await Secp256k1HdWallet.fromMnemonic(
       "opinion knife other balcony surge more bamboo canoe romance ask argue teach anxiety adjust spike mystery wolf alone torch tail six decide wash alley",
@@ -153,9 +168,6 @@ describe("transaction execution", () => {
       signer,
       message,
       coin(1000000, "uosmo"),
-      {
-        rpcEndpoint: OSMOSIS_ENDPOINT,
-      },
     );
 
     // CheckTx must pass but the execution will fail in DeliverTx due to invalid contract address

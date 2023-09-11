@@ -10,5 +10,9 @@
   },
   "devDependencies": {
     "turbo": "^1.10.13"
+  },
+  "dependencies": {
+    "@injectivelabs/sdk-ts": "^1.12.1",
+    "@injectivelabs/utils": "^1.12.1"
   }
 }

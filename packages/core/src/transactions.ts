@@ -1,30 +1,12 @@
 import { toUtf8 } from "@cosmjs/encoding";
 import { EncodeObject } from "@cosmjs/proto-signing";
-import { StargateClient } from "@cosmjs/stargate";
+import MsgTransferInjective from "@injectivelabs/sdk-ts/dist/cjs/core/modules/ibc/msgs/MsgTransfer";
+import { Msgs } from "@injectivelabs/sdk-ts/dist/cjs/core/modules/msgs";
+import MsgExecuteContractInjective from "@injectivelabs/sdk-ts/dist/cjs/core/modules/wasm/msgs/MsgExecuteContract";
 import { MsgExecuteContract } from "cosmjs-types/cosmwasm/wasm/v1/tx";
 import { MsgTransfer } from "cosmjs-types/ibc/applications/transfer/v1/tx";
 
 import { MultiChainMsg } from "./types";
-
-export async function getAccountNumberAndSequence(
-  address: string,
-  rpcEndpoint: string,
-) {
-  const client = await StargateClient.connect(rpcEndpoint);
-
-  const account = await client.getAccount(address);
-
-  if (!account) {
-    throw new Error("Failed to retrieve account");
-  }
-
-  client.disconnect();
-
-  return {
-    accountNumber: account.accountNumber,
-    sequence: account.sequence,
-  };
-}
 
 export function getEncodeObjectFromMultiChainMessage(
   message: MultiChainMsg,
@@ -63,6 +45,35 @@ export function getEncodeObjectFromMultiChainMessage(
     typeUrl: message.msgTypeURL,
     value: msgJson,
   };
+}
+
+export function getEncodeObjectFromMultiChainMessageInjective(
+  message: MultiChainMsg,
+): Msgs {
+  const msgJson = JSON.parse(message.msg);
+
+  if (message.msgTypeURL === "/ibc.applications.transfer.v1.MsgTransfer") {
+    return MsgTransferInjective.fromJSON({
+      port: msgJson.source_port,
+      channelId: msgJson.source_channel,
+      amount: msgJson.token,
+      sender: msgJson.sender,
+      receiver: msgJson.receiver,
+      timeout: msgJson.timeout_timestamp,
+      memo: msgJson.memo,
+    });
+  }
+
+  if (message.msgTypeURL === "/cosmwasm.wasm.v1.MsgExecuteContract") {
+    return MsgExecuteContractInjective.fromJSON({
+      sender: msgJson.sender,
+      contractAddress: msgJson.contract,
+      msg: toUtf8(JSON.stringify(msgJson.msg)),
+      funds: msgJson.funds,
+    });
+  }
+
+  throw new Error("Unsupported message type");
 }
 
 export function getGasAmountForMessage(message: MultiChainMsg) {

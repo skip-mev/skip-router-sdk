@@ -23,16 +23,28 @@ import {
   defaultRegistryTypes,
   SignerData,
   SigningStargateClient,
+  StargateClient,
   StdFee,
 } from "@cosmjs/stargate";
+import {
+  ChainRestAuthApi,
+  ChainRestTendermintApi,
+} from "@injectivelabs/sdk-ts/dist/cjs/client/chain/rest";
+import {
+  BigNumberInBase,
+  DEFAULT_BLOCK_TIMEOUT_HEIGHT,
+} from "@injectivelabs/utils";
+import axios from "axios";
+import { chains } from "chain-registry";
 import { SignMode } from "cosmjs-types/cosmos/tx/signing/v1beta1/signing";
 import { TxRaw } from "cosmjs-types/cosmos/tx/v1beta1/tx";
 import { MsgExecuteContract } from "cosmjs-types/cosmwasm/wasm/v1/tx";
 
+import { createTransaction } from "./injective";
 import { RequestClient } from "./request-client";
 import {
-  getAccountNumberAndSequence,
   getEncodeObjectFromMultiChainMessage,
+  getEncodeObjectFromMultiChainMessageInjective,
   getGasAmountForMessage,
 } from "./transactions";
 import {
@@ -81,7 +93,22 @@ import {
   TxStatusResponseJSON,
 } from "./types";
 
+const wait = (ms: number) => new Promise((resolve) => setTimeout(resolve, ms));
+
 export const SKIP_API_URL = "https://api.skip.money/v1";
+
+export type EndpointOptions = {
+  rpc?: string;
+  rest?: string;
+};
+
+export interface SkipAPIClientOptions {
+  endpointOptions?: {
+    endpoints?: Record<string, EndpointOptions>;
+    getRpcEndpointForChain?: (chainID: string) => Promise<string>;
+    getRestEndpointForChain?: (chainID: string) => Promise<string>;
+  };
+}
 
 export class SkipAPIClient {
   private requestClient: RequestClient;
@@ -89,7 +116,13 @@ export class SkipAPIClient {
   private aminoTypes: AminoTypes;
   private registry: Registry;
 
-  constructor(apiURL: string) {
+  private endpointOptions: {
+    endpoints?: Record<string, EndpointOptions>;
+    getRpcEndpointForChain?: (chainID: string) => Promise<string>;
+    getRestEndpointForChain?: (chainID: string) => Promise<string>;
+  };
+
+  constructor(apiURL: string, options: SkipAPIClientOptions = {}) {
     this.requestClient = new RequestClient(apiURL);
 
     this.aminoTypes = new AminoTypes({
@@ -102,6 +135,8 @@ export class SkipAPIClient {
       "/cosmwasm.wasm.v1.MsgExecuteContract",
       MsgExecuteContract,
     );
+
+    this.endpointOptions = options.endpointOptions ?? {};
   }
 
   async assets(options: AssetsRequest = {}): Promise<Record<string, Asset[]>> {
@@ -153,9 +188,6 @@ export class SkipAPIClient {
     signer: OfflineSigner,
     message: MultiChainMsg,
     feeAmount: Coin,
-    options: {
-      rpcEndpoint: string;
-    },
   ) {
     const accounts = await signer.getAccounts();
     const accountFromSigner = accounts.find(
@@ -166,9 +198,11 @@ export class SkipAPIClient {
       throw new Error("Failed to retrieve account from signer");
     }
 
-    const { accountNumber, sequence } = await getAccountNumberAndSequence(
+    const endpoint = await this.getRpcEndpointForChain(message.chainID);
+
+    const { accountNumber, sequence } = await this.getAccountNumberAndSequence(
       signerAddress,
-      options.rpcEndpoint,
+      message.chainID,
     );
 
     const gas = getGasAmountForMessage(message);
@@ -201,7 +235,7 @@ export class SkipAPIClient {
     const txBytes = TxRaw.encode(rawTx).finish();
 
     const stargateClient = await SigningStargateClient.connectWithSigner(
-      options.rpcEndpoint,
+      endpoint,
       signer,
     );
 
@@ -217,26 +251,26 @@ export class SkipAPIClient {
     fee: StdFee,
     { accountNumber, sequence, chainId }: SignerData,
   ): Promise<TxRaw> {
-    // TODO: Uncomment when EVMOS and Injective are supported
-    // if (multiChainMessage.chain_id.includes("evmos")) {
-    //   return this.signMultiChainMessageDirectEvmos(
-    //     signerAddress,
-    //     signer,
-    //     multiChainMessage,
-    //     fee,
-    //     { accountNumber, sequence, chainId }
-    //   );
-    // }
+    if (multiChainMessage.chainID.includes("evmos")) {
+      return this.signMultiChainMessageDirectEvmos(
+        signerAddress,
+        signer,
+        multiChainMessage,
+        fee,
+        { accountNumber, sequence, chainId },
+      );
+    }
 
-    // if (multiChainMessage.chain_id.includes("injective")) {
-    //   return this.signMultiChainMessageDirectInjective(
-    //     signerAddress,
-    //     signer,
-    //     multiChainMessage,
-    //     fee,
-    //     { accountNumber, sequence, chainId }
-    //   );
-    // }
+    if (multiChainMessage.chainID.includes("injective")) {
+      // throw new Error("Injective is not supported yet");
+      return this.signMultiChainMessageDirectInjective(
+        signerAddress,
+        signer,
+        multiChainMessage,
+        fee,
+        { accountNumber, sequence, chainId },
+      );
+    }
 
     const accounts = await signer.getAccounts();
     const accountFromSigner = accounts.find(
@@ -288,6 +322,112 @@ export class SkipAPIClient {
       bodyBytes: signed.bodyBytes,
       authInfoBytes: signed.authInfoBytes,
       signatures: [fromBase64(signature.signature)],
+    });
+  }
+
+  // TODO: This is previously existing code, just moved to a new function.
+  // Using signMultiChainMessageDirect on evmos DOES currently fail.
+  // I need to investigate what exactly is even different about this and hopefully remove it all together.
+  async signMultiChainMessageDirectEvmos(
+    signerAddress: string,
+    signer: OfflineDirectSigner,
+    multiChainMessage: MultiChainMsg,
+    fee: StdFee,
+    { accountNumber, sequence, chainId }: SignerData,
+  ): Promise<TxRaw> {
+    const accounts = await signer.getAccounts();
+    const accountFromSigner = accounts.find(
+      (account) => account.address === signerAddress,
+    );
+
+    if (!accountFromSigner) {
+      throw new Error("Failed to retrieve account from signer");
+    }
+
+    const message =
+      getEncodeObjectFromMultiChainMessageInjective(multiChainMessage);
+
+    const pk = Buffer.from(accountFromSigner.pubkey).toString("base64");
+
+    const { signDoc } = createTransaction({
+      pubKey: pk,
+      chainId: chainId,
+      message: [message],
+      sequence,
+      accountNumber,
+      timeoutHeight: 0,
+      fee,
+    });
+
+    const directSignResponse = await signer.signDirect(
+      signerAddress,
+      // @ts-expect-error TODO: Fix this
+      signDoc,
+    );
+
+    return TxRaw.fromPartial({
+      bodyBytes: directSignResponse.signed.bodyBytes,
+      authInfoBytes: directSignResponse.signed.authInfoBytes,
+      signatures: [fromBase64(directSignResponse.signature.signature)],
+    });
+  }
+
+  // TODO: This is previously existing code, just moved to a new function.
+  // Using signMultiChainMessageDirect on injective DOES currently fail.
+  // I need to investigate what exactly is even different about this and hopefully remove it all together.
+  async signMultiChainMessageDirectInjective(
+    signerAddress: string,
+    signer: OfflineDirectSigner,
+    multiChainMessage: MultiChainMsg,
+    fee: StdFee,
+    { accountNumber, sequence, chainId }: SignerData,
+  ): Promise<TxRaw> {
+    const accounts = await signer.getAccounts();
+    const accountFromSigner = accounts.find(
+      (account) => account.address === signerAddress,
+    );
+
+    if (!accountFromSigner) {
+      throw new Error("Failed to retrieve account from signer");
+    }
+
+    const restEndpoint = await this.getRestEndpointForChain(
+      multiChainMessage.chainID,
+    );
+
+    /** Block Details */
+    const chainRestTendermintApi = new ChainRestTendermintApi(restEndpoint);
+    const latestBlock = await chainRestTendermintApi.fetchLatestBlock();
+    const latestHeight = latestBlock.header.height;
+    const timeoutHeight = new BigNumberInBase(latestHeight).plus(
+      DEFAULT_BLOCK_TIMEOUT_HEIGHT,
+    );
+
+    const pk = Buffer.from(accountFromSigner.pubkey).toString("base64");
+
+    const message =
+      getEncodeObjectFromMultiChainMessageInjective(multiChainMessage);
+
+    const { signDoc } = createTransaction({
+      pubKey: pk,
+      chainId: chainId,
+      message: [message],
+      sequence,
+      accountNumber,
+      timeoutHeight: timeoutHeight.toNumber(),
+      fee,
+    });
+
+    const directSignResponse = await signer.signDirect(
+      signerAddress,
+      // @ts-expect-error TODO: Fix this
+      signDoc,
+    );
+
+    return TxRaw.fromPartial({
+      bodyBytes: directSignResponse.signed.bodyBytes,
+      authInfoBytes: directSignResponse.signed.authInfoBytes,
+      signatures: [fromBase64(directSignResponse.signature.signature)],
     });
   }
 
@@ -445,11 +585,147 @@ export class SkipAPIClient {
     return txStatusResponseFromJSON(response);
   }
 
+  async waitForTransaction(chainID: string, txHash: string) {
+    await this.trackTransaction(chainID, txHash);
+
+    // eslint-disable-next-line no-constant-condition
+    while (true) {
+      const txStatusResponse = await this.transactionStatus(chainID, txHash);
+
+      if (txStatusResponse.status === "STATE_COMPLETED") {
+        return txStatusResponse;
+      }
+
+      await wait(1000);
+    }
+  }
+
   async venues(): Promise<SwapVenue[]> {
     const response = await this.requestClient.get<{ venues: SwapVenueJSON[] }>(
       "/fungible/venues",
     );
 
     return response.venues.map((venue) => swapVenueFromJSON(venue));
+  }
+
+  async getAccountNumberAndSequence(address: string, chainID: string) {
+    if (chainID.includes("evmos")) {
+      return this.getAccountNumberAndSequenceEvmos(address, chainID);
+    }
+
+    if (chainID.includes("injective")) {
+      return this.getAccountNumberAndSequenceInjective(address, chainID);
+    }
+
+    const endpoint = await this.getRpcEndpointForChain(chainID);
+
+    const client = await StargateClient.connect(endpoint);
+
+    const account = await client.getAccount(address);
+
+    if (!account) {
+      throw new Error("Failed to retrieve account");
+    }
+
+    client.disconnect();
+
+    return {
+      accountNumber: account.accountNumber,
+      sequence: account.sequence,
+    };
+  }
+
+  async getAccountNumberAndSequenceEvmos(address: string, chainID: string) {
+    const endpoint = await this.getRestEndpointForChain(chainID);
+
+    const response = await axios.get(
+      `${endpoint}/cosmos/auth/v1beta1/accounts/${address}`,
+    );
+
+    const accountNumber = response.data.account.base_account
+      .account_number as number;
+    const sequence = response.data.account.base_account.sequence as number;
+
+    return {
+      accountNumber,
+      sequence,
+    };
+  }
+
+  async getAccountNumberAndSequenceInjective(address: string, chainID: string) {
+    const endpoint = await this.getRestEndpointForChain(chainID);
+
+    const chainRestAuthApi = new ChainRestAuthApi(endpoint);
+
+    const accountDetailsResponse = await chainRestAuthApi.fetchAccount(address);
+
+    return {
+      accountNumber: parseInt(
+        accountDetailsResponse.account.base_account.account_number,
+      ),
+      sequence: parseInt(accountDetailsResponse.account.base_account.sequence),
+    };
+  }
+
+  private async getRpcEndpointForChain(chainID: string) {
+    if (this.endpointOptions.getRpcEndpointForChain) {
+      return this.endpointOptions.getRpcEndpointForChain(chainID);
+    }
+
+    if (
+      this.endpointOptions.endpoints &&
+      this.endpointOptions.endpoints[chainID]
+    ) {
+      const endpointOptions = this.endpointOptions.endpoints[chainID];
+
+      if (endpointOptions.rpc) {
+        return endpointOptions.rpc;
+      }
+    }
+
+    const chain = chains.find((chain) => chain.chain_id === chainID);
+
+    if (!chain) {
+      throw new Error(`Failed to find chain with ID ${chainID} in registry`);
+    }
+
+    const endpoint = chain.apis?.rpc?.[0].address;
+
+    if (!endpoint) {
+      throw new Error(`Failed to find RPC endpoint for chain ${chainID}`);
+    }
+
+    return endpoint;
+  }
+
+  private async getRestEndpointForChain(chainID: string) {
+    if (this.endpointOptions.getRestEndpointForChain) {
+      return this.endpointOptions.getRestEndpointForChain(chainID);
+    }
+
+    if (
+      this.endpointOptions.endpoints &&
+      this.endpointOptions.endpoints[chainID]
+    ) {
+      const endpointOptions = this.endpointOptions.endpoints[chainID];
+
+      if (endpointOptions.rest) {
+        return endpointOptions.rest;
+      }
+    }
+
+    const chain = chains.find((chain) => chain.chain_id === chainID);
+
+    if (!chain) {
+      throw new Error(`Failed to find chain with ID ${chainID} in registry`);
+    }
+
+    const endpoint = chain.apis?.rest?.[0].address;
+
+    if (!endpoint) {
+      throw new Error(`Failed to find REST endpoint for chain ${chainID}`);
+    }
+
+    return endpoint;
   }
 }
