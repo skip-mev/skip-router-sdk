@@ -904,7 +904,7 @@ describe("client", () => {
                   src_chain_id: "axelar-dojo-1",
                   dst_chain_id: "osomosis-1",
                   state: "TRANSFER_SUCCESS",
-                  packet: {
+                  packet_txs: {
                     send_tx: {
                       chain_id: "axelar-dojo-1",
                       tx_hash:
@@ -928,7 +928,7 @@ describe("client", () => {
                   src_chain_id: "osmosis-1",
                   dst_chain_id: "cosmoshub-4",
                   state: "TRANSFER_SUCCESS",
-                  packet: {
+                  packet_txs: {
                     send_tx: {
                       chain_id: "osmosis-1",
                       tx_hash:
@@ -978,7 +978,7 @@ describe("client", () => {
             srcChainID: "axelar-dojo-1",
             dstChainID: "osomosis-1",
             state: "TRANSFER_SUCCESS",
-            packet: {
+            packetTXs: {
               sendTx: {
                 chainID: "axelar-dojo-1",
                 txHash:
@@ -1002,7 +1002,7 @@ describe("client", () => {
             srcChainID: "osmosis-1",
             dstChainID: "cosmoshub-4",
             state: "TRANSFER_SUCCESS",
-            packet: {
+            packetTXs: {
               sendTx: {
                 chainID: "osmosis-1",
                 txHash:
