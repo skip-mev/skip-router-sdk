@@ -1,4 +1,5 @@
 import {
+  coin,
   encodeSecp256k1Pubkey,
   makeSignDoc as makeSignDocAmino,
   OfflineAminoSigner,
@@ -103,6 +104,7 @@ export type EndpointOptions = {
 };
 
 export interface SkipAPIClientOptions {
+  getOfflineSigner: (chainID: string) => Promise<OfflineSigner>;
   endpointOptions?: {
     endpoints?: Record<string, EndpointOptions>;
     getRpcEndpointForChain?: (chainID: string) => Promise<string>;
@@ -122,7 +124,9 @@ export class SkipAPIClient {
     getRestEndpointForChain?: (chainID: string) => Promise<string>;
   };
 
-  constructor(apiURL: string, options: SkipAPIClientOptions = {}) {
+  private getOfflineSigner: (chainID: string) => Promise<OfflineSigner>;
+
+  constructor(apiURL: string, options: SkipAPIClientOptions) {
     this.requestClient = new RequestClient(apiURL);
 
     this.aminoTypes = new AminoTypes({
@@ -137,6 +141,7 @@ export class SkipAPIClient {
     );
 
     this.endpointOptions = options.endpointOptions ?? {};
+    this.getOfflineSigner = options.getOfflineSigner;
   }
 
   async assets(options: AssetsRequest = {}): Promise<Record<string, Asset[]>> {
@@ -181,6 +186,109 @@ export class SkipAPIClient {
     );
 
     return response.chains.map((chain) => chainFromJSON(chain));
+  }
+
+  async executeRoute(
+    route: RouteResponse,
+    userAddresses: Record<string, string>,
+    {
+      onTransactionSuccess,
+    }: {
+      onTransactionSuccess?: (txStatus: TxStatusResponse) => Promise<void>;
+    } = {},
+  ) {
+    const messages = await this.messages({
+      sourceAssetDenom: route.sourceAssetDenom,
+      sourceAssetChainID: route.sourceAssetChainID,
+      destAssetDenom: route.destAssetDenom,
+      destAssetChainID: route.destAssetChainID,
+      amountIn: route.amountIn,
+      amountOut: route.estimatedAmountOut ?? "0",
+      addressList: route.chainIDs.map((chainID) => userAddresses[chainID]),
+      operations: route.operations,
+    });
+
+    const feeInfos: Record<
+      string,
+      {
+        denom: string;
+        low_gas_price?: number | undefined;
+        average_gas_price?: number | undefined;
+      }
+    > = {};
+
+    // check balances on chains where a tx is initiated
+    for (let i = 0; i < messages.length; i++) {
+      const multiHopMsg = messages[i];
+
+      const chain = chains.find(
+        (chain) => chain.chain_id === multiHopMsg.chainID,
+      );
+
+      if (!chain) {
+        throw new Error(
+          `Failed to find chain with ID ${multiHopMsg.chainID} in registry`,
+        );
+      }
+
+      const feeInfo = chain.fees?.fee_tokens[0];
+      if (!feeInfo) {
+        throw new Error("No fee info found");
+      }
+
+      feeInfos[multiHopMsg.chainID] = feeInfo;
+
+      const gasNeeded = getGasAmountForMessage(multiHopMsg);
+
+      let averageGasPrice = 0;
+      if (feeInfo.low_gas_price) {
+        averageGasPrice = feeInfo.low_gas_price;
+      } else if (feeInfo.average_gas_price) {
+        averageGasPrice = feeInfo.average_gas_price;
+      }
+
+      const amountNeeded = averageGasPrice * parseInt(gasNeeded);
+
+      const endpoint = await this.getRpcEndpointForChain(multiHopMsg.chainID);
+
+      const stargateClient = await StargateClient.connect(endpoint);
+
+      const balance = await stargateClient.getBalance(
+        userAddresses[multiHopMsg.chainID],
+        feeInfo.denom,
+      );
+
+      if (parseInt(balance.amount) < amountNeeded) {
+        throw new Error(
+          `Insufficient fee token to initiate transfer on ${multiHopMsg.chainID}. Need ${amountNeeded} ${feeInfo.denom}, but only have ${balance.amount} ${feeInfo.denom}.`,
+        );
+      }
+    }
+
+    // execute txs
+    for (let i = 0; i < messages.length; i++) {
+      const multiHopMsg = messages[i];
+
+      const feeInfo = feeInfos[multiHopMsg.chainID];
+
+      const signer = await this.getOfflineSigner(multiHopMsg.chainID);
+
+      const tx = await this.executeMultiChainMessage(
+        userAddresses[multiHopMsg.chainID],
+        signer,
+        multiHopMsg,
+        coin(0, feeInfo.denom),
+      );
+
+      const txStatusResponse = await this.waitForTransaction(
+        multiHopMsg.chainID,
+        tx.transactionHash,
+      );
+
+      if (onTransactionSuccess) {
+        await onTransactionSuccess(txStatusResponse);
+      }
+    }
   }
 
   async executeMultiChainMessage(

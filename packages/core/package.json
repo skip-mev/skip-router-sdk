@@ -16,7 +16,8 @@
     "e2e:setup": "make setup && make setup-kind",
     "e2e:stop": "make stop",
     "e2e:clean": "make stop clean",
-    "e2e:test": "vitest --dangerouslyIgnoreUnhandledErrors -c vitest.e2e.config.ts --test-timeout=30000"
+    "e2e:test": "vitest --dangerouslyIgnoreUnhandledErrors -c vitest.e2e.config.ts --test-timeout=30000",
+    "watch:cjs": "tsc -w -p tsconfig/tsconfig.cjs.json"
   },
   "author": "",
   "license": "ISC",

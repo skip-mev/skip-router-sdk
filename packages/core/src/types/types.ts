@@ -486,14 +486,14 @@ export type TransferInfoJSON = {
   src_chain_id: string;
   dst_chain_id: string;
   state: TransferState;
-  packet: PacketJSON;
+  packet_txs: PacketJSON;
 };
 
 export type TransferInfo = {
   srcChainID: string;
   dstChainID: string;
   state: TransferState;
-  packet: Packet;
+  packetTXs: Packet;
 };
 
 export type NextBlockingTransferJSON = {
