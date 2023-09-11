@@ -8,22 +8,6 @@ import { MsgTransfer } from "cosmjs-types/ibc/applications/transfer/v1/tx";
 
 import { MultiChainMsg } from "./types";
 
-// async function getAccountNumberAndSequenceInjective(
-//   address: string,
-//   endpoint: string,
-// ) {
-//   const chainRestAuthApi = new ChainRestAuthApi(endpoint);
-
-//   const accountDetailsResponse = await chainRestAuthApi.fetchAccount(address);
-
-//   return {
-//     accountNumber: parseInt(
-//       accountDetailsResponse.account.base_account.account_number,
-//     ),
-//     sequence: parseInt(accountDetailsResponse.account.base_account.sequence),
-//   };
-// }
-
 export function getEncodeObjectFromMultiChainMessage(
   message: MultiChainMsg,
 ): EncodeObject {
