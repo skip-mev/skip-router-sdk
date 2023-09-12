@@ -69,7 +69,11 @@ describe("client", () => {
         }),
       );
 
-      const client = new SkipAPIClient(SKIP_API_URL);
+      const client = new SkipAPIClient(SKIP_API_URL, {
+        getOfflineSigner: async () => {
+          throw new Error("not implemented");
+        },
+      });
 
       const response = await client.chains();
 
@@ -178,7 +182,11 @@ describe("client", () => {
         }),
       );
 
-      const client = new SkipAPIClient(SKIP_API_URL);
+      const client = new SkipAPIClient(SKIP_API_URL, {
+        getOfflineSigner: async () => {
+          throw new Error("not implemented");
+        },
+      });
 
       const assets = await client.assets();
 
@@ -272,7 +280,11 @@ describe("client", () => {
         ),
       );
 
-      const client = new SkipAPIClient(SKIP_API_URL);
+      const client = new SkipAPIClient(SKIP_API_URL, {
+        getOfflineSigner: async () => {
+          throw new Error("not implemented");
+        },
+      });
 
       const assets = await client.assets({
         chainID: "osmosis-1",
@@ -312,7 +324,11 @@ describe("client", () => {
         }),
       );
 
-      const client = new SkipAPIClient(SKIP_API_URL);
+      const client = new SkipAPIClient(SKIP_API_URL, {
+        getOfflineSigner: async () => {
+          throw new Error("not implemented");
+        },
+      });
 
       await expect(client.assets()).rejects.toThrow("Invalid chain_id");
     });
@@ -331,7 +347,11 @@ describe("client", () => {
         }),
       );
 
-      const client = new SkipAPIClient(SKIP_API_URL);
+      const client = new SkipAPIClient(SKIP_API_URL, {
+        getOfflineSigner: async () => {
+          throw new Error("not implemented");
+        },
+      });
 
       await expect(client.assets()).rejects.toThrow("internal server error");
     });
@@ -388,7 +408,11 @@ describe("client", () => {
         ),
       );
 
-      const client = new SkipAPIClient(SKIP_API_URL);
+      const client = new SkipAPIClient(SKIP_API_URL, {
+        getOfflineSigner: async () => {
+          throw new Error("not implemented");
+        },
+      });
 
       const assetsFromSource = await client.assetsFromSource({
         sourceAssetChainID: "osmosis-1",
@@ -446,7 +470,11 @@ describe("client", () => {
         ),
       );
 
-      const client = new SkipAPIClient(SKIP_API_URL);
+      const client = new SkipAPIClient(SKIP_API_URL, {
+        getOfflineSigner: async () => {
+          throw new Error("not implemented");
+        },
+      });
 
       await expect(
         client.assetsFromSource({
@@ -473,7 +501,11 @@ describe("client", () => {
         ),
       );
 
-      const client = new SkipAPIClient(SKIP_API_URL);
+      const client = new SkipAPIClient(SKIP_API_URL, {
+        getOfflineSigner: async () => {
+          throw new Error("not implemented");
+        },
+      });
 
       await expect(
         client.assetsFromSource({
@@ -517,7 +549,11 @@ describe("client", () => {
         ),
       );
 
-      const client = new SkipAPIClient(SKIP_API_URL);
+      const client = new SkipAPIClient(SKIP_API_URL, {
+        getOfflineSigner: async () => {
+          throw new Error("not implemented");
+        },
+      });
 
       const response = await client.recommendAssets({
         sourceAssetChainID: "osmosis-1",
@@ -566,7 +602,11 @@ describe("client", () => {
         }),
       );
 
-      const client = new SkipAPIClient(SKIP_API_URL);
+      const client = new SkipAPIClient(SKIP_API_URL, {
+        getOfflineSigner: async () => {
+          throw new Error("not implemented");
+        },
+      });
 
       const response = await client.messages({
         sourceAssetDenom: "uosmo",
@@ -683,7 +723,11 @@ describe("client", () => {
         }),
       );
 
-      const client = new SkipAPIClient(SKIP_API_URL);
+      const client = new SkipAPIClient(SKIP_API_URL, {
+        getOfflineSigner: async () => {
+          throw new Error("not implemented");
+        },
+      });
 
       const response = await client.route({
         sourceAssetChainID: "osmosis-1",
@@ -762,7 +806,11 @@ describe("client", () => {
         }),
       );
 
-      const client = new SkipAPIClient(SKIP_API_URL);
+      const client = new SkipAPIClient(SKIP_API_URL, {
+        getOfflineSigner: async () => {
+          throw new Error("not implemented");
+        },
+      });
 
       const response = await client.venues();
 
@@ -793,7 +841,11 @@ describe("client", () => {
         }),
       );
 
-      const client = new SkipAPIClient(SKIP_API_URL);
+      const client = new SkipAPIClient(SKIP_API_URL, {
+        getOfflineSigner: async () => {
+          throw new Error("not implemented");
+        },
+      });
 
       const response = await client.submitTransaction(
         "cosmoshub-4",
@@ -821,7 +873,11 @@ describe("client", () => {
         }),
       );
 
-      const client = new SkipAPIClient(SKIP_API_URL);
+      const client = new SkipAPIClient(SKIP_API_URL, {
+        getOfflineSigner: async () => {
+          throw new Error("not implemented");
+        },
+      });
 
       const response = await client.trackTransaction(
         "cosmoshub-4",
@@ -848,7 +904,7 @@ describe("client", () => {
                   src_chain_id: "axelar-dojo-1",
                   dst_chain_id: "osomosis-1",
                   state: "TRANSFER_SUCCESS",
-                  packet: {
+                  packet_txs: {
                     send_tx: {
                       chain_id: "axelar-dojo-1",
                       tx_hash:
@@ -872,7 +928,7 @@ describe("client", () => {
                   src_chain_id: "osmosis-1",
                   dst_chain_id: "cosmoshub-4",
                   state: "TRANSFER_SUCCESS",
-                  packet: {
+                  packet_txs: {
                     send_tx: {
                       chain_id: "osmosis-1",
                       tx_hash:
@@ -904,7 +960,11 @@ describe("client", () => {
         }),
       );
 
-      const client = new SkipAPIClient(SKIP_API_URL);
+      const client = new SkipAPIClient(SKIP_API_URL, {
+        getOfflineSigner: async () => {
+          throw new Error("not implemented");
+        },
+      });
 
       const response = await client.transactionStatus(
         "cosmoshub-4",
@@ -918,7 +978,7 @@ describe("client", () => {
             srcChainID: "axelar-dojo-1",
             dstChainID: "osomosis-1",
             state: "TRANSFER_SUCCESS",
-            packet: {
+            packetTXs: {
               sendTx: {
                 chainID: "axelar-dojo-1",
                 txHash:
@@ -942,7 +1002,7 @@ describe("client", () => {
             srcChainID: "osmosis-1",
             dstChainID: "cosmoshub-4",
             state: "TRANSFER_SUCCESS",
-            packet: {
+            packetTXs: {
               sendTx: {
                 chainID: "osmosis-1",
                 txHash:

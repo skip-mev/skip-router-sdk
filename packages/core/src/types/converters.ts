@@ -739,7 +739,9 @@ export function transferInfoFromJSON(
     srcChainID: transferInfoJSON.src_chain_id,
     dstChainID: transferInfoJSON.dst_chain_id,
     state: transferInfoJSON.state,
-    packet: transferInfoJSON.packet && packetFromJSON(transferInfoJSON.packet),
+    packetTXs:
+      transferInfoJSON.packet_txs &&
+      packetFromJSON(transferInfoJSON.packet_txs),
   };
 }
 
@@ -750,7 +752,7 @@ export function transferInfoToJSON(
     src_chain_id: transferInfo.srcChainID,
     dst_chain_id: transferInfo.dstChainID,
     state: transferInfo.state,
-    packet: transferInfo.packet && packetToJSON(transferInfo.packet),
+    packet_txs: transferInfo.packetTXs && packetToJSON(transferInfo.packetTXs),
   };
 }
 
