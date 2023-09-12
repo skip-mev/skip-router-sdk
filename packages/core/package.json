@@ -1,6 +1,6 @@
 {
   "name": "@skip-router/core",
-  "version": "0.0.3",
+  "version": "0.0.4",
   "description": "",
   "main": "dist/cjs/index.js",
   "types": "dist/cjs/index.d.ts",
@@ -17,7 +17,8 @@
     "e2e:stop": "make stop",
     "e2e:clean": "make stop clean",
     "e2e:test": "vitest --dangerouslyIgnoreUnhandledErrors -c vitest.e2e.config.ts --test-timeout=30000",
-    "watch:cjs": "tsc -w -p tsconfig/tsconfig.cjs.json"
+    "watch:cjs": "tsc -w -p tsconfig/tsconfig.cjs.json",
+    "publish": "npm run build && npm publish --access public"
   },
   "author": "",
   "license": "ISC",
