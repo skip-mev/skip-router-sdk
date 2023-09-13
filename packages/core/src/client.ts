@@ -103,7 +103,7 @@ export type EndpointOptions = {
   rest?: string;
 };
 
-export interface SkipAPIClientOptions {
+export interface SkipRouterClientOptions {
   getOfflineSigner?: (chainID: string) => Promise<OfflineSigner>;
   endpointOptions?: {
     endpoints?: Record<string, EndpointOptions>;
@@ -117,7 +117,7 @@ export type ExecuteRouteOptions = {
   onTransactionSuccess?: (txStatus: TxStatusResponse) => Promise<void>;
 };
 
-export class SkipAPIClient {
+export class SkipRouter {
   private requestClient: RequestClient;
 
   private aminoTypes: AminoTypes;
@@ -131,7 +131,7 @@ export class SkipAPIClient {
 
   private getOfflineSigner?: (chainID: string) => Promise<OfflineSigner>;
 
-  constructor(apiURL: string, options: SkipAPIClientOptions) {
+  constructor(apiURL: string, options: SkipRouterClientOptions) {
     this.requestClient = new RequestClient(apiURL);
 
     this.aminoTypes = new AminoTypes({
