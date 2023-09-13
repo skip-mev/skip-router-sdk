@@ -1,6 +1,12 @@
-# Skip SDK
+# `@skip-router/core`
 
-WIP SDK for the Skip API. Not ready for use.
+Provides core functionality for interacting with the Skip API.
+
+## Installation
+
+```bash
+npm install @skip-router/core
+```
 
 ## Running Unit Tests
 
