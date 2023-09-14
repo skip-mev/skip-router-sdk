@@ -1,0 +1,16 @@
+{
+  "name": "examples",
+  "version": "0.0.0",
+  "private": true,
+  "scripts": {
+    "start": "npx ts-node src/index.ts"
+  },
+  "dependencies": {
+    "@cosmjs/proto-signing": "^0.31.1",
+    "@keplr-wallet/types": "^0.12.23",
+    "@skip-router/core": "*"
+  },
+  "devDependencies": {
+    "typescript": "^5.2.2"
+  }
+}
