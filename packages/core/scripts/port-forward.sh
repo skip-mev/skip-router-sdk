@@ -54,6 +54,9 @@ if [[ $num_chains -lt 0 ]]; then
 fi
 for i in $(seq 0 $num_chains); do
   chain=$(yq -r ".chains[$i].name" ${CONFIGFILE} )
+  if [[ "$chain" == "evmos_9000-1" ]]; then
+    chain="evmos-9000-1"
+  fi
   localrpc=$(yq -r ".chains[$i].ports.rpc" ${CONFIGFILE} )
   locallcd=$(yq -r ".chains[$i].ports.rest" ${CONFIGFILE} )
   localexp=$(yq -r ".chains[$i].ports.exposer" ${CONFIGFILE})
