@@ -55,6 +55,7 @@ relayers:
     resources:
       cpu: "0.1"
       memory: "100M"
+
   - name: injective-osmos
     type: hermes
     replicas: 1
@@ -64,12 +65,14 @@ relayers:
     resources:
       cpu: "0.1"
       memory: "100M"      
+
   - name: evmos-osmos
     type: hermes
     replicas: 1
     chains:
       - evmos_9000-1
       - osmosis-1      
+      
     resources:
       cpu: "0.1"
       memory: "100M"            
