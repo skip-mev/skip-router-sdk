@@ -6,9 +6,6 @@ chains:
       rest: 1313
       rpc: 26653
       faucet: 8082
-    # resources:
-      # cpu: "0.1"
-      # memory: "100M"
 
   - name: gaia-1
     type: cosmos
@@ -17,9 +14,6 @@ chains:
       rest: 1317
       rpc: 26657
       faucet: 8083
-    # resources:
-      # cpu: "0.1"
-      # memory: "100M"
 
   - name: evmos_9000-1
     type: evmos
@@ -29,9 +23,6 @@ chains:
     ports:
       rest: 1318
       rpc: 26658
-    # resources:
-      # cpu: "0.1"
-      # memory: "100M"   
       
   - name: injective-1
     type: injective
@@ -40,10 +31,7 @@ chains:
       enabled: false
     ports:
       rest: 1319
-      rpc: 26659   
-    # resources:
-      # cpu: "0.1"
-      # memory: "100M"    
+      rpc: 26659      
 
 relayers:
   - name: osmos-gaia
@@ -52,29 +40,20 @@ relayers:
     chains:
       - osmosis-1
       - gaia-1
-    # resources:
-      # cpu: "0.1"
-      # memory: "100M"
 
   - name: injective-osmos
     type: hermes
     replicas: 1
     chains:
       - injective-1
-      - osmosis-1
-    # resources:
-      # cpu: "0.1"
-      # memory: "100M"      
+      - osmosis-1 
 
   - name: evmos-osmos
     type: hermes
     replicas: 1
     chains:
       - evmos_9000-1
-      - osmosis-1      
-    # resources:
-      # cpu: "0.1"
-      # memory: "100M"            
+      - osmosis-1               
 
 explorer:
   enabled: false
@@ -88,10 +67,10 @@ registry:
   #   cpu: "0.1"
   #   memory: "100M"
 
-# exposer:
-  # resources:
-    # cpu: "0.1"
-    # memory: "100M"
+exposer:
+  resources:
+    cpu: "0.1"
+    memory: "100M"
 
 # faucet:
   # resources:
