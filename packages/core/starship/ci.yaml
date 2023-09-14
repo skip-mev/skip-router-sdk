@@ -33,7 +33,7 @@ chains:
       cpu: "0.2"
       memory: "200M"      
       
-  - name: onjective-1
+  - name: injective-1
     type: injective
     numValidators: 1
     faucet:
