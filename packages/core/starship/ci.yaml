@@ -1,5 +1,5 @@
 chains:
-  - name: asmosis-1
+  - name: osmosis-1
     type: osmosis
     numValidators: 1
     ports:
@@ -33,7 +33,7 @@ chains:
       cpu: "0.2"
       memory: "200M"      
       
-  - name: anjective-1
+  - name: onjective-1
     type: injective
     numValidators: 1
     faucet:
@@ -50,7 +50,7 @@ relayers:
     type: hermes
     replicas: 1
     chains:
-      - asmosis-1
+      - osmosis-1
       - gaia-1
     resources:
       cpu: "0.1"
@@ -60,8 +60,8 @@ relayers:
     type: hermes
     replicas: 1
     chains:
-      - anjective-1
-      - asmosis-1
+      - injective-1
+      - osmosis-1
     resources:
       cpu: "0.1"
       memory: "100M"      
@@ -72,7 +72,6 @@ relayers:
     chains:
       - evmos_9000-1
       - osmosis-1      
-      
     resources:
       cpu: "0.1"
       memory: "100M"            
