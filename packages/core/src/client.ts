@@ -103,8 +103,8 @@ export type EndpointOptions = {
   rest?: string;
 };
 
-export interface SkipAPIClientOptions {
-  getOfflineSigner: (chainID: string) => Promise<OfflineSigner>;
+export interface SkipRouterClientOptions {
+  getOfflineSigner?: (chainID: string) => Promise<OfflineSigner>;
   endpointOptions?: {
     endpoints?: Record<string, EndpointOptions>;
     getRpcEndpointForChain?: (chainID: string) => Promise<string>;
@@ -112,7 +112,12 @@ export interface SkipAPIClientOptions {
   };
 }
 
-export class SkipAPIClient {
+export type ExecuteRouteOptions = {
+  getOfflineSigner?: (chainID: string) => Promise<OfflineSigner>;
+  onTransactionSuccess?: (txStatus: TxStatusResponse) => Promise<void>;
+};
+
+export class SkipRouter {
   private requestClient: RequestClient;
 
   private aminoTypes: AminoTypes;
@@ -124,9 +129,9 @@ export class SkipAPIClient {
     getRestEndpointForChain?: (chainID: string) => Promise<string>;
   };
 
-  private getOfflineSigner: (chainID: string) => Promise<OfflineSigner>;
+  private getOfflineSigner?: (chainID: string) => Promise<OfflineSigner>;
 
-  constructor(apiURL: string, options: SkipAPIClientOptions) {
+  constructor(apiURL: string, options: SkipRouterClientOptions) {
     this.requestClient = new RequestClient(apiURL);
 
     this.aminoTypes = new AminoTypes({
@@ -191,11 +196,7 @@ export class SkipAPIClient {
   async executeRoute(
     route: RouteResponse,
     userAddresses: Record<string, string>,
-    {
-      onTransactionSuccess,
-    }: {
-      onTransactionSuccess?: (txStatus: TxStatusResponse) => Promise<void>;
-    } = {},
+    options: ExecuteRouteOptions = {},
   ) {
     const messages = await this.messages({
       sourceAssetDenom: route.sourceAssetDenom,
@@ -271,7 +272,18 @@ export class SkipAPIClient {
 
       const feeInfo = feeInfos[multiHopMsg.chainID];
 
-      const signer = await this.getOfflineSigner(multiHopMsg.chainID);
+      let getOfflineSigner = this.getOfflineSigner;
+      if (options.getOfflineSigner) {
+        getOfflineSigner = options.getOfflineSigner;
+      }
+
+      if (!getOfflineSigner) {
+        throw new Error(
+          `Unable to find offline signer for chain ${multiHopMsg.chainID}`,
+        );
+      }
+
+      const signer = await getOfflineSigner(multiHopMsg.chainID);
 
       const tx = await this.executeMultiChainMessage(
         userAddresses[multiHopMsg.chainID],
@@ -285,8 +297,8 @@ export class SkipAPIClient {
         tx.transactionHash,
       );
 
-      if (onTransactionSuccess) {
-        await onTransactionSuccess(txStatusResponse);
+      if (options.onTransactionSuccess) {
+        await options.onTransactionSuccess(txStatusResponse);
       }
     }
   }

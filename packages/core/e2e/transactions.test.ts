@@ -3,7 +3,7 @@ import { FaucetClient } from "@cosmjs/faucet-client";
 import { coin, DirectSecp256k1HdWallet } from "@cosmjs/proto-signing";
 import { isDeliverTxFailure, isDeliverTxSuccess } from "@cosmjs/stargate";
 
-import { SKIP_API_URL, SkipAPIClient } from "../src";
+import { SKIP_API_URL, SkipRouter } from "../src";
 import {
   COSMOSHUB_ENDPOINT,
   COSMOSHUB_FAUCET,
@@ -13,7 +13,7 @@ import {
 
 describe("transaction execution", () => {
   it("signs and executes an IBC transfer", async () => {
-    const client = new SkipAPIClient(SKIP_API_URL, {
+    const client = new SkipRouter(SKIP_API_URL, {
       endpointOptions: {
         getRpcEndpointForChain: async () => {
           return COSMOSHUB_ENDPOINT;
@@ -52,7 +52,7 @@ describe("transaction execution", () => {
   });
 
   it("signs and executes an IBC transfer (amino)", async () => {
-    const client = new SkipAPIClient(SKIP_API_URL, {
+    const client = new SkipRouter(SKIP_API_URL, {
       endpointOptions: {
         getRpcEndpointForChain: async () => {
           return COSMOSHUB_ENDPOINT;
@@ -104,7 +104,7 @@ describe("transaction execution", () => {
     const faucet = new FaucetClient(OSMOSIS_FAUCET);
     await faucet.credit(signerAddress, "uosmo");
 
-    const client = new SkipAPIClient(SKIP_API_URL, {
+    const client = new SkipRouter(SKIP_API_URL, {
       endpointOptions: {
         getRpcEndpointForChain: async () => {
           return OSMOSIS_ENDPOINT;
@@ -134,7 +134,7 @@ describe("transaction execution", () => {
   });
 
   it("signs and executes a cosmwasm execute message (amino)", async () => {
-    const client = new SkipAPIClient(SKIP_API_URL, {
+    const client = new SkipRouter(SKIP_API_URL, {
       endpointOptions: {
         getRpcEndpointForChain: async () => {
           return OSMOSIS_ENDPOINT;

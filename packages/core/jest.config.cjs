@@ -7,9 +7,6 @@ const esModules = [
   "@evmos/transactions",
   "@evmos/eip712",
   "@evmos/proto",
-  "@buf/cosmos_cosmos-sdk.bufbuild_es",
-  "@buf/evmos_evmos.bufbuild_es",
-  "@buf/cosmos_ibc.bufbuild_es",
 ].join("|");
 
 /** @type {import('ts-jest').JestConfigWithTsJest} */

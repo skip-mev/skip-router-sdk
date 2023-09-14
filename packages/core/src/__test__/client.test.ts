@@ -1,7 +1,7 @@
 import { rest } from "msw";
 import { setupServer } from "msw/node";
 
-import { SKIP_API_URL, SkipAPIClient } from "../client";
+import { SKIP_API_URL, SkipRouter } from "../client";
 import { Chain, ChainJSON } from "../types/types";
 
 export const server = setupServer();
@@ -69,7 +69,7 @@ describe("client", () => {
         }),
       );
 
-      const client = new SkipAPIClient(SKIP_API_URL, {
+      const client = new SkipRouter(SKIP_API_URL, {
         getOfflineSigner: async () => {
           throw new Error("not implemented");
         },
@@ -182,7 +182,7 @@ describe("client", () => {
         }),
       );
 
-      const client = new SkipAPIClient(SKIP_API_URL, {
+      const client = new SkipRouter(SKIP_API_URL, {
         getOfflineSigner: async () => {
           throw new Error("not implemented");
         },
@@ -280,7 +280,7 @@ describe("client", () => {
         ),
       );
 
-      const client = new SkipAPIClient(SKIP_API_URL, {
+      const client = new SkipRouter(SKIP_API_URL, {
         getOfflineSigner: async () => {
           throw new Error("not implemented");
         },
@@ -324,7 +324,7 @@ describe("client", () => {
         }),
       );
 
-      const client = new SkipAPIClient(SKIP_API_URL, {
+      const client = new SkipRouter(SKIP_API_URL, {
         getOfflineSigner: async () => {
           throw new Error("not implemented");
         },
@@ -347,7 +347,7 @@ describe("client", () => {
         }),
       );
 
-      const client = new SkipAPIClient(SKIP_API_URL, {
+      const client = new SkipRouter(SKIP_API_URL, {
         getOfflineSigner: async () => {
           throw new Error("not implemented");
         },
@@ -408,7 +408,7 @@ describe("client", () => {
         ),
       );
 
-      const client = new SkipAPIClient(SKIP_API_URL, {
+      const client = new SkipRouter(SKIP_API_URL, {
         getOfflineSigner: async () => {
           throw new Error("not implemented");
         },
@@ -470,7 +470,7 @@ describe("client", () => {
         ),
       );
 
-      const client = new SkipAPIClient(SKIP_API_URL, {
+      const client = new SkipRouter(SKIP_API_URL, {
         getOfflineSigner: async () => {
           throw new Error("not implemented");
         },
@@ -501,7 +501,7 @@ describe("client", () => {
         ),
       );
 
-      const client = new SkipAPIClient(SKIP_API_URL, {
+      const client = new SkipRouter(SKIP_API_URL, {
         getOfflineSigner: async () => {
           throw new Error("not implemented");
         },
@@ -549,7 +549,7 @@ describe("client", () => {
         ),
       );
 
-      const client = new SkipAPIClient(SKIP_API_URL, {
+      const client = new SkipRouter(SKIP_API_URL, {
         getOfflineSigner: async () => {
           throw new Error("not implemented");
         },
@@ -602,7 +602,7 @@ describe("client", () => {
         }),
       );
 
-      const client = new SkipAPIClient(SKIP_API_URL, {
+      const client = new SkipRouter(SKIP_API_URL, {
         getOfflineSigner: async () => {
           throw new Error("not implemented");
         },
@@ -723,7 +723,7 @@ describe("client", () => {
         }),
       );
 
-      const client = new SkipAPIClient(SKIP_API_URL, {
+      const client = new SkipRouter(SKIP_API_URL, {
         getOfflineSigner: async () => {
           throw new Error("not implemented");
         },
@@ -806,7 +806,7 @@ describe("client", () => {
         }),
       );
 
-      const client = new SkipAPIClient(SKIP_API_URL, {
+      const client = new SkipRouter(SKIP_API_URL, {
         getOfflineSigner: async () => {
           throw new Error("not implemented");
         },
@@ -841,7 +841,7 @@ describe("client", () => {
         }),
       );
 
-      const client = new SkipAPIClient(SKIP_API_URL, {
+      const client = new SkipRouter(SKIP_API_URL, {
         getOfflineSigner: async () => {
           throw new Error("not implemented");
         },
@@ -873,7 +873,7 @@ describe("client", () => {
         }),
       );
 
-      const client = new SkipAPIClient(SKIP_API_URL, {
+      const client = new SkipRouter(SKIP_API_URL, {
         getOfflineSigner: async () => {
           throw new Error("not implemented");
         },
@@ -960,7 +960,7 @@ describe("client", () => {
         }),
       );
 
-      const client = new SkipAPIClient(SKIP_API_URL, {
+      const client = new SkipRouter(SKIP_API_URL, {
         getOfflineSigner: async () => {
           throw new Error("not implemented");
         },
