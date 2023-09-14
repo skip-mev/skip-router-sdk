@@ -7,8 +7,8 @@ chains:
       rpc: 26653
       faucet: 8082
     resources:
-      cpu: "0.2"
-      memory: "200M"
+      cpu: "0.1"
+      memory: "100M"
 
   - name: gaia-1
     type: cosmos
@@ -18,8 +18,8 @@ chains:
       rpc: 26657
       faucet: 8083
     resources:
-      cpu: "0.2"
-      memory: "200M"
+      cpu: "0.1"
+      memory: "100M"
 
   - name: evmos_9000-1
     type: evmos
@@ -30,8 +30,8 @@ chains:
       rest: 1318
       rpc: 26658
     resources:
-      cpu: "0.2"
-      memory: "200M"      
+      cpu: "0.1"
+      memory: "100M"   
       
   - name: injective-1
     type: injective
@@ -42,8 +42,8 @@ chains:
       rest: 1319
       rpc: 26659   
     resources:
-      cpu: "0.2"
-      memory: "200M"       
+      cpu: "0.1"
+      memory: "100M"    
 
 relayers:
   - name: osmos-gaia
