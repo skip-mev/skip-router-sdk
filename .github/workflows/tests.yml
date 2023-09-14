@@ -39,7 +39,7 @@ jobs:
         working-directory: ./packages/core
 
       - name: Start starship
-        run: make start HELM_FILE=starship/ci.yaml
+        run: make debug HELM_FILE=starship/ci.yaml
         working-directory: ./packages/core
 
       - name: Run e2e tests
