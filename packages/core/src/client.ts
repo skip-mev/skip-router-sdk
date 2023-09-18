@@ -131,7 +131,7 @@ export class SkipRouter {
 
   private getOfflineSigner?: (chainID: string) => Promise<OfflineSigner>;
 
-  constructor(apiURL: string, options: SkipRouterClientOptions) {
+  constructor(apiURL: string, options: SkipRouterClientOptions = {}) {
     this.requestClient = new RequestClient(apiURL);
 
     this.aminoTypes = new AminoTypes({
@@ -272,6 +272,16 @@ export class SkipRouter {
 
       const feeInfo = feeInfos[multiHopMsg.chainID];
 
+      let averageGasPrice = 0;
+      if (feeInfo.low_gas_price) {
+        averageGasPrice = feeInfo.low_gas_price;
+      } else if (feeInfo.average_gas_price) {
+        averageGasPrice = feeInfo.average_gas_price;
+      }
+
+      const feeAmount =
+        averageGasPrice * parseInt(getGasAmountForMessage(multiHopMsg));
+
       let getOfflineSigner = this.getOfflineSigner;
       if (options.getOfflineSigner) {
         getOfflineSigner = options.getOfflineSigner;
@@ -289,7 +299,7 @@ export class SkipRouter {
         userAddresses[multiHopMsg.chainID],
         signer,
         multiHopMsg,
-        coin(0, feeInfo.denom),
+        coin(feeAmount, feeInfo.denom),
       );
 
       const txStatusResponse = await this.waitForTransaction(
