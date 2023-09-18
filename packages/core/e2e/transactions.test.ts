@@ -95,7 +95,7 @@ describe("transaction execution", () => {
     expect(isDeliverTxSuccess(tx)).toBe(true);
   });
 
-  it.only("signs and executes an IBC transfer (injective)", async () => {
+  it("signs and executes an IBC transfer (injective)", async () => {
     const client = new SkipRouter(SKIP_API_URL, {
       endpointOptions: {
         getRpcEndpointForChain: async () => {
@@ -140,7 +140,7 @@ describe("transaction execution", () => {
     expect(isDeliverTxSuccess(tx)).toBe(true);
   });
 
-  it.only("signs and executes an IBC transfer (evmos)", async () => {
+  it("signs and executes an IBC transfer (evmos)", async () => {
     const client = new SkipRouter(SKIP_API_URL, {
       endpointOptions: {
         getRpcEndpointForChain: async () => {
