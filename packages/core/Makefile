@@ -2,7 +2,7 @@ HELM_NAME = skip-router
 HELM_FILE = starship/local.yaml
 HELM_REPO = starship
 HELM_CHART = devnet
-HELM_VERSION = 0.1.45
+HELM_VERSION = 0.1.46-rc3
 
 ###############################################################################
 ###                              All commands                               ###
@@ -38,7 +38,7 @@ setup-helm:
 install:
 	@echo "Installing the helm chart. This is going to take a while....."
 	@echo "You can check the status with \"kubectl get pods\", run in another terminal please"
-	helm install -f $(HELM_FILE) $(HELM_NAME) $(HELM_REPO)/$(HELM_CHART) --version $(HELM_VERSION) --wait --timeout 20m
+	helm install -f $(HELM_FILE) $(HELM_NAME) $(HELM_REPO)/$(HELM_CHART) --version $(HELM_VERSION) --wait --timeout 50m
 
 .PHONY: upgrade
 upgrade:

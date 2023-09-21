@@ -15,6 +15,25 @@ chains:
       rpc: 26657
       faucet: 8083
 
+  - name: evmos_9000-1
+    type: evmos
+    numValidators: 1
+    faucet:
+      enabled: false
+    ports:
+      rest: 1318
+      rpc: 26658
+      
+  - name: injective-1
+    type: injective
+    numValidators: 1
+    faucet:
+      enabled: false
+    ports:
+      rest: 1319
+      rpc: 26659    
+
+
 relayers:
   - name: osmos-gaia
     type: hermes
@@ -22,6 +41,18 @@ relayers:
     chains:
       - osmosis-1
       - gaia-1
+  - name: injective-osmos
+    type: hermes
+    replicas: 1
+    chains:
+      - injective-1
+      - osmosis-1
+  - name: evmos-osmos
+    type: hermes
+    replicas: 1
+    chains:
+      - evmos_9000-1
+      - osmosis-1      
 
 explorer:
   enabled: false
