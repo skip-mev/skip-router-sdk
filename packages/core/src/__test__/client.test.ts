@@ -139,6 +139,7 @@ describe("client", () => {
                       chain_id: "cosmoshub-4",
                       origin_denom: "ustrd",
                       origin_chain_id: "stride-1",
+                      is_cw20: false,
                       trace: "transfer/channel-391",
                       symbol: "STRD",
                       name: "STRD",
@@ -151,6 +152,7 @@ describe("client", () => {
                       chain_id: "cosmoshub-4",
                       origin_denom: "uatom",
                       origin_chain_id: "cosmoshub-4",
+                      is_cw20: false,
                       trace: "",
                       symbol: "ATOM",
                       name: "ATOM",
@@ -167,6 +169,7 @@ describe("client", () => {
                       chain_id: "osmosis-1",
                       origin_denom: "uosmo",
                       origin_chain_id: "osmosis-1",
+                      is_cw20: false,
                       trace: "",
                       symbol: "OSMO",
                       name: "OSMO",
@@ -182,11 +185,7 @@ describe("client", () => {
         }),
       );
 
-      const client = new SkipRouter(SKIP_API_URL, {
-        getOfflineSigner: async () => {
-          throw new Error("not implemented");
-        },
-      });
+      const client = new SkipRouter(SKIP_API_URL);
 
       const assets = await client.assets();
 
@@ -198,6 +197,7 @@ describe("client", () => {
             chainID: "cosmoshub-4",
             originDenom: "ustrd",
             originChainID: "stride-1",
+            isCW20: false,
             trace: "transfer/channel-391",
             symbol: "STRD",
             name: "STRD",
@@ -210,6 +210,7 @@ describe("client", () => {
             chainID: "cosmoshub-4",
             originDenom: "uatom",
             originChainID: "cosmoshub-4",
+            isCW20: false,
             trace: "",
             symbol: "ATOM",
             name: "ATOM",
@@ -224,6 +225,7 @@ describe("client", () => {
             chainID: "osmosis-1",
             originDenom: "uosmo",
             originChainID: "osmosis-1",
+            isCW20: false,
             trace: "",
             symbol: "OSMO",
             name: "OSMO",
@@ -258,6 +260,7 @@ describe("client", () => {
                           chain_id: "osmosis-1",
                           origin_denom: "uosmo",
                           origin_chain_id: "osmosis-1",
+                          is_cw20: false,
                           trace: "",
                           symbol: "OSMO",
                           name: "OSMO",
@@ -280,11 +283,7 @@ describe("client", () => {
         ),
       );
 
-      const client = new SkipRouter(SKIP_API_URL, {
-        getOfflineSigner: async () => {
-          throw new Error("not implemented");
-        },
-      });
+      const client = new SkipRouter(SKIP_API_URL);
 
       const assets = await client.assets({
         chainID: "osmosis-1",
@@ -300,6 +299,7 @@ describe("client", () => {
             originDenom: "uosmo",
             originChainID: "osmosis-1",
             trace: "",
+            isCW20: false,
             symbol: "OSMO",
             name: "OSMO",
             logoURI:

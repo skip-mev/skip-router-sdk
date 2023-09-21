@@ -66,6 +66,8 @@ import {
 } from "../converters";
 import {
   AffiliateJSON,
+  Asset,
+  AssetJSON,
   AssetRecommendation,
   AssetRecommendationJSON,
   ChainJSON,
@@ -118,11 +120,12 @@ test("affiliateToJSON", () => {
 });
 
 test("assetFromJSON", () => {
-  const assetJSON = {
+  const assetJSON: AssetJSON = {
     denom: "uosmo",
     chain_id: "osmosis-1",
     origin_denom: "uosmo",
     origin_chain_id: "osmosis-1",
+    is_cw20: false,
     trace: "",
     symbol: "OSMO",
     name: "OSMO",
@@ -136,6 +139,7 @@ test("assetFromJSON", () => {
     chainID: "osmosis-1",
     originDenom: "uosmo",
     originChainID: "osmosis-1",
+    isCW20: false,
     trace: "",
     symbol: "OSMO",
     name: "OSMO",
@@ -146,12 +150,13 @@ test("assetFromJSON", () => {
 });
 
 test("assetToJSON", () => {
-  const asset = {
+  const asset: Asset = {
     denom: "uosmo",
     chainID: "osmosis-1",
     originDenom: "uosmo",
     originChainID: "osmosis-1",
     trace: "",
+    isCW20: false,
     symbol: "OSMO",
     name: "OSMO",
     logoURI:
@@ -164,6 +169,7 @@ test("assetToJSON", () => {
     chain_id: "osmosis-1",
     origin_denom: "uosmo",
     origin_chain_id: "osmosis-1",
+    is_cw20: false,
     trace: "",
     symbol: "OSMO",
     name: "OSMO",
@@ -181,6 +187,7 @@ test("assetRecommendationFromJSON", () => {
       origin_denom: "uosmo",
       origin_chain_id: "osmosis-1",
       trace: "",
+      is_cw20: false,
       symbol: "OSMO",
       name: "OSMO",
       logo_uri:
@@ -197,6 +204,7 @@ test("assetRecommendationFromJSON", () => {
       originDenom: "uosmo",
       originChainID: "osmosis-1",
       trace: "",
+      isCW20: false,
       symbol: "OSMO",
       name: "OSMO",
       logoURI:
@@ -215,6 +223,7 @@ test("assetRecommendationToJSON", () => {
       originDenom: "uosmo",
       originChainID: "osmosis-1",
       trace: "",
+      isCW20: false,
       symbol: "OSMO",
       name: "OSMO",
       logoURI:
@@ -230,6 +239,7 @@ test("assetRecommendationToJSON", () => {
       chain_id: "osmosis-1",
       origin_denom: "uosmo",
       origin_chain_id: "osmosis-1",
+      is_cw20: false,
       trace: "",
       symbol: "OSMO",
       name: "OSMO",

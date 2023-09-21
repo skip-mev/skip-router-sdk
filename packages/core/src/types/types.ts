@@ -17,6 +17,7 @@ export type AssetJSON = {
   origin_denom: string;
   origin_chain_id: string;
   trace: string;
+  is_cw20: boolean;
 
   symbol?: string;
   name?: string;
@@ -31,6 +32,7 @@ export type Asset = {
   originDenom: string;
   originChainID: string;
   trace: string;
+  isCW20: boolean;
 
   symbol?: string;
   name?: string;
