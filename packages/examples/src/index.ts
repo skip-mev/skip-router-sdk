@@ -16,7 +16,8 @@ const USER_ADDRESSES = {
 const MNEMONIC = ""; // <---- UPDATE THIS
 
 async function main() {
-  const client = new SkipRouter(SKIP_API_URL, {
+  const client = new SkipRouter({
+    apiURL: SKIP_API_URL,
     getOfflineSigner: async (chainID) => {
       return DirectSecp256k1HdWallet.fromMnemonic(MNEMONIC);
 
@@ -38,7 +39,9 @@ async function main() {
     cumulativeAffiliateFeeBPS: "0",
   });
 
-  await client.executeRoute(route, USER_ADDRESSES, {
+  await client.executeRoute({
+    route,
+    userAddresses: USER_ADDRESSES,
     onTransactionSuccess: async (tx) => {
       console.log(tx);
     },

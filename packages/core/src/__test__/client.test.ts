@@ -69,10 +69,8 @@ describe("client", () => {
         }),
       );
 
-      const client = new SkipRouter(SKIP_API_URL, {
-        getOfflineSigner: async () => {
-          throw new Error("not implemented");
-        },
+      const client = new SkipRouter({
+        apiURL: SKIP_API_URL,
       });
 
       const response = await client.chains();
@@ -185,7 +183,9 @@ describe("client", () => {
         }),
       );
 
-      const client = new SkipRouter(SKIP_API_URL);
+      const client = new SkipRouter({
+        apiURL: SKIP_API_URL,
+      });
 
       const assets = await client.assets();
 
@@ -283,7 +283,9 @@ describe("client", () => {
         ),
       );
 
-      const client = new SkipRouter(SKIP_API_URL);
+      const client = new SkipRouter({
+        apiURL: SKIP_API_URL,
+      });
 
       const assets = await client.assets({
         chainID: "osmosis-1",
@@ -324,10 +326,8 @@ describe("client", () => {
         }),
       );
 
-      const client = new SkipRouter(SKIP_API_URL, {
-        getOfflineSigner: async () => {
-          throw new Error("not implemented");
-        },
+      const client = new SkipRouter({
+        apiURL: SKIP_API_URL,
       });
 
       await expect(client.assets()).rejects.toThrow("Invalid chain_id");
@@ -347,10 +347,8 @@ describe("client", () => {
         }),
       );
 
-      const client = new SkipRouter(SKIP_API_URL, {
-        getOfflineSigner: async () => {
-          throw new Error("not implemented");
-        },
+      const client = new SkipRouter({
+        apiURL: SKIP_API_URL,
       });
 
       await expect(client.assets()).rejects.toThrow("internal server error");
@@ -408,10 +406,8 @@ describe("client", () => {
         ),
       );
 
-      const client = new SkipRouter(SKIP_API_URL, {
-        getOfflineSigner: async () => {
-          throw new Error("not implemented");
-        },
+      const client = new SkipRouter({
+        apiURL: SKIP_API_URL,
       });
 
       const assetsFromSource = await client.assetsFromSource({
@@ -470,10 +466,8 @@ describe("client", () => {
         ),
       );
 
-      const client = new SkipRouter(SKIP_API_URL, {
-        getOfflineSigner: async () => {
-          throw new Error("not implemented");
-        },
+      const client = new SkipRouter({
+        apiURL: SKIP_API_URL,
       });
 
       await expect(
@@ -501,10 +495,8 @@ describe("client", () => {
         ),
       );
 
-      const client = new SkipRouter(SKIP_API_URL, {
-        getOfflineSigner: async () => {
-          throw new Error("not implemented");
-        },
+      const client = new SkipRouter({
+        apiURL: SKIP_API_URL,
       });
 
       await expect(
@@ -549,10 +541,8 @@ describe("client", () => {
         ),
       );
 
-      const client = new SkipRouter(SKIP_API_URL, {
-        getOfflineSigner: async () => {
-          throw new Error("not implemented");
-        },
+      const client = new SkipRouter({
+        apiURL: SKIP_API_URL,
       });
 
       const response = await client.recommendAssets({
@@ -602,10 +592,8 @@ describe("client", () => {
         }),
       );
 
-      const client = new SkipRouter(SKIP_API_URL, {
-        getOfflineSigner: async () => {
-          throw new Error("not implemented");
-        },
+      const client = new SkipRouter({
+        apiURL: SKIP_API_URL,
       });
 
       const response = await client.messages({
@@ -723,10 +711,8 @@ describe("client", () => {
         }),
       );
 
-      const client = new SkipRouter(SKIP_API_URL, {
-        getOfflineSigner: async () => {
-          throw new Error("not implemented");
-        },
+      const client = new SkipRouter({
+        apiURL: SKIP_API_URL,
       });
 
       const response = await client.route({
@@ -806,10 +792,8 @@ describe("client", () => {
         }),
       );
 
-      const client = new SkipRouter(SKIP_API_URL, {
-        getOfflineSigner: async () => {
-          throw new Error("not implemented");
-        },
+      const client = new SkipRouter({
+        apiURL: SKIP_API_URL,
       });
 
       const response = await client.venues();
@@ -841,16 +825,14 @@ describe("client", () => {
         }),
       );
 
-      const client = new SkipRouter(SKIP_API_URL, {
-        getOfflineSigner: async () => {
-          throw new Error("not implemented");
-        },
+      const client = new SkipRouter({
+        apiURL: SKIP_API_URL,
       });
 
-      const response = await client.submitTransaction(
-        "cosmoshub-4",
-        "txbytes123",
-      );
+      const response = await client.submitTransaction({
+        chainID: "cosmoshub-4",
+        tx: "txbytes123",
+      });
 
       expect(response).toEqual({
         txHash: "tx_hash123",
@@ -873,16 +855,14 @@ describe("client", () => {
         }),
       );
 
-      const client = new SkipRouter(SKIP_API_URL, {
-        getOfflineSigner: async () => {
-          throw new Error("not implemented");
-        },
+      const client = new SkipRouter({
+        apiURL: SKIP_API_URL,
       });
 
-      const response = await client.trackTransaction(
-        "cosmoshub-4",
-        "tx_hash123",
-      );
+      const response = await client.trackTransaction({
+        chainID: "cosmoshub-4",
+        txHash: "tx_hash123",
+      });
 
       expect(response).toEqual({
         txHash: "tx_hash123",
@@ -960,16 +940,14 @@ describe("client", () => {
         }),
       );
 
-      const client = new SkipRouter(SKIP_API_URL, {
-        getOfflineSigner: async () => {
-          throw new Error("not implemented");
-        },
+      const client = new SkipRouter({
+        apiURL: SKIP_API_URL,
       });
 
-      const response = await client.transactionStatus(
-        "cosmoshub-4",
-        "tx_hash123",
-      );
+      const response = await client.transactionStatus({
+        chainID: "cosmoshub-4",
+        txHash: "tx_hash123",
+      });
 
       expect(response).toEqual({
         status: "STATE_COMPLETED",
