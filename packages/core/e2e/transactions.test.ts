@@ -18,7 +18,8 @@ import {
 
 describe("transaction execution", () => {
   it("signs and executes an IBC transfer", async () => {
-    const client = new SkipRouter(SKIP_API_URL, {
+    const client = new SkipRouter({
+      apiURL: SKIP_API_URL,
       endpointOptions: {
         getRpcEndpointForChain: async () => {
           return COSMOSHUB_ENDPOINT;
@@ -46,18 +47,19 @@ describe("transaction execution", () => {
       msgTypeURL: "/ibc.applications.transfer.v1.MsgTransfer",
     };
 
-    const tx = await client.executeMultiChainMessage(
+    const tx = await client.executeMultiChainMessage({
       signerAddress,
       signer,
       message,
-      coin(1000000, "uatom"),
-    );
+      feeAmount: coin(1000000, "uatom"),
+    });
 
     expect(isDeliverTxSuccess(tx)).toBe(true);
   });
 
   it("signs and executes an IBC transfer (amino)", async () => {
-    const client = new SkipRouter(SKIP_API_URL, {
+    const client = new SkipRouter({
+      apiURL: SKIP_API_URL,
       endpointOptions: {
         getRpcEndpointForChain: async () => {
           return COSMOSHUB_ENDPOINT;
@@ -85,18 +87,19 @@ describe("transaction execution", () => {
       msgTypeURL: "/ibc.applications.transfer.v1.MsgTransfer",
     };
 
-    const tx = await client.executeMultiChainMessage(
+    const tx = await client.executeMultiChainMessage({
       signerAddress,
       signer,
       message,
-      coin(1000000, "uatom"),
-    );
+      feeAmount: coin(1000000, "uatom"),
+    });
 
     expect(isDeliverTxSuccess(tx)).toBe(true);
   });
 
   it("signs and executes an IBC transfer (injective)", async () => {
-    const client = new SkipRouter(SKIP_API_URL, {
+    const client = new SkipRouter({
+      apiURL: SKIP_API_URL,
       endpointOptions: {
         getRpcEndpointForChain: async () => {
           return INJECTIVE_RPC_ENDPOINT;
@@ -128,20 +131,21 @@ describe("transaction execution", () => {
       msgTypeURL: "/ibc.applications.transfer.v1.MsgTransfer",
     };
 
-    const tx = await client.executeMultiChainMessage(
+    const tx = await client.executeMultiChainMessage({
       signerAddress,
       // eslint-disable-next-line @typescript-eslint/ban-ts-comment
       // @ts-ignore
       signer,
       message,
-      coin(1000000, "inj"),
-    );
+      feeAmount: coin(1000000, "inj"),
+    });
 
     expect(isDeliverTxSuccess(tx)).toBe(true);
   });
 
   it("signs and executes an IBC transfer (evmos)", async () => {
-    const client = new SkipRouter(SKIP_API_URL, {
+    const client = new SkipRouter({
+      apiURL: SKIP_API_URL,
       endpointOptions: {
         getRpcEndpointForChain: async () => {
           return EVMOS_RPC_ENDPOINT;
@@ -175,14 +179,14 @@ describe("transaction execution", () => {
       msgTypeURL: "/ibc.applications.transfer.v1.MsgTransfer",
     };
 
-    const tx = await client.executeMultiChainMessage(
+    const tx = await client.executeMultiChainMessage({
       signerAddress,
       // eslint-disable-next-line @typescript-eslint/ban-ts-comment
       // @ts-ignore
       signer,
       message,
-      coin(10000000, "aevmos"),
-    );
+      feeAmount: coin(10000000, "aevmos"),
+    });
 
     expect(isDeliverTxSuccess(tx)).toBe(true);
   });
@@ -201,7 +205,8 @@ describe("transaction execution", () => {
     const faucet = new FaucetClient(OSMOSIS_FAUCET);
     await faucet.credit(signerAddress, "uosmo");
 
-    const client = new SkipRouter(SKIP_API_URL, {
+    const client = new SkipRouter({
+      apiURL: SKIP_API_URL,
       endpointOptions: {
         getRpcEndpointForChain: async () => {
           return OSMOSIS_ENDPOINT;
@@ -216,12 +221,12 @@ describe("transaction execution", () => {
       msgTypeURL: "/cosmwasm.wasm.v1.MsgExecuteContract",
     };
 
-    const tx = await client.executeMultiChainMessage(
+    const tx = await client.executeMultiChainMessage({
       signerAddress,
       signer,
       message,
-      coin(1000000, "uosmo"),
-    );
+      feeAmount: coin(1000000, "uosmo"),
+    });
 
     // CheckTx must pass but the execution will fail in DeliverTx due to invalid contract address
     expect(isDeliverTxFailure(tx)).toBe(true);
@@ -231,7 +236,8 @@ describe("transaction execution", () => {
   });
 
   it("signs and executes a cosmwasm execute message (amino)", async () => {
-    const client = new SkipRouter(SKIP_API_URL, {
+    const client = new SkipRouter({
+      apiURL: SKIP_API_URL,
       endpointOptions: {
         getRpcEndpointForChain: async () => {
           return OSMOSIS_ENDPOINT;
@@ -260,12 +266,12 @@ describe("transaction execution", () => {
       msgTypeURL: "/cosmwasm.wasm.v1.MsgExecuteContract",
     };
 
-    const tx = await client.executeMultiChainMessage(
+    const tx = await client.executeMultiChainMessage({
       signerAddress,
       signer,
       message,
-      coin(1000000, "uosmo"),
-    );
+      feeAmount: coin(1000000, "uosmo"),
+    });
 
     // CheckTx must pass but the execution will fail in DeliverTx due to invalid contract address
     expect(isDeliverTxFailure(tx)).toBe(true);

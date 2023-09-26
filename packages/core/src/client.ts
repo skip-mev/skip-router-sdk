@@ -103,7 +103,8 @@ export type EndpointOptions = {
   rest?: string;
 };
 
-export interface SkipRouterClientOptions {
+export interface SkipRouterOptions {
+  apiURL?: string;
   getOfflineSigner?: (chainID: string) => Promise<OfflineSigner>;
   endpointOptions?: {
     endpoints?: Record<string, EndpointOptions>;
@@ -113,8 +114,33 @@ export interface SkipRouterClientOptions {
 }
 
 export type ExecuteRouteOptions = {
+  route: RouteResponse;
+  userAddresses: Record<string, string>;
   getOfflineSigner?: (chainID: string) => Promise<OfflineSigner>;
   onTransactionSuccess?: (txStatus: TxStatusResponse) => Promise<void>;
+};
+
+export type ExecuteMultiChainMessageOptions = {
+  signerAddress: string;
+  signer: OfflineSigner;
+  message: MultiChainMsg;
+  feeAmount: Coin;
+};
+
+export type SignMultiChainMessageDirectOptions = {
+  signerAddress: string;
+  signer: OfflineDirectSigner;
+  multiChainMessage: MultiChainMsg;
+  fee: StdFee;
+  signerData: SignerData;
+};
+
+export type SignMultiChainMessageAminoOptions = {
+  signerAddress: string;
+  signer: OfflineAminoSigner;
+  multiChainMessage: MultiChainMsg;
+  fee: StdFee;
+  signerData: SignerData;
 };
 
 export class SkipRouter {
@@ -131,8 +157,8 @@ export class SkipRouter {
 
   private getOfflineSigner?: (chainID: string) => Promise<OfflineSigner>;
 
-  constructor(apiURL: string, options: SkipRouterClientOptions = {}) {
-    this.requestClient = new RequestClient(apiURL);
+  constructor(options: SkipRouterOptions = {}) {
+    this.requestClient = new RequestClient(options.apiURL ?? SKIP_API_URL);
 
     this.aminoTypes = new AminoTypes({
       ...createDefaultAminoConverters(),
@@ -193,11 +219,9 @@ export class SkipRouter {
     return response.chains.map((chain) => chainFromJSON(chain));
   }
 
-  async executeRoute(
-    route: RouteResponse,
-    userAddresses: Record<string, string>,
-    options: ExecuteRouteOptions = {},
-  ) {
+  async executeRoute(options: ExecuteRouteOptions) {
+    const { route, userAddresses } = options;
+
     const messages = await this.messages({
       sourceAssetDenom: route.sourceAssetDenom,
       sourceAssetChainID: route.sourceAssetChainID,
@@ -295,17 +319,17 @@ export class SkipRouter {
 
       const signer = await getOfflineSigner(multiHopMsg.chainID);
 
-      const tx = await this.executeMultiChainMessage(
-        userAddresses[multiHopMsg.chainID],
+      const tx = await this.executeMultiChainMessage({
+        signerAddress: userAddresses[multiHopMsg.chainID],
         signer,
-        multiHopMsg,
-        coin(feeAmount, feeInfo.denom),
-      );
+        message: multiHopMsg,
+        feeAmount: coin(feeAmount, feeInfo.denom),
+      });
 
-      const txStatusResponse = await this.waitForTransaction(
-        multiHopMsg.chainID,
-        tx.transactionHash,
-      );
+      const txStatusResponse = await this.waitForTransaction({
+        chainID: multiHopMsg.chainID,
+        txHash: tx.transactionHash,
+      });
 
       if (options.onTransactionSuccess) {
         await options.onTransactionSuccess(txStatusResponse);
@@ -313,12 +337,9 @@ export class SkipRouter {
     }
   }
 
-  async executeMultiChainMessage(
-    signerAddress: string,
-    signer: OfflineSigner,
-    message: MultiChainMsg,
-    feeAmount: Coin,
-  ) {
+  async executeMultiChainMessage(options: ExecuteMultiChainMessageOptions) {
+    const { signerAddress, signer, message, feeAmount } = options;
+
     const accounts = await signer.getAccounts();
     const accountFromSigner = accounts.find(
       (account) => account.address === signerAddress,
@@ -339,27 +360,35 @@ export class SkipRouter {
 
     let rawTx: TxRaw;
     if (isOfflineDirectSigner(signer)) {
-      rawTx = await this.signMultiChainMessageDirect(
+      rawTx = await this.signMultiChainMessageDirect({
         signerAddress,
         signer,
-        message,
-        {
+        multiChainMessage: message,
+        fee: {
           amount: [feeAmount],
           gas,
         },
-        { accountNumber, sequence, chainId: message.chainID },
-      );
+        signerData: {
+          accountNumber,
+          sequence,
+          chainId: message.chainID,
+        },
+      });
     } else {
-      rawTx = await this.signMultiChainMessageAmino(
+      rawTx = await this.signMultiChainMessageAmino({
         signerAddress,
         signer,
-        message,
-        {
+        multiChainMessage: message,
+        fee: {
           amount: [feeAmount],
           gas,
         },
-        { accountNumber, sequence, chainId: message.chainID },
-      );
+        signerData: {
+          accountNumber,
+          sequence,
+          chainId: message.chainID,
+        },
+      });
     }
 
     const txBytes = TxRaw.encode(rawTx).finish();
@@ -375,12 +404,16 @@ export class SkipRouter {
   }
 
   async signMultiChainMessageDirect(
-    signerAddress: string,
-    signer: OfflineDirectSigner,
-    multiChainMessage: MultiChainMsg,
-    fee: StdFee,
-    { accountNumber, sequence, chainId }: SignerData,
+    options: SignMultiChainMessageDirectOptions,
   ): Promise<TxRaw> {
+    const {
+      signer,
+      signerAddress,
+      multiChainMessage,
+      fee,
+      signerData: { accountNumber, sequence, chainId },
+    } = options;
+
     if (multiChainMessage.chainID.includes("evmos")) {
       return this.signMultiChainMessageDirectEvmos(
         signerAddress,
@@ -458,7 +491,7 @@ export class SkipRouter {
   // TODO: This is previously existing code, just moved to a new function.
   // Using signMultiChainMessageDirect on evmos DOES currently fail.
   // I need to investigate what exactly is even different about this and hopefully remove it all together.
-  async signMultiChainMessageDirectEvmos(
+  private async signMultiChainMessageDirectEvmos(
     signerAddress: string,
     signer: OfflineDirectSigner,
     multiChainMessage: MultiChainMsg,
@@ -505,7 +538,7 @@ export class SkipRouter {
   // TODO: This is previously existing code, just moved to a new function.
   // Using signMultiChainMessageDirect on injective DOES currently fail.
   // I need to investigate what exactly is even different about this and hopefully remove it all together.
-  async signMultiChainMessageDirectInjective(
+  private async signMultiChainMessageDirectInjective(
     signerAddress: string,
     signer: OfflineDirectSigner,
     multiChainMessage: MultiChainMsg,
@@ -562,12 +595,16 @@ export class SkipRouter {
   }
 
   async signMultiChainMessageAmino(
-    signerAddress: string,
-    signer: OfflineAminoSigner,
-    multiChainMessage: MultiChainMsg,
-    fee: StdFee,
-    { accountNumber, sequence, chainId }: SignerData,
+    options: SignMultiChainMessageAminoOptions,
   ): Promise<TxRaw> {
+    const {
+      signer,
+      signerAddress,
+      multiChainMessage,
+      fee,
+      signerData: { accountNumber, sequence, chainId },
+    } = options;
+
     const accounts = await signer.getAccounts();
     const accountFromSigner = accounts.find(
       (account) => account.address === signerAddress,
@@ -670,10 +707,13 @@ export class SkipRouter {
     );
   }
 
-  async submitTransaction(
-    chainID: string,
-    tx: string,
-  ): Promise<SubmitTxResponse> {
+  async submitTransaction({
+    chainID,
+    tx,
+  }: {
+    chainID: string;
+    tx: string;
+  }): Promise<SubmitTxResponse> {
     const response = await this.requestClient.post<
       SubmitTxResponseJSON,
       SubmitTxRequestJSON
@@ -685,10 +725,13 @@ export class SkipRouter {
     return submitTxResponseFromJSON(response);
   }
 
-  async trackTransaction(
-    chainID: string,
-    txHash: string,
-  ): Promise<TrackTxResponse> {
+  async trackTransaction({
+    chainID,
+    txHash,
+  }: {
+    chainID: string;
+    txHash: string;
+  }): Promise<TrackTxResponse> {
     const response = await this.requestClient.post<
       TrackTxResponseJSON,
       TrackTxRequestJSON
@@ -700,10 +743,13 @@ export class SkipRouter {
     return trackTxResponseFromJSON(response);
   }
 
-  async transactionStatus(
-    chainID: string,
-    txHash: string,
-  ): Promise<TxStatusResponse> {
+  async transactionStatus({
+    chainID,
+    txHash,
+  }: {
+    chainID: string;
+    txHash: string;
+  }): Promise<TxStatusResponse> {
     const response = await this.requestClient.get<
       TxStatusResponseJSON,
       TxStatusRequestJSON
@@ -715,12 +761,24 @@ export class SkipRouter {
     return txStatusResponseFromJSON(response);
   }
 
-  async waitForTransaction(chainID: string, txHash: string) {
-    await this.trackTransaction(chainID, txHash);
+  async waitForTransaction({
+    chainID,
+    txHash,
+  }: {
+    chainID: string;
+    txHash: string;
+  }) {
+    await this.trackTransaction({
+      chainID,
+      txHash,
+    });
 
     // eslint-disable-next-line no-constant-condition
     while (true) {
-      const txStatusResponse = await this.transactionStatus(chainID, txHash);
+      const txStatusResponse = await this.transactionStatus({
+        chainID,
+        txHash,
+      });
 
       if (txStatusResponse.status === "STATE_COMPLETED") {
         return txStatusResponse;
@@ -738,7 +796,7 @@ export class SkipRouter {
     return response.venues.map((venue) => swapVenueFromJSON(venue));
   }
 
-  async getAccountNumberAndSequence(address: string, chainID: string) {
+  private async getAccountNumberAndSequence(address: string, chainID: string) {
     if (chainID.includes("evmos")) {
       return this.getAccountNumberAndSequenceEvmos(address, chainID);
     }
@@ -765,7 +823,10 @@ export class SkipRouter {
     };
   }
 
-  async getAccountNumberAndSequenceEvmos(address: string, chainID: string) {
+  private async getAccountNumberAndSequenceEvmos(
+    address: string,
+    chainID: string,
+  ) {
     const endpoint = await this.getRestEndpointForChain(chainID);
 
     const response = await axios.get(
@@ -782,7 +843,10 @@ export class SkipRouter {
     };
   }
 
-  async getAccountNumberAndSequenceInjective(address: string, chainID: string) {
+  private async getAccountNumberAndSequenceInjective(
+    address: string,
+    chainID: string,
+  ) {
     const endpoint = await this.getRestEndpointForChain(chainID);
 
     const chainRestAuthApi = new ChainRestAuthApi(endpoint);
