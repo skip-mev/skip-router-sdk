@@ -17,6 +17,8 @@ import {
   cosmWasmContractMsgToJSON,
   feeAssetFromJSON,
   feeAssetToJSON,
+  ibcAddressFromJSON,
+  ibcAddressToJSON,
   msgsRequestFromJSON,
   msgsRequestToJSON,
   multiChainMsgFromJSON,
@@ -65,35 +67,43 @@ import {
   txStatusResponseToJSON,
 } from "../converters";
 import {
-  AffiliateJSON,
-  Asset,
-  AssetJSON,
-  AssetRecommendation,
-  AssetRecommendationJSON,
-  ChainJSON,
   ChainTransactionJSON,
-  FeeAssetJSON,
-  MsgsRequestJSON,
-  MultiChainMsgJSON,
   NextBlockingTransferJSON,
   PacketJSON,
-  PostHandler,
-  PostHandlerJSON,
-  RecommendAssetsRequest,
-  RecommendAssetsRequestJSON,
+  StatusRequestJSON,
   SubmitTxRequestJSON,
   SubmitTxResponseJSON,
-  SwapExactCoinInJSON,
   TrackTxRequestJSON,
+  TrackTxResponse,
   TrackTxResponseJSON,
   TransferAssetReleaseJSON,
   TransferInfo,
   TransferInfoJSON,
-  TransferJSON,
-  TxStatusRequestJSON,
   TxStatusResponse,
   TxStatusResponseJSON,
-} from "../types";
+} from "../lifecycle";
+import { ChainJSON, FeeAssetJSON } from "../routing";
+import {
+  AffiliateJSON,
+  Asset,
+  AssetJSON,
+  IBCAddress,
+  IBCAddressJSON,
+  MultiChainMsgJSON,
+  PostHandler,
+  PostHandlerJSON,
+  SwapExactCoinInJSON,
+  TransferJSON,
+} from "../shared";
+import {
+  AssetRecommendation,
+  AssetRecommendationJSON,
+  AssetsFromSourceRequest,
+  AssetsFromSourceRequestJSON,
+  MsgsRequestJSON,
+  RecommendAssetsRequest,
+  RecommendAssetsRequestJSON,
+} from "../unified";
 
 test("affiliateFromJSON", () => {
   const affiliateJSON: AffiliateJSON = {
@@ -132,6 +142,7 @@ test("assetFromJSON", () => {
     logo_uri:
       "https://raw.githubusercontent.com/cosmostation/chainlist/main/chain/osmosis/asset/osmo.png",
     decimals: 6,
+    token_contract: "token-contract-value",
   };
 
   expect(assetFromJSON(assetJSON)).toEqual({
@@ -146,6 +157,7 @@ test("assetFromJSON", () => {
     logoURI:
       "https://raw.githubusercontent.com/cosmostation/chainlist/main/chain/osmosis/asset/osmo.png",
     decimals: 6,
+    tokenContract: "token-contract-value",
   });
 });
 
@@ -162,6 +174,7 @@ test("assetToJSON", () => {
     logoURI:
       "https://raw.githubusercontent.com/cosmostation/chainlist/main/chain/osmosis/asset/osmo.png",
     decimals: 6,
+    tokenContract: "token-contract-value",
   };
 
   expect(assetToJSON(asset)).toEqual({
@@ -176,6 +189,7 @@ test("assetToJSON", () => {
     logo_uri:
       "https://raw.githubusercontent.com/cosmostation/chainlist/main/chain/osmosis/asset/osmo.png",
     decimals: 6,
+    token_contract: "token-contract-value",
   });
 });
 
@@ -193,6 +207,7 @@ test("assetRecommendationFromJSON", () => {
       logo_uri:
         "https://raw.githubusercontent.com/cosmostation/chainlist/main/chain/osmosis/asset/osmo.png",
       decimals: 6,
+      token_contract: "token-contract-value",
     },
     reason: "MOST_LIQUID",
   };
@@ -210,6 +225,7 @@ test("assetRecommendationFromJSON", () => {
       logoURI:
         "https://raw.githubusercontent.com/cosmostation/chainlist/main/chain/osmosis/asset/osmo.png",
       decimals: 6,
+      tokenContract: "token-contract-value",
     },
     reason: "MOST_LIQUID",
   });
@@ -229,6 +245,7 @@ test("assetRecommendationToJSON", () => {
       logoURI:
         "https://raw.githubusercontent.com/cosmostation/chainlist/main/chain/osmosis/asset/osmo.png",
       decimals: 6,
+      tokenContract: "token-contract-value",
     },
     reason: "MOST_LIQUID",
   };
@@ -246,37 +263,90 @@ test("assetRecommendationToJSON", () => {
       logo_uri:
         "https://raw.githubusercontent.com/cosmostation/chainlist/main/chain/osmosis/asset/osmo.png",
       decimals: 6,
+      token_contract: "token-contract-value",
     },
     reason: "MOST_LIQUID",
   });
 });
 
 test("assetsFromSourceRequestFromJSON", () => {
-  const assetsFromSourceRequestJSON = {
+  const assetsFromSourceRequestJSON: AssetsFromSourceRequestJSON = {
     source_asset_denom: "uosmo",
     source_asset_chain_id: "osmosis-1",
     allow_multi_tx: true,
+    recommendation_reason: "MOST_LIQUID",
+    include_swaps: true,
+    swap_venues: [
+      {
+        name: "neutron-astroport",
+        chain_id: "neutron-1",
+      },
+    ],
+    native_only: true,
+    group_by: "group-by-value",
+    include_cw20_assets: true,
   };
 
-  expect(assetsFromSourceRequestFromJSON(assetsFromSourceRequestJSON)).toEqual({
+  const expected: AssetsFromSourceRequest = {
     sourceAssetDenom: "uosmo",
     sourceAssetChainID: "osmosis-1",
     allowMultiTx: true,
-  });
+    recommendationReason: "MOST_LIQUID",
+    includeSwaps: true,
+    swapVenues: [
+      {
+        name: "neutron-astroport",
+        chainID: "neutron-1",
+      },
+    ],
+    nativeOnly: true,
+    groupBy: "group-by-value",
+    includeCW20Assets: true,
+  };
+
+  expect(assetsFromSourceRequestFromJSON(assetsFromSourceRequestJSON)).toEqual(
+    expected,
+  );
 });
 
 test("assetsFromSourceRequestToJSON", () => {
-  const assetsFromSourceRequest = {
+  const assetsFromSourceRequest: AssetsFromSourceRequest = {
     sourceAssetDenom: "uosmo",
     sourceAssetChainID: "osmosis-1",
     allowMultiTx: true,
+    recommendationReason: "MOST_LIQUID",
+    includeSwaps: true,
+    swapVenues: [
+      {
+        name: "neutron-astroport",
+        chainID: "neutron-1",
+      },
+    ],
+    nativeOnly: true,
+    groupBy: "group-by-value",
+    includeCW20Assets: true,
   };
 
-  expect(assetsFromSourceRequestToJSON(assetsFromSourceRequest)).toEqual({
+  const expected: AssetsFromSourceRequestJSON = {
     source_asset_denom: "uosmo",
     source_asset_chain_id: "osmosis-1",
     allow_multi_tx: true,
-  });
+    recommendation_reason: "MOST_LIQUID",
+    include_swaps: true,
+    swap_venues: [
+      {
+        name: "neutron-astroport",
+        chain_id: "neutron-1",
+      },
+    ],
+    native_only: true,
+    group_by: "group-by-value",
+    include_cw20_assets: true,
+  };
+
+  expect(assetsFromSourceRequestToJSON(assetsFromSourceRequest)).toEqual(
+    expected,
+  );
 });
 
 test("assetsRequestFromJSON", () => {
@@ -1794,29 +1864,27 @@ test("trackTxRequestToJSON", () => {
 test("trackTxResponseFromJSON", () => {
   const trackResponseJSON: TrackTxResponseJSON = {
     tx_hash: "txid123",
-    success: true,
   };
 
   expect(trackTxResponseFromJSON(trackResponseJSON)).toEqual({
     txHash: "txid123",
-    success: true,
   });
 });
 
 test("trackTxResponseToJSON", () => {
-  const trackResponse = {
+  const trackResponse: TrackTxResponse = {
     txHash: "txid123",
-    success: true,
   };
 
-  expect(trackTxResponseToJSON(trackResponse)).toEqual({
+  const expected: TrackTxResponseJSON = {
     tx_hash: "txid123",
-    success: true,
-  });
+  };
+
+  expect(trackTxResponseToJSON(trackResponse)).toEqual(expected);
 });
 
 test("txStatusRequestFromJSON", () => {
-  const txStatusJSON: TxStatusRequestJSON = {
+  const txStatusJSON: StatusRequestJSON = {
     tx_hash: "txid123",
     chain_id: "osmosis-1",
   };
@@ -2337,4 +2405,32 @@ test("txStatusResponseToJSON", () => {
     },
     error: null,
   });
+});
+
+test("ibcAddressFromJSON", () => {
+  const input: IBCAddressJSON = {
+    address: "cosmos1hsk6jryyqjfhp5dhc55tc9jtckygx0eph6dd02",
+    chain_id: "cosmoshub-4",
+  };
+
+  const expected: IBCAddress = {
+    address: "cosmos1hsk6jryyqjfhp5dhc55tc9jtckygx0eph6dd02",
+    chainID: "cosmoshub-4",
+  };
+
+  expect(ibcAddressFromJSON(input)).toEqual(expected);
+});
+
+test("ibcAddressToJSON", () => {
+  const input: IBCAddress = {
+    address: "cosmos1hsk6jryyqjfhp5dhc55tc9jtckygx0eph6dd02",
+    chainID: "cosmoshub-4",
+  };
+
+  const expected: IBCAddressJSON = {
+    address: "cosmos1hsk6jryyqjfhp5dhc55tc9jtckygx0eph6dd02",
+    chain_id: "cosmoshub-4",
+  };
+
+  expect(ibcAddressToJSON(input)).toEqual(expected);
 });

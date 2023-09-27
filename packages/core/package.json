@@ -35,6 +35,7 @@
     "axios": "^1.4.0",
     "chain-registry": "^1.19.0",
     "cosmjs-types": "^0.8.0",
+    "faker": "^6.6.6",
     "keccak256": "^1.0.6"
   },
   "devDependencies": {

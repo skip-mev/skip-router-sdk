@@ -77,6 +77,7 @@ import {
   RouteResponse,
   routeResponseFromJSON,
   RouteResponseJSON,
+  StatusRequestJSON,
   SubmitTxRequestJSON,
   SubmitTxResponse,
   submitTxResponseFromJSON,
@@ -88,7 +89,6 @@ import {
   TrackTxResponse,
   trackTxResponseFromJSON,
   TrackTxResponseJSON,
-  TxStatusRequestJSON,
   TxStatusResponse,
   txStatusResponseFromJSON,
   TxStatusResponseJSON,
@@ -752,7 +752,7 @@ export class SkipRouter {
   }): Promise<TxStatusResponse> {
     const response = await this.requestClient.get<
       TxStatusResponseJSON,
-      TxStatusRequestJSON
+      StatusRequestJSON
     >("/tx/status", {
       chain_id: chainID,
       tx_hash: txHash,

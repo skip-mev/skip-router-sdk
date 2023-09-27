@@ -1,44 +1,41 @@
 import {
-  Affiliate,
-  AffiliateJSON,
-  Asset,
-  AssetJSON,
-  AssetRecommendation,
-  AssetRecommendationJSON,
-  AssetsFromSourceRequest,
-  AssetsFromSourceRequestJSON,
-  AssetsRequest,
-  AssetsRequestJSON,
-  Chain,
-  ChainJSON,
   ChainTransaction,
   ChainTransactionJSON,
-  CosmWasmContractMsg,
-  CosmWasmContractMsgJSON,
-  FeeAsset,
-  FeeAssetJSON,
-  MsgsRequest,
-  MsgsRequestJSON,
-  MultiChainMsg,
-  MultiChainMsgJSON,
   NextBlockingTransfer,
   NextBlockingTransferJSON,
-  Operation,
-  OperationJSON,
   Packet,
   PacketJSON,
-  PostHandler,
-  PostHandlerJSON,
-  RecommendAssetsRequest,
-  RecommendAssetsRequestJSON,
-  RouteRequest,
-  RouteRequestJSON,
-  RouteResponse,
-  RouteResponseJSON,
+  StatusRequest,
+  StatusRequestJSON,
   SubmitTxRequest,
   SubmitTxRequestJSON,
   SubmitTxResponse,
   SubmitTxResponseJSON,
+  TrackTxRequest,
+  TrackTxRequestJSON,
+  TrackTxResponse,
+  TrackTxResponseJSON,
+  TransferAssetRelease,
+  TransferAssetReleaseJSON,
+  TransferInfo,
+  TransferInfoJSON,
+  TxStatusResponse,
+  TxStatusResponseJSON,
+} from "./lifecycle";
+import { Chain, ChainJSON, FeeAsset, FeeAssetJSON } from "./routing";
+import {
+  Affiliate,
+  AffiliateJSON,
+  Asset,
+  AssetJSON,
+  CosmWasmContractMsg,
+  CosmWasmContractMsgJSON,
+  IBCAddress,
+  IBCAddressJSON,
+  MultiChainMsg,
+  MultiChainMsgJSON,
+  PostHandler,
+  PostHandlerJSON,
   Swap,
   SwapExactCoinIn,
   SwapExactCoinInJSON,
@@ -49,21 +46,27 @@ import {
   SwapOperationJSON,
   SwapVenue,
   SwapVenueJSON,
-  TrackTxRequest,
-  TrackTxRequestJSON,
-  TrackTxResponse,
-  TrackTxResponseJSON,
   Transfer,
-  TransferAssetRelease,
-  TransferAssetReleaseJSON,
-  TransferInfo,
-  TransferInfoJSON,
   TransferJSON,
-  TxStatusRequest,
-  TxStatusRequestJSON,
-  TxStatusResponse,
-  TxStatusResponseJSON,
-} from "./types";
+} from "./shared";
+import {
+  AssetRecommendation,
+  AssetRecommendationJSON,
+  AssetsFromSourceRequest,
+  AssetsFromSourceRequestJSON,
+  AssetsRequest,
+  AssetsRequestJSON,
+  MsgsRequest,
+  MsgsRequestJSON,
+  Operation,
+  OperationJSON,
+  RecommendAssetsRequest,
+  RecommendAssetsRequestJSON,
+  RouteRequest,
+  RouteRequestJSON,
+  RouteResponse,
+  RouteResponseJSON,
+} from "./unified";
 
 export function affiliateFromJSON(affiliateJSON: AffiliateJSON): Affiliate {
   return {
@@ -91,6 +94,7 @@ export function assetFromJSON(assetJSON: AssetJSON): Asset {
     name: assetJSON.name,
     logoURI: assetJSON.logo_uri,
     decimals: assetJSON.decimals,
+    tokenContract: assetJSON.token_contract,
   };
 }
 
@@ -106,6 +110,7 @@ export function assetToJSON(asset: Asset): AssetJSON {
     name: asset.name,
     logo_uri: asset.logoURI,
     decimals: asset.decimals,
+    token_contract: asset.tokenContract,
   };
 }
 
@@ -134,6 +139,12 @@ export function assetsFromSourceRequestFromJSON(
     sourceAssetDenom: assetsFromSourceRequestJSON.source_asset_denom,
     sourceAssetChainID: assetsFromSourceRequestJSON.source_asset_chain_id,
     allowMultiTx: assetsFromSourceRequestJSON.allow_multi_tx,
+    recommendationReason: assetsFromSourceRequestJSON.recommendation_reason,
+    includeSwaps: assetsFromSourceRequestJSON.include_swaps,
+    swapVenues: assetsFromSourceRequestJSON.swap_venues?.map(swapVenueFromJSON),
+    nativeOnly: assetsFromSourceRequestJSON.native_only,
+    groupBy: assetsFromSourceRequestJSON.group_by,
+    includeCW20Assets: assetsFromSourceRequestJSON.include_cw20_assets,
   };
 }
 
@@ -144,6 +155,12 @@ export function assetsFromSourceRequestToJSON(
     source_asset_denom: assetsFromSourceRequest.sourceAssetDenom,
     source_asset_chain_id: assetsFromSourceRequest.sourceAssetChainID,
     allow_multi_tx: assetsFromSourceRequest.allowMultiTx,
+    recommendation_reason: assetsFromSourceRequest.recommendationReason,
+    include_swaps: assetsFromSourceRequest.includeSwaps,
+    swap_venues: assetsFromSourceRequest.swapVenues?.map(swapVenueToJSON),
+    native_only: assetsFromSourceRequest.nativeOnly,
+    group_by: assetsFromSourceRequest.groupBy,
+    include_cw20_assets: assetsFromSourceRequest.includeCW20Assets,
   };
 }
 
@@ -154,6 +171,7 @@ export function assetsRequestFromJSON(
     chainID: assetsRequestJSON.chain_id,
     nativeOnly: assetsRequestJSON.native_only,
     includeNoMetadataAssets: assetsRequestJSON.include_no_metadata_assets,
+    includeCW20Assets: assetsRequestJSON.include_cw20_assets,
   };
 }
 
@@ -164,6 +182,7 @@ export function assetsRequestToJSON(
     chain_id: assetsRequest.chainID,
     native_only: assetsRequest.nativeOnly,
     include_no_metadata_assets: assetsRequest.includeNoMetadataAssets,
+    include_cw20_assets: assetsRequest.includeCW20Assets,
   };
 }
 
@@ -658,7 +677,6 @@ export function trackTxResponseFromJSON(
 ): TrackTxResponse {
   return {
     txHash: trackResponseJSON.tx_hash,
-    success: trackResponseJSON.success,
   };
 }
 
@@ -667,13 +685,12 @@ export function trackTxResponseToJSON(
 ): TrackTxResponseJSON {
   return {
     tx_hash: trackResponse.txHash,
-    success: trackResponse.success,
   };
 }
 
 export function txStatusRequestFromJSON(
-  txStatusRequestJSON: TxStatusRequestJSON,
-): TxStatusRequest {
+  txStatusRequestJSON: StatusRequestJSON,
+): StatusRequest {
   return {
     txHash: txStatusRequestJSON.tx_hash,
     chainID: txStatusRequestJSON.chain_id,
@@ -681,8 +698,8 @@ export function txStatusRequestFromJSON(
 }
 
 export function txStatusRequestToJSON(
-  txStatusRequest: TxStatusRequest,
-): TxStatusRequestJSON {
+  txStatusRequest: StatusRequest,
+): StatusRequestJSON {
   return {
     tx_hash: txStatusRequest.txHash,
     chain_id: txStatusRequest.chainID,
@@ -822,5 +839,19 @@ export function txStatusResponseToJSON(
       statusResponse.transferAssetRelease &&
       transferAssetReleaseToJSON(statusResponse.transferAssetRelease),
     error: statusResponse.error,
+  };
+}
+
+export function ibcAddressFromJSON(ibcAddressJSON: IBCAddressJSON): IBCAddress {
+  return {
+    address: ibcAddressJSON.address,
+    chainID: ibcAddressJSON.chain_id,
+  };
+}
+
+export function ibcAddressToJSON(ibcAddress: IBCAddress): IBCAddressJSON {
+  return {
+    address: ibcAddress.address,
+    chain_id: ibcAddress.chainID,
   };
 }

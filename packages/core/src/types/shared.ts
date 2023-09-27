@@ -1,0 +1,170 @@
+export type IBCAddressJSON = {
+  address: string;
+  chain_id: string;
+};
+
+export type IBCAddress = {
+  address: string;
+  chainID: string;
+};
+
+export type AssetJSON = {
+  denom: string;
+  chain_id: string;
+
+  origin_denom: string;
+  origin_chain_id: string;
+  trace: string;
+  is_cw20: boolean;
+
+  symbol: string | undefined;
+  name: string | undefined;
+  logo_uri: string | undefined;
+  decimals: number | undefined;
+  token_contract: string | undefined;
+};
+
+export type Asset = {
+  denom: string;
+  chainID: string;
+
+  originDenom: string;
+  originChainID: string;
+  trace: string;
+  isCW20: boolean;
+
+  symbol: string | undefined;
+  name: string | undefined;
+  logoURI: string | undefined;
+  decimals: number | undefined;
+  tokenContract: string | undefined;
+};
+
+export type TransferJSON = {
+  port: string;
+  channel: string;
+  chain_id: string;
+  pfm_enabled: boolean;
+  dest_denom: string;
+  supports_memo: boolean;
+};
+
+export type Transfer = {
+  port: string;
+  channel: string;
+  chainID: string;
+  pfmEnabled: boolean;
+  destDenom: string;
+  supportsMemo: boolean;
+};
+
+export type MultiChainMsgJSON = {
+  chain_id: string;
+  path: string[];
+  msg: string;
+  msg_type_url: string;
+};
+
+export type MultiChainMsg = {
+  chainID: string;
+  path: string[];
+  msg: string;
+  msgTypeURL: string;
+};
+
+export type SwapVenueJSON = {
+  name: string;
+  chain_id: string;
+};
+
+export type SwapVenue = {
+  name: string;
+  chainID: string;
+};
+
+export type SwapOperationJSON = {
+  pool: string;
+  denom_in: string;
+  denom_out: string;
+};
+
+export type SwapOperation = {
+  pool: string;
+  denomIn: string;
+  denomOut: string;
+};
+
+export type SwapExactCoinOutJSON = {
+  swap_venue: SwapVenueJSON;
+  swap_operations: SwapOperationJSON[];
+  swap_amount_out: string;
+};
+
+export type SwapExactCoinOut = {
+  swapVenue: SwapVenue;
+  swapOperations: SwapOperation[];
+  swapAmountOut: string;
+};
+
+export type SwapExactCoinInJSON = {
+  swap_venue: SwapVenueJSON;
+  swap_operations: SwapOperationJSON[];
+  swap_amount_in?: string;
+};
+
+export type SwapExactCoinIn = {
+  swapVenue: SwapVenue;
+  swapOperations: SwapOperation[];
+  swapAmountIn?: string;
+};
+
+export type SwapJSON = (
+  | { swap_in: SwapExactCoinInJSON }
+  | { swap_out: SwapExactCoinOutJSON }
+) & {
+  estimated_affiliate_fee?: string;
+};
+
+export type Swap = (
+  | { swapIn: SwapExactCoinIn }
+  | { swapOut: SwapExactCoinOut }
+) & {
+  estimatedAffiliateFee?: string;
+};
+
+export type AffiliateJSON = {
+  basis_points_fee: string;
+  address: string;
+};
+
+export type Affiliate = {
+  basisPointsFee: string;
+  address: string;
+};
+
+export type Reason = "UNKNOWN" | "BASE_TOKEN" | "MOST_LIQUID" | "DIRECT";
+
+export type CosmWasmContractMsgJSON = {
+  contract_address: string;
+  msg: string;
+};
+
+export type CosmWasmContractMsg = {
+  contractAddress: string;
+  msg: string;
+};
+
+export type AutopilotAction = "LIQUID_STAKE" | "CLAIM";
+
+export type AutopilotMsg = {
+  receiver: string;
+  action: AutopilotAction;
+};
+
+export type PostHandlerJSON =
+  | { wasm_msg: CosmWasmContractMsgJSON }
+  | { autopilot_msg: AutopilotMsg };
+
+export type PostHandler =
+  | { wasmMsg: CosmWasmContractMsg }
+  | { autopilotMsg: AutopilotMsg };
