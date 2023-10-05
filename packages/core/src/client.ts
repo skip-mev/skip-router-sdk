@@ -48,6 +48,7 @@ import { MsgExecuteContract } from "cosmjs-types/cosmwasm/wasm/v1/tx";
 import { maxUint256, publicActions, WalletClient } from "viem";
 
 import { erc20ABI } from "./constants/abis";
+import { SUPPORTED_TESTNETS } from "./constants/constants";
 import { createTransaction } from "./injective";
 import { RequestClient } from "./request-client";
 import {
@@ -70,6 +71,7 @@ import {
   Chain,
   chainFromJSON,
   ChainJSON,
+  EvmTx,
   Msg,
   msgFromJSON,
   MsgsRequest,
@@ -132,6 +134,7 @@ export type ExecuteRouteOptions = {
     txHash: string;
     success: boolean;
   }) => Promise<void>;
+  validateGasBalance?: boolean;
 };
 
 export type ExecuteMultiChainMessageOptions = {
@@ -248,7 +251,7 @@ export class SkipRouter {
   }
 
   async executeRoute(options: ExecuteRouteOptions) {
-    const { route, userAddresses } = options;
+    const { route, userAddresses, validateGasBalance } = options;
 
     const messages = await this.messages({
       sourceAssetDenom: route.sourceAssetDenom,
@@ -261,91 +264,21 @@ export class SkipRouter {
       operations: route.operations,
     });
 
-    const feeInfos: Record<
-      string,
-      {
-        denom: string;
-        low_gas_price?: number | undefined;
-        average_gas_price?: number | undefined;
-      }
-    > = {};
+    if (validateGasBalance) {
+      // check balances on chains where a tx is initiated
+      for (let i = 0; i < messages.length; i++) {
+        const message = messages[i];
 
-    // check balances on chains where a tx is initiated
-    for (let i = 0; i < messages.length; i++) {
-      const message = messages[i];
-
-      if ("multiChainMsg" in message) {
-        const { multiChainMsg } = message;
-
-        const chain = chains.find(
-          (chain) => chain.chain_id === multiChainMsg.chainID,
-        );
-        if (!chain) {
-          throw new Error(
-            `Failed to find chain with ID ${multiChainMsg.chainID} in registry`,
+        if ("multiChainMsg" in message) {
+          await this.validateCosmosGasBalance(
+            userAddresses[message.multiChainMsg.chainID],
+            message.multiChainMsg,
           );
         }
 
-        const feeInfo = chain.fees?.fee_tokens[0];
-        if (!feeInfo) {
-          throw new Error("No fee info found");
+        if ("evmTx" in message) {
+          // TODO: check balance
         }
-
-        feeInfos[multiChainMsg.chainID] = feeInfo;
-
-        const gasNeeded = getGasAmountForMessage(multiChainMsg);
-        let averageGasPrice = 0;
-        if (feeInfo.low_gas_price) {
-          averageGasPrice = feeInfo.low_gas_price;
-        } else if (feeInfo.average_gas_price) {
-          averageGasPrice = feeInfo.average_gas_price;
-        }
-
-        const amountNeeded = averageGasPrice * parseInt(gasNeeded);
-
-        const endpoint = await this.getRpcEndpointForChain(
-          multiChainMsg.chainID,
-        );
-        const stargateClient = await StargateClient.connect(endpoint);
-
-        const balance = await stargateClient.getBalance(
-          userAddresses[multiChainMsg.chainID],
-          feeInfo.denom,
-        );
-        if (parseInt(balance.amount) < amountNeeded) {
-          throw new Error(
-            `Insufficient fee token to initiate transfer on ${multiChainMsg.chainID}. Need ${amountNeeded} ${feeInfo.denom}, but only have ${balance.amount} ${feeInfo.denom}.`,
-          );
-        }
-      }
-
-      if ("evmTx" in message) {
-        // TODO: check balance
-        // const { evmTx } = message;
-        // let getEVMSigner = this.getEVMSigner;
-        // if (options.getEVMSigner) {
-        //   getEVMSigner = options.getEVMSigner;
-        // }
-        // if (!getEVMSigner) {
-        //   throw new Error("Unable to get EVM signer");
-        // }
-        // const evmSigner = await getEVMSigner(evmTx.chainID);
-        // if (!evmSigner.account) {
-        //   throw new Error("Failed to retrieve account from signer");
-        // }
-        // const extendedEvmSigner = evmSigner.extend(publicActions);
-        // const fees = await extendedEvmSigner.estimateFeesPerGas();
-        // const estimatedGas = await extendedEvmSigner.estimateGas({
-        //   account: evmSigner.account,
-        //   to: evmTx.to as `0x${string}`,
-        //   data: `0x${evmTx.data}`,
-        //   value: evmTx.value !== "" ? BigInt(evmTx.value) : undefined,
-        //   // gasPrice: fees.gasPrice,
-        //   // maxFeePerGas: fees.maxFeePerGas,
-        //   // maxPriorityFeePerGas: fees.maxPriorityFeePerGas,
-        // });
-        // console.log(fees);
-        // console.log(estimatedGas);
       }
     }
 
@@ -356,7 +289,7 @@ export class SkipRouter {
       if ("multiChainMsg" in message) {
         const { multiChainMsg } = message;
 
-        const feeInfo = feeInfos[multiChainMsg.chainID];
+        const feeInfo = this.getFeeInfoForChain(multiChainMsg.chainID);
 
         let averageGasPrice = 0;
         if (feeInfo.low_gas_price) {
@@ -443,65 +376,14 @@ export class SkipRouter {
         }
 
         const evmSigner = await getEVMSigner(evmTx.chainID);
-        if (!evmSigner.account) {
-          throw new Error("Failed to retrieve account from signer");
-        }
 
-        const extendedEvmSigner = evmSigner.extend(publicActions);
-
-        // check for approvals
-        for (const requiredApproval of evmTx.requiredERC20Approvals) {
-          const allowance = await extendedEvmSigner.readContract({
-            address: requiredApproval.tokenContract as `0x${string}`,
-            abi: erc20ABI,
-            functionName: "allowance",
-            args: [
-              evmSigner.account.address as `0x${string}`,
-              requiredApproval.spender as `0x${string}`,
-            ],
-          });
-
-          if (allowance > BigInt(requiredApproval.amount)) {
-            continue;
-          }
-
-          const txHash = await extendedEvmSigner.writeContract({
-            account: evmSigner.account,
-            address: requiredApproval.tokenContract as `0x${string}`,
-            abi: erc20ABI,
-            functionName: "approve",
-            args: [requiredApproval.spender as `0x${string}`, maxUint256],
-            chain: evmSigner.chain,
-          });
-
-          const receipt = await extendedEvmSigner.waitForTransactionReceipt({
-            hash: txHash,
-          });
-
-          if (receipt.status === "reverted") {
-            throw new Error(`EVM tx reverted: ${receipt.transactionHash}`);
-          }
-        }
-
-        // execute tx
-        const tx = await extendedEvmSigner.sendTransaction({
-          account: evmSigner.account,
-          to: message.evmTx.to as `0x${string}`,
-          data: `0x${message.evmTx.data}`,
-          chain: evmSigner.chain,
-          value:
-            message.evmTx.value === ""
-              ? undefined
-              : BigInt(message.evmTx.value),
+        const txReceipt = await this.executeEVMTransaction({
+          message: evmTx,
+          signer: evmSigner,
         });
 
         // TODO: do this in a better way
-        const isTestnetTX = [
-          "80001",
-          "osmo-test-5",
-          "pion-1",
-          "axelar-testnet-lisbon-3",
-        ].includes(evmTx.chainID);
+        const isTestnetTX = SUPPORTED_TESTNETS.includes(evmTx.chainID);
 
         if (evmTx.requiredERC20Approvals.length > 0) {
           const gmpClient = new AxelarGMPRecoveryAPI({
@@ -510,7 +392,9 @@ export class SkipRouter {
 
           // eslint-disable-next-line no-constant-condition
           while (true) {
-            const status = await gmpClient.queryTransactionStatus(tx);
+            const status = await gmpClient.queryTransactionStatus(
+              txReceipt.transactionHash,
+            );
             if (status.status === "destination_executed") {
               break;
             }
@@ -520,7 +404,7 @@ export class SkipRouter {
           // eslint-disable-next-line no-constant-condition
           while (true) {
             const status = await getAxelarDespositAddressTransferStatus(
-              tx,
+              txReceipt.transactionHash,
               isTestnetTX,
             );
 
@@ -538,7 +422,7 @@ export class SkipRouter {
         if (options.onTransactionSuccess) {
           await options.onTransactionSuccess({
             chainID: evmTx.chainID,
-            txHash: tx,
+            txHash: txReceipt.transactionHash,
             success: true,
           });
         }
@@ -610,6 +494,69 @@ export class SkipRouter {
     const tx = await stargateClient.broadcastTx(txBytes);
 
     return tx;
+  }
+
+  async executeEVMTransaction({
+    message,
+    signer,
+  }: {
+    message: EvmTx;
+    signer: WalletClient;
+  }) {
+    if (!signer.account) {
+      throw new Error("Failed to retrieve account from signer");
+    }
+
+    const extendedSigner = signer.extend(publicActions);
+
+    // check for approvals
+    for (const requiredApproval of message.requiredERC20Approvals) {
+      const allowance = await extendedSigner.readContract({
+        address: requiredApproval.tokenContract as `0x${string}`,
+        abi: erc20ABI,
+        functionName: "allowance",
+        args: [
+          signer.account.address as `0x${string}`,
+          requiredApproval.spender as `0x${string}`,
+        ],
+      });
+
+      if (allowance > BigInt(requiredApproval.amount)) {
+        continue;
+      }
+
+      const txHash = await extendedSigner.writeContract({
+        account: signer.account,
+        address: requiredApproval.tokenContract as `0x${string}`,
+        abi: erc20ABI,
+        functionName: "approve",
+        args: [requiredApproval.spender as `0x${string}`, maxUint256],
+        chain: signer.chain,
+      });
+
+      const receipt = await extendedSigner.waitForTransactionReceipt({
+        hash: txHash,
+      });
+
+      if (receipt.status === "reverted") {
+        throw new Error(`EVM tx reverted: ${receipt.transactionHash}`);
+      }
+    }
+
+    // execute tx
+    const txHash = await extendedSigner.sendTransaction({
+      account: signer.account,
+      to: message.to as `0x${string}`,
+      data: `0x${message.data}`,
+      chain: signer.chain,
+      value: message.value === "" ? undefined : BigInt(message.value),
+    });
+
+    const receipt = await extendedSigner.waitForTransactionReceipt({
+      hash: txHash,
+    });
+
+    return receipt;
   }
 
   async signMultiChainMessageDirect(
@@ -1129,6 +1076,52 @@ export class SkipRouter {
     }
 
     return endpoint;
+  }
+
+  private getFeeInfoForChain(chainID: string) {
+    const chain = chains.find((chain) => chain.chain_id === chainID);
+    if (!chain) {
+      throw new Error(`Failed to find chain with ID ${chainID} in registry`);
+    }
+
+    const feeInfo = chain.fees?.fee_tokens[0];
+    if (!feeInfo) {
+      throw new Error("No fee info found");
+    }
+
+    return feeInfo;
+  }
+
+  private async validateCosmosGasBalance(
+    signerAddress: string,
+    message: MultiChainMsg,
+  ) {
+    const feeInfo = this.getFeeInfoForChain(message.chainID);
+
+    const gasNeeded = getGasAmountForMessage(message);
+    let averageGasPrice = 0;
+    if (feeInfo.low_gas_price) {
+      averageGasPrice = feeInfo.low_gas_price;
+    } else if (feeInfo.average_gas_price) {
+      averageGasPrice = feeInfo.average_gas_price;
+    }
+
+    const amountNeeded = averageGasPrice * parseInt(gasNeeded);
+
+    const endpoint = await this.getRpcEndpointForChain(message.chainID);
+
+    const stargateClient = await StargateClient.connect(endpoint);
+
+    const balance = await stargateClient.getBalance(
+      signerAddress,
+      feeInfo.denom,
+    );
+
+    if (parseInt(balance.amount) < amountNeeded) {
+      throw new Error(
+        `Insufficient fee token to initiate transfer on ${message.chainID}. Need ${amountNeeded} ${feeInfo.denom}, but only have ${balance.amount} ${feeInfo.denom}.`,
+      );
+    }
   }
 }
 
