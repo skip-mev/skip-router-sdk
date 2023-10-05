@@ -1,5 +1,9 @@
 import {
-  coin,
+  AxelarGMPRecoveryAPI,
+  Environment,
+  QueryTransferStatus,
+} from "@axelar-network/axelarjs-sdk";
+import {
   encodeSecp256k1Pubkey,
   makeSignDoc as makeSignDocAmino,
   OfflineAminoSigner,
@@ -18,6 +22,7 @@ import {
   Registry,
   TxBodyEncodeObject,
 } from "@cosmjs/proto-signing";
+import { coin } from "@cosmjs/proto-signing";
 import {
   AminoTypes,
   createDefaultAminoConverters,
@@ -40,7 +45,9 @@ import { chains } from "chain-registry";
 import { SignMode } from "cosmjs-types/cosmos/tx/signing/v1beta1/signing";
 import { TxRaw } from "cosmjs-types/cosmos/tx/v1beta1/tx";
 import { MsgExecuteContract } from "cosmjs-types/cosmwasm/wasm/v1/tx";
+import { maxUint256, publicActions, WalletClient } from "viem";
 
+import { erc20ABI } from "./constants/abis";
 import { createTransaction } from "./injective";
 import { RequestClient } from "./request-client";
 import {
@@ -63,12 +70,13 @@ import {
   Chain,
   chainFromJSON,
   ChainJSON,
+  Msg,
+  msgFromJSON,
   MsgsRequest,
   MsgsRequestJSON,
   msgsRequestToJSON,
   MsgsResponseJSON,
   MultiChainMsg,
-  multiChainMsgFromJSON,
   RecommendAssetsRequest,
   recommendAssetsRequestToJSON,
   RouteRequest,
@@ -105,7 +113,8 @@ export type EndpointOptions = {
 
 export interface SkipRouterOptions {
   apiURL?: string;
-  getOfflineSigner?: (chainID: string) => Promise<OfflineSigner>;
+  getEVMSigner?: (chainID: string) => Promise<WalletClient>;
+  getCosmosSigner?: (chainID: string) => Promise<OfflineSigner>;
   endpointOptions?: {
     endpoints?: Record<string, EndpointOptions>;
     getRpcEndpointForChain?: (chainID: string) => Promise<string>;
@@ -116,8 +125,13 @@ export interface SkipRouterOptions {
 export type ExecuteRouteOptions = {
   route: RouteResponse;
   userAddresses: Record<string, string>;
-  getOfflineSigner?: (chainID: string) => Promise<OfflineSigner>;
-  onTransactionSuccess?: (txStatus: TxStatusResponse) => Promise<void>;
+  getEVMSigner?: (chainID: string) => Promise<WalletClient>;
+  getCosmosSigner?: (chainID: string) => Promise<OfflineSigner>;
+  onTransactionSuccess?: (status: {
+    chainID: string;
+    txHash: string;
+    success: boolean;
+  }) => Promise<void>;
 };
 
 export type ExecuteMultiChainMessageOptions = {
@@ -155,7 +169,8 @@ export class SkipRouter {
     getRestEndpointForChain?: (chainID: string) => Promise<string>;
   };
 
-  private getOfflineSigner?: (chainID: string) => Promise<OfflineSigner>;
+  private getCosmosSigner?: (chainID: string) => Promise<OfflineSigner>;
+  private getEVMSigner?: (chainID: string) => Promise<WalletClient>;
 
   constructor(options: SkipRouterOptions = {}) {
     this.requestClient = new RequestClient(options.apiURL ?? SKIP_API_URL);
@@ -172,7 +187,8 @@ export class SkipRouter {
     );
 
     this.endpointOptions = options.endpointOptions ?? {};
-    this.getOfflineSigner = options.getOfflineSigner;
+    this.getCosmosSigner = options.getCosmosSigner;
+    this.getEVMSigner = options.getEVMSigner;
   }
 
   async assets(options: AssetsRequest = {}): Promise<Record<string, Asset[]>> {
@@ -181,7 +197,7 @@ export class SkipRouter {
         chain_to_assets_map: Record<string, { assets: AssetJSON[] }>;
       },
       AssetsRequestJSON
-    >("/fungible/assets", assetsRequestToJSON(options));
+    >("/v1/fungible/assets", assetsRequestToJSON(options));
 
     return Object.entries(response.chain_to_assets_map).reduce(
       (acc, [chainID, { assets }]) => {
@@ -200,7 +216,10 @@ export class SkipRouter {
         dest_assets: Record<string, { assets: AssetJSON[] }>;
       },
       AssetsFromSourceRequestJSON
-    >("/fungible/assets_from_source", assetsFromSourceRequestToJSON(options));
+    >(
+      "/v1/fungible/assets_from_source",
+      assetsFromSourceRequestToJSON(options),
+    );
 
     return Object.entries(response.dest_assets).reduce(
       (acc, [chainID, { assets }]) => {
@@ -211,9 +230,18 @@ export class SkipRouter {
     );
   }
 
-  async chains(): Promise<Chain[]> {
+  async chains(
+    {
+      includeEVM,
+    }: {
+      includeEVM?: boolean;
+    } = { includeEVM: false },
+  ): Promise<Chain[]> {
     const response = await this.requestClient.get<{ chains: ChainJSON[] }>(
-      "/info/chains",
+      "/v1/info/chains",
+      {
+        include_evm: includeEVM,
+      },
     );
 
     return response.chains.map((chain) => chainFromJSON(chain));
@@ -244,95 +272,276 @@ export class SkipRouter {
 
     // check balances on chains where a tx is initiated
     for (let i = 0; i < messages.length; i++) {
-      const multiHopMsg = messages[i];
+      const message = messages[i];
 
-      const chain = chains.find(
-        (chain) => chain.chain_id === multiHopMsg.chainID,
-      );
+      if ("multiChainMsg" in message) {
+        const { multiChainMsg } = message;
 
-      if (!chain) {
-        throw new Error(
-          `Failed to find chain with ID ${multiHopMsg.chainID} in registry`,
+        const chain = chains.find(
+          (chain) => chain.chain_id === multiChainMsg.chainID,
         );
-      }
+        if (!chain) {
+          throw new Error(
+            `Failed to find chain with ID ${multiChainMsg.chainID} in registry`,
+          );
+        }
 
-      const feeInfo = chain.fees?.fee_tokens[0];
-      if (!feeInfo) {
-        throw new Error("No fee info found");
-      }
+        const feeInfo = chain.fees?.fee_tokens[0];
+        if (!feeInfo) {
+          throw new Error("No fee info found");
+        }
 
-      feeInfos[multiHopMsg.chainID] = feeInfo;
+        feeInfos[multiChainMsg.chainID] = feeInfo;
 
-      const gasNeeded = getGasAmountForMessage(multiHopMsg);
+        const gasNeeded = getGasAmountForMessage(multiChainMsg);
+        let averageGasPrice = 0;
+        if (feeInfo.low_gas_price) {
+          averageGasPrice = feeInfo.low_gas_price;
+        } else if (feeInfo.average_gas_price) {
+          averageGasPrice = feeInfo.average_gas_price;
+        }
 
-      let averageGasPrice = 0;
-      if (feeInfo.low_gas_price) {
-        averageGasPrice = feeInfo.low_gas_price;
-      } else if (feeInfo.average_gas_price) {
-        averageGasPrice = feeInfo.average_gas_price;
-      }
+        const amountNeeded = averageGasPrice * parseInt(gasNeeded);
 
-      const amountNeeded = averageGasPrice * parseInt(gasNeeded);
-
-      const endpoint = await this.getRpcEndpointForChain(multiHopMsg.chainID);
-
-      const stargateClient = await StargateClient.connect(endpoint);
-
-      const balance = await stargateClient.getBalance(
-        userAddresses[multiHopMsg.chainID],
-        feeInfo.denom,
-      );
-
-      if (parseInt(balance.amount) < amountNeeded) {
-        throw new Error(
-          `Insufficient fee token to initiate transfer on ${multiHopMsg.chainID}. Need ${amountNeeded} ${feeInfo.denom}, but only have ${balance.amount} ${feeInfo.denom}.`,
+        const endpoint = await this.getRpcEndpointForChain(
+          multiChainMsg.chainID,
         );
+        const stargateClient = await StargateClient.connect(endpoint);
+
+        const balance = await stargateClient.getBalance(
+          userAddresses[multiChainMsg.chainID],
+          feeInfo.denom,
+        );
+        if (parseInt(balance.amount) < amountNeeded) {
+          throw new Error(
+            `Insufficient fee token to initiate transfer on ${multiChainMsg.chainID}. Need ${amountNeeded} ${feeInfo.denom}, but only have ${balance.amount} ${feeInfo.denom}.`,
+          );
+        }
+      }
+
+      if ("evmTx" in message) {
+        // TODO: check balance
+        // const { evmTx } = message;
+        // let getEVMSigner = this.getEVMSigner;
+        // if (options.getEVMSigner) {
+        //   getEVMSigner = options.getEVMSigner;
+        // }
+        // if (!getEVMSigner) {
+        //   throw new Error("Unable to get EVM signer");
+        // }
+        // const evmSigner = await getEVMSigner(evmTx.chainID);
+        // if (!evmSigner.account) {
+        //   throw new Error("Failed to retrieve account from signer");
+        // }
+        // const extendedEvmSigner = evmSigner.extend(publicActions);
+        // const fees = await extendedEvmSigner.estimateFeesPerGas();
+        // const estimatedGas = await extendedEvmSigner.estimateGas({
+        //   account: evmSigner.account,
+        //   to: evmTx.to as `0x${string}`,
+        //   data: `0x${evmTx.data}`,
+        //   value: evmTx.value !== "" ? BigInt(evmTx.value) : undefined,
+        //   // gasPrice: fees.gasPrice,
+        //   // maxFeePerGas: fees.maxFeePerGas,
+        //   // maxPriorityFeePerGas: fees.maxPriorityFeePerGas,
+        // });
+        // console.log(fees);
+        // console.log(estimatedGas);
       }
     }
 
     // execute txs
     for (let i = 0; i < messages.length; i++) {
-      const multiHopMsg = messages[i];
+      const message = messages[i];
 
-      const feeInfo = feeInfos[multiHopMsg.chainID];
+      if ("multiChainMsg" in message) {
+        const { multiChainMsg } = message;
 
-      let averageGasPrice = 0;
-      if (feeInfo.low_gas_price) {
-        averageGasPrice = feeInfo.low_gas_price;
-      } else if (feeInfo.average_gas_price) {
-        averageGasPrice = feeInfo.average_gas_price;
+        const feeInfo = feeInfos[multiChainMsg.chainID];
+
+        let averageGasPrice = 0;
+        if (feeInfo.low_gas_price) {
+          averageGasPrice = feeInfo.low_gas_price;
+        } else if (feeInfo.average_gas_price) {
+          averageGasPrice = feeInfo.average_gas_price;
+        }
+
+        const feeAmount =
+          averageGasPrice * parseInt(getGasAmountForMessage(multiChainMsg));
+
+        let getOfflineSigner = this.getCosmosSigner;
+        if (options.getCosmosSigner) {
+          getOfflineSigner = options.getCosmosSigner;
+        }
+
+        if (!getOfflineSigner) {
+          throw new Error(
+            `Unable to find offline signer for chain ${multiChainMsg.chainID}`,
+          );
+        }
+
+        const signer = await getOfflineSigner(multiChainMsg.chainID);
+
+        const tx = await this.executeMultiChainMessage({
+          signerAddress: userAddresses[multiChainMsg.chainID],
+          signer,
+          message: multiChainMsg,
+          feeAmount: coin(feeAmount, feeInfo.denom),
+        });
+
+        const isAxelarTransfer = await getIsAxelarTransfer(tx.transactionHash);
+
+        if (isAxelarTransfer) {
+          // eslint-disable-next-line no-constant-condition
+          while (true) {
+            const status = await getAxelarDespositAddressTransferStatus(
+              tx.transactionHash,
+              false,
+            );
+
+            if (
+              status.success &&
+              status.data.status === QueryTransferStatus.EXECUTED
+            ) {
+              break;
+            }
+
+            await wait(1000);
+          }
+
+          if (options.onTransactionSuccess) {
+            await options.onTransactionSuccess({
+              chainID: multiChainMsg.chainID,
+              txHash: tx.transactionHash,
+              success: true,
+            });
+          }
+        } else {
+          const txStatusResponse = await this.waitForTransaction({
+            chainID: multiChainMsg.chainID,
+            txHash: tx.transactionHash,
+          });
+
+          if (options.onTransactionSuccess) {
+            await options.onTransactionSuccess({
+              chainID: multiChainMsg.chainID,
+              txHash: tx.transactionHash,
+              success: txStatusResponse.status === "STATE_COMPLETED",
+            });
+          }
+        }
       }
 
-      const feeAmount =
-        averageGasPrice * parseInt(getGasAmountForMessage(multiHopMsg));
+      if ("evmTx" in message) {
+        const { evmTx } = message;
 
-      let getOfflineSigner = this.getOfflineSigner;
-      if (options.getOfflineSigner) {
-        getOfflineSigner = options.getOfflineSigner;
-      }
+        let getEVMSigner = this.getEVMSigner;
+        if (options.getEVMSigner) {
+          getEVMSigner = options.getEVMSigner;
+        }
+        if (!getEVMSigner) {
+          throw new Error("Unable to get EVM signer");
+        }
 
-      if (!getOfflineSigner) {
-        throw new Error(
-          `Unable to find offline signer for chain ${multiHopMsg.chainID}`,
-        );
-      }
+        const evmSigner = await getEVMSigner(evmTx.chainID);
+        if (!evmSigner.account) {
+          throw new Error("Failed to retrieve account from signer");
+        }
 
-      const signer = await getOfflineSigner(multiHopMsg.chainID);
+        const extendedEvmSigner = evmSigner.extend(publicActions);
 
-      const tx = await this.executeMultiChainMessage({
-        signerAddress: userAddresses[multiHopMsg.chainID],
-        signer,
-        message: multiHopMsg,
-        feeAmount: coin(feeAmount, feeInfo.denom),
-      });
+        // check for approvals
+        for (const requiredApproval of evmTx.requiredERC20Approvals) {
+          const allowance = await extendedEvmSigner.readContract({
+            address: requiredApproval.tokenContract as `0x${string}`,
+            abi: erc20ABI,
+            functionName: "allowance",
+            args: [
+              evmSigner.account.address as `0x${string}`,
+              requiredApproval.spender as `0x${string}`,
+            ],
+          });
 
-      const txStatusResponse = await this.waitForTransaction({
-        chainID: multiHopMsg.chainID,
-        txHash: tx.transactionHash,
-      });
+          if (allowance > BigInt(requiredApproval.amount)) {
+            continue;
+          }
 
-      if (options.onTransactionSuccess) {
-        await options.onTransactionSuccess(txStatusResponse);
+          const txHash = await extendedEvmSigner.writeContract({
+            account: evmSigner.account,
+            address: requiredApproval.tokenContract as `0x${string}`,
+            abi: erc20ABI,
+            functionName: "approve",
+            args: [requiredApproval.spender as `0x${string}`, maxUint256],
+            chain: evmSigner.chain,
+          });
+
+          const receipt = await extendedEvmSigner.waitForTransactionReceipt({
+            hash: txHash,
+          });
+
+          if (receipt.status === "reverted") {
+            throw new Error(`EVM tx reverted: ${receipt.transactionHash}`);
+          }
+        }
+
+        // execute tx
+        const tx = await extendedEvmSigner.sendTransaction({
+          account: evmSigner.account,
+          to: message.evmTx.to as `0x${string}`,
+          data: `0x${message.evmTx.data}`,
+          chain: evmSigner.chain,
+          value:
+            message.evmTx.value === ""
+              ? undefined
+              : BigInt(message.evmTx.value),
+        });
+
+        // TODO: do this in a better way
+        const isTestnetTX = [
+          "80001",
+          "osmo-test-5",
+          "pion-1",
+          "axelar-testnet-lisbon-3",
+        ].includes(evmTx.chainID);
+
+        if (evmTx.requiredERC20Approvals.length > 0) {
+          const gmpClient = new AxelarGMPRecoveryAPI({
+            environment: Environment.MAINNET,
+          });
+
+          // eslint-disable-next-line no-constant-condition
+          while (true) {
+            const status = await gmpClient.queryTransactionStatus(tx);
+            if (status.status === "destination_executed") {
+              break;
+            }
+            await wait(1000);
+          }
+        } else {
+          // eslint-disable-next-line no-constant-condition
+          while (true) {
+            const status = await getAxelarDespositAddressTransferStatus(
+              tx,
+              isTestnetTX,
+            );
+
+            if (
+              status.success &&
+              status.data.status === QueryTransferStatus.EXECUTED
+            ) {
+              break;
+            }
+
+            await wait(1000);
+          }
+        }
+
+        if (options.onTransactionSuccess) {
+          await options.onTransactionSuccess({
+            chainID: evmTx.chainID,
+            txHash: tx,
+            success: true,
+          });
+        }
       }
     }
   }
@@ -425,7 +634,6 @@ export class SkipRouter {
     }
 
     if (multiChainMessage.chainID.includes("injective")) {
-      // throw new Error("Injective is not supported yet");
       return this.signMultiChainMessageDirectInjective(
         signerAddress,
         signer,
@@ -673,23 +881,23 @@ export class SkipRouter {
     });
   }
 
-  async messages(options: MsgsRequest): Promise<MultiChainMsg[]> {
+  async messages(options: MsgsRequest): Promise<Msg[]> {
     const response = await this.requestClient.post<
       MsgsResponseJSON,
       MsgsRequestJSON
-    >("/fungible/msgs", {
+    >("/v2/fungible/msgs", {
       ...msgsRequestToJSON(options),
       slippage_tolerance_percent: options.slippageTolerancePercent ?? "0",
     });
 
-    return response.msgs.map((msg) => multiChainMsgFromJSON(msg));
+    return response.msgs.map((msg) => msgFromJSON(msg));
   }
 
   async route(options: RouteRequest): Promise<RouteResponse> {
     const response = await this.requestClient.post<
       RouteResponseJSON,
       RouteRequestJSON
-    >("/fungible/route", {
+    >("/v2/fungible/route", {
       ...routeRequestToJSON(options),
       cumulative_affiliate_fee_bps: options.cumulativeAffiliateFeeBPS ?? "0",
     });
@@ -700,7 +908,7 @@ export class SkipRouter {
   async recommendAssets(options: RecommendAssetsRequest) {
     const response = await this.requestClient.post<{
       recommendations: AssetRecommendationJSON[];
-    }>("/fungible/recommend_assets", recommendAssetsRequestToJSON(options));
+    }>("/v1/fungible/recommend_assets", recommendAssetsRequestToJSON(options));
 
     return response.recommendations.map((recommendation) =>
       assetRecommendationFromJSON(recommendation),
@@ -717,7 +925,7 @@ export class SkipRouter {
     const response = await this.requestClient.post<
       SubmitTxResponseJSON,
       SubmitTxRequestJSON
-    >("/tx/submit", {
+    >("/v1/tx/submit", {
       chain_id: chainID,
       tx: tx,
     });
@@ -735,7 +943,7 @@ export class SkipRouter {
     const response = await this.requestClient.post<
       TrackTxResponseJSON,
       TrackTxRequestJSON
-    >("/tx/track", {
+    >("/v1/tx/track", {
       chain_id: chainID,
       tx_hash: txHash,
     });
@@ -753,7 +961,7 @@ export class SkipRouter {
     const response = await this.requestClient.get<
       TxStatusResponseJSON,
       StatusRequestJSON
-    >("/tx/status", {
+    >("/v1/tx/status", {
       chain_id: chainID,
       tx_hash: txHash,
     });
@@ -790,7 +998,7 @@ export class SkipRouter {
 
   async venues(): Promise<SwapVenue[]> {
     const response = await this.requestClient.get<{ venues: SwapVenueJSON[] }>(
-      "/fungible/venues",
+      "/v1/fungible/venues",
     );
 
     return response.venues.map((venue) => swapVenueFromJSON(venue));
@@ -922,4 +1130,46 @@ export class SkipRouter {
 
     return endpoint;
   }
+}
+
+// TODO: rename and find a proper home. DO NOT KEEP.
+async function getAxelarDespositAddressTransferStatus(
+  txHash: string,
+  isTestnetTX: boolean,
+): Promise<
+  | { success: true; data: { status: QueryTransferStatus } }
+  | { success: false; error: string }
+> {
+  const apiURL = isTestnetTX
+    ? "https://testnet.api.axelarscan.io"
+    : "https://api.axelarscan.io";
+  const { data } = await axios.post(`${apiURL}/cross-chain/transfers-status`, {
+    txHash,
+  });
+
+  if (data.length === 0 || data.error) {
+    return {
+      success: false,
+      error: "No transfer found",
+    };
+  }
+
+  return {
+    success: true,
+    data: {
+      status: data[0].status as QueryTransferStatus,
+    },
+  };
+}
+
+async function getIsAxelarTransfer(txHash: string) {
+  const { data } = await axios.post<{ data: unknown[] }>(
+    "https://api.axelarscan.io",
+    {
+      method: "searchTransfers",
+      txHash: txHash,
+    },
+  );
+
+  return data.data.length > 0;
 }

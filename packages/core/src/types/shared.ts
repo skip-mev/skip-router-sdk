@@ -58,6 +58,24 @@ export type Transfer = {
   supportsMemo: boolean;
 };
 
+export type AxelarTransferJSON = {
+  from_chain: string;
+  to_chain: string;
+  asset: string;
+  should_unwrap: boolean;
+  fee_amount: string;
+  is_testnet: boolean;
+};
+
+export type AxelarTransfer = {
+  fromChain: string;
+  toChain: string;
+  asset: string;
+  shouldUnwrap: boolean;
+  feeAmount: string;
+  isTestnet: boolean;
+};
+
 export type MultiChainMsgJSON = {
   chain_id: string;
   path: string[];
@@ -168,3 +186,31 @@ export type PostHandlerJSON =
 export type PostHandler =
   | { wasmMsg: CosmWasmContractMsg }
   | { autopilotMsg: AutopilotMsg };
+
+export type ERC20ApprovalJSON = {
+  token_contract: string;
+  spender: string;
+  amount: string;
+};
+
+export type ERC20Approval = {
+  tokenContract: string;
+  spender: string;
+  amount: string;
+};
+
+export type EvmTxJSON = {
+  chain_id: string;
+  to: string;
+  value: string;
+  data: string;
+  required_erc20_approvals: ERC20ApprovalJSON[];
+};
+
+export type EvmTx = {
+  chainID: string;
+  to: string;
+  value: string;
+  data: string;
+  requiredERC20Approvals: ERC20Approval[];
+};

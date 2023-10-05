@@ -28,8 +28,14 @@ import {
   AffiliateJSON,
   Asset,
   AssetJSON,
+  AxelarTransfer,
+  AxelarTransferJSON,
   CosmWasmContractMsg,
   CosmWasmContractMsgJSON,
+  ERC20Approval,
+  ERC20ApprovalJSON,
+  EvmTx,
+  EvmTxJSON,
   IBCAddress,
   IBCAddressJSON,
   MultiChainMsg,
@@ -56,6 +62,8 @@ import {
   AssetsFromSourceRequestJSON,
   AssetsRequest,
   AssetsRequestJSON,
+  Msg,
+  MsgJSON,
   MsgsRequest,
   MsgsRequestJSON,
   Operation,
@@ -172,6 +180,7 @@ export function assetsRequestFromJSON(
     nativeOnly: assetsRequestJSON.native_only,
     includeNoMetadataAssets: assetsRequestJSON.include_no_metadata_assets,
     includeCW20Assets: assetsRequestJSON.include_cw20_assets,
+    includeEvmAssets: assetsRequestJSON.include_evm_assets,
   };
 }
 
@@ -183,6 +192,7 @@ export function assetsRequestToJSON(
     native_only: assetsRequest.nativeOnly,
     include_no_metadata_assets: assetsRequest.includeNoMetadataAssets,
     include_cw20_assets: assetsRequest.includeCW20Assets,
+    include_evm_assets: assetsRequest.includeEvmAssets,
   };
 }
 
@@ -198,6 +208,7 @@ export function chainFromJSON(chainJSON: ChainJSON): Chain {
     logoURI: chainJSON.logo_uri,
     bech32Prefix: chainJSON.bech32_prefix,
     feeAssets: chainJSON.fee_assets.map(feeAssetFromJSON),
+    chainType: chainJSON.chain_type,
   };
 }
 
@@ -213,6 +224,7 @@ export function chainToJSON(chain: Chain): ChainJSON {
     logo_uri: chain.logoURI,
     bech32_prefix: chain.bech32Prefix,
     fee_assets: chain.feeAssets.map(feeAssetToJSON),
+    chain_type: chain.chainType,
   };
 }
 
@@ -449,12 +461,22 @@ export function operationFromJSON(operationJSON: OperationJSON): Operation {
     return { transfer: transferFromJSON(operationJSON.transfer) };
   }
 
+  if ("axelar_transfer" in operationJSON) {
+    return {
+      axelarTransfer: axelarTransferFromJSON(operationJSON.axelar_transfer),
+    };
+  }
+
   return { swap: swapFromJSON(operationJSON.swap) };
 }
 
 export function operationToJSON(operation: Operation): OperationJSON {
   if ("transfer" in operation) {
     return { transfer: transferToJSON(operation.transfer) };
+  }
+
+  if ("axelarTransfer" in operation) {
+    return { axelar_transfer: axelarTransferToJSON(operation.axelarTransfer) };
   }
 
   return { swap: swapToJSON(operation.swap) };
@@ -853,5 +875,98 @@ export function ibcAddressToJSON(ibcAddress: IBCAddress): IBCAddressJSON {
   return {
     address: ibcAddress.address,
     chain_id: ibcAddress.chainID,
+  };
+}
+
+export function axelarTransferFromJSON(
+  axelarTransferJSON: AxelarTransferJSON,
+): AxelarTransfer {
+  return {
+    fromChain: axelarTransferJSON.from_chain,
+    toChain: axelarTransferJSON.to_chain,
+    asset: axelarTransferJSON.asset,
+    shouldUnwrap: axelarTransferJSON.should_unwrap,
+    feeAmount: axelarTransferJSON.fee_amount,
+    isTestnet: axelarTransferJSON.is_testnet,
+  };
+}
+
+export function axelarTransferToJSON(
+  axelarTransfer: AxelarTransfer,
+): AxelarTransferJSON {
+  return {
+    from_chain: axelarTransfer.fromChain,
+    to_chain: axelarTransfer.toChain,
+    asset: axelarTransfer.asset,
+    should_unwrap: axelarTransfer.shouldUnwrap,
+    fee_amount: axelarTransfer.feeAmount,
+    is_testnet: axelarTransfer.isTestnet,
+  };
+}
+
+export function erc20ApprovalFromJSON(
+  erc20ApprovalJSON: ERC20ApprovalJSON,
+): ERC20Approval {
+  return {
+    tokenContract: erc20ApprovalJSON.token_contract,
+    spender: erc20ApprovalJSON.spender,
+    amount: erc20ApprovalJSON.amount,
+  };
+}
+
+export function erc20ApprovalToJSON(
+  erc20Approval: ERC20Approval,
+): ERC20ApprovalJSON {
+  return {
+    token_contract: erc20Approval.tokenContract,
+    spender: erc20Approval.spender,
+    amount: erc20Approval.amount,
+  };
+}
+
+export function evmTxFromJSON(evmTxJSON: EvmTxJSON): EvmTx {
+  return {
+    chainID: evmTxJSON.chain_id,
+    to: evmTxJSON.to,
+    value: evmTxJSON.value,
+    data: evmTxJSON.data,
+    requiredERC20Approvals: evmTxJSON.required_erc20_approvals.map(
+      erc20ApprovalFromJSON,
+    ),
+  };
+}
+
+export function evmTxToJSON(evmTx: EvmTx): EvmTxJSON {
+  return {
+    chain_id: evmTx.chainID,
+    to: evmTx.to,
+    value: evmTx.value,
+    data: evmTx.data,
+    required_erc20_approvals:
+      evmTx.requiredERC20Approvals.map(erc20ApprovalToJSON),
+  };
+}
+
+export function msgFromJSON(msgJSON: MsgJSON): Msg {
+  if ("multi_chain_msg" in msgJSON) {
+    return {
+      multiChainMsg: multiChainMsgFromJSON(msgJSON.multi_chain_msg),
+    };
+  }
+
+  return {
+    evmTx: evmTxFromJSON(msgJSON.evm_tx),
+  };
+}
+
+export function msgToJSON(msg: Msg): MsgJSON {
+  if ("multiChainMsg" in msg) {
+    return {
+      multi_chain_msg: multiChainMsgToJSON(msg.multiChainMsg),
+    };
+  }
+
+  return {
+    evm_tx: evmTxToJSON(msg.evmTx),
   };
 }

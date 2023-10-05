@@ -3,6 +3,10 @@ import {
   AffiliateJSON,
   Asset,
   AssetJSON,
+  AxelarTransfer,
+  AxelarTransferJSON,
+  EvmTx,
+  EvmTxJSON,
   MultiChainMsg,
   MultiChainMsgJSON,
   PostHandler,
@@ -21,6 +25,7 @@ export type AssetsRequestJSON = {
   native_only?: boolean;
   include_no_metadata_assets?: boolean;
   include_cw20_assets?: boolean;
+  include_evm_assets?: boolean;
 };
 
 export type AssetsRequest = {
@@ -28,6 +33,7 @@ export type AssetsRequest = {
   nativeOnly?: boolean;
   includeNoMetadataAssets?: boolean;
   includeCW20Assets?: boolean;
+  includeEvmAssets?: boolean;
 };
 
 export type AssetsFromSourceRequestJSON = {
@@ -126,9 +132,15 @@ export type RouteRequestGivenOut = RouteRequestBase & {
 
 export type RouteRequest = RouteRequestGivenIn | RouteRequestGivenOut;
 
-export type OperationJSON = { transfer: TransferJSON } | { swap: SwapJSON };
+export type OperationJSON =
+  | { transfer: TransferJSON }
+  | { swap: SwapJSON }
+  | { axelar_transfer: AxelarTransferJSON };
 
-export type Operation = { transfer: Transfer } | { swap: Swap };
+export type Operation =
+  | { transfer: Transfer }
+  | { swap: Swap }
+  | { axelarTransfer: AxelarTransfer };
 
 export type RouteResponseJSON = {
   source_asset_denom: string;
@@ -200,10 +212,16 @@ export type MsgsRequest = {
   postRouteHandler?: PostHandler;
 };
 
+export type MsgJSON =
+  | { multi_chain_msg: MultiChainMsgJSON }
+  | { evm_tx: EvmTxJSON };
+
+export type Msg = { multiChainMsg: MultiChainMsg } | { evmTx: EvmTx };
+
 export type MsgsResponseJSON = {
-  msgs: MultiChainMsgJSON[];
+  msgs: MsgJSON[];
 };
 
 export type MsgsResponse = {
-  msgs: MultiChainMsg[];
+  msgs: Msg[];
 };

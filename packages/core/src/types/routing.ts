@@ -30,6 +30,7 @@ export type Chain = {
   logoURI?: string;
   bech32Prefix: string;
   feeAssets: FeeAsset[];
+  chainType: string;
 };
 
 export type ChainJSON = {
@@ -43,6 +44,7 @@ export type ChainJSON = {
   logo_uri?: string;
   bech32_prefix: string;
   fee_assets: FeeAssetJSON[];
+  chain_type: string;
 };
 
 export type ModuleVersionInfo = {
