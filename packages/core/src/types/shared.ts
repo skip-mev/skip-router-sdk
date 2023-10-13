@@ -60,7 +60,9 @@ export type Transfer = {
 
 export type AxelarTransferJSON = {
   from_chain: string;
+  from_chain_id: string;
   to_chain: string;
+  to_chain_id: string;
   asset: string;
   should_unwrap: boolean;
   fee_amount: string;
@@ -69,7 +71,9 @@ export type AxelarTransferJSON = {
 
 export type AxelarTransfer = {
   fromChain: string;
+  fromChainID: string;
   toChain: string;
+  toChainID: string;
   asset: string;
   shouldUnwrap: boolean;
   feeAmount: string;

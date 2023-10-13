@@ -354,6 +354,29 @@ export class SkipRouter {
             txHash: tx.transactionHash,
           });
 
+          const isAxelarTransferAfterIBC = await getIsAxelarTransfer(
+            tx.transactionHash,
+          );
+
+          if (isAxelarTransferAfterIBC) {
+            // eslint-disable-next-line no-constant-condition
+            while (true) {
+              const status = await getAxelarDespositAddressTransferStatus(
+                tx.transactionHash,
+                false,
+              );
+
+              if (
+                status.success &&
+                status.data.status === QueryTransferStatus.EXECUTED
+              ) {
+                break;
+              }
+
+              await wait(1000);
+            }
+          }
+
           if (options.onTransactionSuccess) {
             await options.onTransactionSuccess({
               chainID: multiChainMsg.chainID,

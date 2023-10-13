@@ -883,7 +883,9 @@ export function axelarTransferFromJSON(
 ): AxelarTransfer {
   return {
     fromChain: axelarTransferJSON.from_chain,
+    fromChainID: axelarTransferJSON.from_chain_id,
     toChain: axelarTransferJSON.to_chain,
+    toChainID: axelarTransferJSON.to_chain_id,
     asset: axelarTransferJSON.asset,
     shouldUnwrap: axelarTransferJSON.should_unwrap,
     feeAmount: axelarTransferJSON.fee_amount,
@@ -896,7 +898,9 @@ export function axelarTransferToJSON(
 ): AxelarTransferJSON {
   return {
     from_chain: axelarTransfer.fromChain,
+    from_chain_id: axelarTransfer.fromChainID,
     to_chain: axelarTransfer.toChain,
+    to_chain_id: axelarTransfer.toChainID,
     asset: axelarTransfer.asset,
     should_unwrap: axelarTransfer.shouldUnwrap,
     fee_amount: axelarTransfer.feeAmount,
