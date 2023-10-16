@@ -117,7 +117,12 @@ export type ExecuteRouteOptions = {
   route: RouteResponse;
   userAddresses: Record<string, string>;
   getOfflineSigner?: (chainID: string) => Promise<OfflineSigner>;
-  onTransactionSuccess?: (txStatus: TxStatusResponse) => Promise<void>;
+  onTransactionSuccess?: (
+    txHash: string,
+    chainID: string,
+    txStatus: TxStatusResponse,
+  ) => Promise<void>;
+  slippageTolerancePercent?: string;
 };
 
 export type ExecuteMultiChainMessageOptions = {
@@ -220,7 +225,7 @@ export class SkipRouter {
   }
 
   async executeRoute(options: ExecuteRouteOptions) {
-    const { route, userAddresses } = options;
+    const { route, userAddresses, slippageTolerancePercent = "3" } = options;
 
     const messages = await this.messages({
       sourceAssetDenom: route.sourceAssetDenom,
@@ -231,6 +236,7 @@ export class SkipRouter {
       amountOut: route.estimatedAmountOut ?? "0",
       addressList: route.chainIDs.map((chainID) => userAddresses[chainID]),
       operations: route.operations,
+      slippageTolerancePercent,
     });
 
     const feeInfos: Record<
@@ -332,7 +338,11 @@ export class SkipRouter {
       });
 
       if (options.onTransactionSuccess) {
-        await options.onTransactionSuccess(txStatusResponse);
+        await options.onTransactionSuccess(
+          tx.transactionHash,
+          multiHopMsg.chainID,
+          txStatusResponse,
+        );
       }
     }
   }
