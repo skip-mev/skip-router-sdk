@@ -41,12 +41,13 @@ import {
   DEFAULT_BLOCK_TIMEOUT_HEIGHT,
 } from "@injectivelabs/utils";
 import axios from "axios";
-import { chains } from "chain-registry";
+// import { chains } from "chain-registry";
 import { SignMode } from "cosmjs-types/cosmos/tx/signing/v1beta1/signing";
 import { TxRaw } from "cosmjs-types/cosmos/tx/v1beta1/tx";
 import { MsgExecuteContract } from "cosmjs-types/cosmwasm/wasm/v1/tx";
 import { maxUint256, publicActions, WalletClient } from "viem";
 
+import chainsRecord from "./chains/chainRecord";
 import { erc20ABI } from "./constants/abis";
 import { SUPPORTED_TESTNETS } from "./constants/constants";
 import { createTransaction } from "./injective";
@@ -1055,7 +1056,7 @@ export class SkipRouter {
       }
     }
 
-    const chain = chains.find((chain) => chain.chain_id === chainID);
+    const chain = chainsRecord[chainID];
 
     if (!chain) {
       throw new Error(`Failed to find chain with ID ${chainID} in registry`);
@@ -1086,8 +1087,7 @@ export class SkipRouter {
       }
     }
 
-    const chain = chains.find((chain) => chain.chain_id === chainID);
-
+    const chain = chainsRecord[chainID];
     if (!chain) {
       throw new Error(`Failed to find chain with ID ${chainID} in registry`);
     }
@@ -1102,7 +1102,7 @@ export class SkipRouter {
   }
 
   private getFeeInfoForChain(chainID: string) {
-    const chain = chains.find((chain) => chain.chain_id === chainID);
+    const chain = chainsRecord[chainID];
     if (!chain) {
       throw new Error(`Failed to find chain with ID ${chainID} in registry`);
     }
