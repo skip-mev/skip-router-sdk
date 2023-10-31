@@ -1,3 +1,5 @@
+import * as chainRegistry from "chain-registry";
+
 const DYDX_CHAIN = {
   $schema: "../chain.schema.json",
   chain_name: "dydx",
@@ -82,6 +84,21 @@ const DYDX_CHAIN = {
         address: "rpc.dydx.nodestake.top:666",
         provider: "NodeStake",
       },
+      {
+        id: "400f3d9e30b69e78a7fb891f60d76fa3c73f0ecc",
+        address: "dydx.rpc.kjnodes.com:17059",
+        provider: "kjnodes",
+      },
+      {
+        id: "e1b058e5cfa2b836ddaa496b10911da62dcf182e",
+        address: "dydx-seed-de.allnodes.me:26656",
+        provider: "Allnodes ⚡️ Nodes & Staking",
+      },
+      {
+        id: "e726816f42831689eab9378d5d577f1d06d25716",
+        address: "dydx-seed-us.allnodes.me:26656",
+        provider: "Allnodes ⚡️ Nodes & Staking",
+      },
     ],
     persistent_peers: [
       {
@@ -109,6 +126,14 @@ const DYDX_CHAIN = {
         address: "https://rpc.dydx.nodestake.top:443",
         provider: "NodeStake",
       },
+      {
+        address: "https://dydx.rpc.kjnodes.com:443",
+        provider: "kjnodes",
+      },
+      {
+        address: "https://dydx-rpc.publicnode.com:443",
+        provider: "Allnodes ⚡️ Nodes & Staking",
+      },
     ],
     rest: [
       {
@@ -127,6 +152,14 @@ const DYDX_CHAIN = {
         address: "https://api.dydx.nodestake.top:443",
         provider: "NodeStake",
       },
+      {
+        address: "https://dydx.api.kjnodes.com:443",
+        provider: "kjnodes",
+      },
+      {
+        address: "https://dydx-rest.publicnode.com",
+        provider: "Allnodes ⚡️ Nodes & Staking",
+      },
     ],
     grpc: [
       {
@@ -140,6 +173,14 @@ const DYDX_CHAIN = {
       {
         address: "https://grpc.dydx.nodestake.top",
         provider: "NodeStake",
+      },
+      {
+        address: "dydx.grpc.kjnodes.com:443",
+        provider: "kjnodes",
+      },
+      {
+        address: "dydx-grpc.publicnode.com:443",
+        provider: "Allnodes ⚡️ Nodes & Staking",
       },
     ],
   },
@@ -166,6 +207,108 @@ const DYDX_CHAIN = {
   ],
 };
 
-module.exports = {
-  DYDX_CHAIN,
+const CELESTIA_CHAIN = {
+  $schema: "../chain.schema.json",
+  chain_name: "celestia",
+  chain_id: "celestia",
+  pretty_name: "Celestia",
+  status: "live",
+  network_type: "mainnet",
+  bech32_prefix: "celestia",
+  daemon_name: "celestia-appd",
+  node_home: "$HOME/.celestia-app",
+  key_algos: ["secp256k1"],
+  slip44: 118,
+  fees: {
+    fee_tokens: [
+      {
+        denom: "utia",
+        fixed_min_gas_price: 0,
+        low_gas_price: 0.1,
+        average_gas_price: 0.2,
+        high_gas_price: 0.4,
+      },
+    ],
+  },
+  codebase: {
+    git_repo: "https://github.com/celestiaorg/celestia-app",
+    recommended_version: "v1.3.0",
+    compatible_versions: ["v1.3.0"],
+    genesis: {
+      genesis_url:
+        "https://raw.githubusercontent.com/celestiaorg/networks/master/celestia/genesis.json",
+    },
+    versions: [
+      {
+        name: "v1.3.0",
+        recommended_version: "v1.3.0",
+        compatible_versions: ["v1.3.0"],
+      },
+    ],
+  },
+  peers: {
+    seeds: [
+      {
+        id: "e6116822e1a5e283d8a85d3ec38f4d232274eaf3",
+        address: "consensus-full-seed-1.celestia-bootstrap.net:26656",
+        provider: "Celestia Foundation",
+      },
+      {
+        id: "cf7ac8b19ff56a9d47c75551bd4864883d1e24b5",
+        address: "consensus-full-seed-1.celestia-bootstrap.net:26656",
+        provider: "Celestia Foundation",
+      },
+    ],
+  },
+  apis: {
+    rpc: [
+      {
+        address: "https://public-celestia-rpc.numia.xyz",
+        provider: "Numia",
+      },
+      {
+        address: "https://celestia-rpc.mesa.newmetric.xyz",
+        provider: "Newmetric",
+      },
+      {
+        address: "https://rpc.lunaroasis.net",
+        provider: "Lunar Oasis",
+      },
+    ],
+    rest: [
+      {
+        address: "https://public-celestia-lcd.numia.xyz",
+        provider: "Numia",
+      },
+      {
+        address: "https://celestia-rest.mesa.newmetric.xyz",
+        provider: "Newmetric",
+      },
+      {
+        address: "https://api.lunaroasis.net",
+        provider: "Lunar Oasis",
+      },
+    ],
+  },
+  explorers: [
+    {
+      kind: "Mintscan",
+      url: "https://mintscan.io/celestia",
+      tx_page: "https://mintscan.io/celestia/txs/${txHash}",
+    },
+  ],
 };
+
+export default function () {
+  const chains = chainRegistry.chains;
+
+  if (chains.findIndex((chain) => chain.chain_id === "dydx-mainnet-1") === -1) {
+    chains.push(DYDX_CHAIN);
+  }
+
+  if (chains.findIndex((chain) => chain.chain_id === "celestia") === -1) {
+    chains.push(CELESTIA_CHAIN);
+  }
+
+  return chains;
+}

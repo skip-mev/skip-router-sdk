@@ -47,9 +47,9 @@ import { TxRaw } from "cosmjs-types/cosmos/tx/v1beta1/tx";
 import { MsgExecuteContract } from "cosmjs-types/cosmwasm/wasm/v1/tx";
 import { maxUint256, publicActions, WalletClient } from "viem";
 
-import chainsRecord from "./chains/chainRecord";
+import chains from "./chains";
 import { erc20ABI } from "./constants/abis";
-import { SUPPORTED_TESTNETS } from "./constants/constants";
+// import { SUPPORTED_TESTNETS } from "./constants/constants";
 import { createTransaction } from "./injective";
 import { RequestClient } from "./request-client";
 import {
@@ -407,41 +407,53 @@ export class SkipRouter {
         });
 
         // TODO: do this in a better way
-        const isTestnetTX = SUPPORTED_TESTNETS.includes(evmTx.chainID);
+        // const isTestnetTX = SUPPORTED_TESTNETS.includes(evmTx.chainID);
 
-        if (evmTx.requiredERC20Approvals.length > 0) {
-          const gmpClient = new AxelarGMPRecoveryAPI({
-            environment: Environment.MAINNET,
-          });
+        const gmpClient = new AxelarGMPRecoveryAPI({
+          environment: Environment.MAINNET,
+        });
 
-          // eslint-disable-next-line no-constant-condition
-          while (true) {
-            const status = await gmpClient.queryTransactionStatus(
-              txReceipt.transactionHash,
-            );
-            if (status.status === "destination_executed") {
-              break;
-            }
-            await wait(1000);
+        // eslint-disable-next-line no-constant-condition
+        while (true) {
+          const status = await gmpClient.queryTransactionStatus(
+            txReceipt.transactionHash,
+          );
+          if (status.status === "destination_executed") {
+            break;
           }
-        } else {
-          // eslint-disable-next-line no-constant-condition
-          while (true) {
-            const status = await getAxelarDespositAddressTransferStatus(
-              txReceipt.transactionHash,
-              isTestnetTX,
-            );
-
-            if (
-              status.success &&
-              status.data.status === QueryTransferStatus.EXECUTED
-            ) {
-              break;
-            }
-
-            await wait(1000);
-          }
+          await wait(1000);
         }
+
+        // if (evmTx.requiredERC20Approvals.length > 0) {
+
+        //   // eslint-disable-next-line no-constant-condition
+        //   while (true) {
+        //     const status = await gmpClient.queryTransactionStatus(
+        //       txReceipt.transactionHash,
+        //     );
+        //     if (status.status === "destination_executed") {
+        //       break;
+        //     }
+        //     await wait(1000);
+        //   }
+        // } else {
+        //   // eslint-disable-next-line no-constant-condition
+        //   while (true) {
+        //     const status = await getAxelarDespositAddressTransferStatus(
+        //       txReceipt.transactionHash,
+        //       isTestnetTX,
+        //     );
+
+        //     if (
+        //       status.success &&
+        //       status.data.status === QueryTransferStatus.EXECUTED
+        //     ) {
+        //       break;
+        //     }
+
+        //     await wait(1000);
+        //   }
+        // }
 
         if (options.onTransactionSuccess) {
           await options.onTransactionSuccess({
@@ -1056,7 +1068,7 @@ export class SkipRouter {
       }
     }
 
-    const chain = chainsRecord[chainID];
+    const chain = chains().find((chain) => chain.chain_id === chainID);
 
     if (!chain) {
       throw new Error(`Failed to find chain with ID ${chainID} in registry`);
@@ -1087,7 +1099,7 @@ export class SkipRouter {
       }
     }
 
-    const chain = chainsRecord[chainID];
+    const chain = chains().find((chain) => chain.chain_id === chainID);
     if (!chain) {
       throw new Error(`Failed to find chain with ID ${chainID} in registry`);
     }
@@ -1102,7 +1114,7 @@ export class SkipRouter {
   }
 
   private getFeeInfoForChain(chainID: string) {
-    const chain = chainsRecord[chainID];
+    const chain = chains().find((chain) => chain.chain_id === chainID);
     if (!chain) {
       throw new Error(`Failed to find chain with ID ${chainID} in registry`);
     }

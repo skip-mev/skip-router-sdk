@@ -24,7 +24,9 @@ export type StatusState =
   | "STATE_PENDING"
   | "STATE_RECEIVED"
   | "STATE_COMPLETED"
-  | "STATE_ABANDONED";
+  | "STATE_ABANDONED"
+  | "STATE_COMPLETED_SUCCESS"
+  | "STATE_COMPLETED_ERROR";
 
 export type NextBlockingTransferJSON = {
   transfer_sequence_index: number;
