@@ -107,7 +107,7 @@ import {
 
 const wait = (ms: number) => new Promise((resolve) => setTimeout(resolve, ms));
 
-export const SKIP_API_URL = "https://api.skip.money/v1";
+export const SKIP_API_URL = "https://api.skip.money";
 
 export type EndpointOptions = {
   rpc?: string;
