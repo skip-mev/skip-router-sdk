@@ -1,10 +1,18 @@
 import {
+  AxelarTransferInfo,
+  AxelarTransferInfoJSON,
+  AxelarTransferTransactions,
+  AxelarTransferTransactionsJSON,
   ChainTransaction,
   ChainTransactionJSON,
+  ContractCallWithTokenTransactions,
+  ContractCallWithTokenTransactionsJSON,
   NextBlockingTransfer,
   NextBlockingTransferJSON,
   Packet,
   PacketJSON,
+  SendTokenTransactions,
+  SendTokenTransactionsJSON,
   StatusRequest,
   StatusRequestJSON,
   SubmitTxRequest,
@@ -17,6 +25,8 @@ import {
   TrackTxResponseJSON,
   TransferAssetRelease,
   TransferAssetReleaseJSON,
+  TransferEvent,
+  TransferEventJSON,
   TransferInfo,
   TransferInfoJSON,
   TxStatusResponse,
@@ -839,12 +849,14 @@ export function txStatusResponseFromJSON(
     nextBlockingTransfer:
       statusResponseJSON.next_blocking_transfer &&
       nextBlockingTransferFromJSON(statusResponseJSON.next_blocking_transfer),
-    transferSequence:
-      statusResponseJSON.transfer_sequence.map(transferInfoFromJSON),
+    transferSequence: statusResponseJSON.transfer_sequence.map(
+      transferEventFromJSON,
+    ),
     transferAssetRelease:
       statusResponseJSON.transfer_asset_release &&
       transferAssetReleaseFromJSON(statusResponseJSON.transfer_asset_release),
     error: statusResponseJSON.error,
+    state: statusResponseJSON.state,
   };
 }
 
@@ -856,11 +868,12 @@ export function txStatusResponseToJSON(
     next_blocking_transfer:
       statusResponse.nextBlockingTransfer &&
       nextBlockingTransferToJSON(statusResponse.nextBlockingTransfer),
-    transfer_sequence: statusResponse.transferSequence.map(transferInfoToJSON),
+    transfer_sequence: statusResponse.transferSequence.map(transferEventToJSON),
     transfer_asset_release:
       statusResponse.transferAssetRelease &&
       transferAssetReleaseToJSON(statusResponse.transferAssetRelease),
     error: statusResponse.error,
+    state: statusResponse.state,
   };
 }
 
@@ -972,5 +985,161 @@ export function msgToJSON(msg: Msg): MsgJSON {
 
   return {
     evm_tx: evmTxToJSON(msg.evmTx),
+  };
+}
+
+export function sendTokenTransactionsFromJSON(
+  sendTokenTransactionsJSON: SendTokenTransactionsJSON,
+): SendTokenTransactions {
+  return {
+    sendTx: sendTokenTransactionsJSON.send_tx
+      ? chainTransactionFromJSON(sendTokenTransactionsJSON.send_tx)
+      : null,
+    confirmTx: sendTokenTransactionsJSON.confirm_tx
+      ? chainTransactionFromJSON(sendTokenTransactionsJSON.confirm_tx)
+      : null,
+    executeTx: sendTokenTransactionsJSON.execute_tx
+      ? chainTransactionFromJSON(sendTokenTransactionsJSON.execute_tx)
+      : null,
+    error: sendTokenTransactionsJSON.error,
+  };
+}
+
+export function sendTokenTransactionsToJSON(
+  sendTokenTransactions: SendTokenTransactions,
+): SendTokenTransactionsJSON {
+  return {
+    send_tx: sendTokenTransactions.sendTx
+      ? chainTransactionToJSON(sendTokenTransactions.sendTx)
+      : null,
+    confirm_tx: sendTokenTransactions.confirmTx
+      ? chainTransactionToJSON(sendTokenTransactions.confirmTx)
+      : null,
+    execute_tx: sendTokenTransactions.executeTx
+      ? chainTransactionToJSON(sendTokenTransactions.executeTx)
+      : null,
+    error: sendTokenTransactions.error,
+  };
+}
+
+export function contractCallWithTokenTransactionsFromJSON(
+  value: ContractCallWithTokenTransactionsJSON,
+): ContractCallWithTokenTransactions {
+  return {
+    sendTx: value.send_tx ? chainTransactionFromJSON(value.send_tx) : null,
+    gasPaidTx: value.gas_paid_tx
+      ? chainTransactionFromJSON(value.gas_paid_tx)
+      : null,
+    confirmTx: value.confirm_tx
+      ? chainTransactionFromJSON(value.confirm_tx)
+      : null,
+    approveTx: value.approve_tx
+      ? chainTransactionFromJSON(value.approve_tx)
+      : null,
+    executeTx: value.execute_tx
+      ? chainTransactionFromJSON(value.execute_tx)
+      : null,
+    error: value.error,
+  };
+}
+
+export function contractCallWithTokenTransactionsToJSON(
+  value: ContractCallWithTokenTransactions,
+): ContractCallWithTokenTransactionsJSON {
+  return {
+    send_tx: value.sendTx ? chainTransactionToJSON(value.sendTx) : null,
+    gas_paid_tx: value.gasPaidTx
+      ? chainTransactionToJSON(value.gasPaidTx)
+      : null,
+    confirm_tx: value.confirmTx
+      ? chainTransactionToJSON(value.confirmTx)
+      : null,
+    approve_tx: value.approveTx
+      ? chainTransactionToJSON(value.approveTx)
+      : null,
+    execute_tx: value.executeTx
+      ? chainTransactionToJSON(value.executeTx)
+      : null,
+    error: value.error,
+  };
+}
+
+export function axelarTransferTransactionsFromJSON(
+  value: AxelarTransferTransactionsJSON,
+): AxelarTransferTransactions {
+  if ("contract_call_with_token_txs" in value) {
+    return {
+      contractCallWithTokenTxs: contractCallWithTokenTransactionsFromJSON(
+        value.contract_call_with_token_txs,
+      ),
+    };
+  }
+
+  return {
+    sendTokenTxs: sendTokenTransactionsFromJSON(value.send_token_txs),
+  };
+}
+
+export function axelarTransferTransactionsToJSON(
+  value: AxelarTransferTransactions,
+): AxelarTransferTransactionsJSON {
+  if ("contractCallWithTokenTxs" in value) {
+    return {
+      contract_call_with_token_txs: contractCallWithTokenTransactionsToJSON(
+        value.contractCallWithTokenTxs,
+      ),
+    };
+  }
+
+  return {
+    send_token_txs: sendTokenTransactionsToJSON(value.sendTokenTxs),
+  };
+}
+
+export function axelarTransferInfoFromJSON(
+  value: AxelarTransferInfoJSON,
+): AxelarTransferInfo {
+  return {
+    srcChainID: value.src_chain_id,
+    dstChainID: value.dst_chain_id,
+    type: value.type,
+    state: value.state,
+    txs: value.txs && axelarTransferTransactionsFromJSON(value.txs),
+  };
+}
+
+export function axelarTransferInfoToJSON(
+  value: AxelarTransferInfo,
+): AxelarTransferInfoJSON {
+  return {
+    src_chain_id: value.srcChainID,
+    dst_chain_id: value.dstChainID,
+    type: value.type,
+    state: value.state,
+    txs: value.txs && axelarTransferTransactionsToJSON(value.txs),
+  };
+}
+
+export function transferEventFromJSON(value: TransferEventJSON): TransferEvent {
+  if ("ibc_transfer" in value) {
+    return {
+      ibcTransfer: transferInfoFromJSON(value.ibc_transfer),
+    };
+  }
+
+  return {
+    axelarTransfer: axelarTransferInfoFromJSON(value.axelar_transfer),
+  };
+}
+
+export function transferEventToJSON(value: TransferEvent): TransferEventJSON {
+  if ("ibcTransfer" in value) {
+    return {
+      ibc_transfer: transferInfoToJSON(value.ibcTransfer),
+    };
+  }
+
+  return {
+    axelar_transfer: axelarTransferInfoToJSON(value.axelarTransfer),
   };
 }

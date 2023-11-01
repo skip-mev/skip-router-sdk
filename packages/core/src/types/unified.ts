@@ -40,12 +40,12 @@ export type AssetsFromSourceRequestJSON = {
   source_asset_denom: string;
   source_asset_chain_id: string;
 
-  allow_multi_tx: boolean | undefined;
-  recommendation_reason: Reason | undefined;
-  include_swaps: boolean | undefined;
-  swap_venues: SwapVenueJSON[] | undefined;
-  native_only: boolean | undefined;
-  group_by: string | undefined;
+  allow_multi_tx?: boolean;
+  recommendation_reason?: Reason;
+  include_swaps?: boolean;
+  swap_venues?: SwapVenueJSON[];
+  native_only?: boolean;
+  group_by?: string;
   include_cw20_assets: boolean;
 };
 
@@ -53,12 +53,12 @@ export type AssetsFromSourceRequest = {
   sourceAssetDenom: string;
   sourceAssetChainID: string;
 
-  allowMultiTx: boolean | undefined;
-  recommendationReason: Reason | undefined;
-  includeSwaps: boolean | undefined;
-  swapVenues: SwapVenue[] | undefined;
-  nativeOnly: boolean | undefined;
-  groupBy: string | undefined;
+  allowMultiTx?: boolean;
+  recommendationReason?: Reason;
+  includeSwaps?: boolean;
+  swapVenues?: SwapVenue[];
+  nativeOnly?: boolean;
+  groupBy?: string;
   includeCW20Assets: boolean;
 };
 

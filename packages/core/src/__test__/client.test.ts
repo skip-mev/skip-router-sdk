@@ -2,7 +2,7 @@ import { rest } from "msw";
 import { setupServer } from "msw/node";
 
 import { SKIP_API_URL, SkipRouter } from "../client";
-import { Chain, ChainJSON } from "../types/types";
+import { Chain, ChainJSON } from "../types";
 
 export const server = setupServer();
 
@@ -26,6 +26,7 @@ describe("client", () => {
                   chain_id: "osmosis-1",
                   pfm_enabled: true,
                   cosmos_sdk_version: "v0.47.3",
+                  chain_type: "cosmos",
                   modules: {
                     "github.com/cosmos/ibc-go": {
                       path: "github.com/cosmos/ibc-go/v4",
@@ -81,6 +82,7 @@ describe("client", () => {
           chainID: "osmosis-1",
           pfmEnabled: true,
           cosmosSDKVersion: "v0.47.3",
+          chainType: "cosmos",
           modules: {
             "github.com/cosmos/ibc-go": {
               path: "github.com/cosmos/ibc-go/v4",
@@ -413,6 +415,7 @@ describe("client", () => {
       const assetsFromSource = await client.assetsFromSource({
         sourceAssetChainID: "osmosis-1",
         sourceAssetDenom: "uosmo",
+        includeCW20Assets: true,
       });
 
       expect(assetsFromSource).toEqual({
@@ -474,6 +477,7 @@ describe("client", () => {
         client.assetsFromSource({
           sourceAssetChainID: "osmosis-1",
           sourceAssetDenom: "uosmo",
+          includeCW20Assets: true,
         }),
       ).rejects.toThrow("Invalid source_asset_chain_id");
     });
@@ -503,6 +507,7 @@ describe("client", () => {
         client.assetsFromSource({
           sourceAssetChainID: "osmosis-1",
           sourceAssetDenom: "uosmo",
+          includeCW20Assets: true,
         }),
       ).rejects.toThrow("internal server error");
     });
@@ -575,16 +580,18 @@ describe("client", () => {
   describe("/v1/fungible/msgs", () => {
     it("handles 200 OK", async () => {
       server.use(
-        rest.post("https://api.skip.money/v1/fungible/msgs", (_, res, ctx) => {
+        rest.post("https://api.skip.money/v2/fungible/msgs", (_, res, ctx) => {
           return res(
             ctx.status(200),
             ctx.json({
               msgs: [
                 {
-                  chain_id: "osmosis-1",
-                  path: ["osmosis-1", "cosmoshub-4"],
-                  msg: '{"sender":"osmo1f2f9vryyu53gr8vhsksn66kugnxaa7k8jdpk0e","contract":"osmo1rc6h59ev8m7mdpg584v7m5t24k2ut3dy5nekjw4mdsfjysyjvv3q65m8pj","msg":{"swap_and_action":{"user_swap":{"swap_exact_coin_in":{"operations":[{"denom_in":"uosmo","denom_out":"ibc/27394FB092D2ECCD56123C74F36E4C1F926001CEADA9CA97EA622B25F41E5EB2","pool":"1"}],"swap_venue_name":"osmosis-poolmanager"}},"min_coin":{"denom":"ibc/27394FB092D2ECCD56123C74F36E4C1F926001CEADA9CA97EA622B25F41E5EB2","amount":"54946"},"timeout_timestamp":1693012979767514087,"post_swap_action":{"ibc_transfer":{"ibc_info":{"memo":"","receiver":"cosmos1f2f9vryyu53gr8vhsksn66kugnxaa7k86kjxet","recover_address":"osmo1f2f9vryyu53gr8vhsksn66kugnxaa7k8jdpk0e","source_channel":"channel-0"}}},"affiliates":[]}},"funds":[{"denom":"uosmo","amount":"1000000"}]}',
-                  msg_type_url: "/cosmwasm.wasm.v1.MsgExecuteContract",
+                  multi_chain_msg: {
+                    chain_id: "osmosis-1",
+                    path: ["osmosis-1", "cosmoshub-4"],
+                    msg: '{"sender":"osmo1f2f9vryyu53gr8vhsksn66kugnxaa7k8jdpk0e","contract":"osmo1rc6h59ev8m7mdpg584v7m5t24k2ut3dy5nekjw4mdsfjysyjvv3q65m8pj","msg":{"swap_and_action":{"user_swap":{"swap_exact_coin_in":{"operations":[{"denom_in":"uosmo","denom_out":"ibc/27394FB092D2ECCD56123C74F36E4C1F926001CEADA9CA97EA622B25F41E5EB2","pool":"1"}],"swap_venue_name":"osmosis-poolmanager"}},"min_coin":{"denom":"ibc/27394FB092D2ECCD56123C74F36E4C1F926001CEADA9CA97EA622B25F41E5EB2","amount":"54946"},"timeout_timestamp":1693012979767514087,"post_swap_action":{"ibc_transfer":{"ibc_info":{"memo":"","receiver":"cosmos1f2f9vryyu53gr8vhsksn66kugnxaa7k86kjxet","recover_address":"osmo1f2f9vryyu53gr8vhsksn66kugnxaa7k8jdpk0e","source_channel":"channel-0"}}},"affiliates":[]}},"funds":[{"denom":"uosmo","amount":"1000000"}]}',
+                    msg_type_url: "/cosmwasm.wasm.v1.MsgExecuteContract",
+                  },
                 },
               ],
             }),
@@ -645,10 +652,12 @@ describe("client", () => {
 
       expect(response).toEqual([
         {
-          chainID: "osmosis-1",
-          path: ["osmosis-1", "cosmoshub-4"],
-          msg: '{"sender":"osmo1f2f9vryyu53gr8vhsksn66kugnxaa7k8jdpk0e","contract":"osmo1rc6h59ev8m7mdpg584v7m5t24k2ut3dy5nekjw4mdsfjysyjvv3q65m8pj","msg":{"swap_and_action":{"user_swap":{"swap_exact_coin_in":{"operations":[{"denom_in":"uosmo","denom_out":"ibc/27394FB092D2ECCD56123C74F36E4C1F926001CEADA9CA97EA622B25F41E5EB2","pool":"1"}],"swap_venue_name":"osmosis-poolmanager"}},"min_coin":{"denom":"ibc/27394FB092D2ECCD56123C74F36E4C1F926001CEADA9CA97EA622B25F41E5EB2","amount":"54946"},"timeout_timestamp":1693012979767514087,"post_swap_action":{"ibc_transfer":{"ibc_info":{"memo":"","receiver":"cosmos1f2f9vryyu53gr8vhsksn66kugnxaa7k86kjxet","recover_address":"osmo1f2f9vryyu53gr8vhsksn66kugnxaa7k8jdpk0e","source_channel":"channel-0"}}},"affiliates":[]}},"funds":[{"denom":"uosmo","amount":"1000000"}]}',
-          msgTypeURL: "/cosmwasm.wasm.v1.MsgExecuteContract",
+          multiChainMsg: {
+            chainID: "osmosis-1",
+            path: ["osmosis-1", "cosmoshub-4"],
+            msg: '{"sender":"osmo1f2f9vryyu53gr8vhsksn66kugnxaa7k8jdpk0e","contract":"osmo1rc6h59ev8m7mdpg584v7m5t24k2ut3dy5nekjw4mdsfjysyjvv3q65m8pj","msg":{"swap_and_action":{"user_swap":{"swap_exact_coin_in":{"operations":[{"denom_in":"uosmo","denom_out":"ibc/27394FB092D2ECCD56123C74F36E4C1F926001CEADA9CA97EA622B25F41E5EB2","pool":"1"}],"swap_venue_name":"osmosis-poolmanager"}},"min_coin":{"denom":"ibc/27394FB092D2ECCD56123C74F36E4C1F926001CEADA9CA97EA622B25F41E5EB2","amount":"54946"},"timeout_timestamp":1693012979767514087,"post_swap_action":{"ibc_transfer":{"ibc_info":{"memo":"","receiver":"cosmos1f2f9vryyu53gr8vhsksn66kugnxaa7k86kjxet","recover_address":"osmo1f2f9vryyu53gr8vhsksn66kugnxaa7k8jdpk0e","source_channel":"channel-0"}}},"affiliates":[]}},"funds":[{"denom":"uosmo","amount":"1000000"}]}',
+            msgTypeURL: "/cosmwasm.wasm.v1.MsgExecuteContract",
+          },
         },
       ]);
     });
@@ -657,7 +666,7 @@ describe("client", () => {
   describe("/v1/fungible/route", () => {
     it("handles 200 OK", async () => {
       server.use(
-        rest.post("https://api.skip.money/v1/fungible/route", (_, res, ctx) => {
+        rest.post("https://api.skip.money/v2/fungible/route", (_, res, ctx) => {
           return res(
             ctx.status(200),
             ctx.json({
@@ -814,7 +823,7 @@ describe("client", () => {
   describe("submitTransaction", () => {
     it("handles 200 OK", async () => {
       server.use(
-        rest.post("https://api.skip.money/v1/tx/submit", (_, res, ctx) => {
+        rest.post("https://api.skip.money/v2/tx/submit", (_, res, ctx) => {
           return res(
             ctx.status(200),
             ctx.json({
@@ -844,7 +853,7 @@ describe("client", () => {
   describe("trackTransaction", () => {
     it("handles 200 OK", async () => {
       server.use(
-        rest.post("https://api.skip.money/v1/tx/track", (_, res, ctx) => {
+        rest.post("https://api.skip.money/v2/tx/track", (_, res, ctx) => {
           return res(
             ctx.status(200),
             ctx.json({
@@ -866,7 +875,6 @@ describe("client", () => {
 
       expect(response).toEqual({
         txHash: "tx_hash123",
-        success: true,
       });
     });
   });
@@ -874,58 +882,62 @@ describe("client", () => {
   describe("transactionStatus", () => {
     it("handles 200 OK", async () => {
       server.use(
-        rest.get("https://api.skip.money/v1/tx/status", (_, res, ctx) => {
+        rest.get("https://api.skip.money/v2/tx/status", (_, res, ctx) => {
           return res(
             ctx.status(200),
             ctx.json({
               status: "STATE_COMPLETED",
               transfer_sequence: [
                 {
-                  src_chain_id: "axelar-dojo-1",
-                  dst_chain_id: "osomosis-1",
-                  state: "TRANSFER_SUCCESS",
-                  packet_txs: {
-                    send_tx: {
-                      chain_id: "axelar-dojo-1",
-                      tx_hash:
-                        "AAEA76709215A808AF6D7FC2B8FBB8746BC1F196E46FFAE84B79C6F6CD0A79C9",
+                  ibc_transfer: {
+                    src_chain_id: "axelar-dojo-1",
+                    dst_chain_id: "osomosis-1",
+                    state: "TRANSFER_SUCCESS",
+                    packet_txs: {
+                      send_tx: {
+                        chain_id: "axelar-dojo-1",
+                        tx_hash:
+                          "AAEA76709215A808AF6D7FC2B8FBB8746BC1F196E46FFAE84B79C6F6CD0A79C9",
+                      },
+                      receive_tx: {
+                        chain_id: "osmosis-1",
+                        tx_hash:
+                          "082A6C8024998EC277C2B90BFDDB323CCA506C24A6730C658B9B6DC653198E3D",
+                      },
+                      acknowledge_tx: {
+                        chain_id: "axelar-dojo-1",
+                        tx_hash:
+                          "C9A36F94A5B2CA9C7ABF20402561E46FD8B80EBAC4F0D5B7C01F978E34285CCA",
+                      },
+                      timeout_tx: null,
+                      error: null,
                     },
-                    receive_tx: {
-                      chain_id: "osmosis-1",
-                      tx_hash:
-                        "082A6C8024998EC277C2B90BFDDB323CCA506C24A6730C658B9B6DC653198E3D",
-                    },
-                    acknowledge_tx: {
-                      chain_id: "axelar-dojo-1",
-                      tx_hash:
-                        "C9A36F94A5B2CA9C7ABF20402561E46FD8B80EBAC4F0D5B7C01F978E34285CCA",
-                    },
-                    timeout_tx: null,
-                    error: null,
                   },
                 },
                 {
-                  src_chain_id: "osmosis-1",
-                  dst_chain_id: "cosmoshub-4",
-                  state: "TRANSFER_SUCCESS",
-                  packet_txs: {
-                    send_tx: {
-                      chain_id: "osmosis-1",
-                      tx_hash:
-                        "082A6C8024998EC277C2B90BFDDB323CCA506C24A6730C658B9B6DC653198E3D",
+                  ibc_transfer: {
+                    src_chain_id: "osmosis-1",
+                    dst_chain_id: "cosmoshub-4",
+                    state: "TRANSFER_SUCCESS",
+                    packet_txs: {
+                      send_tx: {
+                        chain_id: "osmosis-1",
+                        tx_hash:
+                          "082A6C8024998EC277C2B90BFDDB323CCA506C24A6730C658B9B6DC653198E3D",
+                      },
+                      receive_tx: {
+                        chain_id: "cosmoshub-4",
+                        tx_hash:
+                          "913E2542EBFEF2E885C19DD9C4F8ECB6ADAFFE59D60BB108FAD94FBABF9C5671",
+                      },
+                      acknowledge_tx: {
+                        chain_id: "osmosis-1",
+                        tx_hash:
+                          "1EDB2886E6FD59D6B9C096FBADB1A52585745694F4DFEE3A3CD3FF0153307EBC",
+                      },
+                      timeout_tx: null,
+                      error: null,
                     },
-                    receive_tx: {
-                      chain_id: "cosmoshub-4",
-                      tx_hash:
-                        "913E2542EBFEF2E885C19DD9C4F8ECB6ADAFFE59D60BB108FAD94FBABF9C5671",
-                    },
-                    acknowledge_tx: {
-                      chain_id: "osmosis-1",
-                      tx_hash:
-                        "1EDB2886E6FD59D6B9C096FBADB1A52585745694F4DFEE3A3CD3FF0153307EBC",
-                    },
-                    timeout_tx: null,
-                    error: null,
                   },
                 },
               ],
@@ -935,6 +947,7 @@ describe("client", () => {
                 denom: "uatom",
               },
               error: null,
+              state: "STATE_COMPLETED",
             }),
           );
         }),
@@ -953,51 +966,55 @@ describe("client", () => {
         status: "STATE_COMPLETED",
         transferSequence: [
           {
-            srcChainID: "axelar-dojo-1",
-            dstChainID: "osomosis-1",
-            state: "TRANSFER_SUCCESS",
-            packetTXs: {
-              sendTx: {
-                chainID: "axelar-dojo-1",
-                txHash:
-                  "AAEA76709215A808AF6D7FC2B8FBB8746BC1F196E46FFAE84B79C6F6CD0A79C9",
+            ibcTransfer: {
+              srcChainID: "axelar-dojo-1",
+              dstChainID: "osomosis-1",
+              state: "TRANSFER_SUCCESS",
+              packetTXs: {
+                sendTx: {
+                  chainID: "axelar-dojo-1",
+                  txHash:
+                    "AAEA76709215A808AF6D7FC2B8FBB8746BC1F196E46FFAE84B79C6F6CD0A79C9",
+                },
+                receiveTx: {
+                  chainID: "osmosis-1",
+                  txHash:
+                    "082A6C8024998EC277C2B90BFDDB323CCA506C24A6730C658B9B6DC653198E3D",
+                },
+                acknowledgeTx: {
+                  chainID: "axelar-dojo-1",
+                  txHash:
+                    "C9A36F94A5B2CA9C7ABF20402561E46FD8B80EBAC4F0D5B7C01F978E34285CCA",
+                },
+                timeoutTx: null,
+                error: null,
               },
-              receiveTx: {
-                chainID: "osmosis-1",
-                txHash:
-                  "082A6C8024998EC277C2B90BFDDB323CCA506C24A6730C658B9B6DC653198E3D",
-              },
-              acknowledgeTx: {
-                chainID: "axelar-dojo-1",
-                txHash:
-                  "C9A36F94A5B2CA9C7ABF20402561E46FD8B80EBAC4F0D5B7C01F978E34285CCA",
-              },
-              timeoutTx: null,
-              error: null,
             },
           },
           {
-            srcChainID: "osmosis-1",
-            dstChainID: "cosmoshub-4",
-            state: "TRANSFER_SUCCESS",
-            packetTXs: {
-              sendTx: {
-                chainID: "osmosis-1",
-                txHash:
-                  "082A6C8024998EC277C2B90BFDDB323CCA506C24A6730C658B9B6DC653198E3D",
+            ibcTransfer: {
+              srcChainID: "osmosis-1",
+              dstChainID: "cosmoshub-4",
+              state: "TRANSFER_SUCCESS",
+              packetTXs: {
+                sendTx: {
+                  chainID: "osmosis-1",
+                  txHash:
+                    "082A6C8024998EC277C2B90BFDDB323CCA506C24A6730C658B9B6DC653198E3D",
+                },
+                receiveTx: {
+                  chainID: "cosmoshub-4",
+                  txHash:
+                    "913E2542EBFEF2E885C19DD9C4F8ECB6ADAFFE59D60BB108FAD94FBABF9C5671",
+                },
+                acknowledgeTx: {
+                  chainID: "osmosis-1",
+                  txHash:
+                    "1EDB2886E6FD59D6B9C096FBADB1A52585745694F4DFEE3A3CD3FF0153307EBC",
+                },
+                timeoutTx: null,
+                error: null,
               },
-              receiveTx: {
-                chainID: "cosmoshub-4",
-                txHash:
-                  "913E2542EBFEF2E885C19DD9C4F8ECB6ADAFFE59D60BB108FAD94FBABF9C5671",
-              },
-              acknowledgeTx: {
-                chainID: "osmosis-1",
-                txHash:
-                  "1EDB2886E6FD59D6B9C096FBADB1A52585745694F4DFEE3A3CD3FF0153307EBC",
-              },
-              timeoutTx: null,
-              error: null,
             },
           },
         ],
@@ -1007,6 +1024,7 @@ describe("client", () => {
           denom: "uatom",
         },
         error: null,
+        state: "STATE_COMPLETED",
       });
     });
   });

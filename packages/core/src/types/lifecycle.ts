@@ -79,18 +79,20 @@ export type TransferAssetRelease = {
 
 export type TxStatusResponseJSON = {
   status: StatusState;
+  transfer_sequence: TransferEventJSON[];
   next_blocking_transfer: NextBlockingTransferJSON | null;
-  transfer_sequence: TransferInfoJSON[];
   transfer_asset_release: TransferAssetReleaseJSON | null;
   error: StatusError | null;
+  state: StatusState;
 };
 
 export type TxStatusResponse = {
   status: StatusState;
+  transferSequence: TransferEvent[];
   nextBlockingTransfer: NextBlockingTransfer | null;
-  transferSequence: TransferInfo[];
   transferAssetRelease: TransferAssetRelease | null;
   error: StatusError | null;
+  state: StatusState;
 };
 
 export type PacketJSON = {
@@ -194,3 +196,117 @@ export type TrackTxResponseJSON = {
 export type TrackTxResponse = {
   txHash: string;
 };
+
+export type AxelarTransferType =
+  | "AXELAR_TRANSFER_CONTRACT_CALL_WITH_TOKEN"
+  | "AXELAR_TRANSFER_SEND_TOKEN";
+
+export type AxelarTransferState =
+  | "AXELAR_TRANSFER_UNKNOWN"
+  | "AXELAR_TRANSFER_PENDING_CONFIRMATION"
+  | "AXELAR_TRANSFER_PENDING_RECEIPT"
+  | "AXELAR_TRANSFER_SUCCESS"
+  | "AXELAR_TRANSFER_FAILURE";
+
+export type AxelarTransferInfoJSON = {
+  src_chain_id: string;
+  dst_chain_id: string;
+  type: AxelarTransferType;
+  state: AxelarTransferState;
+  txs: AxelarTransferTransactionsJSON;
+};
+
+export type AxelarTransferInfo = {
+  srcChainID: string;
+  dstChainID: string;
+  type: AxelarTransferType;
+  state: AxelarTransferState;
+  txs: AxelarTransferTransactions;
+};
+
+export type AxelarTransferTransactionsJSON =
+  | {
+      contract_call_with_token_txs: ContractCallWithTokenTransactionsJSON;
+    }
+  | {
+      send_token_txs: SendTokenTransactionsJSON;
+    };
+
+export type AxelarTransferTransactions =
+  | {
+      contractCallWithTokenTxs: ContractCallWithTokenTransactions;
+    }
+  | {
+      sendTokenTxs: SendTokenTransactions;
+    };
+
+export type ContractCallWithTokenTransactionsJSON = {
+  send_tx: ChainTransactionJSON | null;
+  gas_paid_tx: ChainTransactionJSON | null;
+  confirm_tx: ChainTransactionJSON | null;
+  approve_tx: ChainTransactionJSON | null;
+  execute_tx: ChainTransactionJSON | null;
+  error: ContractCallWithTokenError | null;
+};
+
+export type ContractCallWithTokenTransactions = {
+  sendTx: ChainTransaction | null;
+  gasPaidTx: ChainTransaction | null;
+  confirmTx: ChainTransaction | null;
+  approveTx: ChainTransaction | null;
+  executeTx: ChainTransaction | null;
+  error: ContractCallWithTokenError | null;
+};
+
+export type ContractCallWithTokenError = {
+  message: string;
+  type: ContractCallWithTokenErrorType;
+};
+
+export type ContractCallWithTokenErrorType =
+  "CONTRACT_CALL_WITH_TOKEN_EXECUTION_ERROR";
+
+export type SendTokenTransactionsJSON = {
+  send_tx: ChainTransactionJSON | null;
+  confirm_tx: ChainTransactionJSON | null;
+  execute_tx: ChainTransactionJSON | null;
+  error: SendTokenError | null;
+};
+
+export type SendTokenTransactions = {
+  sendTx: ChainTransaction | null;
+  confirmTx: ChainTransaction | null;
+  executeTx: ChainTransaction | null;
+  error: SendTokenError | null;
+};
+
+export type SendTokenErrorType = "SEND_TOKEN_EXECUTION_ERROR";
+
+export type SendTokenError = {
+  message: string;
+  type: SendTokenErrorType;
+};
+
+export type TransferEventJSON =
+  | {
+      ibc_transfer: TransferInfoJSON;
+    }
+  | {
+      axelar_transfer: AxelarTransferInfoJSON;
+    };
+
+export type TransferEvent =
+  | {
+      ibcTransfer: TransferInfo;
+    }
+  | { axelarTransfer: AxelarTransferInfo };
+
+// message StatusV2Response {
+//   StatusState status = 1;
+//   repeated TransferEvent transfer_sequence = 2;
+//   NextBlockingTransfer next_blocking_transfer = 3;
+//   TransferAssetRelease transfer_asset_release = 4;
+
+//   StatusError error = 5;
+//   StatusState state = 6;
+// }

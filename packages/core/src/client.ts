@@ -1,9 +1,4 @@
 import {
-  AxelarGMPRecoveryAPI,
-  Environment,
-  QueryTransferStatus,
-} from "@axelar-network/axelarjs-sdk";
-import {
   encodeSecp256k1Pubkey,
   makeSignDoc as makeSignDocAmino,
   OfflineAminoSigner,
@@ -41,7 +36,6 @@ import {
   DEFAULT_BLOCK_TIMEOUT_HEIGHT,
 } from "@injectivelabs/utils";
 import axios from "axios";
-// import { chains } from "chain-registry";
 import { SignMode } from "cosmjs-types/cosmos/tx/signing/v1beta1/signing";
 import { TxRaw } from "cosmjs-types/cosmos/tx/v1beta1/tx";
 import { MsgExecuteContract } from "cosmjs-types/cosmwasm/wasm/v1/tx";
@@ -49,7 +43,6 @@ import { maxUint256, publicActions, WalletClient } from "viem";
 
 import chains from "./chains";
 import { erc20ABI } from "./constants/abis";
-// import { SUPPORTED_TESTNETS } from "./constants/constants";
 import { createTransaction } from "./injective";
 import { RequestClient } from "./request-client";
 import {
@@ -134,6 +127,10 @@ export type ExecuteRouteOptions = {
     chainID: string;
     txHash: string;
     success: boolean;
+  }) => Promise<void>;
+  onTransactionBroadcast?: (txInfo: {
+    txHash: string;
+    chainID: string;
   }) => Promise<void>;
   validateGasBalance?: boolean;
 };
@@ -322,69 +319,24 @@ export class SkipRouter {
           feeAmount: coin(feeAmount, feeInfo.denom),
         });
 
-        const isAxelarTransfer = await getIsAxelarTransfer(tx.transactionHash);
-
-        if (isAxelarTransfer) {
-          // eslint-disable-next-line no-constant-condition
-          while (true) {
-            const status = await getAxelarDespositAddressTransferStatus(
-              tx.transactionHash,
-              false,
-            );
-
-            if (
-              status.success &&
-              status.data.status === QueryTransferStatus.EXECUTED
-            ) {
-              break;
-            }
-
-            await wait(1000);
-          }
-
-          if (options.onTransactionSuccess) {
-            await options.onTransactionSuccess({
-              chainID: multiChainMsg.chainID,
-              txHash: tx.transactionHash,
-              success: true,
-            });
-          }
-        } else {
-          const txStatusResponse = await this.waitForTransaction({
+        if (options.onTransactionBroadcast) {
+          await options.onTransactionBroadcast({
             chainID: multiChainMsg.chainID,
             txHash: tx.transactionHash,
           });
+        }
 
-          const isAxelarTransferAfterIBC = await getIsAxelarTransfer(
-            tx.transactionHash,
-          );
+        const txStatusResponse = await this.waitForTransaction({
+          chainID: multiChainMsg.chainID,
+          txHash: tx.transactionHash,
+        });
 
-          if (isAxelarTransferAfterIBC) {
-            // eslint-disable-next-line no-constant-condition
-            while (true) {
-              const status = await getAxelarDespositAddressTransferStatus(
-                tx.transactionHash,
-                false,
-              );
-
-              if (
-                status.success &&
-                status.data.status === QueryTransferStatus.EXECUTED
-              ) {
-                break;
-              }
-
-              await wait(1000);
-            }
-          }
-
-          if (options.onTransactionSuccess) {
-            await options.onTransactionSuccess({
-              chainID: multiChainMsg.chainID,
-              txHash: tx.transactionHash,
-              success: txStatusResponse.status === "STATE_COMPLETED",
-            });
-          }
+        if (options.onTransactionSuccess) {
+          await options.onTransactionSuccess({
+            chainID: multiChainMsg.chainID,
+            txHash: tx.transactionHash,
+            success: txStatusResponse.status === "STATE_COMPLETED_SUCCESS",
+          });
         }
       }
 
@@ -406,60 +358,23 @@ export class SkipRouter {
           signer: evmSigner,
         });
 
-        // TODO: do this in a better way
-        // const isTestnetTX = SUPPORTED_TESTNETS.includes(evmTx.chainID);
-
-        const gmpClient = new AxelarGMPRecoveryAPI({
-          environment: Environment.MAINNET,
-        });
-
-        // eslint-disable-next-line no-constant-condition
-        while (true) {
-          const status = await gmpClient.queryTransactionStatus(
-            txReceipt.transactionHash,
-          );
-          if (status.status === "destination_executed") {
-            break;
-          }
-          await wait(1000);
+        if (options.onTransactionBroadcast) {
+          await options.onTransactionBroadcast({
+            chainID: evmTx.chainID,
+            txHash: txReceipt.transactionHash,
+          });
         }
 
-        // if (evmTx.requiredERC20Approvals.length > 0) {
-
-        //   // eslint-disable-next-line no-constant-condition
-        //   while (true) {
-        //     const status = await gmpClient.queryTransactionStatus(
-        //       txReceipt.transactionHash,
-        //     );
-        //     if (status.status === "destination_executed") {
-        //       break;
-        //     }
-        //     await wait(1000);
-        //   }
-        // } else {
-        //   // eslint-disable-next-line no-constant-condition
-        //   while (true) {
-        //     const status = await getAxelarDespositAddressTransferStatus(
-        //       txReceipt.transactionHash,
-        //       isTestnetTX,
-        //     );
-
-        //     if (
-        //       status.success &&
-        //       status.data.status === QueryTransferStatus.EXECUTED
-        //     ) {
-        //       break;
-        //     }
-
-        //     await wait(1000);
-        //   }
-        // }
+        const txStatusResponse = await this.waitForTransaction({
+          chainID: evmTx.chainID,
+          txHash: txReceipt.transactionHash,
+        });
 
         if (options.onTransactionSuccess) {
           await options.onTransactionSuccess({
             chainID: evmTx.chainID,
             txHash: txReceipt.transactionHash,
-            success: true,
+            success: txStatusResponse.status === "STATE_COMPLETED_SUCCESS",
           });
         }
       }
@@ -908,7 +823,7 @@ export class SkipRouter {
     const response = await this.requestClient.post<
       SubmitTxResponseJSON,
       SubmitTxRequestJSON
-    >("/v1/tx/submit", {
+    >("/v2/tx/submit", {
       chain_id: chainID,
       tx: tx,
     });
@@ -926,7 +841,7 @@ export class SkipRouter {
     const response = await this.requestClient.post<
       TrackTxResponseJSON,
       TrackTxRequestJSON
-    >("/v1/tx/track", {
+    >("/v2/tx/track", {
       chain_id: chainID,
       tx_hash: txHash,
     });
@@ -944,7 +859,7 @@ export class SkipRouter {
     const response = await this.requestClient.get<
       TxStatusResponseJSON,
       StatusRequestJSON
-    >("/v1/tx/status", {
+    >("/v2/tx/status", {
       chain_id: chainID,
       tx_hash: txHash,
     });
@@ -1158,46 +1073,4 @@ export class SkipRouter {
       );
     }
   }
-}
-
-// TODO: rename and find a proper home. DO NOT KEEP.
-async function getAxelarDespositAddressTransferStatus(
-  txHash: string,
-  isTestnetTX: boolean,
-): Promise<
-  | { success: true; data: { status: QueryTransferStatus } }
-  | { success: false; error: string }
-> {
-  const apiURL = isTestnetTX
-    ? "https://testnet.api.axelarscan.io"
-    : "https://api.axelarscan.io";
-  const { data } = await axios.post(`${apiURL}/cross-chain/transfers-status`, {
-    txHash,
-  });
-
-  if (data.length === 0 || data.error) {
-    return {
-      success: false,
-      error: "No transfer found",
-    };
-  }
-
-  return {
-    success: true,
-    data: {
-      status: data[0].status as QueryTransferStatus,
-    },
-  };
-}
-
-async function getIsAxelarTransfer(txHash: string) {
-  const { data } = await axios.post<{ data: unknown[] }>(
-    "https://api.axelarscan.io",
-    {
-      method: "searchTransfers",
-      txHash: txHash,
-    },
-  );
-
-  return data.data.length > 0;
 }
