@@ -133,6 +133,7 @@ export type ExecuteRouteOptions = {
     chainID: string;
   }) => Promise<void>;
   validateGasBalance?: boolean;
+  slippageTolerancePercent?: string;
 };
 
 export type ExecuteMultiChainMessageOptions = {
@@ -260,24 +261,12 @@ export class SkipRouter {
       amountOut: route.estimatedAmountOut ?? "0",
       addressList: route.chainIDs.map((chainID) => userAddresses[chainID]),
       operations: route.operations,
+      slippageTolerancePercent: options.slippageTolerancePercent ?? "1",
     });
 
     if (validateGasBalance) {
       // check balances on chains where a tx is initiated
-      for (let i = 0; i < messages.length; i++) {
-        const message = messages[i];
-
-        if ("multiChainMsg" in message) {
-          await this.validateCosmosGasBalance(
-            userAddresses[message.multiChainMsg.chainID],
-            message.multiChainMsg,
-          );
-        }
-
-        if ("evmTx" in message) {
-          // TODO: check balance
-        }
-      }
+      await this.validateGasBalances(messages, userAddresses);
     }
 
     // execute txs
@@ -1040,6 +1029,22 @@ export class SkipRouter {
     }
 
     return feeInfo;
+  }
+
+  private async validateGasBalances(
+    messages: Msg[],
+    userAddresses: Record<string, string>,
+  ) {
+    for (let i = 0; i < messages.length; i++) {
+      const message = messages[i];
+
+      if ("multiChainMsg" in message) {
+        await this.validateCosmosGasBalance(
+          userAddresses[message.multiChainMsg.chainID],
+          message.multiChainMsg,
+        );
+      }
+    }
   }
 
   private async validateCosmosGasBalance(
