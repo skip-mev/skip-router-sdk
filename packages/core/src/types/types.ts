@@ -342,6 +342,7 @@ export type MsgsRequestJSON = {
 
   estimated_amount_out?: string;
   slippage_tolerance_percent?: string;
+  timeout_seconds?: string;
   affiliates?: AffiliateJSON[];
 
   post_route_handler?: PostHandlerJSON;
@@ -359,6 +360,7 @@ export type MsgsRequest = {
 
   estimatedAmountOut?: string;
   slippageTolerancePercent?: string;
+  timeoutSeconds?: string;
   affiliates?: Affiliate[];
 
   postRouteHandler?: PostHandler;
