@@ -6,7 +6,8 @@
   ],
   "scripts": {
     "build": "turbo run build",
-    "test": "turbo run test"
+    "test": "turbo run test",
+    "release": "turbo run build lint test && changeset publish"
   },
   "devDependencies": {
     "turbo": "^1.10.13"
