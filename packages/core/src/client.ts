@@ -123,16 +123,13 @@ export type ExecuteRouteOptions = {
   userAddresses: Record<string, string>;
   getEVMSigner?: (chainID: string) => Promise<WalletClient>;
   getCosmosSigner?: (chainID: string) => Promise<OfflineSigner>;
-  onTransactionSuccess?: (status: {
-    chainID: string;
-    txHash: string;
-    success: boolean;
-  }) => Promise<void>;
   onTransactionBroadcast?: (txInfo: {
     txHash: string;
     chainID: string;
   }) => Promise<void>;
+  onTransactionCompleted?: (status: TxStatusResponse) => Promise<void>;
   validateGasBalance?: boolean;
+  slippageTolerancePercent?: string;
 };
 
 export type ExecuteMultiChainMessageOptions = {
@@ -260,24 +257,12 @@ export class SkipRouter {
       amountOut: route.estimatedAmountOut ?? "0",
       addressList: route.chainIDs.map((chainID) => userAddresses[chainID]),
       operations: route.operations,
+      slippageTolerancePercent: options.slippageTolerancePercent ?? "1",
     });
 
     if (validateGasBalance) {
       // check balances on chains where a tx is initiated
-      for (let i = 0; i < messages.length; i++) {
-        const message = messages[i];
-
-        if ("multiChainMsg" in message) {
-          await this.validateCosmosGasBalance(
-            userAddresses[message.multiChainMsg.chainID],
-            message.multiChainMsg,
-          );
-        }
-
-        if ("evmTx" in message) {
-          // TODO: check balance
-        }
-      }
+      await this.validateGasBalances(messages, userAddresses);
     }
 
     // execute txs
@@ -331,12 +316,8 @@ export class SkipRouter {
           txHash: tx.transactionHash,
         });
 
-        if (options.onTransactionSuccess) {
-          await options.onTransactionSuccess({
-            chainID: multiChainMsg.chainID,
-            txHash: tx.transactionHash,
-            success: txStatusResponse.status === "STATE_COMPLETED_SUCCESS",
-          });
+        if (options.onTransactionCompleted) {
+          await options.onTransactionCompleted(txStatusResponse);
         }
       }
 
@@ -370,12 +351,8 @@ export class SkipRouter {
           txHash: txReceipt.transactionHash,
         });
 
-        if (options.onTransactionSuccess) {
-          await options.onTransactionSuccess({
-            chainID: evmTx.chainID,
-            txHash: txReceipt.transactionHash,
-            success: txStatusResponse.status === "STATE_COMPLETED_SUCCESS",
-          });
+        if (options.onTransactionCompleted) {
+          await options.onTransactionCompleted(txStatusResponse);
         }
       }
     }
@@ -1040,6 +1017,22 @@ export class SkipRouter {
     }
 
     return feeInfo;
+  }
+
+  private async validateGasBalances(
+    messages: Msg[],
+    userAddresses: Record<string, string>,
+  ) {
+    for (let i = 0; i < messages.length; i++) {
+      const message = messages[i];
+
+      if ("multiChainMsg" in message) {
+        await this.validateCosmosGasBalance(
+          userAddresses[message.multiChainMsg.chainID],
+          message.multiChainMsg,
+        );
+      }
+    }
   }
 
   private async validateCosmosGasBalance(
