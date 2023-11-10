@@ -1,44 +1,57 @@
 import {
-  Affiliate,
-  AffiliateJSON,
-  Asset,
-  AssetJSON,
-  AssetRecommendation,
-  AssetRecommendationJSON,
-  AssetsFromSourceRequest,
-  AssetsFromSourceRequestJSON,
-  AssetsRequest,
-  AssetsRequestJSON,
-  Chain,
-  ChainJSON,
+  AxelarTransferInfo,
+  AxelarTransferInfoJSON,
+  AxelarTransferTransactions,
+  AxelarTransferTransactionsJSON,
   ChainTransaction,
   ChainTransactionJSON,
-  CosmWasmContractMsg,
-  CosmWasmContractMsgJSON,
-  FeeAsset,
-  FeeAssetJSON,
-  MsgsRequest,
-  MsgsRequestJSON,
-  MultiChainMsg,
-  MultiChainMsgJSON,
+  ContractCallWithTokenTransactions,
+  ContractCallWithTokenTransactionsJSON,
   NextBlockingTransfer,
   NextBlockingTransferJSON,
-  Operation,
-  OperationJSON,
   Packet,
   PacketJSON,
-  PostHandler,
-  PostHandlerJSON,
-  RecommendAssetsRequest,
-  RecommendAssetsRequestJSON,
-  RouteRequest,
-  RouteRequestJSON,
-  RouteResponse,
-  RouteResponseJSON,
+  SendTokenTransactions,
+  SendTokenTransactionsJSON,
+  StatusRequest,
+  StatusRequestJSON,
   SubmitTxRequest,
   SubmitTxRequestJSON,
   SubmitTxResponse,
   SubmitTxResponseJSON,
+  TrackTxRequest,
+  TrackTxRequestJSON,
+  TrackTxResponse,
+  TrackTxResponseJSON,
+  TransferAssetRelease,
+  TransferAssetReleaseJSON,
+  TransferEvent,
+  TransferEventJSON,
+  TransferInfo,
+  TransferInfoJSON,
+  TxStatusResponse,
+  TxStatusResponseJSON,
+} from "./lifecycle";
+import { Chain, ChainJSON, FeeAsset, FeeAssetJSON } from "./routing";
+import {
+  Affiliate,
+  AffiliateJSON,
+  Asset,
+  AssetJSON,
+  AxelarTransfer,
+  AxelarTransferJSON,
+  CosmWasmContractMsg,
+  CosmWasmContractMsgJSON,
+  ERC20Approval,
+  ERC20ApprovalJSON,
+  EvmTx,
+  EvmTxJSON,
+  IBCAddress,
+  IBCAddressJSON,
+  MultiChainMsg,
+  MultiChainMsgJSON,
+  PostHandler,
+  PostHandlerJSON,
   Swap,
   SwapExactCoinIn,
   SwapExactCoinInJSON,
@@ -49,21 +62,29 @@ import {
   SwapOperationJSON,
   SwapVenue,
   SwapVenueJSON,
-  TrackTxRequest,
-  TrackTxRequestJSON,
-  TrackTxResponse,
-  TrackTxResponseJSON,
   Transfer,
-  TransferAssetRelease,
-  TransferAssetReleaseJSON,
-  TransferInfo,
-  TransferInfoJSON,
   TransferJSON,
-  TxStatusRequest,
-  TxStatusRequestJSON,
-  TxStatusResponse,
-  TxStatusResponseJSON,
-} from "./types";
+} from "./shared";
+import {
+  AssetRecommendation,
+  AssetRecommendationJSON,
+  AssetsFromSourceRequest,
+  AssetsFromSourceRequestJSON,
+  AssetsRequest,
+  AssetsRequestJSON,
+  Msg,
+  MsgJSON,
+  MsgsRequest,
+  MsgsRequestJSON,
+  Operation,
+  OperationJSON,
+  RecommendAssetsRequest,
+  RecommendAssetsRequestJSON,
+  RouteRequest,
+  RouteRequestJSON,
+  RouteResponse,
+  RouteResponseJSON,
+} from "./unified";
 
 export function affiliateFromJSON(affiliateJSON: AffiliateJSON): Affiliate {
   return {
@@ -91,6 +112,7 @@ export function assetFromJSON(assetJSON: AssetJSON): Asset {
     name: assetJSON.name,
     logoURI: assetJSON.logo_uri,
     decimals: assetJSON.decimals,
+    tokenContract: assetJSON.token_contract,
   };
 }
 
@@ -106,6 +128,7 @@ export function assetToJSON(asset: Asset): AssetJSON {
     name: asset.name,
     logo_uri: asset.logoURI,
     decimals: asset.decimals,
+    token_contract: asset.tokenContract,
   };
 }
 
@@ -134,6 +157,12 @@ export function assetsFromSourceRequestFromJSON(
     sourceAssetDenom: assetsFromSourceRequestJSON.source_asset_denom,
     sourceAssetChainID: assetsFromSourceRequestJSON.source_asset_chain_id,
     allowMultiTx: assetsFromSourceRequestJSON.allow_multi_tx,
+    recommendationReason: assetsFromSourceRequestJSON.recommendation_reason,
+    includeSwaps: assetsFromSourceRequestJSON.include_swaps,
+    swapVenues: assetsFromSourceRequestJSON.swap_venues?.map(swapVenueFromJSON),
+    nativeOnly: assetsFromSourceRequestJSON.native_only,
+    groupBy: assetsFromSourceRequestJSON.group_by,
+    includeCW20Assets: assetsFromSourceRequestJSON.include_cw20_assets,
   };
 }
 
@@ -144,6 +173,12 @@ export function assetsFromSourceRequestToJSON(
     source_asset_denom: assetsFromSourceRequest.sourceAssetDenom,
     source_asset_chain_id: assetsFromSourceRequest.sourceAssetChainID,
     allow_multi_tx: assetsFromSourceRequest.allowMultiTx,
+    recommendation_reason: assetsFromSourceRequest.recommendationReason,
+    include_swaps: assetsFromSourceRequest.includeSwaps,
+    swap_venues: assetsFromSourceRequest.swapVenues?.map(swapVenueToJSON),
+    native_only: assetsFromSourceRequest.nativeOnly,
+    group_by: assetsFromSourceRequest.groupBy,
+    include_cw20_assets: assetsFromSourceRequest.includeCW20Assets,
   };
 }
 
@@ -154,6 +189,8 @@ export function assetsRequestFromJSON(
     chainID: assetsRequestJSON.chain_id,
     nativeOnly: assetsRequestJSON.native_only,
     includeNoMetadataAssets: assetsRequestJSON.include_no_metadata_assets,
+    includeCW20Assets: assetsRequestJSON.include_cw20_assets,
+    includeEvmAssets: assetsRequestJSON.include_evm_assets,
   };
 }
 
@@ -164,6 +201,8 @@ export function assetsRequestToJSON(
     chain_id: assetsRequest.chainID,
     native_only: assetsRequest.nativeOnly,
     include_no_metadata_assets: assetsRequest.includeNoMetadataAssets,
+    include_cw20_assets: assetsRequest.includeCW20Assets,
+    include_evm_assets: assetsRequest.includeEvmAssets,
   };
 }
 
@@ -179,6 +218,7 @@ export function chainFromJSON(chainJSON: ChainJSON): Chain {
     logoURI: chainJSON.logo_uri,
     bech32Prefix: chainJSON.bech32_prefix,
     feeAssets: chainJSON.fee_assets.map(feeAssetFromJSON),
+    chainType: chainJSON.chain_type,
   };
 }
 
@@ -194,6 +234,7 @@ export function chainToJSON(chain: Chain): ChainJSON {
     logo_uri: chain.logoURI,
     bech32_prefix: chain.bech32Prefix,
     fee_assets: chain.feeAssets.map(feeAssetToJSON),
+    chain_type: chain.chainType,
   };
 }
 
@@ -430,12 +471,22 @@ export function operationFromJSON(operationJSON: OperationJSON): Operation {
     return { transfer: transferFromJSON(operationJSON.transfer) };
   }
 
+  if ("axelar_transfer" in operationJSON) {
+    return {
+      axelarTransfer: axelarTransferFromJSON(operationJSON.axelar_transfer),
+    };
+  }
+
   return { swap: swapFromJSON(operationJSON.swap) };
 }
 
 export function operationToJSON(operation: Operation): OperationJSON {
   if ("transfer" in operation) {
     return { transfer: transferToJSON(operation.transfer) };
+  }
+
+  if ("axelarTransfer" in operation) {
+    return { axelar_transfer: axelarTransferToJSON(operation.axelarTransfer) };
   }
 
   return { swap: swapToJSON(operation.swap) };
@@ -658,7 +709,6 @@ export function trackTxResponseFromJSON(
 ): TrackTxResponse {
   return {
     txHash: trackResponseJSON.tx_hash,
-    success: trackResponseJSON.success,
   };
 }
 
@@ -667,13 +717,12 @@ export function trackTxResponseToJSON(
 ): TrackTxResponseJSON {
   return {
     tx_hash: trackResponse.txHash,
-    success: trackResponse.success,
   };
 }
 
 export function txStatusRequestFromJSON(
-  txStatusRequestJSON: TxStatusRequestJSON,
-): TxStatusRequest {
+  txStatusRequestJSON: StatusRequestJSON,
+): StatusRequest {
   return {
     txHash: txStatusRequestJSON.tx_hash,
     chainID: txStatusRequestJSON.chain_id,
@@ -681,8 +730,8 @@ export function txStatusRequestFromJSON(
 }
 
 export function txStatusRequestToJSON(
-  txStatusRequest: TxStatusRequest,
-): TxStatusRequestJSON {
+  txStatusRequest: StatusRequest,
+): StatusRequestJSON {
   return {
     tx_hash: txStatusRequest.txHash,
     chain_id: txStatusRequest.chainID,
@@ -695,6 +744,7 @@ export function chainTransactionFromJSON(
   return {
     txHash: chainTransactionJSON.tx_hash,
     chainID: chainTransactionJSON.chain_id,
+    explorerLink: chainTransactionJSON.explorer_link,
   };
 }
 
@@ -704,6 +754,7 @@ export function chainTransactionToJSON(
   return {
     tx_hash: chainTransaction.txHash,
     chain_id: chainTransaction.chainID,
+    explorer_link: chainTransaction.explorerLink,
   };
 }
 
@@ -800,12 +851,14 @@ export function txStatusResponseFromJSON(
     nextBlockingTransfer:
       statusResponseJSON.next_blocking_transfer &&
       nextBlockingTransferFromJSON(statusResponseJSON.next_blocking_transfer),
-    transferSequence:
-      statusResponseJSON.transfer_sequence.map(transferInfoFromJSON),
+    transferSequence: statusResponseJSON.transfer_sequence.map(
+      transferEventFromJSON,
+    ),
     transferAssetRelease:
       statusResponseJSON.transfer_asset_release &&
       transferAssetReleaseFromJSON(statusResponseJSON.transfer_asset_release),
     error: statusResponseJSON.error,
+    state: statusResponseJSON.state,
   };
 }
 
@@ -817,10 +870,280 @@ export function txStatusResponseToJSON(
     next_blocking_transfer:
       statusResponse.nextBlockingTransfer &&
       nextBlockingTransferToJSON(statusResponse.nextBlockingTransfer),
-    transfer_sequence: statusResponse.transferSequence.map(transferInfoToJSON),
+    transfer_sequence: statusResponse.transferSequence.map(transferEventToJSON),
     transfer_asset_release:
       statusResponse.transferAssetRelease &&
       transferAssetReleaseToJSON(statusResponse.transferAssetRelease),
     error: statusResponse.error,
+    state: statusResponse.state,
+  };
+}
+
+export function ibcAddressFromJSON(ibcAddressJSON: IBCAddressJSON): IBCAddress {
+  return {
+    address: ibcAddressJSON.address,
+    chainID: ibcAddressJSON.chain_id,
+  };
+}
+
+export function ibcAddressToJSON(ibcAddress: IBCAddress): IBCAddressJSON {
+  return {
+    address: ibcAddress.address,
+    chain_id: ibcAddress.chainID,
+  };
+}
+
+export function axelarTransferFromJSON(
+  axelarTransferJSON: AxelarTransferJSON,
+): AxelarTransfer {
+  return {
+    fromChain: axelarTransferJSON.from_chain,
+    fromChainID: axelarTransferJSON.from_chain_id,
+    toChain: axelarTransferJSON.to_chain,
+    toChainID: axelarTransferJSON.to_chain_id,
+    asset: axelarTransferJSON.asset,
+    shouldUnwrap: axelarTransferJSON.should_unwrap,
+    feeAmount: axelarTransferJSON.fee_amount,
+    isTestnet: axelarTransferJSON.is_testnet,
+  };
+}
+
+export function axelarTransferToJSON(
+  axelarTransfer: AxelarTransfer,
+): AxelarTransferJSON {
+  return {
+    from_chain: axelarTransfer.fromChain,
+    from_chain_id: axelarTransfer.fromChainID,
+    to_chain: axelarTransfer.toChain,
+    to_chain_id: axelarTransfer.toChainID,
+    asset: axelarTransfer.asset,
+    should_unwrap: axelarTransfer.shouldUnwrap,
+    fee_amount: axelarTransfer.feeAmount,
+    is_testnet: axelarTransfer.isTestnet,
+  };
+}
+
+export function erc20ApprovalFromJSON(
+  erc20ApprovalJSON: ERC20ApprovalJSON,
+): ERC20Approval {
+  return {
+    tokenContract: erc20ApprovalJSON.token_contract,
+    spender: erc20ApprovalJSON.spender,
+    amount: erc20ApprovalJSON.amount,
+  };
+}
+
+export function erc20ApprovalToJSON(
+  erc20Approval: ERC20Approval,
+): ERC20ApprovalJSON {
+  return {
+    token_contract: erc20Approval.tokenContract,
+    spender: erc20Approval.spender,
+    amount: erc20Approval.amount,
+  };
+}
+
+export function evmTxFromJSON(evmTxJSON: EvmTxJSON): EvmTx {
+  return {
+    chainID: evmTxJSON.chain_id,
+    to: evmTxJSON.to,
+    value: evmTxJSON.value,
+    data: evmTxJSON.data,
+    requiredERC20Approvals: evmTxJSON.required_erc20_approvals.map(
+      erc20ApprovalFromJSON,
+    ),
+  };
+}
+
+export function evmTxToJSON(evmTx: EvmTx): EvmTxJSON {
+  return {
+    chain_id: evmTx.chainID,
+    to: evmTx.to,
+    value: evmTx.value,
+    data: evmTx.data,
+    required_erc20_approvals:
+      evmTx.requiredERC20Approvals.map(erc20ApprovalToJSON),
+  };
+}
+
+export function msgFromJSON(msgJSON: MsgJSON): Msg {
+  if ("multi_chain_msg" in msgJSON) {
+    return {
+      multiChainMsg: multiChainMsgFromJSON(msgJSON.multi_chain_msg),
+    };
+  }
+
+  return {
+    evmTx: evmTxFromJSON(msgJSON.evm_tx),
+  };
+}
+
+export function msgToJSON(msg: Msg): MsgJSON {
+  if ("multiChainMsg" in msg) {
+    return {
+      multi_chain_msg: multiChainMsgToJSON(msg.multiChainMsg),
+    };
+  }
+
+  return {
+    evm_tx: evmTxToJSON(msg.evmTx),
+  };
+}
+
+export function sendTokenTransactionsFromJSON(
+  sendTokenTransactionsJSON: SendTokenTransactionsJSON,
+): SendTokenTransactions {
+  return {
+    sendTx: sendTokenTransactionsJSON.send_tx
+      ? chainTransactionFromJSON(sendTokenTransactionsJSON.send_tx)
+      : null,
+    confirmTx: sendTokenTransactionsJSON.confirm_tx
+      ? chainTransactionFromJSON(sendTokenTransactionsJSON.confirm_tx)
+      : null,
+    executeTx: sendTokenTransactionsJSON.execute_tx
+      ? chainTransactionFromJSON(sendTokenTransactionsJSON.execute_tx)
+      : null,
+    error: sendTokenTransactionsJSON.error,
+  };
+}
+
+export function sendTokenTransactionsToJSON(
+  sendTokenTransactions: SendTokenTransactions,
+): SendTokenTransactionsJSON {
+  return {
+    send_tx: sendTokenTransactions.sendTx
+      ? chainTransactionToJSON(sendTokenTransactions.sendTx)
+      : null,
+    confirm_tx: sendTokenTransactions.confirmTx
+      ? chainTransactionToJSON(sendTokenTransactions.confirmTx)
+      : null,
+    execute_tx: sendTokenTransactions.executeTx
+      ? chainTransactionToJSON(sendTokenTransactions.executeTx)
+      : null,
+    error: sendTokenTransactions.error,
+  };
+}
+
+export function contractCallWithTokenTransactionsFromJSON(
+  value: ContractCallWithTokenTransactionsJSON,
+): ContractCallWithTokenTransactions {
+  return {
+    sendTx: value.send_tx ? chainTransactionFromJSON(value.send_tx) : null,
+    gasPaidTx: value.gas_paid_tx
+      ? chainTransactionFromJSON(value.gas_paid_tx)
+      : null,
+    confirmTx: value.confirm_tx
+      ? chainTransactionFromJSON(value.confirm_tx)
+      : null,
+    approveTx: value.approve_tx
+      ? chainTransactionFromJSON(value.approve_tx)
+      : null,
+    executeTx: value.execute_tx
+      ? chainTransactionFromJSON(value.execute_tx)
+      : null,
+    error: value.error,
+  };
+}
+
+export function contractCallWithTokenTransactionsToJSON(
+  value: ContractCallWithTokenTransactions,
+): ContractCallWithTokenTransactionsJSON {
+  return {
+    send_tx: value.sendTx ? chainTransactionToJSON(value.sendTx) : null,
+    gas_paid_tx: value.gasPaidTx
+      ? chainTransactionToJSON(value.gasPaidTx)
+      : null,
+    confirm_tx: value.confirmTx
+      ? chainTransactionToJSON(value.confirmTx)
+      : null,
+    approve_tx: value.approveTx
+      ? chainTransactionToJSON(value.approveTx)
+      : null,
+    execute_tx: value.executeTx
+      ? chainTransactionToJSON(value.executeTx)
+      : null,
+    error: value.error,
+  };
+}
+
+export function axelarTransferTransactionsFromJSON(
+  value: AxelarTransferTransactionsJSON,
+): AxelarTransferTransactions {
+  if ("contract_call_with_token_txs" in value) {
+    return {
+      contractCallWithTokenTxs: contractCallWithTokenTransactionsFromJSON(
+        value.contract_call_with_token_txs,
+      ),
+    };
+  }
+
+  return {
+    sendTokenTxs: sendTokenTransactionsFromJSON(value.send_token_txs),
+  };
+}
+
+export function axelarTransferTransactionsToJSON(
+  value: AxelarTransferTransactions,
+): AxelarTransferTransactionsJSON {
+  if ("contractCallWithTokenTxs" in value) {
+    return {
+      contract_call_with_token_txs: contractCallWithTokenTransactionsToJSON(
+        value.contractCallWithTokenTxs,
+      ),
+    };
+  }
+
+  return {
+    send_token_txs: sendTokenTransactionsToJSON(value.sendTokenTxs),
+  };
+}
+
+export function axelarTransferInfoFromJSON(
+  value: AxelarTransferInfoJSON,
+): AxelarTransferInfo {
+  return {
+    srcChainID: value.src_chain_id,
+    dstChainID: value.dst_chain_id,
+    type: value.type,
+    state: value.state,
+    txs: value.txs && axelarTransferTransactionsFromJSON(value.txs),
+    axelarScanLink: value.axelar_scan_link,
+  };
+}
+
+export function axelarTransferInfoToJSON(
+  value: AxelarTransferInfo,
+): AxelarTransferInfoJSON {
+  return {
+    src_chain_id: value.srcChainID,
+    dst_chain_id: value.dstChainID,
+    type: value.type,
+    state: value.state,
+    txs: value.txs && axelarTransferTransactionsToJSON(value.txs),
+    axelar_scan_link: value.axelarScanLink,
+  };
+}
+
+export function transferEventFromJSON(value: TransferEventJSON): TransferEvent {
+  if ("ibc_transfer" in value) {
+    return {
+      ibcTransfer: transferInfoFromJSON(value.ibc_transfer),
+    };
+  }
+
+  return {
+    axelarTransfer: axelarTransferInfoFromJSON(value.axelar_transfer),
+  };
+}
+
+export function transferEventToJSON(value: TransferEvent): TransferEventJSON {
+  if ("ibcTransfer" in value) {
+    return {
+      ibc_transfer: transferInfoToJSON(value.ibcTransfer),
+    };
+  }
+
+  return {
+    axelar_transfer: axelarTransferInfoToJSON(value.axelarTransfer),
   };
 }

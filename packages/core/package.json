@@ -1,6 +1,6 @@
 {
   "name": "@skip-router/core",
-  "version": "0.0.11",
+  "version": "0.1.0-rc22",
   "description": "",
   "main": "dist/cjs/index.js",
   "types": "dist/cjs/index.d.ts",
@@ -17,12 +17,12 @@
     "e2e:stop": "make stop",
     "e2e:clean": "make stop clean",
     "e2e:test": "vitest --dangerouslyIgnoreUnhandledErrors -c vitest.e2e.config.ts --test-timeout=30000",
-    "watch:cjs": "tsc -w -p tsconfig/tsconfig.cjs.json",
-    "prepare": "npm run build"
+    "watch:cjs": "tsc -w -p tsconfig/tsconfig.cjs.json"
   },
   "author": "",
   "license": "ISC",
   "dependencies": {
+    "@axelar-network/axelarjs-sdk": "^0.13.6",
     "@cosmjs/amino": "^0.31.1",
     "@cosmjs/cosmwasm-stargate": "^0.31.1",
     "@cosmjs/encoding": "^0.31.1",
@@ -35,7 +35,9 @@
     "axios": "^1.4.0",
     "chain-registry": "^1.19.0",
     "cosmjs-types": "^0.8.0",
-    "keccak256": "^1.0.6"
+    "faker": "^6.6.6",
+    "keccak256": "^1.0.6",
+    "viem": "^1.12.2"
   },
   "devDependencies": {
     "@cosmjs/faucet": "^0.31.1",

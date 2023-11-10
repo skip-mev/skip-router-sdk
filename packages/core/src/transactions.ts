@@ -3,6 +3,7 @@ import { EncodeObject } from "@cosmjs/proto-signing";
 import MsgTransferInjective from "@injectivelabs/sdk-ts/dist/cjs/core/modules/ibc/msgs/MsgTransfer";
 import { Msgs } from "@injectivelabs/sdk-ts/dist/cjs/core/modules/msgs";
 import MsgExecuteContractInjective from "@injectivelabs/sdk-ts/dist/cjs/core/modules/wasm/msgs/MsgExecuteContract";
+import { MsgSend } from "cosmjs-types/cosmos/bank/v1beta1/tx";
 import { MsgExecuteContract } from "cosmjs-types/cosmwasm/wasm/v1/tx";
 import { MsgTransfer } from "cosmjs-types/ibc/applications/transfer/v1/tx";
 
@@ -37,6 +38,17 @@ export function getEncodeObjectFromMultiChainMessage(
         contract: msgJson.contract,
         msg: toUtf8(JSON.stringify(msgJson.msg)),
         funds: msgJson.funds,
+      }),
+    };
+  }
+
+  if (message.msgTypeURL === "/cosmos.bank.v1beta1.MsgSend") {
+    return {
+      typeUrl: message.msgTypeURL,
+      value: MsgSend.fromPartial({
+        fromAddress: msgJson.from_address,
+        toAddress: msgJson.to_address,
+        amount: msgJson.amount,
       }),
     };
   }
