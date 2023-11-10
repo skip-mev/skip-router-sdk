@@ -744,6 +744,7 @@ export function chainTransactionFromJSON(
   return {
     txHash: chainTransactionJSON.tx_hash,
     chainID: chainTransactionJSON.chain_id,
+    explorerLink: chainTransactionJSON.explorer_link,
   };
 }
 
@@ -753,6 +754,7 @@ export function chainTransactionToJSON(
   return {
     tx_hash: chainTransaction.txHash,
     chain_id: chainTransaction.chainID,
+    explorer_link: chainTransaction.explorerLink,
   };
 }
 
@@ -1105,6 +1107,7 @@ export function axelarTransferInfoFromJSON(
     type: value.type,
     state: value.state,
     txs: value.txs && axelarTransferTransactionsFromJSON(value.txs),
+    axelarScanLink: value.axelar_scan_link,
   };
 }
 
@@ -1117,6 +1120,7 @@ export function axelarTransferInfoToJSON(
     type: value.type,
     state: value.state,
     txs: value.txs && axelarTransferTransactionsToJSON(value.txs),
+    axelar_scan_link: value.axelarScanLink,
   };
 }
 

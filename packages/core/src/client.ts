@@ -123,15 +123,11 @@ export type ExecuteRouteOptions = {
   userAddresses: Record<string, string>;
   getEVMSigner?: (chainID: string) => Promise<WalletClient>;
   getCosmosSigner?: (chainID: string) => Promise<OfflineSigner>;
-  onTransactionSuccess?: (status: {
-    chainID: string;
-    txHash: string;
-    success: boolean;
-  }) => Promise<void>;
   onTransactionBroadcast?: (txInfo: {
     txHash: string;
     chainID: string;
   }) => Promise<void>;
+  onTransactionCompleted?: (status: TxStatusResponse) => Promise<void>;
   validateGasBalance?: boolean;
   slippageTolerancePercent?: string;
 };
@@ -320,12 +316,8 @@ export class SkipRouter {
           txHash: tx.transactionHash,
         });
 
-        if (options.onTransactionSuccess) {
-          await options.onTransactionSuccess({
-            chainID: multiChainMsg.chainID,
-            txHash: tx.transactionHash,
-            success: txStatusResponse.status === "STATE_COMPLETED_SUCCESS",
-          });
+        if (options.onTransactionCompleted) {
+          await options.onTransactionCompleted(txStatusResponse);
         }
       }
 
@@ -359,12 +351,8 @@ export class SkipRouter {
           txHash: txReceipt.transactionHash,
         });
 
-        if (options.onTransactionSuccess) {
-          await options.onTransactionSuccess({
-            chainID: evmTx.chainID,
-            txHash: txReceipt.transactionHash,
-            success: txStatusResponse.status === "STATE_COMPLETED_SUCCESS",
-          });
+        if (options.onTransactionCompleted) {
+          await options.onTransactionCompleted(txStatusResponse);
         }
       }
     }

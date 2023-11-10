@@ -172,11 +172,13 @@ export type PacketError = {
 export type ChainTransactionJSON = {
   chain_id: string;
   tx_hash: string;
+  explorer_link: string;
 };
 
 export type ChainTransaction = {
   chainID: string;
   txHash: string;
+  explorerLink: string;
 };
 
 export type TrackTxRequestJSON = {
@@ -214,6 +216,7 @@ export type AxelarTransferInfoJSON = {
   type: AxelarTransferType;
   state: AxelarTransferState;
   txs: AxelarTransferTransactionsJSON;
+  axelar_scan_link: string;
 };
 
 export type AxelarTransferInfo = {
@@ -222,6 +225,7 @@ export type AxelarTransferInfo = {
   type: AxelarTransferType;
   state: AxelarTransferState;
   txs: AxelarTransferTransactions;
+  axelarScanLink: string;
 };
 
 export type AxelarTransferTransactionsJSON =
