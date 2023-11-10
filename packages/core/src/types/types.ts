@@ -66,12 +66,14 @@ export type AssetsRequestJSON = {
   chain_id?: string;
   native_only?: boolean;
   include_no_metadata_assets?: boolean;
+  include_cw20_assets?: boolean;
 };
 
 export type AssetsRequest = {
   chainID?: string;
   nativeOnly?: boolean;
   includeNoMetadataAssets?: boolean;
+  includeCw20Assets?: boolean;
 };
 
 export type Chain = {

@@ -164,6 +164,7 @@ export function assetsRequestToJSON(
     chain_id: assetsRequest.chainID,
     native_only: assetsRequest.nativeOnly,
     include_no_metadata_assets: assetsRequest.includeNoMetadataAssets,
+    include_cw20_assets: assetsRequest.includeCw20Assets,
   };
 }
 
