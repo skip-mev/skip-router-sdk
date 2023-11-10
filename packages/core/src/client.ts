@@ -36,11 +36,11 @@ import {
   DEFAULT_BLOCK_TIMEOUT_HEIGHT,
 } from "@injectivelabs/utils";
 import axios from "axios";
-import { chains } from "chain-registry";
 import { SignMode } from "cosmjs-types/cosmos/tx/signing/v1beta1/signing";
 import { TxRaw } from "cosmjs-types/cosmos/tx/v1beta1/tx";
 import { MsgExecuteContract } from "cosmjs-types/cosmwasm/wasm/v1/tx";
 
+import chains from "./chains";
 import { createTransaction } from "./injective";
 import { RequestClient } from "./request-client";
 import {
@@ -252,7 +252,7 @@ export class SkipRouter {
     for (let i = 0; i < messages.length; i++) {
       const multiHopMsg = messages[i];
 
-      const chain = chains.find(
+      const chain = chains().find(
         (chain) => chain.chain_id === multiHopMsg.chainID,
       );
 
@@ -887,7 +887,7 @@ export class SkipRouter {
       }
     }
 
-    const chain = chains.find((chain) => chain.chain_id === chainID);
+    const chain = chains().find((chain) => chain.chain_id === chainID);
 
     if (!chain) {
       throw new Error(`Failed to find chain with ID ${chainID} in registry`);
@@ -918,7 +918,7 @@ export class SkipRouter {
       }
     }
 
-    const chain = chains.find((chain) => chain.chain_id === chainID);
+    const chain = chains().find((chain) => chain.chain_id === chainID);
 
     if (!chain) {
       throw new Error(`Failed to find chain with ID ${chainID} in registry`);
