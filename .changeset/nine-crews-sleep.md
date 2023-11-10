@@ -1,4 +1,5 @@
 ---
+"@skip-router/core": major
 ---
 
 - Updates lifecycle tracking types to include the explorer links now provided by the API
