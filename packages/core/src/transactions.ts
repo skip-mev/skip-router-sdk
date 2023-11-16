@@ -93,7 +93,7 @@ export function getGasAmountForMessage(message: MultiChainMsg) {
     if (message.chainID === "neutron-1") {
       return "2400000";
     }
-    return "1200000";
+    return "2000000";
   }
   return "280000";
 }
