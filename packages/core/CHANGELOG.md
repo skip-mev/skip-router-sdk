@@ -1,5 +1,11 @@
 # @skip-router/core
 
+## 1.0.1
+
+### Patch Changes
+
+- 1dc36fd: Raise gas estimate for MsgExecuteContract calls
+
 ## 1.0.0
 
 ### Major Changes
