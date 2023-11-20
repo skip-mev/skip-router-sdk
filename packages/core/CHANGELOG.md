@@ -1,5 +1,11 @@
 # @skip-router/core
 
+## 1.0.2
+
+### Patch Changes
+
+- f4f16e2: Utilize client_id parameter in API requests
+
 ## 1.0.1
 
 ### Patch Changes
