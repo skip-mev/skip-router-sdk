@@ -109,6 +109,7 @@ export type EndpointOptions = {
 
 export interface SkipRouterOptions {
   apiURL?: string;
+  clientID?: string;
   getEVMSigner?: (chainID: string) => Promise<WalletClient>;
   getCosmosSigner?: (chainID: string) => Promise<OfflineSigner>;
   endpointOptions?: {
@@ -161,7 +162,7 @@ export class SkipRouter {
   private aminoTypes: AminoTypes;
   private registry: Registry;
 
-  private clientID = "client_id";
+  private clientID: string;
 
   private endpointOptions: {
     endpoints?: Record<string, EndpointOptions>;
@@ -173,6 +174,7 @@ export class SkipRouter {
   private getEVMSigner?: (chainID: string) => Promise<WalletClient>;
 
   constructor(options: SkipRouterOptions = {}) {
+    this.clientID = options.clientID ?? "skip-router-js";
     this.requestClient = new RequestClient(options.apiURL ?? SKIP_API_URL);
 
     this.aminoTypes = new AminoTypes({
