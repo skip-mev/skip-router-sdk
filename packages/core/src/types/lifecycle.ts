@@ -1,11 +1,13 @@
 export type SubmitTxRequestJSON = {
   tx: string;
   chain_id: string;
+  client_id?: string;
 };
 
 export type SubmitTxRequest = {
   tx: string;
   chainID: string;
+  clientID?: string;
 };
 
 export type SubmitTxResponseJSON = {
@@ -39,11 +41,13 @@ export type NextBlockingTransfer = {
 export type StatusRequestJSON = {
   tx_hash: string;
   chain_id: string;
+  client_id?: string;
 };
 
 export type StatusRequest = {
   txHash: string;
   chainID: string;
+  clientID?: string;
 };
 
 export type TransferState =
@@ -184,11 +188,13 @@ export type ChainTransaction = {
 export type TrackTxRequestJSON = {
   tx_hash: string;
   chain_id: string;
+  client_id?: string;
 };
 
 export type TrackTxRequest = {
   txHash: string;
   chainID: string;
+  clientID?: string;
 };
 
 export type TrackTxResponseJSON = {

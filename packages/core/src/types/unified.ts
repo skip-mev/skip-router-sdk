@@ -26,6 +26,7 @@ export type AssetsRequestJSON = {
   include_no_metadata_assets?: boolean;
   include_cw20_assets?: boolean;
   include_evm_assets?: boolean;
+  client_id?: string;
 };
 
 export type AssetsRequest = {
@@ -34,6 +35,7 @@ export type AssetsRequest = {
   includeNoMetadataAssets?: boolean;
   includeCW20Assets?: boolean;
   includeEvmAssets?: boolean;
+  clientID?: string;
 };
 
 export type AssetsFromSourceRequestJSON = {
@@ -47,6 +49,7 @@ export type AssetsFromSourceRequestJSON = {
   native_only?: boolean;
   group_by?: string;
   include_cw20_assets: boolean;
+  client_id?: string;
 };
 
 export type AssetsFromSourceRequest = {
@@ -60,6 +63,7 @@ export type AssetsFromSourceRequest = {
   nativeOnly?: boolean;
   groupBy?: string;
   includeCW20Assets: boolean;
+  clientID?: string;
 };
 
 export type AssetRecommendation = {
@@ -77,6 +81,7 @@ export type RecommendAssetsRequestJSON = {
   source_asset_chain_id: string;
   dest_chain_id: string;
   reason?: Reason;
+  client_id?: string;
 };
 
 export type RecommendAssetsRequest = {
@@ -84,6 +89,7 @@ export type RecommendAssetsRequest = {
   sourceAssetChainID: string;
   destChainID: string;
   reason?: Reason;
+  clientID?: string;
 };
 
 export type RouteRequestBaseJSON = {
@@ -94,6 +100,7 @@ export type RouteRequestBaseJSON = {
 
   cumulative_affiliate_fee_bps?: string;
   swap_venue?: SwapVenueJSON;
+  client_id?: string;
 };
 
 export type RouteRequestGivenInJSON = RouteRequestBaseJSON & {
@@ -118,6 +125,7 @@ export type RouteRequestBase = {
 
   cumulativeAffiliateFeeBPS?: string;
   swapVenue?: SwapVenue;
+  clientID?: string;
 };
 
 export type RouteRequestGivenIn = RouteRequestBase & {
@@ -193,6 +201,8 @@ export type MsgsRequestJSON = {
   affiliates?: AffiliateJSON[];
 
   post_route_handler?: PostHandlerJSON;
+
+  client_id?: string;
 };
 
 export type MsgsRequest = {
@@ -210,6 +220,8 @@ export type MsgsRequest = {
   affiliates?: Affiliate[];
 
   postRouteHandler?: PostHandler;
+
+  clientID?: string;
 };
 
 export type MsgJSON =

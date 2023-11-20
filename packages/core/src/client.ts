@@ -109,6 +109,7 @@ export type EndpointOptions = {
 
 export interface SkipRouterOptions {
   apiURL?: string;
+  clientID?: string;
   getEVMSigner?: (chainID: string) => Promise<WalletClient>;
   getCosmosSigner?: (chainID: string) => Promise<OfflineSigner>;
   endpointOptions?: {
@@ -161,6 +162,8 @@ export class SkipRouter {
   private aminoTypes: AminoTypes;
   private registry: Registry;
 
+  private clientID: string;
+
   private endpointOptions: {
     endpoints?: Record<string, EndpointOptions>;
     getRpcEndpointForChain?: (chainID: string) => Promise<string>;
@@ -171,6 +174,7 @@ export class SkipRouter {
   private getEVMSigner?: (chainID: string) => Promise<WalletClient>;
 
   constructor(options: SkipRouterOptions = {}) {
+    this.clientID = options.clientID ?? "skip-router-js";
     this.requestClient = new RequestClient(options.apiURL ?? SKIP_API_URL);
 
     this.aminoTypes = new AminoTypes({
@@ -195,7 +199,13 @@ export class SkipRouter {
         chain_to_assets_map: Record<string, { assets: AssetJSON[] }>;
       },
       AssetsRequestJSON
-    >("/v1/fungible/assets", assetsRequestToJSON(options));
+    >(
+      "/v1/fungible/assets",
+      assetsRequestToJSON({
+        ...options,
+        clientID: this.clientID,
+      }),
+    );
 
     return Object.entries(response.chain_to_assets_map).reduce(
       (acc, [chainID, { assets }]) => {
@@ -216,7 +226,10 @@ export class SkipRouter {
       AssetsFromSourceRequestJSON
     >(
       "/v1/fungible/assets_from_source",
-      assetsFromSourceRequestToJSON(options),
+      assetsFromSourceRequestToJSON({
+        ...options,
+        clientID: this.clientID,
+      }),
     );
 
     return Object.entries(response.dest_assets).reduce(
@@ -239,6 +252,7 @@ export class SkipRouter {
       "/v1/info/chains",
       {
         include_evm: includeEVM,
+        client_id: this.clientID,
       },
     );
 
@@ -763,6 +777,7 @@ export class SkipRouter {
     >("/v2/fungible/msgs", {
       ...msgsRequestToJSON(options),
       slippage_tolerance_percent: options.slippageTolerancePercent ?? "0",
+      client_id: this.clientID,
     });
 
     return response.msgs.map((msg) => msgFromJSON(msg));
@@ -775,6 +790,7 @@ export class SkipRouter {
     >("/v2/fungible/route", {
       ...routeRequestToJSON(options),
       cumulative_affiliate_fee_bps: options.cumulativeAffiliateFeeBPS ?? "0",
+      client_id: this.clientID,
     });
 
     return routeResponseFromJSON(response);
@@ -783,7 +799,13 @@ export class SkipRouter {
   async recommendAssets(options: RecommendAssetsRequest) {
     const response = await this.requestClient.post<{
       recommendations: AssetRecommendationJSON[];
-    }>("/v1/fungible/recommend_assets", recommendAssetsRequestToJSON(options));
+    }>(
+      "/v1/fungible/recommend_assets",
+      recommendAssetsRequestToJSON({
+        ...options,
+        clientID: this.clientID,
+      }),
+    );
 
     return response.recommendations.map((recommendation) =>
       assetRecommendationFromJSON(recommendation),
@@ -803,6 +825,7 @@ export class SkipRouter {
     >("/v2/tx/submit", {
       chain_id: chainID,
       tx: tx,
+      client_id: this.clientID,
     });
 
     return submitTxResponseFromJSON(response);
@@ -821,6 +844,7 @@ export class SkipRouter {
     >("/v2/tx/track", {
       chain_id: chainID,
       tx_hash: txHash,
+      client_id: this.clientID,
     });
 
     return trackTxResponseFromJSON(response);
@@ -839,6 +863,7 @@ export class SkipRouter {
     >("/v2/tx/status", {
       chain_id: chainID,
       tx_hash: txHash,
+      client_id: this.clientID,
     });
 
     return txStatusResponseFromJSON(response);
@@ -874,6 +899,9 @@ export class SkipRouter {
   async venues(): Promise<SwapVenue[]> {
     const response = await this.requestClient.get<{ venues: SwapVenueJSON[] }>(
       "/v1/fungible/venues",
+      {
+        client_id: this.clientID,
+      },
     );
 
     return response.venues.map((venue) => swapVenueFromJSON(venue));

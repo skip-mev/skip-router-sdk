@@ -163,6 +163,7 @@ export function assetsFromSourceRequestFromJSON(
     nativeOnly: assetsFromSourceRequestJSON.native_only,
     groupBy: assetsFromSourceRequestJSON.group_by,
     includeCW20Assets: assetsFromSourceRequestJSON.include_cw20_assets,
+    clientID: assetsFromSourceRequestJSON.client_id,
   };
 }
 
@@ -179,6 +180,7 @@ export function assetsFromSourceRequestToJSON(
     native_only: assetsFromSourceRequest.nativeOnly,
     group_by: assetsFromSourceRequest.groupBy,
     include_cw20_assets: assetsFromSourceRequest.includeCW20Assets,
+    client_id: assetsFromSourceRequest.clientID,
   };
 }
 
@@ -191,6 +193,7 @@ export function assetsRequestFromJSON(
     includeNoMetadataAssets: assetsRequestJSON.include_no_metadata_assets,
     includeCW20Assets: assetsRequestJSON.include_cw20_assets,
     includeEvmAssets: assetsRequestJSON.include_evm_assets,
+    clientID: assetsRequestJSON.client_id,
   };
 }
 
@@ -203,6 +206,7 @@ export function assetsRequestToJSON(
     include_no_metadata_assets: assetsRequest.includeNoMetadataAssets,
     include_cw20_assets: assetsRequest.includeCW20Assets,
     include_evm_assets: assetsRequest.includeEvmAssets,
+    client_id: assetsRequest.clientID,
   };
 }
 
@@ -260,6 +264,7 @@ export function recommendAssetsRequestFromJSON(
     sourceAssetChainID: recommendAssetsRequestJSON.source_asset_chain_id,
     destChainID: recommendAssetsRequestJSON.dest_chain_id,
     reason: recommendAssetsRequestJSON.reason,
+    clientID: recommendAssetsRequestJSON.client_id,
   };
 }
 
@@ -271,6 +276,7 @@ export function recommendAssetsRequestToJSON(
     source_asset_chain_id: recommendAssetsRequest.sourceAssetChainID,
     dest_chain_id: recommendAssetsRequest.destChainID,
     reason: recommendAssetsRequest.reason,
+    client_id: recommendAssetsRequest.clientID,
   };
 }
 
@@ -303,6 +309,7 @@ export function routeRequestFromJSON(
       swapVenue: routeRequestJSON.swap_venue
         ? swapVenueFromJSON(routeRequestJSON.swap_venue)
         : undefined,
+      clientID: routeRequestJSON.client_id,
     };
   }
 
@@ -317,6 +324,7 @@ export function routeRequestFromJSON(
     swapVenue: routeRequestJSON.swap_venue
       ? swapVenueFromJSON(routeRequestJSON.swap_venue)
       : undefined,
+    clientID: routeRequestJSON.client_id,
   };
 }
 
@@ -335,6 +343,7 @@ export function routeRequestToJSON(
       swap_venue: routeRequest.swapVenue
         ? swapVenueToJSON(routeRequest.swapVenue)
         : undefined,
+      client_id: routeRequest.clientID,
     };
   }
 
@@ -349,6 +358,7 @@ export function routeRequestToJSON(
     swap_venue: routeRequest.swapVenue
       ? swapVenueToJSON(routeRequest.swapVenue)
       : undefined,
+    client_id: routeRequest.clientID,
   };
 }
 
@@ -604,6 +614,7 @@ export function msgsRequestFromJSON(
     postRouteHandler:
       msgsRequestJSON.post_route_handler &&
       postHandlerFromJSON(msgsRequestJSON.post_route_handler),
+    clientID: msgsRequestJSON.client_id,
   };
 }
 
@@ -625,6 +636,7 @@ export function msgsRequestToJSON(msgsRequest: MsgsRequest): MsgsRequestJSON {
     post_route_handler:
       msgsRequest.postRouteHandler &&
       postHandlerToJSON(msgsRequest.postRouteHandler),
+    client_id: msgsRequest.clientID,
   };
 }
 
@@ -656,6 +668,7 @@ export function submitTxRequestFromJSON(
   return {
     tx: submitTxRequestJSON.tx,
     chainID: submitTxRequestJSON.chain_id,
+    clientID: submitTxRequestJSON.client_id,
   };
 }
 
@@ -665,6 +678,7 @@ export function submitTxRequestToJSON(
   return {
     tx: submitTxRequest.tx,
     chain_id: submitTxRequest.chainID,
+    client_id: submitTxRequest.clientID,
   };
 }
 
@@ -692,6 +706,7 @@ export function trackTxRequestFromJSON(
   return {
     txHash: trackRequestJSON.tx_hash,
     chainID: trackRequestJSON.chain_id,
+    clientID: trackRequestJSON.client_id,
   };
 }
 
@@ -701,6 +716,7 @@ export function trackTxRequestToJSON(
   return {
     tx_hash: trackRequest.txHash,
     chain_id: trackRequest.chainID,
+    client_id: trackRequest.clientID,
   };
 }
 
@@ -726,6 +742,7 @@ export function txStatusRequestFromJSON(
   return {
     txHash: txStatusRequestJSON.tx_hash,
     chainID: txStatusRequestJSON.chain_id,
+    clientID: txStatusRequestJSON.client_id,
   };
 }
 
@@ -735,6 +752,7 @@ export function txStatusRequestToJSON(
   return {
     tx_hash: txStatusRequest.txHash,
     chain_id: txStatusRequest.chainID,
+    client_id: txStatusRequest.clientID,
   };
 }
 
