@@ -66,6 +66,7 @@ export type AxelarTransferJSON = {
   asset: string;
   should_unwrap: boolean;
   fee_amount: string;
+  fee_asset: AssetJSON;
   is_testnet: boolean;
 };
 
@@ -77,6 +78,7 @@ export type AxelarTransfer = {
   asset: string;
   shouldUnwrap: boolean;
   feeAmount: string;
+  feeAsset: Asset;
   isTestnet: boolean;
 };
 

@@ -922,6 +922,7 @@ export function axelarTransferFromJSON(
     asset: axelarTransferJSON.asset,
     shouldUnwrap: axelarTransferJSON.should_unwrap,
     feeAmount: axelarTransferJSON.fee_amount,
+    feeAsset: assetFromJSON(axelarTransferJSON.fee_asset),
     isTestnet: axelarTransferJSON.is_testnet,
   };
 }
@@ -937,6 +938,7 @@ export function axelarTransferToJSON(
     asset: axelarTransfer.asset,
     should_unwrap: axelarTransfer.shouldUnwrap,
     fee_amount: axelarTransfer.feeAmount,
+    fee_asset: assetToJSON(axelarTransfer.feeAsset),
     is_testnet: axelarTransfer.isTestnet,
   };
 }
