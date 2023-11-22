@@ -1,5 +1,11 @@
 # @skip-router/core
 
+## 1.0.3
+
+### Patch Changes
+
+- cd03ff5: Add fee asset field to AxelarTransfer
+
 ## 1.0.2
 
 ### Patch Changes
