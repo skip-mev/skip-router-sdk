@@ -22,6 +22,8 @@ export type AssetJSON = {
   logo_uri: string | undefined;
   decimals: number | undefined;
   token_contract: string | undefined;
+  description: string | undefined;
+  coingecko_id: string | undefined;
 };
 
 export type Asset = {
@@ -38,6 +40,8 @@ export type Asset = {
   logoURI: string | undefined;
   decimals: number | undefined;
   tokenContract: string | undefined;
+  description: string | undefined;
+  coingeckoID: string | undefined;
 };
 
 export type TransferJSON = {

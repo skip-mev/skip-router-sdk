@@ -113,6 +113,8 @@ export function assetFromJSON(assetJSON: AssetJSON): Asset {
     logoURI: assetJSON.logo_uri,
     decimals: assetJSON.decimals,
     tokenContract: assetJSON.token_contract,
+    description: assetJSON.description,
+    coingeckoID: assetJSON.coingecko_id,
   };
 }
 
@@ -129,6 +131,8 @@ export function assetToJSON(asset: Asset): AssetJSON {
     logo_uri: asset.logoURI,
     decimals: asset.decimals,
     token_contract: asset.tokenContract,
+    description: asset.description,
+    coingecko_id: asset.coingeckoID,
   };
 }
 

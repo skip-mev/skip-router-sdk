@@ -153,6 +153,8 @@ test("assetFromJSON", () => {
       "https://raw.githubusercontent.com/cosmostation/chainlist/main/chain/osmosis/asset/osmo.png",
     decimals: 6,
     token_contract: "token-contract-value",
+    description: "description-value",
+    coingecko_id: "coingecko-id-value",
   };
 
   expect(assetFromJSON(assetJSON)).toEqual({
@@ -168,6 +170,8 @@ test("assetFromJSON", () => {
       "https://raw.githubusercontent.com/cosmostation/chainlist/main/chain/osmosis/asset/osmo.png",
     decimals: 6,
     tokenContract: "token-contract-value",
+    description: "description-value",
+    coingeckoID: "coingecko-id-value",
   });
 });
 
@@ -185,6 +189,8 @@ test("assetToJSON", () => {
       "https://raw.githubusercontent.com/cosmostation/chainlist/main/chain/osmosis/asset/osmo.png",
     decimals: 6,
     tokenContract: "token-contract-value",
+    description: "description-value",
+    coingeckoID: "coingecko-id-value",
   };
 
   expect(assetToJSON(asset)).toEqual({
@@ -200,6 +206,8 @@ test("assetToJSON", () => {
       "https://raw.githubusercontent.com/cosmostation/chainlist/main/chain/osmosis/asset/osmo.png",
     decimals: 6,
     token_contract: "token-contract-value",
+    description: "description-value",
+    coingecko_id: "coingecko-id-value",
   });
 });
 
@@ -218,6 +226,8 @@ test("assetRecommendationFromJSON", () => {
         "https://raw.githubusercontent.com/cosmostation/chainlist/main/chain/osmosis/asset/osmo.png",
       decimals: 6,
       token_contract: "token-contract-value",
+      description: "description-value",
+      coingecko_id: "coingecko-id-value",
     },
     reason: "MOST_LIQUID",
   };
@@ -236,6 +246,8 @@ test("assetRecommendationFromJSON", () => {
         "https://raw.githubusercontent.com/cosmostation/chainlist/main/chain/osmosis/asset/osmo.png",
       decimals: 6,
       tokenContract: "token-contract-value",
+      description: "description-value",
+      coingeckoID: "coingecko-id-value",
     },
     reason: "MOST_LIQUID",
   });
@@ -256,6 +268,8 @@ test("assetRecommendationToJSON", () => {
         "https://raw.githubusercontent.com/cosmostation/chainlist/main/chain/osmosis/asset/osmo.png",
       decimals: 6,
       tokenContract: "token-contract-value",
+      description: "description-value",
+      coingeckoID: "coingecko-id-value",
     },
     reason: "MOST_LIQUID",
   };
@@ -274,6 +288,8 @@ test("assetRecommendationToJSON", () => {
         "https://raw.githubusercontent.com/cosmostation/chainlist/main/chain/osmosis/asset/osmo.png",
       decimals: 6,
       token_contract: "token-contract-value",
+      description: "description-value",
+      coingecko_id: "coingecko-id-value",
     },
     reason: "MOST_LIQUID",
   });
