@@ -1,5 +1,11 @@
 # @skip-router/core
 
+## 1.0.4
+
+### Patch Changes
+
+- bdd3773: Add description and coingecko id to asset types
+
 ## 1.0.3
 
 ### Patch Changes
