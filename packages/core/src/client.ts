@@ -128,7 +128,11 @@ export type ExecuteRouteOptions = {
     txHash: string;
     chainID: string;
   }) => Promise<void>;
-  onTransactionCompleted?: (status: TxStatusResponse) => Promise<void>;
+  onTransactionCompleted?: (
+    chainID: string,
+    txHash: string,
+    status: TxStatusResponse,
+  ) => Promise<void>;
   validateGasBalance?: boolean;
   slippageTolerancePercent?: string;
 };
@@ -331,7 +335,11 @@ export class SkipRouter {
         });
 
         if (options.onTransactionCompleted) {
-          await options.onTransactionCompleted(txStatusResponse);
+          await options.onTransactionCompleted(
+            multiChainMsg.chainID,
+            tx.transactionHash,
+            txStatusResponse,
+          );
         }
       }
 
@@ -366,7 +374,11 @@ export class SkipRouter {
         });
 
         if (options.onTransactionCompleted) {
-          await options.onTransactionCompleted(txStatusResponse);
+          await options.onTransactionCompleted(
+            evmTx.chainID,
+            txReceipt.transactionHash,
+            txStatusResponse,
+          );
         }
       }
     }
