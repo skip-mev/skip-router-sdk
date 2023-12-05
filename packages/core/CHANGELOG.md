@@ -1,5 +1,11 @@
 # @skip-router/core
 
+## 1.0.5
+
+### Patch Changes
+
+- 018ca30: update onTransactionCompleted callback to include chain id and hash
+
 ## 1.0.4
 
 ### Patch Changes
