@@ -115,6 +115,7 @@ export function assetFromJSON(assetJSON: AssetJSON): Asset {
     tokenContract: assetJSON.token_contract,
     description: assetJSON.description,
     coingeckoID: assetJSON.coingecko_id,
+    recommendedSymbol: assetJSON.recommended_symbol
   };
 }
 
@@ -133,6 +134,7 @@ export function assetToJSON(asset: Asset): AssetJSON {
     token_contract: asset.tokenContract,
     description: asset.description,
     coingecko_id: asset.coingeckoID,
+    recommended_symbol: asset.recommendedSymbol
   };
 }
 

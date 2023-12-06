@@ -155,6 +155,7 @@ test("assetFromJSON", () => {
     token_contract: "token-contract-value",
     description: "description-value",
     coingecko_id: "coingecko-id-value",
+    recommended_symbol: "OSMO",
   };
 
   expect(assetFromJSON(assetJSON)).toEqual({
@@ -172,6 +173,7 @@ test("assetFromJSON", () => {
     tokenContract: "token-contract-value",
     description: "description-value",
     coingeckoID: "coingecko-id-value",
+    recommendedSymbol: "OSMO",
   });
 });
 
@@ -191,6 +193,7 @@ test("assetToJSON", () => {
     tokenContract: "token-contract-value",
     description: "description-value",
     coingeckoID: "coingecko-id-value",
+    recommendedSymbol: "OSMO",
   };
 
   expect(assetToJSON(asset)).toEqual({
@@ -208,6 +211,7 @@ test("assetToJSON", () => {
     token_contract: "token-contract-value",
     description: "description-value",
     coingecko_id: "coingecko-id-value",
+    recommended_symbol: "OSMO",
   });
 });
 
@@ -228,6 +232,7 @@ test("assetRecommendationFromJSON", () => {
       token_contract: "token-contract-value",
       description: "description-value",
       coingecko_id: "coingecko-id-value",
+      recommended_symbol: "OSMO",
     },
     reason: "MOST_LIQUID",
   };
@@ -248,6 +253,7 @@ test("assetRecommendationFromJSON", () => {
       tokenContract: "token-contract-value",
       description: "description-value",
       coingeckoID: "coingecko-id-value",
+      recommendedSymbol: "OSMO",
     },
     reason: "MOST_LIQUID",
   });
@@ -270,6 +276,7 @@ test("assetRecommendationToJSON", () => {
       tokenContract: "token-contract-value",
       description: "description-value",
       coingeckoID: "coingecko-id-value",
+      recommendedSymbol: "OSMO",
     },
     reason: "MOST_LIQUID",
   };
@@ -290,6 +297,7 @@ test("assetRecommendationToJSON", () => {
       token_contract: "token-contract-value",
       description: "description-value",
       coingecko_id: "coingecko-id-value",
+      recommended_symbol: "OSMO",
     },
     reason: "MOST_LIQUID",
   });
