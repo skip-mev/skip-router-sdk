@@ -948,6 +948,7 @@ describe("client", () => {
               },
               error: null,
               state: "STATE_COMPLETED",
+              transfers: [],
             }),
           );
         }),
@@ -1025,6 +1026,7 @@ describe("client", () => {
         },
         error: null,
         state: "STATE_COMPLETED",
+        transfers: [],
       });
     });
   });
