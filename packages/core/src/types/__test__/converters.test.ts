@@ -2321,6 +2321,7 @@ test("txStatusResponseFromJSON", () => {
     },
     error: null,
     state: "STATE_COMPLETED_SUCCESS",
+    transfers: [],
   };
 
   expect(txStatusResponseFromJSON(statusResponseJSON)).toEqual({
@@ -2398,6 +2399,7 @@ test("txStatusResponseFromJSON", () => {
     },
     error: null,
     state: "STATE_COMPLETED_SUCCESS",
+    transfers: [],
   });
 });
 
@@ -2477,6 +2479,7 @@ test("txStatusResponseToJSON", () => {
     },
     error: null,
     state: "STATE_COMPLETED_SUCCESS",
+    transfers: [],
   };
 
   expect(txStatusResponseToJSON(statusResponse)).toEqual({
@@ -2554,6 +2557,7 @@ test("txStatusResponseToJSON", () => {
     },
     error: null,
     state: "STATE_COMPLETED_SUCCESS",
+    transfers: [],
   });
 });
 
