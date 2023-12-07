@@ -24,6 +24,7 @@ export type AssetJSON = {
   token_contract: string | undefined;
   description: string | undefined;
   coingecko_id: string | undefined;
+  recommended_symbol: string | undefined;
 };
 
 export type Asset = {
@@ -42,6 +43,7 @@ export type Asset = {
   tokenContract: string | undefined;
   description: string | undefined;
   coingeckoID: string | undefined;
+  recommendedSymbol: string | undefined;
 };
 
 export type TransferJSON = {
