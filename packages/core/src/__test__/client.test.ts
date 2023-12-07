@@ -948,7 +948,35 @@ describe("client", () => {
               },
               error: null,
               state: "STATE_COMPLETED",
-              transfers: [],
+              transfers: [
+                {
+                  state: "STATE_COMPLETED_SUCCESS",
+                  transfer_sequence: [
+                    {
+                      ibc_transfer: {
+                        src_chain_id: "src-chain",
+                        dst_chain_id: "dest-chain",
+                        state: "TRANSFER_SUCCESS",
+                        packet_txs: {
+                          send_tx: null,
+                          receive_tx: null,
+                          acknowledge_tx: null,
+                          timeout_tx: null,
+                          error: null,
+                        },
+                      },
+                    },
+                  ],
+                  next_blocking_transfer: {
+                    transfer_sequence_index: 1,
+                  },
+                  transfer_asset_release: {
+                    chain_id: "cosmoshub-4",
+                    denom: "uatom",
+                  },
+                  error: null,
+                },
+              ],
             }),
           );
         }),
@@ -1026,7 +1054,35 @@ describe("client", () => {
         },
         error: null,
         state: "STATE_COMPLETED",
-        transfers: [],
+        transfers: [
+          {
+            state: "STATE_COMPLETED_SUCCESS",
+            transferSequence: [
+              {
+                ibcTransfer: {
+                  srcChainID: "src-chain",
+                  dstChainID: "dest-chain",
+                  state: "TRANSFER_SUCCESS",
+                  packetTXs: {
+                    sendTx: null,
+                    receiveTx: null,
+                    acknowledgeTx: null,
+                    timeoutTx: null,
+                    error: null,
+                  },
+                },
+              },
+            ],
+            nextBlockingTransfer: {
+              transferSequenceIndex: 1,
+            },
+            transferAssetRelease: {
+              chainID: "cosmoshub-4",
+              denom: "uatom",
+            },
+            error: null,
+          },
+        ],
       });
     });
   });
