@@ -1,5 +1,11 @@
 # @skip-router/core
 
+## 1.1.1
+
+### Patch Changes
+
+- 3a89472: Add fields for price impact and usd amounts
+
 ## 1.1.0
 
 ### Minor Changes
