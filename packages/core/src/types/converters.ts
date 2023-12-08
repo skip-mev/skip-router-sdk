@@ -29,6 +29,8 @@ import {
   TransferEventJSON,
   TransferInfo,
   TransferInfoJSON,
+  TransferStatus,
+  TransferStatusJSON,
   TxStatusResponse,
   TxStatusResponseJSON,
 } from "./lifecycle";
@@ -883,6 +885,7 @@ export function txStatusResponseFromJSON(
       transferAssetReleaseFromJSON(statusResponseJSON.transfer_asset_release),
     error: statusResponseJSON.error,
     state: statusResponseJSON.state,
+    transfers: statusResponseJSON.transfers.map(transferStatusFromJSON),
   };
 }
 
@@ -900,6 +903,7 @@ export function txStatusResponseToJSON(
       transferAssetReleaseToJSON(statusResponse.transferAssetRelease),
     error: statusResponse.error,
     state: statusResponse.state,
+    transfers: statusResponse.transfers.map(transferStatusToJSON),
   };
 }
 
@@ -1171,5 +1175,37 @@ export function transferEventToJSON(value: TransferEvent): TransferEventJSON {
 
   return {
     axelar_transfer: axelarTransferInfoToJSON(value.axelarTransfer),
+  };
+}
+
+export function transferStatusFromJSON(
+  value: TransferStatusJSON,
+): TransferStatus {
+  return {
+    transferSequence: value.transfer_sequence.map(transferEventFromJSON),
+    transferAssetRelease:
+      value.transfer_asset_release &&
+      transferAssetReleaseFromJSON(value.transfer_asset_release),
+    error: value.error,
+    state: value.state,
+    nextBlockingTransfer:
+      value.next_blocking_transfer &&
+      nextBlockingTransferFromJSON(value.next_blocking_transfer),
+  };
+}
+
+export function transferStatusToJSON(
+  value: TransferStatus,
+): TransferStatusJSON {
+  return {
+    transfer_sequence: value.transferSequence.map(transferEventToJSON),
+    transfer_asset_release:
+      value.transferAssetRelease &&
+      transferAssetReleaseToJSON(value.transferAssetRelease),
+    error: value.error,
+    state: value.state,
+    next_blocking_transfer:
+      value.nextBlockingTransfer &&
+      nextBlockingTransferToJSON(value.nextBlockingTransfer),
   };
 }

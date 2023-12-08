@@ -88,6 +88,7 @@ export type TxStatusResponseJSON = {
   transfer_asset_release: TransferAssetReleaseJSON | null;
   error: StatusError | null;
   state: StatusState;
+  transfers: TransferStatusJSON[];
 };
 
 export type TxStatusResponse = {
@@ -97,6 +98,23 @@ export type TxStatusResponse = {
   transferAssetRelease: TransferAssetRelease | null;
   error: StatusError | null;
   state: StatusState;
+  transfers: TransferStatus[];
+};
+
+export type TransferStatusJSON = {
+  state: StatusState;
+  transfer_sequence: TransferEventJSON[];
+  next_blocking_transfer: NextBlockingTransferJSON | null;
+  transfer_asset_release: TransferAssetReleaseJSON | null;
+  error: StatusError | null;
+};
+
+export type TransferStatus = {
+  state: StatusState;
+  transferSequence: TransferEvent[];
+  nextBlockingTransfer: NextBlockingTransfer | null;
+  transferAssetRelease: TransferAssetRelease | null;
+  error: StatusError | null;
 };
 
 export type PacketJSON = {
