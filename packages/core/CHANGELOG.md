@@ -1,5 +1,15 @@
 # @skip-router/core
 
+## 1.1.0
+
+### Minor Changes
+
+- c0336ea: recommended asset field added to data models
+
+### Patch Changes
+
+- def7ec0: Handle multi-transfer
+
 ## 1.0.5
 
 ### Patch Changes
