@@ -419,6 +419,7 @@ export function swapExactCoinInFromJSON(
       swapOperationFromJSON,
     ),
     swapAmountIn: swapExactCoinInJSON.swap_amount_in,
+    priceImpactPercent: swapExactCoinInJSON.price_impact_percent,
   };
 }
 
@@ -429,6 +430,7 @@ export function swapExactCoinInToJSON(
     swap_venue: swapVenueToJSON(swapExactCoinIn.swapVenue),
     swap_operations: swapExactCoinIn.swapOperations.map(swapOperationToJSON),
     swap_amount_in: swapExactCoinIn.swapAmountIn,
+    price_impact_percent: swapExactCoinIn.priceImpactPercent,
   };
 }
 
@@ -441,6 +443,7 @@ export function swapExactCoinOutFromJSON(
       swapOperationFromJSON,
     ),
     swapAmountOut: swapExactCoinOutJSON.swap_amount_out,
+    priceImpactPercent: swapExactCoinOutJSON.price_impact_percent,
   };
 }
 
@@ -451,6 +454,7 @@ export function swapExactCoinOutToJSON(
     swap_venue: swapVenueToJSON(swapExactCoinOut.swapVenue),
     swap_operations: swapExactCoinOut.swapOperations.map(swapOperationToJSON),
     swap_amount_out: swapExactCoinOut.swapAmountOut,
+    price_impact_percent: swapExactCoinOut.priceImpactPercent,
   };
 }
 
@@ -529,6 +533,10 @@ export function routeResponseFromJSON(
       : undefined,
 
     txsRequired: routeResponseJSON.txs_required,
+
+    usdAmountIn: routeResponseJSON.usd_amount_in,
+    usdAmountOut: routeResponseJSON.usd_amount_out,
+    swapPriceImpactPercent: routeResponseJSON.swap_price_impact_percent,
   };
 }
 
@@ -553,6 +561,10 @@ export function routeResponseToJSON(
       : undefined,
 
     txs_required: routeResponse.txsRequired,
+
+    usd_amount_in: routeResponse.usdAmountIn,
+    usd_amount_out: routeResponse.usdAmountOut,
+    swap_price_impact_percent: routeResponse.swapPriceImpactPercent,
   };
 }
 

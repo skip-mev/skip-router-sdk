@@ -166,6 +166,10 @@ export type RouteResponseJSON = {
   swap_venue?: SwapVenueJSON;
 
   txs_required: number;
+
+  usd_amount_in?: string;
+  usd_amount_out?: string;
+  swap_price_impact_percent?: string;
 };
 
 export type RouteResponse = {
@@ -184,6 +188,10 @@ export type RouteResponse = {
   swapVenue?: SwapVenue;
 
   txsRequired: number;
+
+  usdAmountIn?: string;
+  usdAmountOut?: string;
+  swapPriceImpactPercent?: string;
 };
 
 export type MsgsRequestJSON = {
