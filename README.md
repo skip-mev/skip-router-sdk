@@ -12,7 +12,7 @@ https://www.npmjs.com/package/@skip-router/core
 
 See the main documentation site for the Skip-API for more usage information
 
-## Packages
+## Packages 
 
 | Name                                                                                 | Type | Description                 |
 | ------------------------------------------------------------------------------------ | ---- | --------------------------- |
