@@ -16,4 +16,4 @@ See the main documentation site for the Skip API for more usage information
 
 | Name                                                                                 | Type | Description                 |
 | ------------------------------------------------------------------------------------ | ---- | --------------------------- |
-| [@skip-router/core](https://github.com/skip-mev/skip-router/tree/main/packages/core) | Core | Core Skip API functionality |
+| [@skip-router/core](https://github.com/skip-mev/skip-router/tree/main/packages/core) | Core | Core Skip-API functionality |
