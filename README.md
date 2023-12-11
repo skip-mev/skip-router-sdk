@@ -2,7 +2,7 @@
 
 Skip Router is a SDK for the Skip API that helps developers create more seamless cross-chain experiences for their end-users with IBC.
 
-## [NPM Package](https://www.npmjs.com/package/@skip-router/core)
+## [NPM Package](https://www.npmjs.com/package/@skip-router/core) 
 
 https://www.npmjs.com/package/@skip-router/core
 
