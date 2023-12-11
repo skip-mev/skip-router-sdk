@@ -6,7 +6,7 @@ Skip Router is a SDK for the Skip API that helps developers create more seamless
 
 https://www.npmjs.com/package/@skip-router/core
 
-## Example Usage: [@skip-router/examples](https://github.com/skip-mev/skip-router/tree/main/packages/examples)
+## Example Usage: [@skip-router/examples](https://github.com/skip-mev/skip-router/tree/main/packages/examples) 
 
 ## More docs: https://api-docs.skip.money 
 
