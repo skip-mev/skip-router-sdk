@@ -10,7 +10,7 @@ https://www.npmjs.com/package/@skip-router/core
 
 ## More docs: https://api-docs.skip.money   
 
-See the  main documentation site for the Skip-API for more usage information
+See the   main documentation site for the Skip-API for more usage information
 
 ## Packages  
 
