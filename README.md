@@ -8,7 +8,7 @@ https://www.npmjs.com/package/@skip-router/core
 
 ## Example Usage: [@skip-router/examples](https://github.com/skip-mev/skip-router/tree/main/packages/examples) 
 
-## More docs: https://api-docs.skip.money  
+## More docs: https://api-docs.skip.money   
 
 See the main documentation site for the Skip-API for more usage information
 
