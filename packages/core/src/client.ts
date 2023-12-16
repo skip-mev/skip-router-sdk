@@ -831,7 +831,7 @@ export class SkipRouter {
 
   async ibcOriginAssets(assets: DenomWithChainID[]): Promise<AssetOrError[]> {
     const response = await this.requestClient.post<OriginAssetsResponseJSON>(
-      "/v1/fungible/ibc_origin_assets",
+      "/v2/fungible/ibc_origin_assets",
       originAssetsRequestToJSON({
         assets,
       }),

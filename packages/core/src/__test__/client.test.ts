@@ -1142,7 +1142,7 @@ describe("client", () => {
 
       server.use(
         rest.post(
-          "https://api.skip.money/v1/fungible/ibc_origin_assets",
+          "https://api.skip.money/v2/fungible/ibc_origin_assets",
           (_, res, ctx) => {
             return res(ctx.status(200), ctx.json(expectedResult));
           },
