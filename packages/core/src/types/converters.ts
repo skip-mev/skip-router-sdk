@@ -40,10 +40,14 @@ import {
   AffiliateJSON,
   Asset,
   AssetJSON,
+  AssetOrError,
+  AssetOrErrorJSON,
   AxelarTransfer,
   AxelarTransferJSON,
   CosmWasmContractMsg,
   CosmWasmContractMsgJSON,
+  DenomWithChainID,
+  DenomWithChainIDJSON,
   ERC20Approval,
   ERC20ApprovalJSON,
   EvmTx,
@@ -52,6 +56,10 @@ import {
   IBCAddressJSON,
   MultiChainMsg,
   MultiChainMsgJSON,
+  OriginAssetsRequest,
+  OriginAssetsRequestJSON,
+  OriginAssetsResponse,
+  OriginAssetsResponseJSON,
   PostHandler,
   PostHandlerJSON,
   Swap,
@@ -110,6 +118,7 @@ export function assetFromJSON(assetJSON: AssetJSON): Asset {
     originChainID: assetJSON.origin_chain_id,
     trace: assetJSON.trace,
     isCW20: assetJSON.is_cw20,
+    isEVM: assetJSON.is_evm,
     symbol: assetJSON.symbol,
     name: assetJSON.name,
     logoURI: assetJSON.logo_uri,
@@ -117,7 +126,7 @@ export function assetFromJSON(assetJSON: AssetJSON): Asset {
     tokenContract: assetJSON.token_contract,
     description: assetJSON.description,
     coingeckoID: assetJSON.coingecko_id,
-    recommendedSymbol: assetJSON.recommended_symbol
+    recommendedSymbol: assetJSON.recommended_symbol,
   };
 }
 
@@ -129,6 +138,7 @@ export function assetToJSON(asset: Asset): AssetJSON {
     origin_chain_id: asset.originChainID,
     trace: asset.trace,
     is_cw20: asset.isCW20,
+    is_evm: asset.isEVM,
     symbol: asset.symbol,
     name: asset.name,
     logo_uri: asset.logoURI,
@@ -136,7 +146,7 @@ export function assetToJSON(asset: Asset): AssetJSON {
     token_contract: asset.tokenContract,
     description: asset.description,
     coingecko_id: asset.coingeckoID,
-    recommended_symbol: asset.recommendedSymbol
+    recommended_symbol: asset.recommendedSymbol,
   };
 }
 
@@ -1219,5 +1229,71 @@ export function transferStatusToJSON(
     next_blocking_transfer:
       value.nextBlockingTransfer &&
       nextBlockingTransferToJSON(value.nextBlockingTransfer),
+  };
+}
+
+export function denomWithChainIDFromJSON(
+  value: DenomWithChainIDJSON,
+): DenomWithChainID {
+  return {
+    chainID: value.chain_id,
+    denom: value.denom,
+  };
+}
+
+export function denomWithChainIDToJSON(
+  value: DenomWithChainID,
+): DenomWithChainIDJSON {
+  return {
+    chain_id: value.chainID,
+    denom: value.denom,
+  };
+}
+
+export function assetOrErrorFromJSON(value: AssetOrErrorJSON): AssetOrError {
+  if ("asset" in value) {
+    return { asset: assetFromJSON(value.asset) };
+  }
+
+  return { error: value.error };
+}
+
+export function assetOrErrorToJSON(value: AssetOrError): AssetOrErrorJSON {
+  if ("asset" in value) {
+    return { asset: assetToJSON(value.asset) };
+  }
+
+  return { error: value.error };
+}
+
+export function originAssetsRequestFromJSON(
+  value: OriginAssetsRequestJSON,
+): OriginAssetsRequest {
+  return {
+    assets: value.assets.map(denomWithChainIDFromJSON),
+  };
+}
+
+export function originAssetsRequestToJSON(
+  value: OriginAssetsRequest,
+): OriginAssetsRequestJSON {
+  return {
+    assets: value.assets.map(denomWithChainIDToJSON),
+  };
+}
+
+export function originAssetsResponseFromJSON(
+  value: OriginAssetsResponseJSON,
+): OriginAssetsResponse {
+  return {
+    originAssets: value.origin_assets.map(assetOrErrorFromJSON),
+  };
+}
+
+export function originAssetsResponseToJSON(
+  value: OriginAssetsResponse,
+): OriginAssetsResponseJSON {
+  return {
+    origin_assets: value.originAssets.map(assetOrErrorToJSON),
   };
 }

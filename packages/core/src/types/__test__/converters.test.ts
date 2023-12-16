@@ -17,6 +17,8 @@ import {
   contractCallWithTokenTransactionsToJSON,
   cosmWasmContractMsgFromJSON,
   cosmWasmContractMsgToJSON,
+  denomWithChainIDFromJSON,
+  denomWithChainIDToJSON,
   feeAssetFromJSON,
   feeAssetToJSON,
   ibcAddressFromJSON,
@@ -97,6 +99,8 @@ import {
   AffiliateJSON,
   Asset,
   AssetJSON,
+  DenomWithChainID,
+  DenomWithChainIDJSON,
   IBCAddress,
   IBCAddressJSON,
   MultiChainMsgJSON,
@@ -146,6 +150,7 @@ test("assetFromJSON", () => {
     origin_denom: "uosmo",
     origin_chain_id: "osmosis-1",
     is_cw20: false,
+    is_evm: false,
     trace: "",
     symbol: "OSMO",
     name: "OSMO",
@@ -164,6 +169,7 @@ test("assetFromJSON", () => {
     originDenom: "uosmo",
     originChainID: "osmosis-1",
     isCW20: false,
+    isEVM: false,
     trace: "",
     symbol: "OSMO",
     name: "OSMO",
@@ -185,6 +191,7 @@ test("assetToJSON", () => {
     originChainID: "osmosis-1",
     trace: "",
     isCW20: false,
+    isEVM: false,
     symbol: "OSMO",
     name: "OSMO",
     logoURI:
@@ -202,6 +209,7 @@ test("assetToJSON", () => {
     origin_denom: "uosmo",
     origin_chain_id: "osmosis-1",
     is_cw20: false,
+    is_evm: false,
     trace: "",
     symbol: "OSMO",
     name: "OSMO",
@@ -224,6 +232,7 @@ test("assetRecommendationFromJSON", () => {
       origin_chain_id: "osmosis-1",
       trace: "",
       is_cw20: false,
+      is_evm: false,
       symbol: "OSMO",
       name: "OSMO",
       logo_uri:
@@ -245,6 +254,7 @@ test("assetRecommendationFromJSON", () => {
       originChainID: "osmosis-1",
       trace: "",
       isCW20: false,
+      isEVM: false,
       symbol: "OSMO",
       name: "OSMO",
       logoURI:
@@ -268,6 +278,7 @@ test("assetRecommendationToJSON", () => {
       originChainID: "osmosis-1",
       trace: "",
       isCW20: false,
+      isEVM: false,
       symbol: "OSMO",
       name: "OSMO",
       logoURI:
@@ -288,6 +299,7 @@ test("assetRecommendationToJSON", () => {
       origin_denom: "uosmo",
       origin_chain_id: "osmosis-1",
       is_cw20: false,
+      is_evm: false,
       trace: "",
       symbol: "OSMO",
       name: "OSMO",
@@ -2971,4 +2983,32 @@ test("contractCallWithTokenTransactionsToJSON", () => {
   };
 
   expect(contractCallWithTokenTransactionsToJSON(input)).toEqual(expected);
+});
+
+test("denomWithChainIDFromJSON", () => {
+  const input: DenomWithChainIDJSON = {
+    chain_id: "osmosis-1",
+    denom: "uosmo",
+  };
+
+  const expected: DenomWithChainID = {
+    chainID: "osmosis-1",
+    denom: "uosmo",
+  };
+
+  expect(denomWithChainIDFromJSON(input)).toEqual(expected);
+});
+
+test("denomWithChainIDToJSON", () => {
+  const input: DenomWithChainID = {
+    chainID: "osmosis-1",
+    denom: "uosmo",
+  };
+
+  const expected: DenomWithChainIDJSON = {
+    chain_id: "osmosis-1",
+    denom: "uosmo",
+  };
+
+  expect(denomWithChainIDToJSON(input)).toEqual(expected);
 });

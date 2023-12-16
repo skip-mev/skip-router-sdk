@@ -2,7 +2,13 @@ import { rest } from "msw";
 import { setupServer } from "msw/node";
 
 import { SKIP_API_URL, SkipRouter } from "../client";
-import { Chain, ChainJSON } from "../types";
+import {
+  Chain,
+  ChainJSON,
+  DenomWithChainID,
+  originAssetsResponseFromJSON,
+  OriginAssetsResponseJSON,
+} from "../types";
 
 export const server = setupServer();
 
@@ -1084,6 +1090,82 @@ describe("client", () => {
           },
         ],
       });
+    });
+  });
+
+  describe("ibcOriginAssets", () => {
+    it("returns a list of origin assets", async () => {
+      const expectedResult: OriginAssetsResponseJSON = {
+        origin_assets: [
+          {
+            asset: {
+              denom: "uosmo",
+              chain_id: "osmosis-1",
+              origin_denom: "uosmo",
+              origin_chain_id: "osmosis-1",
+              trace: "",
+              is_cw20: false,
+              is_evm: false,
+              token_contract: "token-contract-value",
+              symbol: "OSMO",
+              name: "OSMO",
+              logo_uri:
+                "https://raw.githubusercontent.com/cosmos/chain-registry/master/osmosis/images/osmo.png",
+              decimals: 6,
+              description: "The native token of Osmosis",
+              coingecko_id: "osmosis",
+              recommended_symbol: "OSMO",
+            },
+          },
+          {
+            asset: {
+              denom: "uusdc",
+              chain_id: "axelar-dojo-1",
+              origin_denom: "uusdc",
+              origin_chain_id: "axelar-dojo-1",
+              trace: "",
+              is_cw20: false,
+              is_evm: false,
+              token_contract: "token-contract-value",
+              symbol: "USDC",
+              name: "USDC",
+              logo_uri:
+                "https://raw.githubusercontent.com/cosmos/chain-registry/master/axelar/images/usdc.png",
+              decimals: 6,
+              description: "Circle's stablecoin on Axelar",
+              coingecko_id: "axlusdc",
+              recommended_symbol: "USDC.axl",
+            },
+          },
+        ],
+      };
+
+      server.use(
+        rest.post(
+          "https://api.skip.money/v1/fungible/ibc_origin_assets",
+          (_, res, ctx) => {
+            return res(ctx.status(200), ctx.json(expectedResult));
+          },
+        ),
+      );
+
+      const client = new SkipRouter({
+        apiURL: SKIP_API_URL,
+      });
+
+      const params: DenomWithChainID[] = [
+        {
+          denom:
+            "ibc/14F9BC3E44B8A9C1BE1FB08980FAB87034C9905EF17CF2F5008FC085218811CC",
+          chainID: "cosmoshub-4",
+        },
+      ];
+
+      const result = await client.ibcOriginAssets(params);
+
+      expect(result).toEqual(
+        originAssetsResponseFromJSON(expectedResult).originAssets,
+      );
     });
   });
 });
