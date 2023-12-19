@@ -3,7 +3,10 @@ import {
   makeSignDoc as makeSignDocAmino,
   OfflineAminoSigner,
 } from "@cosmjs/amino";
-import { createWasmAminoConverters } from "@cosmjs/cosmwasm-stargate";
+import {
+  createWasmAminoConverters,
+  SigningCosmWasmClient,
+} from "@cosmjs/cosmwasm-stargate";
 import { fromBase64 } from "@cosmjs/encoding";
 import { Int53 } from "@cosmjs/math";
 import {
@@ -23,7 +26,6 @@ import {
   createDefaultAminoConverters,
   defaultRegistryTypes,
   SignerData,
-  SigningStargateClient,
   StargateClient,
   StdFee,
 } from "@cosmjs/stargate";
@@ -266,6 +268,17 @@ export class SkipRouter {
   async executeRoute(options: ExecuteRouteOptions) {
     const { route, userAddresses, validateGasBalance } = options;
 
+    let getOfflineSigner = this.getCosmosSigner;
+    if (options.getCosmosSigner) {
+      getOfflineSigner = options.getCosmosSigner;
+    }
+
+    if (!getOfflineSigner) {
+      throw new Error(
+        "Unable to get Cosmos signer. Please provide a signer or a function to get a signer",
+      );
+    }
+
     const messages = await this.messages({
       sourceAssetDenom: route.sourceAssetDenom,
       sourceAssetChainID: route.sourceAssetChainID,
@@ -280,7 +293,7 @@ export class SkipRouter {
 
     if (validateGasBalance) {
       // check balances on chains where a tx is initiated
-      await this.validateGasBalances(messages, userAddresses);
+      await this.validateGasBalances(messages, userAddresses, getOfflineSigner);
     }
 
     // execute txs
@@ -299,27 +312,30 @@ export class SkipRouter {
           averageGasPrice = feeInfo.average_gas_price;
         }
 
-        const feeAmount =
-          averageGasPrice * parseInt(getGasAmountForMessage(multiChainMsg));
-
-        let getOfflineSigner = this.getCosmosSigner;
-        if (options.getCosmosSigner) {
-          getOfflineSigner = options.getCosmosSigner;
-        }
-
-        if (!getOfflineSigner) {
-          throw new Error(
-            `Unable to find offline signer for chain ${multiChainMsg.chainID}`,
-          );
-        }
-
         const signer = await getOfflineSigner(multiChainMsg.chainID);
+
+        const endpoint = await this.getRpcEndpointForChain(
+          multiChainMsg.chainID,
+        );
+
+        const client = await SigningCosmWasmClient.connectWithSigner(
+          endpoint,
+          signer,
+        );
+
+        const estimatedGas = await getGasAmountForMessage(
+          client,
+          userAddresses[multiChainMsg.chainID],
+          multiChainMsg,
+        );
+
+        const feeAmount = averageGasPrice * parseInt(estimatedGas);
 
         const tx = await this.executeMultiChainMessage({
           signerAddress: userAddresses[multiChainMsg.chainID],
           signer,
           message: multiChainMsg,
-          feeAmount: coin(feeAmount, feeInfo.denom),
+          feeAmount: coin(feeAmount.toFixed(0), feeInfo.denom),
         });
 
         if (options.onTransactionBroadcast) {
@@ -398,12 +414,21 @@ export class SkipRouter {
 
     const endpoint = await this.getRpcEndpointForChain(message.chainID);
 
+    const stargateClient = await SigningCosmWasmClient.connectWithSigner(
+      endpoint,
+      signer,
+    );
+
     const { accountNumber, sequence } = await this.getAccountNumberAndSequence(
       signerAddress,
       message.chainID,
     );
 
-    const gas = getGasAmountForMessage(message);
+    const gas = await getGasAmountForMessage(
+      stargateClient,
+      signerAddress,
+      message,
+    );
 
     let rawTx: TxRaw;
     if (isOfflineDirectSigner(signer)) {
@@ -439,11 +464,6 @@ export class SkipRouter {
     }
 
     const txBytes = TxRaw.encode(rawTx).finish();
-
-    const stargateClient = await SigningStargateClient.connectWithSigner(
-      endpoint,
-      signer,
-    );
 
     const tx = await stargateClient.broadcastTx(txBytes);
 
@@ -1062,12 +1082,23 @@ export class SkipRouter {
   private async validateGasBalances(
     messages: Msg[],
     userAddresses: Record<string, string>,
+    getOfflineSigner: (chainID: string) => Promise<OfflineSigner>,
   ) {
     for (let i = 0; i < messages.length; i++) {
       const message = messages[i];
 
       if ("multiChainMsg" in message) {
+        const signer = await getOfflineSigner(message.multiChainMsg.chainID);
+        const endpoint = await this.getRpcEndpointForChain(
+          message.multiChainMsg.chainID,
+        );
+        const client = await SigningCosmWasmClient.connectWithSigner(
+          endpoint,
+          signer,
+        );
+
         await this.validateCosmosGasBalance(
+          client,
           userAddresses[message.multiChainMsg.chainID],
           message.multiChainMsg,
         );
@@ -1076,12 +1107,17 @@ export class SkipRouter {
   }
 
   private async validateCosmosGasBalance(
+    client: SigningCosmWasmClient,
     signerAddress: string,
     message: MultiChainMsg,
   ) {
     const feeInfo = this.getFeeInfoForChain(message.chainID);
 
-    const gasNeeded = getGasAmountForMessage(message);
+    const gasNeeded = await getGasAmountForMessage(
+      client,
+      signerAddress,
+      message,
+    );
     let averageGasPrice = 0;
     if (feeInfo.low_gas_price) {
       averageGasPrice = feeInfo.low_gas_price;
@@ -1091,14 +1127,7 @@ export class SkipRouter {
 
     const amountNeeded = averageGasPrice * parseInt(gasNeeded);
 
-    const endpoint = await this.getRpcEndpointForChain(message.chainID);
-
-    const stargateClient = await StargateClient.connect(endpoint);
-
-    const balance = await stargateClient.getBalance(
-      signerAddress,
-      feeInfo.denom,
-    );
+    const balance = await client.getBalance(signerAddress, feeInfo.denom);
 
     if (parseInt(balance.amount) < amountNeeded) {
       throw new Error(
