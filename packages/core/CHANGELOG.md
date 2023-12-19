@@ -1,5 +1,12 @@
 # @skip-router/core
 
+## 1.1.2
+
+### Patch Changes
+
+- 959b51c: Simulate cosmos transactions to estimate gas
+- 89b7472: Add ibcOriginAssets
+
 ## 1.1.1
 
 ### Patch Changes
