@@ -1,3 +1,4 @@
+import { SigningCosmWasmClient } from "@cosmjs/cosmwasm-stargate";
 import { toUtf8 } from "@cosmjs/encoding";
 import { EncodeObject } from "@cosmjs/proto-signing";
 import MsgTransferInjective from "@injectivelabs/sdk-ts/dist/cjs/core/modules/ibc/msgs/MsgTransfer";
@@ -88,12 +89,27 @@ export function getEncodeObjectFromMultiChainMessageInjective(
   throw new Error("Unsupported message type");
 }
 
-export function getGasAmountForMessage(message: MultiChainMsg) {
-  if (message.msgTypeURL === "/cosmwasm.wasm.v1.MsgExecuteContract") {
-    if (message.chainID === "neutron-1") {
+export async function getGasAmountForMessage(
+  client: SigningCosmWasmClient,
+  signerAddress: string,
+  message: MultiChainMsg,
+) {
+  if (
+    message.chainID.includes("evmos") ||
+    message.chainID.includes("injective") ||
+    process.env.NODE_ENV === "test"
+  ) {
+    if (message.msgTypeURL === "/cosmwasm.wasm.v1.MsgExecuteContract") {
       return "2400000";
     }
-    return "2000000";
+    return "280000";
   }
-  return "280000";
+
+  const encodeMsg = getEncodeObjectFromMultiChainMessage(message);
+
+  const estimatedGas = await client.simulate(signerAddress, [encodeMsg], "");
+
+  const estimatedGasWithBuffer = estimatedGas * 1.5;
+
+  return estimatedGasWithBuffer.toFixed(0);
 }
