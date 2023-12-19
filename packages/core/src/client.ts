@@ -54,6 +54,7 @@ import {
   Asset,
   assetFromJSON,
   AssetJSON,
+  AssetOrError,
   assetRecommendationFromJSON,
   AssetRecommendationJSON,
   AssetsFromSourceRequest,
@@ -65,6 +66,7 @@ import {
   Chain,
   chainFromJSON,
   ChainJSON,
+  DenomWithChainID,
   EvmTx,
   Msg,
   msgFromJSON,
@@ -73,6 +75,9 @@ import {
   msgsRequestToJSON,
   MsgsResponseJSON,
   MultiChainMsg,
+  originAssetsRequestToJSON,
+  originAssetsResponseFromJSON,
+  OriginAssetsResponseJSON,
   RecommendAssetsRequest,
   recommendAssetsRequestToJSON,
   RouteRequest,
@@ -822,6 +827,17 @@ export class SkipRouter {
     return response.recommendations.map((recommendation) =>
       assetRecommendationFromJSON(recommendation),
     );
+  }
+
+  async ibcOriginAssets(assets: DenomWithChainID[]): Promise<AssetOrError[]> {
+    const response = await this.requestClient.post<OriginAssetsResponseJSON>(
+      "/v2/fungible/ibc_origin_assets",
+      originAssetsRequestToJSON({
+        assets,
+      }),
+    );
+
+    return originAssetsResponseFromJSON(response).originAssets;
   }
 
   async submitTransaction({

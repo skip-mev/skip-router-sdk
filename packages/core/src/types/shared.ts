@@ -16,6 +16,7 @@ export type AssetJSON = {
   origin_chain_id: string;
   trace: string;
   is_cw20: boolean;
+  is_evm: boolean;
 
   symbol: string | undefined;
   name: string | undefined;
@@ -35,6 +36,7 @@ export type Asset = {
   originChainID: string;
   trace: string;
   isCW20: boolean;
+  isEVM: boolean;
 
   symbol: string | undefined;
   name: string | undefined;
@@ -229,4 +231,38 @@ export type EvmTx = {
   value: string;
   data: string;
   requiredERC20Approvals: ERC20Approval[];
+};
+
+export type DenomWithChainIDJSON = {
+  denom: string;
+  chain_id: string;
+};
+
+export type DenomWithChainID = {
+  denom: string;
+  chainID: string;
+};
+
+export type ApiError = {
+  message: string;
+};
+
+export type AssetOrErrorJSON = { asset: AssetJSON } | { error: ApiError };
+
+export type AssetOrError = { asset: Asset } | { error: ApiError };
+
+export type OriginAssetsRequestJSON = {
+  assets: DenomWithChainIDJSON[];
+};
+
+export type OriginAssetsRequest = {
+  assets: DenomWithChainID[];
+};
+
+export type OriginAssetsResponseJSON = {
+  origin_assets: AssetOrErrorJSON[];
+};
+
+export type OriginAssetsResponse = {
+  originAssets: AssetOrError[];
 };
