@@ -96,7 +96,8 @@ export async function getGasAmountForMessage(
 ) {
   if (
     message.chainID.includes("evmos") ||
-    message.chainID.includes("injective")
+    message.chainID.includes("injective") ||
+    process.env.NODE_ENV === "test"
   ) {
     if (message.msgTypeURL === "/cosmwasm.wasm.v1.MsgExecuteContract") {
       return "2400000";
