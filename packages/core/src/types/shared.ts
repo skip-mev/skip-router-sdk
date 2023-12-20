@@ -55,6 +55,9 @@ export type TransferJSON = {
   pfm_enabled: boolean;
   dest_denom: string;
   supports_memo: boolean;
+  fee_amount?: string;
+  usd_fee_amount?: string;
+  fee_asset?: AssetJSON;
 };
 
 export type Transfer = {
@@ -64,6 +67,9 @@ export type Transfer = {
   pfmEnabled: boolean;
   destDenom: string;
   supportsMemo: boolean;
+  feeAmount?: string;
+  usdFeeAmount?: string;
+  feeAsset?: Asset;
 };
 
 export type AxelarTransferJSON = {

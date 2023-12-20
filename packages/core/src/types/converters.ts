@@ -388,6 +388,9 @@ export function transferFromJSON(transferJSON: TransferJSON): Transfer {
     pfmEnabled: transferJSON.pfm_enabled,
     destDenom: transferJSON.dest_denom,
     supportsMemo: transferJSON.supports_memo,
+    feeAmount: transferJSON.fee_amount,
+    usdFeeAmount: transferJSON.usd_fee_amount,
+    feeAsset: transferJSON.fee_asset && assetFromJSON(transferJSON.fee_asset),
   };
 }
 
@@ -399,6 +402,9 @@ export function transferToJSON(transfer: Transfer): TransferJSON {
     pfm_enabled: transfer.pfmEnabled,
     dest_denom: transfer.destDenom,
     supports_memo: transfer.supportsMemo,
+    fee_amount: transfer.feeAmount,
+    usd_fee_amount: transfer.usdFeeAmount,
+    fee_asset: transfer.feeAsset && assetToJSON(transfer.feeAsset),
   };
 }
 
