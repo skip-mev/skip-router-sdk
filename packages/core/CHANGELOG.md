@@ -1,5 +1,12 @@
 # @skip-router/core
 
+## 1.1.3
+
+### Patch Changes
+
+- 579e28b: Add fee fields to Transfer field
+- 67a9a04: Add assetsBetweenChains
+
 ## 1.1.2
 
 ### Patch Changes
