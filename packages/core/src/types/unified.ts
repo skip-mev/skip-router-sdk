@@ -245,3 +245,49 @@ export type MsgsResponseJSON = {
 export type MsgsResponse = {
   msgs: Msg[];
 };
+
+export type BridgeType = "IBC" | "AXELAR";
+
+export type AssetBetweenChainsJSON = {
+  asset_on_source: AssetJSON;
+  asset_on_dest: AssetJSON;
+  txs_required: number;
+  bridges: BridgeType[];
+};
+
+export type AssetBetweenChains = {
+  assetOnSource: Asset;
+  assetOnDest: Asset;
+  txsRequired: number;
+  bridges: BridgeType[];
+};
+
+export type AssetsBetweenChainsRequestJSON = {
+  source_chain_id: string;
+  dest_chain_id: string;
+
+  include_no_metadata_assets?: boolean;
+  include_cw20_assets?: boolean;
+  include_evm_assets?: boolean;
+
+  allow_multi_tx?: boolean;
+};
+
+export type AssetsBetweenChainsRequest = {
+  sourceChainID: string;
+  destChainID: string;
+
+  includeNoMetadataAssets?: boolean;
+  includeCW20Assets?: boolean;
+  includeEvmAssets?: boolean;
+
+  allowMultiTx?: boolean;
+};
+
+export type AssetsBetweenChainsResponseJSON = {
+  assets_between_chains: AssetBetweenChainsJSON[];
+};
+
+export type AssetsBetweenChainsResponse = {
+  assetsBetweenChains: AssetBetweenChains[];
+};
