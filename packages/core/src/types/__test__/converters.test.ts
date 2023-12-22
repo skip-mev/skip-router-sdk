@@ -641,33 +641,49 @@ test("feeAssetToJSON", () => {
 
 test("recommendAssetsRequestFromJSON", () => {
   const recommendAssetsRequestJSON: RecommendAssetsRequestJSON = {
-    source_asset_denom: "uosmo",
-    source_asset_chain_id: "osmosis-1",
-    dest_chain_id: "neutron-1",
-    reason: "MOST_LIQUID",
+    requests: [
+      {
+        source_asset_denom: "uosmo",
+        source_asset_chain_id: "osmosis-1",
+        dest_chain_id: "neutron-1",
+        reason: "MOST_LIQUID",
+      },
+    ],
   };
 
   expect(recommendAssetsRequestFromJSON(recommendAssetsRequestJSON)).toEqual({
-    sourceAssetDenom: "uosmo",
-    sourceAssetChainID: "osmosis-1",
-    destChainID: "neutron-1",
-    reason: "MOST_LIQUID",
+    requests: [
+      {
+        sourceAssetDenom: "uosmo",
+        sourceAssetChainID: "osmosis-1",
+        destChainID: "neutron-1",
+        reason: "MOST_LIQUID",
+      },
+    ],
   });
 });
 
 test("recommendAssetsRequestToJSON", () => {
   const recommendAssetsRequest: RecommendAssetsRequest = {
-    sourceAssetDenom: "uosmo",
-    sourceAssetChainID: "osmosis-1",
-    destChainID: "neutron-1",
-    reason: "MOST_LIQUID",
+    requests: [
+      {
+        sourceAssetDenom: "uosmo",
+        sourceAssetChainID: "osmosis-1",
+        destChainID: "neutron-1",
+        reason: "MOST_LIQUID",
+      },
+    ],
   };
 
   expect(recommendAssetsRequestToJSON(recommendAssetsRequest)).toEqual({
-    source_asset_denom: "uosmo",
-    source_asset_chain_id: "osmosis-1",
-    dest_chain_id: "neutron-1",
-    reason: "MOST_LIQUID",
+    requests: [
+      {
+        source_asset_denom: "uosmo",
+        source_asset_chain_id: "osmosis-1",
+        dest_chain_id: "neutron-1",
+        reason: "MOST_LIQUID",
+      },
+    ],
   });
 });
 
