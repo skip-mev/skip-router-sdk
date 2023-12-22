@@ -80,6 +80,8 @@ import {
   AssetBetweenChainsJSON,
   AssetRecommendation,
   AssetRecommendationJSON,
+  AssetRecommendationRequest,
+  AssetRecommendationRequestJSON,
   AssetsBetweenChainsRequest,
   AssetsBetweenChainsRequestJSON,
   AssetsBetweenChainsResponse,
@@ -96,6 +98,10 @@ import {
   OperationJSON,
   RecommendAssetsRequest,
   RecommendAssetsRequestJSON,
+  RecommendAssetsResponse,
+  RecommendAssetsResponseJSON,
+  RecommendationEntry,
+  RecommendationEntryJSON,
   RouteRequest,
   RouteRequestJSON,
   RouteResponse,
@@ -284,10 +290,9 @@ export function recommendAssetsRequestFromJSON(
   recommendAssetsRequestJSON: RecommendAssetsRequestJSON,
 ): RecommendAssetsRequest {
   return {
-    sourceAssetDenom: recommendAssetsRequestJSON.source_asset_denom,
-    sourceAssetChainID: recommendAssetsRequestJSON.source_asset_chain_id,
-    destChainID: recommendAssetsRequestJSON.dest_chain_id,
-    reason: recommendAssetsRequestJSON.reason,
+    requests: recommendAssetsRequestJSON.requests.map(
+      assetRecommendationRequestFromJSON,
+    ),
     clientID: recommendAssetsRequestJSON.client_id,
   };
 }
@@ -296,11 +301,50 @@ export function recommendAssetsRequestToJSON(
   recommendAssetsRequest: RecommendAssetsRequest,
 ): RecommendAssetsRequestJSON {
   return {
-    source_asset_denom: recommendAssetsRequest.sourceAssetDenom,
-    source_asset_chain_id: recommendAssetsRequest.sourceAssetChainID,
-    dest_chain_id: recommendAssetsRequest.destChainID,
-    reason: recommendAssetsRequest.reason,
+    requests: recommendAssetsRequest.requests.map(
+      assetRecommendationRequestToJSON,
+    ),
     client_id: recommendAssetsRequest.clientID,
+  };
+}
+
+export function recommendAssetsResponseFromJSON(
+  value: RecommendAssetsResponseJSON,
+): RecommendAssetsResponse {
+  return {
+    recommendations: value.recommendations.map(assetRecommendationFromJSON),
+    recommendationEntries: value.recommendation_entries.map(
+      recommendationEntryFromJSON,
+    ),
+  };
+}
+
+export function recommendAssetsResponseToJSON(
+  value: RecommendAssetsResponse,
+): RecommendAssetsResponseJSON {
+  return {
+    recommendations: value.recommendations.map(assetRecommendationToJSON),
+    recommendation_entries: value.recommendationEntries.map(
+      recommendationEntryToJSON,
+    ),
+  };
+}
+
+export function recommendationEntryFromJSON(
+  value: RecommendationEntryJSON,
+): RecommendationEntry {
+  return {
+    recommendations: value.recommendations.map(assetRecommendationFromJSON),
+    error: value.error,
+  };
+}
+
+export function recommendationEntryToJSON(
+  value: RecommendationEntry,
+): RecommendationEntryJSON {
+  return {
+    recommendations: value.recommendations.map(assetRecommendationToJSON),
+    error: value.error,
   };
 }
 
@@ -1365,5 +1409,27 @@ export function assetsBetweenChainsResponseFromJSON(
     assetsBetweenChains: value.assets_between_chains.map(
       assetBetweenChainsFromJSON,
     ),
+  };
+}
+
+export function assetRecommendationRequestFromJSON(
+  value: AssetRecommendationRequestJSON,
+): AssetRecommendationRequest {
+  return {
+    sourceAssetDenom: value.source_asset_denom,
+    sourceAssetChainID: value.source_asset_chain_id,
+    destChainID: value.dest_chain_id,
+    reason: value.reason,
+  };
+}
+
+export function assetRecommendationRequestToJSON(
+  value: AssetRecommendationRequest,
+): AssetRecommendationRequestJSON {
+  return {
+    source_asset_denom: value.sourceAssetDenom,
+    source_asset_chain_id: value.sourceAssetChainID,
+    dest_chain_id: value.destChainID,
+    reason: value.reason,
   };
 }

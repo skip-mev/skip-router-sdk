@@ -1,6 +1,7 @@
 import {
   Affiliate,
   AffiliateJSON,
+  ApiError,
   Asset,
   AssetJSON,
   AxelarTransfer,
@@ -76,20 +77,48 @@ export type AssetRecommendationJSON = {
   reason: Reason;
 };
 
-export type RecommendAssetsRequestJSON = {
+export type AssetRecommendationRequestJSON = {
   source_asset_denom: string;
   source_asset_chain_id: string;
   dest_chain_id: string;
   reason?: Reason;
-  client_id?: string;
 };
 
-export type RecommendAssetsRequest = {
+export type AssetRecommendationRequest = {
   sourceAssetDenom: string;
   sourceAssetChainID: string;
   destChainID: string;
   reason?: Reason;
+};
+
+export type RecommendAssetsRequestJSON = {
+  requests: AssetRecommendationRequestJSON[];
+  client_id?: string;
+};
+
+export type RecommendAssetsRequest = {
+  requests: AssetRecommendationRequest[];
   clientID?: string;
+};
+
+export type RecommendAssetsResponseJSON = {
+  recommendations: AssetRecommendationJSON[];
+  recommendation_entries: RecommendationEntryJSON[];
+};
+
+export type RecommendAssetsResponse = {
+  recommendations: AssetRecommendation[];
+  recommendationEntries: RecommendationEntry[];
+};
+
+export type RecommendationEntryJSON = {
+  recommendations: AssetRecommendationJSON[];
+  error?: ApiError;
+};
+
+export type RecommendationEntry = {
+  recommendations: AssetRecommendation[];
+  error?: ApiError;
 };
 
 export type RouteRequestBaseJSON = {

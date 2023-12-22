@@ -58,8 +58,7 @@ import {
   assetFromJSON,
   AssetJSON,
   AssetOrError,
-  assetRecommendationFromJSON,
-  AssetRecommendationJSON,
+  AssetRecommendationRequest,
   AssetsBetweenChainsRequest,
   assetsBetweenChainsRequestToJSON,
   assetsBetweenChainsResponseFromJSON,
@@ -85,8 +84,9 @@ import {
   originAssetsRequestToJSON,
   originAssetsResponseFromJSON,
   OriginAssetsResponseJSON,
-  RecommendAssetsRequest,
   recommendAssetsRequestToJSON,
+  recommendAssetsResponseFromJSON,
+  RecommendAssetsResponseJSON,
   RouteRequest,
   RouteRequestJSON,
   routeRequestToJSON,
@@ -850,20 +850,20 @@ export class SkipRouter {
     return routeResponseFromJSON(response);
   }
 
-  async recommendAssets(options: RecommendAssetsRequest) {
-    const response = await this.requestClient.post<{
-      recommendations: AssetRecommendationJSON[];
-    }>(
-      "/v1/fungible/recommend_assets",
-      recommendAssetsRequestToJSON({
-        ...options,
-        clientID: this.clientID,
-      }),
+  async recommendAssets(
+    request: AssetRecommendationRequest | AssetRecommendationRequest[],
+  ) {
+    const options = recommendAssetsRequestToJSON({
+      requests: Array.isArray(request) ? request : [request],
+      clientID: this.clientID,
+    });
+
+    const response = await this.requestClient.post<RecommendAssetsResponseJSON>(
+      "/v2/fungible/recommend_assets",
+      options,
     );
 
-    return response.recommendations.map((recommendation) =>
-      assetRecommendationFromJSON(recommendation),
-    );
+    return recommendAssetsResponseFromJSON(response).recommendationEntries;
   }
 
   async ibcOriginAssets(assets: DenomWithChainID[]): Promise<AssetOrError[]> {
