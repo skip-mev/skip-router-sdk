@@ -1,5 +1,11 @@
 # @skip-router/core
 
+## 1.2.0
+
+### Minor Changes
+
+- e1ce04a: Update recommendAssets to handle multiple requests
+
 ## 1.1.3
 
 ### Patch Changes
