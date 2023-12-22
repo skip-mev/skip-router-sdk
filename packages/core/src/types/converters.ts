@@ -76,8 +76,14 @@ import {
   TransferJSON,
 } from "./shared";
 import {
+  AssetBetweenChains,
+  AssetBetweenChainsJSON,
   AssetRecommendation,
   AssetRecommendationJSON,
+  AssetsBetweenChainsRequest,
+  AssetsBetweenChainsRequestJSON,
+  AssetsBetweenChainsResponse,
+  AssetsBetweenChainsResponseJSON,
   AssetsFromSourceRequest,
   AssetsFromSourceRequestJSON,
   AssetsRequest,
@@ -1301,5 +1307,63 @@ export function originAssetsResponseToJSON(
 ): OriginAssetsResponseJSON {
   return {
     origin_assets: value.originAssets.map(assetOrErrorToJSON),
+  };
+}
+
+export function assetBetweenChainsFromJSON(
+  value: AssetBetweenChainsJSON,
+): AssetBetweenChains {
+  return {
+    assetOnSource: assetFromJSON(value.asset_on_source),
+    assetOnDest: assetFromJSON(value.asset_on_dest),
+    txsRequired: value.txs_required,
+    bridges: value.bridges,
+  };
+}
+
+export function assetBetweenChainsToJSON(
+  value: AssetBetweenChains,
+): AssetBetweenChainsJSON {
+  return {
+    asset_on_source: assetToJSON(value.assetOnSource),
+    asset_on_dest: assetToJSON(value.assetOnDest),
+    txs_required: value.txsRequired,
+    bridges: value.bridges,
+  };
+}
+
+export function assetsBetweenChainsRequestFromJSON(
+  value: AssetsBetweenChainsRequestJSON,
+): AssetsBetweenChainsRequest {
+  return {
+    sourceChainID: value.source_chain_id,
+    destChainID: value.dest_chain_id,
+    includeNoMetadataAssets: value.include_no_metadata_assets,
+    includeCW20Assets: value.include_cw20_assets,
+    includeEvmAssets: value.include_evm_assets,
+    allowMultiTx: value.allow_multi_tx,
+  };
+}
+
+export function assetsBetweenChainsRequestToJSON(
+  value: AssetsBetweenChainsRequest,
+): AssetsBetweenChainsRequestJSON {
+  return {
+    source_chain_id: value.sourceChainID,
+    dest_chain_id: value.destChainID,
+    include_no_metadata_assets: value.includeNoMetadataAssets,
+    include_cw20_assets: value.includeCW20Assets,
+    include_evm_assets: value.includeEvmAssets,
+    allow_multi_tx: value.allowMultiTx,
+  };
+}
+
+export function assetsBetweenChainsResponseFromJSON(
+  value: AssetsBetweenChainsResponseJSON,
+): AssetsBetweenChainsResponse {
+  return {
+    assetsBetweenChains: value.assets_between_chains.map(
+      assetBetweenChainsFromJSON,
+    ),
   };
 }

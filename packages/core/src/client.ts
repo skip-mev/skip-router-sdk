@@ -54,11 +54,16 @@ import {
 } from "./transactions";
 import {
   Asset,
+  AssetBetweenChains,
   assetFromJSON,
   AssetJSON,
   AssetOrError,
   assetRecommendationFromJSON,
   AssetRecommendationJSON,
+  AssetsBetweenChainsRequest,
+  assetsBetweenChainsRequestToJSON,
+  assetsBetweenChainsResponseFromJSON,
+  AssetsBetweenChainsResponseJSON,
   AssetsFromSourceRequest,
   AssetsFromSourceRequestJSON,
   assetsFromSourceRequestToJSON,
@@ -250,6 +255,18 @@ export class SkipRouter {
       },
       {} as Record<string, Asset[]>,
     );
+  }
+
+  async assetsBetweenChains(
+    options: AssetsBetweenChainsRequest,
+  ): Promise<AssetBetweenChains[]> {
+    const response =
+      await this.requestClient.post<AssetsBetweenChainsResponseJSON>(
+        "/v2/fungible/assets_between_chains",
+        assetsBetweenChainsRequestToJSON(options),
+      );
+
+    return assetsBetweenChainsResponseFromJSON(response).assetsBetweenChains;
   }
 
   async chains(
