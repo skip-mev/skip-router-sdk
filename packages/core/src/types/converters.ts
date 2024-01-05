@@ -609,6 +609,8 @@ export function routeResponseFromJSON(
     usdAmountIn: routeResponseJSON.usd_amount_in,
     usdAmountOut: routeResponseJSON.usd_amount_out,
     swapPriceImpactPercent: routeResponseJSON.swap_price_impact_percent,
+
+    warning: routeResponseJSON.warning,
   };
 }
 
@@ -637,6 +639,8 @@ export function routeResponseToJSON(
     usd_amount_in: routeResponse.usdAmountIn,
     usd_amount_out: routeResponse.usdAmountOut,
     swap_price_impact_percent: routeResponse.swapPriceImpactPercent,
+
+    warning: routeResponse.warning,
   };
 }
 

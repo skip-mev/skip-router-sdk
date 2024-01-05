@@ -171,6 +171,13 @@ export type RouteRequestGivenOut = RouteRequestBase & {
 
 export type RouteRequest = RouteRequestGivenIn | RouteRequestGivenOut;
 
+export type RouteWarningType = "LOW_INFO_WARNING" | "BAD_PRICE_WARNING";
+
+export type RouteWarning = {
+  type: RouteWarningType;
+  message: string;
+};
+
 export type OperationJSON =
   | { transfer: TransferJSON }
   | { swap: SwapJSON }
@@ -201,6 +208,8 @@ export type RouteResponseJSON = {
   usd_amount_in?: string;
   usd_amount_out?: string;
   swap_price_impact_percent?: string;
+
+  warning?: RouteWarning;
 };
 
 export type RouteResponse = {
@@ -223,6 +232,8 @@ export type RouteResponse = {
   usdAmountIn?: string;
   usdAmountOut?: string;
   swapPriceImpactPercent?: string;
+
+  warning?: RouteWarning;
 };
 
 export type MsgsRequestJSON = {
