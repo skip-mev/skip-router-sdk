@@ -1,5 +1,11 @@
 # @skip-router/core
 
+## 1.2.1
+
+### Patch Changes
+
+- 77d97b4: Add 'unsafe' flag to route request
+
 ## 1.2.0
 
 ### Minor Changes
