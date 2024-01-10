@@ -972,7 +972,15 @@ export class SkipRouter {
     return response.venues.map((venue) => swapVenueFromJSON(venue));
   }
 
-  private async getAccountNumberAndSequence(address: string, chainID: string) {
+  async getGasAmountForMessage(
+    client: SigningCosmWasmClient,
+    signerAddress: string,
+    message: MultiChainMsg,
+  ): Promise<string> {
+    return getGasAmountForMessage(client, signerAddress, message);
+  }
+
+  async getAccountNumberAndSequence(address: string, chainID: string) {
     if (chainID.includes("evmos")) {
       return this.getAccountNumberAndSequenceEvmos(address, chainID);
     }
@@ -1098,7 +1106,7 @@ export class SkipRouter {
     return endpoint;
   }
 
-  private getFeeInfoForChain(chainID: string) {
+  getFeeInfoForChain(chainID: string) {
     const chain = chains().find((chain) => chain.chain_id === chainID);
     if (!chain) {
       throw new Error(`Failed to find chain with ID ${chainID} in registry`);
