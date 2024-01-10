@@ -1,5 +1,11 @@
 # @skip-router/core
 
+## 1.2.2
+
+### Patch Changes
+
+- 35aa11b: Expose gas methods in SkipRouter
+
 ## 1.2.1
 
 ### Patch Changes
