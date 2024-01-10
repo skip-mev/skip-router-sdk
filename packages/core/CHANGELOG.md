@@ -1,5 +1,11 @@
 # @skip-router/core
 
+## 1.2.3
+
+### Patch Changes
+
+- c98fb7c: use timeout height instead of timestamp on amino signing
+
 ## 1.2.2
 
 ### Patch Changes
