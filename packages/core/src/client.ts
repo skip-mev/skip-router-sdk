@@ -41,6 +41,7 @@ import axios from "axios";
 import { SignMode } from "cosmjs-types/cosmos/tx/signing/v1beta1/signing";
 import { TxRaw } from "cosmjs-types/cosmos/tx/v1beta1/tx";
 import { MsgExecuteContract } from "cosmjs-types/cosmwasm/wasm/v1/tx";
+import Long from "long";
 import { maxUint256, publicActions, WalletClient } from "viem";
 
 import chains from "./chains";
@@ -766,6 +767,23 @@ export class SkipRouter {
     }
 
     const message = getEncodeObjectFromMultiChainMessage(multiChainMessage);
+
+    if (message.typeUrl === "/ibc.applications.transfer.v1.MsgTransfer") {
+      const endpoint = await this.getRpcEndpointForChain(
+        multiChainMessage.chainID,
+      );
+
+      const client = await StargateClient.connect(endpoint);
+
+      const currentHeight = await client.getHeight();
+
+      message.value.timeoutHeight = {
+        revisionHeight: Long.fromNumber(currentHeight).add(100),
+        revisionNumber: Long.fromNumber(currentHeight).add(100),
+      };
+
+      message.value.timeoutTimestamp = Long.fromNumber(0);
+    }
 
     const pubkey = encodePubkey(
       encodeSecp256k1Pubkey(accountFromSigner.pubkey),
