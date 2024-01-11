@@ -129,7 +129,7 @@ export type RouteRequestBaseJSON = {
 
   cumulative_affiliate_fee_bps?: string;
   swap_venue?: SwapVenueJSON;
-  unsafe?: boolean;
+  allow_unsafe?: boolean;
   client_id?: string;
 };
 
@@ -155,7 +155,7 @@ export type RouteRequestBase = {
 
   cumulativeAffiliateFeeBPS?: string;
   swapVenue?: SwapVenue;
-  unsafe?: boolean;
+  allowUnsafe?: boolean;
   clientID?: string;
 };
 
