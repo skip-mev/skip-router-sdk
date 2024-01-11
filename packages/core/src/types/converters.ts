@@ -377,7 +377,7 @@ export function routeRequestFromJSON(
       swapVenue: routeRequestJSON.swap_venue
         ? swapVenueFromJSON(routeRequestJSON.swap_venue)
         : undefined,
-      unsafe: routeRequestJSON.unsafe,
+      allowUnsafe: routeRequestJSON.allow_unsafe,
       clientID: routeRequestJSON.client_id,
     };
   }
@@ -393,7 +393,7 @@ export function routeRequestFromJSON(
     swapVenue: routeRequestJSON.swap_venue
       ? swapVenueFromJSON(routeRequestJSON.swap_venue)
       : undefined,
-    unsafe: routeRequestJSON.unsafe,
+    allowUnsafe: routeRequestJSON.allow_unsafe,
     clientID: routeRequestJSON.client_id,
   };
 }
@@ -413,7 +413,7 @@ export function routeRequestToJSON(
       swap_venue: routeRequest.swapVenue
         ? swapVenueToJSON(routeRequest.swapVenue)
         : undefined,
-      unsafe: routeRequest.unsafe,
+      allow_unsafe: routeRequest.allowUnsafe,
       client_id: routeRequest.clientID,
     };
   }
@@ -429,7 +429,7 @@ export function routeRequestToJSON(
     swap_venue: routeRequest.swapVenue
       ? swapVenueToJSON(routeRequest.swapVenue)
       : undefined,
-    unsafe: routeRequest.unsafe,
+    allow_unsafe: routeRequest.allowUnsafe,
     client_id: routeRequest.clientID,
   };
 }
