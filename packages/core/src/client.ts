@@ -371,6 +371,8 @@ export class SkipRouter {
 
         const fee = calculateFee(Math.ceil(parseFloat(estimatedGas)), gasPrice);
 
+        console.log(fee);
+
         if (!fee) {
           throw new Error("Unable to get fee for message");
         }
