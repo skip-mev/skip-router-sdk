@@ -1,5 +1,11 @@
 # @skip-router/core
 
+## 1.2.5
+
+### Patch Changes
+
+- fbc169c: Define valid values for experimental features array
+
 ## 1.2.4
 
 ### Patch Changes
