@@ -10,6 +10,8 @@ import { MsgTransfer } from "cosmjs-types/ibc/applications/transfer/v1/tx";
 
 import { MultiChainMsg } from "./types";
 
+export const DEFAULT_GAS_MULTIPLIER = 1.5;
+
 export function getEncodeObjectFromMultiChainMessage(
   message: MultiChainMsg,
 ): EncodeObject {
@@ -93,6 +95,7 @@ export async function getGasAmountForMessage(
   client: SigningCosmWasmClient,
   signerAddress: string,
   message: MultiChainMsg,
+  multiplier: number = DEFAULT_GAS_MULTIPLIER,
 ) {
   if (
     message.chainID.includes("evmos") ||
@@ -109,7 +112,7 @@ export async function getGasAmountForMessage(
 
   const estimatedGas = await client.simulate(signerAddress, [encodeMsg], "");
 
-  const estimatedGasWithBuffer = estimatedGas * 1.5;
+  const estimatedGasWithBuffer = estimatedGas * multiplier;
 
-  return estimatedGasWithBuffer.toFixed(0);
+  return Math.ceil(estimatedGasWithBuffer).toFixed(0);
 }

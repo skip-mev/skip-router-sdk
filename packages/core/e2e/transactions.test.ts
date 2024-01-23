@@ -51,7 +51,10 @@ describe("transaction execution", () => {
       signerAddress,
       signer,
       message,
-      feeAmount: coin(1000000, "uatom"),
+      fee: {
+        amount: [coin(1000000, "uatom")],
+        gas: "200000",
+      },
     });
 
     expect(isDeliverTxSuccess(tx)).toBe(true);
@@ -91,7 +94,10 @@ describe("transaction execution", () => {
       signerAddress,
       signer,
       message,
-      feeAmount: coin(1000000, "uatom"),
+      fee: {
+        amount: [coin(1000000, "uatom")],
+        gas: "200000",
+      },
     });
 
     expect(isDeliverTxSuccess(tx)).toBe(true);
@@ -137,7 +143,10 @@ describe("transaction execution", () => {
       // @ts-ignore
       signer,
       message,
-      feeAmount: coin(1000000, "inj"),
+      fee: {
+        amount: [coin(1000000, "inj")],
+        gas: "200000",
+      },
     });
 
     expect(isDeliverTxSuccess(tx)).toBe(true);
@@ -185,7 +194,10 @@ describe("transaction execution", () => {
       // @ts-ignore
       signer,
       message,
-      feeAmount: coin(10000000, "aevmos"),
+      fee: {
+        amount: [coin(10000000, "aevmos")],
+        gas: "200000",
+      },
     });
 
     expect(isDeliverTxSuccess(tx)).toBe(true);
@@ -225,7 +237,10 @@ describe("transaction execution", () => {
       signerAddress,
       signer,
       message,
-      feeAmount: coin(1000000, "uosmo"),
+      fee: {
+        amount: [coin(1000000, "uosmo")],
+        gas: "200000",
+      },
     });
 
     // CheckTx must pass but the execution will fail in DeliverTx due to invalid contract address
@@ -270,7 +285,10 @@ describe("transaction execution", () => {
       signerAddress,
       signer,
       message,
-      feeAmount: coin(1000000, "uosmo"),
+      fee: {
+        amount: [coin(1000000, "uosmo")],
+        gas: "200000",
+      },
     });
 
     // CheckTx must pass but the execution will fail in DeliverTx due to invalid contract address

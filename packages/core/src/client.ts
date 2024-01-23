@@ -9,8 +9,8 @@ import {
 } from "@cosmjs/cosmwasm-stargate";
 import { fromBase64 } from "@cosmjs/encoding";
 import { Int53 } from "@cosmjs/math";
+import { Decimal } from "@cosmjs/math";
 import {
-  Coin,
   encodePubkey,
   isOfflineDirectSigner,
   makeAuthInfoBytes,
@@ -20,11 +20,12 @@ import {
   Registry,
   TxBodyEncodeObject,
 } from "@cosmjs/proto-signing";
-import { coin } from "@cosmjs/proto-signing";
 import {
   AminoTypes,
+  calculateFee,
   createDefaultAminoConverters,
   defaultRegistryTypes,
+  GasPrice,
   SignerData,
   StargateClient,
   StdFee,
@@ -46,9 +47,11 @@ import { maxUint256, publicActions, WalletClient } from "viem";
 
 import chains from "./chains";
 import { erc20ABI } from "./constants/abis";
+import { DEFAULT_GAS_DENOM_OVERRIDES } from "./constants/constants";
 import { createTransaction } from "./injective";
 import { RequestClient } from "./request-client";
 import {
+  DEFAULT_GAS_MULTIPLIER,
   getEncodeObjectFromMultiChainMessage,
   getEncodeObjectFromMultiChainMessageInjective,
   getGasAmountForMessage,
@@ -75,6 +78,7 @@ import {
   ChainJSON,
   DenomWithChainID,
   EvmTx,
+  FeeAsset,
   Msg,
   msgFromJSON,
   MsgsRequest,
@@ -148,13 +152,16 @@ export type ExecuteRouteOptions = {
   ) => Promise<void>;
   validateGasBalance?: boolean;
   slippageTolerancePercent?: string;
+  // If `getGasPrice` is undefined, or returns undefined, the router will attempt to set the recommended gas price
+  getGasPrice?: (chainID: string) => Promise<GasPrice | undefined>;
+  gasAmountMultiplier?: number;
 };
 
 export type ExecuteMultiChainMessageOptions = {
   signerAddress: string;
   signer: OfflineSigner;
   message: MultiChainMsg;
-  feeAmount: Coin;
+  fee: StdFee;
 };
 
 export type SignMultiChainMessageDirectOptions = {
@@ -289,7 +296,13 @@ export class SkipRouter {
   }
 
   async executeRoute(options: ExecuteRouteOptions) {
-    const { route, userAddresses, validateGasBalance } = options;
+    const {
+      route,
+      userAddresses,
+      validateGasBalance,
+      getGasPrice,
+      gasAmountMultiplier = DEFAULT_GAS_MULTIPLIER,
+    } = options;
 
     let getOfflineSigner = this.getCosmosSigner;
     if (options.getCosmosSigner) {
@@ -316,7 +329,13 @@ export class SkipRouter {
 
     if (validateGasBalance) {
       // check balances on chains where a tx is initiated
-      await this.validateGasBalances(messages, userAddresses, getOfflineSigner);
+      await this.validateGasBalances(
+        messages,
+        userAddresses,
+        getOfflineSigner,
+        getGasPrice,
+        gasAmountMultiplier,
+      );
     }
 
     // execute txs
@@ -326,16 +345,22 @@ export class SkipRouter {
       if ("multiChainMsg" in message) {
         const { multiChainMsg } = message;
 
-        const feeInfo = this.getFeeInfoForChain(multiChainMsg.chainID);
+        const signer = await getOfflineSigner(multiChainMsg.chainID);
 
-        let averageGasPrice = 0;
-        if (feeInfo.low_gas_price) {
-          averageGasPrice = feeInfo.low_gas_price;
-        } else if (feeInfo.average_gas_price) {
-          averageGasPrice = feeInfo.average_gas_price;
+        let gasPrice: GasPrice | undefined;
+        if (getGasPrice) {
+          gasPrice = await getGasPrice(multiChainMsg.chainID);
         }
 
-        const signer = await getOfflineSigner(multiChainMsg.chainID);
+        if (!gasPrice) {
+          gasPrice = await this.getRecommendedGasPrice(multiChainMsg.chainID);
+
+          if (!gasPrice) {
+            throw new Error(
+              `Unable to get gas price for chain: ${multiChainMsg.chainID}`,
+            );
+          }
+        }
 
         const endpoint = await this.getRpcEndpointForChain(
           multiChainMsg.chainID,
@@ -350,15 +375,22 @@ export class SkipRouter {
           client,
           userAddresses[multiChainMsg.chainID],
           multiChainMsg,
+          gasAmountMultiplier,
         );
 
-        const feeAmount = averageGasPrice * parseInt(estimatedGas);
+        const fee = calculateFee(Math.ceil(parseFloat(estimatedGas)), gasPrice);
+
+        console.log(fee);
+
+        if (!fee) {
+          throw new Error("Unable to get fee for message");
+        }
 
         const tx = await this.executeMultiChainMessage({
           signerAddress: userAddresses[multiChainMsg.chainID],
           signer,
           message: multiChainMsg,
-          feeAmount: coin(feeAmount.toFixed(0), feeInfo.denom),
+          fee,
         });
 
         if (options.onTransactionBroadcast) {
@@ -424,7 +456,7 @@ export class SkipRouter {
   }
 
   async executeMultiChainMessage(options: ExecuteMultiChainMessageOptions) {
-    const { signerAddress, signer, message, feeAmount } = options;
+    const { signerAddress, signer, message, fee } = options;
 
     const accounts = await signer.getAccounts();
     const accountFromSigner = accounts.find(
@@ -446,23 +478,13 @@ export class SkipRouter {
       signerAddress,
       message.chainID,
     );
-
-    const gas = await getGasAmountForMessage(
-      stargateClient,
-      signerAddress,
-      message,
-    );
-
     let rawTx: TxRaw;
     if (isOfflineDirectSigner(signer)) {
       rawTx = await this.signMultiChainMessageDirect({
         signerAddress,
         signer,
         multiChainMessage: message,
-        fee: {
-          amount: [feeAmount],
-          gas,
-        },
+        fee,
         signerData: {
           accountNumber,
           sequence,
@@ -474,10 +496,7 @@ export class SkipRouter {
         signerAddress,
         signer,
         multiChainMessage: message,
-        fee: {
-          amount: [feeAmount],
-          gas,
-        },
+        fee,
         signerData: {
           accountNumber,
           sequence,
@@ -1124,24 +1143,188 @@ export class SkipRouter {
     return endpoint;
   }
 
-  getFeeInfoForChain(chainID: string) {
+  async getFeeForMessage(
+    msg: MultiChainMsg,
+    gasAmountMultiplier: number = DEFAULT_GAS_MULTIPLIER,
+    signer?: OfflineSigner,
+    gasPrice?: GasPrice,
+  ) {
+    if (!gasPrice) {
+      gasPrice = await this.getRecommendedGasPrice(msg.chainID);
+
+      if (!gasPrice) {
+        throw new Error(`Unable to get gas price for chain: ${msg.chainID}`);
+      }
+    }
+
+    if (!signer && this.getCosmosSigner) {
+      signer = await this.getCosmosSigner(msg.chainID);
+    }
+
+    if (!signer) {
+      throw new Error(
+        "Unable to get Cosmos signer. Must pass a signer to getFeeForMessage, or configure the getCosmosSigner option in SkipRouterOptions when instantiating SkipRouter",
+      );
+    }
+
+    const accounts = await signer.getAccounts();
+    const signerAddress = accounts[0].address;
+
+    const endpoint = await this.getRpcEndpointForChain(msg.chainID);
+
+    const client = await SigningCosmWasmClient.connectWithSigner(
+      endpoint,
+      signer,
+    );
+
+    const gasNeeded = await getGasAmountForMessage(
+      client,
+      signerAddress,
+      msg,
+      gasAmountMultiplier,
+    );
+
+    const fee = calculateFee(Math.ceil(parseFloat(gasNeeded)), gasPrice);
+
+    if (!fee) {
+      throw new Error("Unable to get fee for message");
+    }
+
+    return fee;
+  }
+
+  async getRecommendedGasPrice(chainID: string) {
+    const feeInfo = await this.getFeeInfoForChain(chainID);
+
+    if (!feeInfo) {
+      return undefined;
+    }
+
+    let price = feeInfo.gasPrice.average;
+    if (price === "") {
+      price = feeInfo.gasPrice.high;
+    }
+    if (price === "") {
+      price = feeInfo.gasPrice.low;
+    }
+
+    return new GasPrice(Decimal.fromUserInput(price, 18), feeInfo.denom);
+  }
+
+  async getFeeInfoForChain(chainID: string): Promise<FeeAsset | undefined> {
+    const skipChains = await this.chains();
+
+    const skipChain = skipChains.find((chain) => chain.chainID === chainID);
+
+    if (!skipChain) {
+      return undefined;
+    }
+
+    const defaultGasToken = await this.getDefaultGasTokenForChain(chainID);
+
+    if (!defaultGasToken) {
+      return undefined;
+    }
+
+    const skipFeeInfo = skipChain.feeAssets.find(
+      (skipFee) => skipFee.denom === defaultGasToken,
+    );
+
+    if (skipFeeInfo && skipFeeInfo.gasPrice !== null) {
+      return skipFeeInfo;
+    }
+
+    const chain = chains().find((chain) => chain.chain_id === chainID);
+    if (!chain) {
+      return undefined;
+    }
+
+    if (!chain.fees) {
+      return undefined;
+    }
+
+    const registryFeeInfo = chain.fees.fee_tokens.find(
+      (feeToken) => feeToken.denom === defaultGasToken,
+    );
+
+    if (!registryFeeInfo) {
+      return undefined;
+    }
+
+    return {
+      denom: registryFeeInfo.denom,
+      gasPrice: {
+        low: registryFeeInfo.low_gas_price
+          ? `${registryFeeInfo.low_gas_price}`
+          : "",
+        average: registryFeeInfo.average_gas_price
+          ? `${registryFeeInfo.average_gas_price}`
+          : "",
+        high: registryFeeInfo.high_gas_price
+          ? `${registryFeeInfo.high_gas_price}`
+          : "",
+      },
+    };
+  }
+
+  private getDefaultGasTokenForChain(chainID: string) {
+    const gasDenom = DEFAULT_GAS_DENOM_OVERRIDES[chainID];
+    if (gasDenom) {
+      return gasDenom as string;
+    }
+
+    const chain = chains().find((chain) => chain.chain_id === chainID);
+    if (!chain) {
+      return undefined;
+    }
+
+    if (!chain.fees) {
+      return undefined;
+    }
+
+    // first check if the chain has a staking token, this is often the "default" gas token
+    const stakingTokens = this.getStakingTokensForChain(chainID);
+    if (stakingTokens && stakingTokens.length > 0) {
+      const feeAsset = chain.fees.fee_tokens.find(
+        (feeToken) => feeToken.denom === stakingTokens[0].denom,
+      );
+
+      if (feeAsset) {
+        return feeAsset.denom;
+      }
+    }
+
+    // next attempt to get the first non-IBC asset in the fee_tokens array, at least this token will be native to the chain
+    const nonIBCAsset = chain.fees.fee_tokens.find(
+      (token) => !token.denom.startsWith("ibc/"),
+    );
+    if (nonIBCAsset) {
+      return nonIBCAsset.denom;
+    }
+
+    // if all else fails, just return the first token in the array
+    return chain.fees.fee_tokens[0].denom;
+  }
+
+  private getStakingTokensForChain(chainID: string) {
     const chain = chains().find((chain) => chain.chain_id === chainID);
     if (!chain) {
       throw new Error(`Failed to find chain with ID ${chainID} in registry`);
     }
 
-    const feeInfo = chain.fees?.fee_tokens[0];
-    if (!feeInfo) {
-      throw new Error("No fee info found");
+    if (!chain.staking) {
+      return undefined;
     }
 
-    return feeInfo;
+    return chain.staking.staking_tokens;
   }
 
   private async validateGasBalances(
     messages: Msg[],
     userAddresses: Record<string, string>,
     getOfflineSigner: (chainID: string) => Promise<OfflineSigner>,
+    getGasPrice?: (chainID: string) => Promise<GasPrice | undefined>,
+    gasAmountMultiplier?: number,
   ) {
     for (let i = 0; i < messages.length; i++) {
       const message = messages[i];
@@ -1158,8 +1341,11 @@ export class SkipRouter {
 
         await this.validateCosmosGasBalance(
           client,
+          signer,
           userAddresses[message.multiChainMsg.chainID],
           message.multiChainMsg,
+          getGasPrice,
+          gasAmountMultiplier,
         );
       }
     }
@@ -1167,30 +1353,33 @@ export class SkipRouter {
 
   private async validateCosmosGasBalance(
     client: SigningCosmWasmClient,
+    signer: OfflineSigner,
     signerAddress: string,
     message: MultiChainMsg,
+    getGasPrice?: (chainID: string) => Promise<GasPrice | undefined>,
+    gasAmountMultiplier?: number,
   ) {
-    const feeInfo = this.getFeeInfoForChain(message.chainID);
-
-    const gasNeeded = await getGasAmountForMessage(
-      client,
-      signerAddress,
-      message,
-    );
-    let averageGasPrice = 0;
-    if (feeInfo.low_gas_price) {
-      averageGasPrice = feeInfo.low_gas_price;
-    } else if (feeInfo.average_gas_price) {
-      averageGasPrice = feeInfo.average_gas_price;
+    let gasPrice: GasPrice | undefined;
+    if (getGasPrice) {
+      gasPrice = await getGasPrice(message.chainID);
     }
 
-    const amountNeeded = averageGasPrice * parseInt(gasNeeded);
+    const fee = await this.getFeeForMessage(
+      message,
+      gasAmountMultiplier,
+      signer,
+      gasPrice,
+    );
 
-    const balance = await client.getBalance(signerAddress, feeInfo.denom);
+    const balance = await client.getBalance(signerAddress, fee.amount[0].denom);
 
-    if (parseInt(balance.amount) < amountNeeded) {
+    if (parseInt(balance.amount) < parseInt(fee.amount[0].amount)) {
       throw new Error(
-        `Insufficient fee token to initiate transfer on ${message.chainID}. Need ${amountNeeded} ${feeInfo.denom}, but only have ${balance.amount} ${feeInfo.denom}.`,
+        `Insufficient fee token to initiate transfer on ${
+          message.chainID
+        }. Need ${parseInt(fee.amount[0].amount)} ${
+          fee.amount[0].denom
+        }, but only have ${balance.amount} ${fee.amount[0].denom}.`,
       );
     }
   }
