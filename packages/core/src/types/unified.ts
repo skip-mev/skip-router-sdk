@@ -133,7 +133,7 @@ export type RouteRequestBaseJSON = {
   swap_venue?: SwapVenueJSON;
   allow_unsafe?: boolean;
   client_id?: string;
-  experimental_features?: string[];
+  experimental_features?: ExperimentalFeature[];
 };
 
 export type RouteRequestGivenInJSON = RouteRequestBaseJSON & {
@@ -160,7 +160,7 @@ export type RouteRequestBase = {
   swapVenue?: SwapVenue;
   allowUnsafe?: boolean;
   clientID?: string;
-  experimentalFeatures?: string[];
+  experimentalFeatures?: ExperimentalFeature[];
 };
 
 export type RouteRequestGivenIn = RouteRequestBase & {
@@ -176,6 +176,8 @@ export type RouteRequestGivenOut = RouteRequestBase & {
 export type RouteRequest = RouteRequestGivenIn | RouteRequestGivenOut;
 
 export type RouteWarningType = "LOW_INFO_WARNING" | "BAD_PRICE_WARNING";
+
+export type ExperimentalFeature = "cctp";
 
 export type RouteWarning = {
   type: RouteWarningType;
