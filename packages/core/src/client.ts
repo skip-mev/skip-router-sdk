@@ -9,6 +9,7 @@ import {
 } from "@cosmjs/cosmwasm-stargate";
 import { fromBase64 } from "@cosmjs/encoding";
 import { Int53 } from "@cosmjs/math";
+import { Decimal } from "@cosmjs/math";
 import {
   encodePubkey,
   isOfflineDirectSigner,
@@ -46,6 +47,7 @@ import { maxUint256, publicActions, WalletClient } from "viem";
 
 import chains from "./chains";
 import { erc20ABI } from "./constants/abis";
+import { DEFAULT_GAS_DENOM_OVERRIDES } from "./constants/constants";
 import { createTransaction } from "./injective";
 import { RequestClient } from "./request-client";
 import {
@@ -150,6 +152,7 @@ export type ExecuteRouteOptions = {
   ) => Promise<void>;
   validateGasBalance?: boolean;
   slippageTolerancePercent?: string;
+  // If `getGasPrice` is undefined, or returns undefined, the router will attempt to set the recommended gas price
   getGasPrice?: (chainID: string) => Promise<GasPrice | undefined>;
   gasAmountMultiplier?: number;
 };
@@ -351,6 +354,12 @@ export class SkipRouter {
 
         if (!gasPrice) {
           gasPrice = await this.getRecommendedGasPrice(multiChainMsg.chainID);
+
+          if (!gasPrice) {
+            throw new Error(
+              `Unable to get gas price for chain: ${multiChainMsg.chainID}`,
+            );
+          }
         }
 
         const endpoint = await this.getRpcEndpointForChain(
@@ -1142,6 +1151,10 @@ export class SkipRouter {
   ) {
     if (!gasPrice) {
       gasPrice = await this.getRecommendedGasPrice(msg.chainID);
+
+      if (!gasPrice) {
+        throw new Error(`Unable to get gas price for chain: ${msg.chainID}`);
+      }
     }
 
     if (!signer && this.getCosmosSigner) {
@@ -1183,6 +1196,10 @@ export class SkipRouter {
   async getRecommendedGasPrice(chainID: string) {
     const feeInfo = await this.getFeeInfoForChain(chainID);
 
+    if (!feeInfo) {
+      return undefined;
+    }
+
     let price = feeInfo.gasPrice.average;
     if (price === "") {
       price = feeInfo.gasPrice.high;
@@ -1191,27 +1208,22 @@ export class SkipRouter {
       price = feeInfo.gasPrice.low;
     }
 
-    return GasPrice.fromString(`${price}${feeInfo.denom}`);
+    return new GasPrice(Decimal.fromUserInput(price, 18), feeInfo.denom);
   }
 
-  async getFeeInfoForChain(chainID: string): Promise<FeeAsset> {
-    const chain = chains().find((chain) => chain.chain_id === chainID);
-    if (!chain) {
-      throw new Error(`Failed to find chain with ID ${chainID} in registry`);
-    }
-
+  async getFeeInfoForChain(chainID: string): Promise<FeeAsset | undefined> {
     const skipChains = await this.chains();
 
     const skipChain = skipChains.find((chain) => chain.chainID === chainID);
 
     if (!skipChain) {
-      throw new Error(`Failed to find chain with ID ${chainID}`);
+      return undefined;
     }
 
-    const defaultGasToken = this.getDefaultGasTokenForChain(chainID);
+    const defaultGasToken = await this.getDefaultGasTokenForChain(chainID);
 
     if (!defaultGasToken) {
-      throw new Error(`Failed to determine gas denom for chain ${chainID}`);
+      return undefined;
     }
 
     const skipFeeInfo = skipChain.feeAssets.find(
@@ -1222,8 +1234,13 @@ export class SkipRouter {
       return skipFeeInfo;
     }
 
+    const chain = chains().find((chain) => chain.chain_id === chainID);
+    if (!chain) {
+      return undefined;
+    }
+
     if (!chain.fees) {
-      throw new Error("No fee info found");
+      return undefined;
     }
 
     const registryFeeInfo = chain.fees.fee_tokens.find(
@@ -1231,7 +1248,7 @@ export class SkipRouter {
     );
 
     if (!registryFeeInfo) {
-      throw new Error("No fee info found");
+      return undefined;
     }
 
     return {
@@ -1251,9 +1268,14 @@ export class SkipRouter {
   }
 
   private getDefaultGasTokenForChain(chainID: string) {
+    const gasDenom = DEFAULT_GAS_DENOM_OVERRIDES[chainID];
+    if (gasDenom) {
+      return gasDenom as string;
+    }
+
     const chain = chains().find((chain) => chain.chain_id === chainID);
     if (!chain) {
-      throw new Error(`Failed to find chain with ID ${chainID} in registry`);
+      return undefined;
     }
 
     if (!chain.fees) {
@@ -1267,7 +1289,9 @@ export class SkipRouter {
         (feeToken) => feeToken.denom === stakingTokens[0].denom,
       );
 
-      return feeAsset?.denom;
+      if (feeAsset) {
+        return feeAsset.denom;
+      }
     }
 
     // next attempt to get the first non-IBC asset in the fee_tokens array, at least this token will be native to the chain
