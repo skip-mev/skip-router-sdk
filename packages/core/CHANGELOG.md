@@ -1,5 +1,13 @@
 # @skip-router/core
 
+## 1.2.4
+
+### Patch Changes
+
+- 803eb8b: rename unsafe to allow_unsafe
+- 1ed5e7b: Add `getFeeForMessage`, `getRecommendedGasPrice`, and `getFeeInfoForChain` methods to SkipRouter
+- 738dd7d: Update router to support CCTP bridging operations returned by the API
+
 ## 1.2.3
 
 ### Patch Changes
