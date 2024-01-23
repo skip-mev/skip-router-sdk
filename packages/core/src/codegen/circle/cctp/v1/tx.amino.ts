@@ -1,3 +1,4 @@
+//@ts-nocheck
 /* eslint-disable */
 import { MsgDepositForBurn } from "./tx";
 export const AminoConverter = {

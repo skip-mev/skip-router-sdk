@@ -12,6 +12,9 @@
     "eslintDisable": {
       "disableAll": true
     },
+    "tsDisable": {
+      "disableAll": true
+    },
     "prototypes": {
       "enableRegistryLoader": true,
       "enabled": true,

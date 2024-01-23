@@ -1,3 +1,4 @@
+//@ts-nocheck
 /* eslint-disable */
 import { GeneratedType, Registry } from "@cosmjs/proto-signing";
 import { MsgDepositForBurn } from "./tx";

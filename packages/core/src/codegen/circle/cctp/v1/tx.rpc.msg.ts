@@ -1,3 +1,4 @@
+//@ts-nocheck
 /* eslint-disable */
 import { Rpc } from "../../../helpers";
 import { BinaryReader } from "../../../binary";
