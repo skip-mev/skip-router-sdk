@@ -1,5 +1,11 @@
 # @skip-router/core
 
+## 1.2.6
+
+### Patch Changes
+
+- 505ff19: Fix type definitions from generated code
+
 ## 1.2.5
 
 ### Patch Changes
