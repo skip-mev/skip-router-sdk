@@ -1,3 +1,4 @@
+//@ts-nocheck
 /* eslint-disable */
 import * as _0 from "./cctp/v1/tx";
 import * as _9 from "./cctp/v1/tx.amino";

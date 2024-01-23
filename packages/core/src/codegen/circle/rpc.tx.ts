@@ -1,3 +1,4 @@
+//@ts-nocheck
 /* eslint-disable */
 import { Rpc } from "../helpers";
 export const createRPCMsgClient = async ({

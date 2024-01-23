@@ -1,3 +1,4 @@
+//@ts-nocheck
 /* eslint-disable */
 import * as _2 from "./api/annotations";
 import * as _3 from "./api/http";
