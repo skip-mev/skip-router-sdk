@@ -6,6 +6,8 @@ import {
   AssetJSON,
   AxelarTransfer,
   AxelarTransferJSON,
+  CCTPTransfer,
+  CCTPTransferJSON,
   EvmTx,
   EvmTxJSON,
   MultiChainMsg,
@@ -131,6 +133,7 @@ export type RouteRequestBaseJSON = {
   swap_venue?: SwapVenueJSON;
   allow_unsafe?: boolean;
   client_id?: string;
+  experimental_features?: string[];
 };
 
 export type RouteRequestGivenInJSON = RouteRequestBaseJSON & {
@@ -157,6 +160,7 @@ export type RouteRequestBase = {
   swapVenue?: SwapVenue;
   allowUnsafe?: boolean;
   clientID?: string;
+  experimentalFeatures?: string[];
 };
 
 export type RouteRequestGivenIn = RouteRequestBase & {
@@ -181,12 +185,14 @@ export type RouteWarning = {
 export type OperationJSON =
   | { transfer: TransferJSON }
   | { swap: SwapJSON }
-  | { axelar_transfer: AxelarTransferJSON };
+  | { axelar_transfer: AxelarTransferJSON }
+  | { cctp_transfer: CCTPTransferJSON };
 
 export type Operation =
   | { transfer: Transfer }
   | { swap: Swap }
-  | { axelarTransfer: AxelarTransfer };
+  | { axelarTransfer: AxelarTransfer }
+  | { cctpTransfer: CCTPTransfer };
 
 export type RouteResponseJSON = {
   source_asset_denom: string;

@@ -46,6 +46,11 @@ import Long from "long";
 import { maxUint256, publicActions, WalletClient } from "viem";
 
 import chains from "./chains";
+// import {
+//   MsgDepositForBurn,
+//   MsgDepositForBurnProtoMsg,
+// } from "./codegen/circle/cctp/v1/tx";
+import { circle } from "./codegen";
 import { erc20ABI } from "./constants/abis";
 import { DEFAULT_GAS_DENOM_OVERRIDES } from "./constants/constants";
 import { createTransaction } from "./injective";
@@ -212,6 +217,8 @@ export class SkipRouter {
       MsgExecuteContract,
     );
 
+    circle.cctp.v1.load(this.registry);
+
     this.endpointOptions = options.endpointOptions ?? {};
     this.getCosmosSigner = options.getCosmosSigner;
     this.getEVMSigner = options.getEVMSigner;
@@ -369,6 +376,9 @@ export class SkipRouter {
         const client = await SigningCosmWasmClient.connectWithSigner(
           endpoint,
           signer,
+          {
+            registry: this.registry,
+          },
         );
 
         const estimatedGas = await getGasAmountForMessage(
@@ -472,6 +482,9 @@ export class SkipRouter {
     const stargateClient = await SigningCosmWasmClient.connectWithSigner(
       endpoint,
       signer,
+      {
+        registry: this.registry,
+      },
     );
 
     const { accountNumber, sequence } = await this.getAccountNumberAndSequence(
@@ -1337,6 +1350,9 @@ export class SkipRouter {
         const client = await SigningCosmWasmClient.connectWithSigner(
           endpoint,
           signer,
+          {
+            registry: this.registry,
+          },
         );
 
         await this.validateCosmosGasBalance(

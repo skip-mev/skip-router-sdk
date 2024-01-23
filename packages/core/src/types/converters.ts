@@ -44,6 +44,8 @@ import {
   AssetOrErrorJSON,
   AxelarTransfer,
   AxelarTransferJSON,
+  CCTPTransfer,
+  CCTPTransferJSON,
   CosmWasmContractMsg,
   CosmWasmContractMsgJSON,
   DenomWithChainID,
@@ -379,6 +381,7 @@ export function routeRequestFromJSON(
         : undefined,
       allowUnsafe: routeRequestJSON.allow_unsafe,
       clientID: routeRequestJSON.client_id,
+      experimentalFeatures: routeRequestJSON.experimental_features,
     };
   }
 
@@ -395,6 +398,7 @@ export function routeRequestFromJSON(
       : undefined,
     allowUnsafe: routeRequestJSON.allow_unsafe,
     clientID: routeRequestJSON.client_id,
+    experimentalFeatures: routeRequestJSON.experimental_features,
   };
 }
 
@@ -415,6 +419,7 @@ export function routeRequestToJSON(
         : undefined,
       allow_unsafe: routeRequest.allowUnsafe,
       client_id: routeRequest.clientID,
+      experimental_features: routeRequest.experimentalFeatures,
     };
   }
 
@@ -431,6 +436,7 @@ export function routeRequestToJSON(
       : undefined,
     allow_unsafe: routeRequest.allowUnsafe,
     client_id: routeRequest.clientID,
+    experimental_features: routeRequest.experimentalFeatures,
   };
 }
 
@@ -569,6 +575,10 @@ export function operationFromJSON(operationJSON: OperationJSON): Operation {
     };
   }
 
+  if ("cctp_transfer" in operationJSON) {
+    return { cctpTransfer: cctpTransferFromJSON(operationJSON.cctp_transfer) };
+  }
+
   return { swap: swapFromJSON(operationJSON.swap) };
 }
 
@@ -579,6 +589,10 @@ export function operationToJSON(operation: Operation): OperationJSON {
 
   if ("axelarTransfer" in operation) {
     return { axelar_transfer: axelarTransferToJSON(operation.axelarTransfer) };
+  }
+
+  if ("cctpTransfer" in operation) {
+    return { cctp_transfer: cctpTransferToJSON(operation.cctpTransfer) };
   }
 
   return { swap: swapToJSON(operation.swap) };
@@ -1036,6 +1050,22 @@ export function axelarTransferToJSON(
     fee_amount: axelarTransfer.feeAmount,
     fee_asset: assetToJSON(axelarTransfer.feeAsset),
     is_testnet: axelarTransfer.isTestnet,
+  };
+}
+
+export function cctpTransferFromJSON(value: CCTPTransferJSON): CCTPTransfer {
+  return {
+    fromChainID: value.from_chain_id,
+    toChainID: value.to_chain_id,
+    burnToken: value.burn_token,
+  };
+}
+
+export function cctpTransferToJSON(value: CCTPTransfer): CCTPTransferJSON {
+  return {
+    from_chain_id: value.fromChainID,
+    to_chain_id: value.toChainID,
+    burn_token: value.burnToken,
   };
 }
 

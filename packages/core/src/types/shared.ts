@@ -110,6 +110,18 @@ export type MultiChainMsg = {
   msgTypeURL: string;
 };
 
+export type CCTPTransferJSON = {
+  from_chain_id: string;
+  to_chain_id: string;
+  burn_token: string;
+};
+
+export type CCTPTransfer = {
+  fromChainID: string;
+  toChainID: string;
+  burnToken: string;
+};
+
 export type SwapVenueJSON = {
   name: string;
   chain_id: string;
