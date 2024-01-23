@@ -1,5 +1,11 @@
 # @skip-router/core
 
+## 1.2.7
+
+### Patch Changes
+
+- bdb8183: Fix type error
+
 ## 1.2.6
 
 ### Patch Changes
