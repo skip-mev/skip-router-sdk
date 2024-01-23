@@ -8,6 +8,7 @@ import { MsgSend } from "cosmjs-types/cosmos/bank/v1beta1/tx";
 import { MsgExecuteContract } from "cosmjs-types/cosmwasm/wasm/v1/tx";
 import { MsgTransfer } from "cosmjs-types/ibc/applications/transfer/v1/tx";
 
+import { MsgDepositForBurn } from "./codegen/circle/cctp/v1/tx";
 import { MultiChainMsg } from "./types";
 
 export function getEncodeObjectFromMultiChainMessage(
@@ -51,6 +52,13 @@ export function getEncodeObjectFromMultiChainMessage(
         toAddress: msgJson.to_address,
         amount: msgJson.amount,
       }),
+    };
+  }
+
+  if (message.msgTypeURL === "/circle.cctp.v1.MsgDepositForBurn") {
+    return {
+      typeUrl: message.msgTypeURL,
+      value: MsgDepositForBurn.fromAmino(msgJson),
     };
   }
 

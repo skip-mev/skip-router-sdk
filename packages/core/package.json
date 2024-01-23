@@ -42,6 +42,7 @@
   "devDependencies": {
     "@cosmjs/faucet": "^0.31.1",
     "@cosmjs/faucet-client": "^0.31.1",
+    "@protobufs/gogoproto": "^0.0.10",
     "@types/jest": "^29.5.3",
     "@typescript-eslint/eslint-plugin": "^6.4.0",
     "@typescript-eslint/parser": "^6.4.0",
