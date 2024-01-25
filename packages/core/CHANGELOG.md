@@ -1,5 +1,11 @@
 # @skip-router/core
 
+## 1.2.8
+
+### Patch Changes
+
+- 7411597: Add bridges endpoint and route parameter
+
 ## 1.2.7
 
 ### Patch Changes
