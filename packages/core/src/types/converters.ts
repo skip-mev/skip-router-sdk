@@ -461,6 +461,7 @@ export function transferFromJSON(transferJSON: TransferJSON): Transfer {
     feeAmount: transferJSON.fee_amount,
     usdFeeAmount: transferJSON.usd_fee_amount,
     feeAsset: transferJSON.fee_asset && assetFromJSON(transferJSON.fee_asset),
+    bridgeID: transferJSON.bridge_id,
   };
 }
 
@@ -475,6 +476,7 @@ export function transferToJSON(transfer: Transfer): TransferJSON {
     fee_amount: transfer.feeAmount,
     usd_fee_amount: transfer.usdFeeAmount,
     fee_asset: transfer.feeAsset && assetToJSON(transfer.feeAsset),
+    bridge_id: transfer.bridgeID,
   };
 }
 
@@ -1044,6 +1046,7 @@ export function axelarTransferFromJSON(
     feeAmount: axelarTransferJSON.fee_amount,
     feeAsset: assetFromJSON(axelarTransferJSON.fee_asset),
     isTestnet: axelarTransferJSON.is_testnet,
+    bridgeID: axelarTransferJSON.bridge_id,
   };
 }
 
@@ -1060,6 +1063,7 @@ export function axelarTransferToJSON(
     fee_amount: axelarTransfer.feeAmount,
     fee_asset: assetToJSON(axelarTransfer.feeAsset),
     is_testnet: axelarTransfer.isTestnet,
+    bridge_id: axelarTransfer.bridgeID,
   };
 }
 
@@ -1068,6 +1072,7 @@ export function cctpTransferFromJSON(value: CCTPTransferJSON): CCTPTransfer {
     fromChainID: value.from_chain_id,
     toChainID: value.to_chain_id,
     burnToken: value.burn_token,
+    bridgeID: value.bridge_id,
   };
 }
 
@@ -1076,6 +1081,7 @@ export function cctpTransferToJSON(value: CCTPTransfer): CCTPTransferJSON {
     from_chain_id: value.fromChainID,
     to_chain_id: value.toChainID,
     burn_token: value.burnToken,
+    bridge_id: value.bridgeID,
   };
 }
 
