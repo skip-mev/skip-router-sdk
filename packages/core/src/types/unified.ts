@@ -134,6 +134,7 @@ export type RouteRequestBaseJSON = {
   allow_unsafe?: boolean;
   client_id?: string;
   experimental_features?: ExperimentalFeature[];
+  bridges?: BridgeType[];
 };
 
 export type RouteRequestGivenInJSON = RouteRequestBaseJSON & {
@@ -161,6 +162,7 @@ export type RouteRequestBase = {
   allowUnsafe?: boolean;
   clientID?: string;
   experimentalFeatures?: ExperimentalFeature[];
+  bridges?: BridgeType[];
 };
 
 export type RouteRequestGivenIn = RouteRequestBase & {
@@ -296,7 +298,7 @@ export type MsgsResponse = {
   msgs: Msg[];
 };
 
-export type BridgeType = "IBC" | "AXELAR";
+export type BridgeType = "IBC" | "AXELAR" | "CCTP";
 
 export type AssetBetweenChainsJSON = {
   asset_on_source: AssetJSON;
@@ -340,4 +342,32 @@ export type AssetsBetweenChainsResponseJSON = {
 
 export type AssetsBetweenChainsResponse = {
   assetsBetweenChains: AssetBetweenChains[];
+};
+
+export type BridgesRequestJSON = {
+  client_id?: string;
+};
+
+export type BridgesRequest = {
+  clientID?: string;
+};
+
+export type BridgesResponseJSON = {
+  bridges: BridgeJSON[];
+};
+
+export type BridgesResponse = {
+  bridges: Bridge[];
+};
+
+export type BridgeJSON = {
+  id: BridgeType;
+  name: string;
+  logo_uri: string;
+};
+
+export type Bridge = {
+  id: BridgeType;
+  name: string;
+  logoURI: string;
 };

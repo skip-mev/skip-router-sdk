@@ -1,3 +1,5 @@
+import { BridgeType } from "./unified";
+
 export type IBCAddressJSON = {
   address: string;
   chain_id: string;
@@ -58,6 +60,7 @@ export type TransferJSON = {
   fee_amount?: string;
   usd_fee_amount?: string;
   fee_asset?: AssetJSON;
+  bridge_id: BridgeType;
 };
 
 export type Transfer = {
@@ -70,6 +73,7 @@ export type Transfer = {
   feeAmount?: string;
   usdFeeAmount?: string;
   feeAsset?: Asset;
+  bridgeID: BridgeType;
 };
 
 export type AxelarTransferJSON = {
@@ -82,6 +86,7 @@ export type AxelarTransferJSON = {
   fee_amount: string;
   fee_asset: AssetJSON;
   is_testnet: boolean;
+  bridge_id: BridgeType;
 };
 
 export type AxelarTransfer = {
@@ -94,6 +99,7 @@ export type AxelarTransfer = {
   feeAmount: string;
   feeAsset: Asset;
   isTestnet: boolean;
+  bridgeID: BridgeType;
 };
 
 export type MultiChainMsgJSON = {
@@ -114,12 +120,14 @@ export type CCTPTransferJSON = {
   from_chain_id: string;
   to_chain_id: string;
   burn_token: string;
+  bridge_id: BridgeType;
 };
 
 export type CCTPTransfer = {
   fromChainID: string;
   toChainID: string;
   burnToken: string;
+  bridgeID: BridgeType;
 };
 
 export type SwapVenueJSON = {

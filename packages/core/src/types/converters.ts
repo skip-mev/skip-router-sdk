@@ -92,6 +92,12 @@ import {
   AssetsFromSourceRequestJSON,
   AssetsRequest,
   AssetsRequestJSON,
+  Bridge,
+  BridgeJSON,
+  BridgesRequest,
+  BridgesRequestJSON,
+  BridgesResponse,
+  BridgesResponseJSON,
   Msg,
   MsgJSON,
   MsgsRequest,
@@ -382,6 +388,7 @@ export function routeRequestFromJSON(
       allowUnsafe: routeRequestJSON.allow_unsafe,
       clientID: routeRequestJSON.client_id,
       experimentalFeatures: routeRequestJSON.experimental_features,
+      bridges: routeRequestJSON.bridges,
     };
   }
 
@@ -399,6 +406,7 @@ export function routeRequestFromJSON(
     allowUnsafe: routeRequestJSON.allow_unsafe,
     clientID: routeRequestJSON.client_id,
     experimentalFeatures: routeRequestJSON.experimental_features,
+    bridges: routeRequestJSON.bridges,
   };
 }
 
@@ -420,6 +428,7 @@ export function routeRequestToJSON(
       allow_unsafe: routeRequest.allowUnsafe,
       client_id: routeRequest.clientID,
       experimental_features: routeRequest.experimentalFeatures,
+      bridges: routeRequest.bridges,
     };
   }
 
@@ -437,6 +446,7 @@ export function routeRequestToJSON(
     allow_unsafe: routeRequest.allowUnsafe,
     client_id: routeRequest.clientID,
     experimental_features: routeRequest.experimentalFeatures,
+    bridges: routeRequest.bridges,
   };
 }
 
@@ -451,6 +461,7 @@ export function transferFromJSON(transferJSON: TransferJSON): Transfer {
     feeAmount: transferJSON.fee_amount,
     usdFeeAmount: transferJSON.usd_fee_amount,
     feeAsset: transferJSON.fee_asset && assetFromJSON(transferJSON.fee_asset),
+    bridgeID: transferJSON.bridge_id,
   };
 }
 
@@ -465,6 +476,7 @@ export function transferToJSON(transfer: Transfer): TransferJSON {
     fee_amount: transfer.feeAmount,
     usd_fee_amount: transfer.usdFeeAmount,
     fee_asset: transfer.feeAsset && assetToJSON(transfer.feeAsset),
+    bridge_id: transfer.bridgeID,
   };
 }
 
@@ -1034,6 +1046,7 @@ export function axelarTransferFromJSON(
     feeAmount: axelarTransferJSON.fee_amount,
     feeAsset: assetFromJSON(axelarTransferJSON.fee_asset),
     isTestnet: axelarTransferJSON.is_testnet,
+    bridgeID: axelarTransferJSON.bridge_id,
   };
 }
 
@@ -1050,6 +1063,7 @@ export function axelarTransferToJSON(
     fee_amount: axelarTransfer.feeAmount,
     fee_asset: assetToJSON(axelarTransfer.feeAsset),
     is_testnet: axelarTransfer.isTestnet,
+    bridge_id: axelarTransfer.bridgeID,
   };
 }
 
@@ -1058,6 +1072,7 @@ export function cctpTransferFromJSON(value: CCTPTransferJSON): CCTPTransfer {
     fromChainID: value.from_chain_id,
     toChainID: value.to_chain_id,
     burnToken: value.burn_token,
+    bridgeID: value.bridge_id,
   };
 }
 
@@ -1066,6 +1081,7 @@ export function cctpTransferToJSON(value: CCTPTransfer): CCTPTransferJSON {
     from_chain_id: value.fromChainID,
     to_chain_id: value.toChainID,
     burn_token: value.burnToken,
+    bridge_id: value.bridgeID,
   };
 }
 
@@ -1469,5 +1485,53 @@ export function assetRecommendationRequestToJSON(
     source_asset_chain_id: value.sourceAssetChainID,
     dest_chain_id: value.destChainID,
     reason: value.reason,
+  };
+}
+
+export function bridgesRequestFromJSON(
+  value: BridgesRequestJSON,
+): BridgesRequest {
+  return {
+    clientID: value.client_id,
+  };
+}
+
+export function bridgesRequestToJSON(
+  value: BridgesRequest,
+): BridgesRequestJSON {
+  return {
+    client_id: value.clientID,
+  };
+}
+
+export function bridgesResponseFromJSON(
+  value: BridgesResponseJSON,
+): BridgesResponse {
+  return {
+    bridges: value.bridges.map(bridgeFromJSON),
+  };
+}
+
+export function bridgesResponseToJSON(
+  value: BridgesResponse,
+): BridgesResponseJSON {
+  return {
+    bridges: value.bridges.map(bridgeToJSON),
+  };
+}
+
+export function bridgeFromJSON(value: BridgeJSON): Bridge {
+  return {
+    id: value.id,
+    name: value.name,
+    logoURI: value.logo_uri,
+  };
+}
+
+export function bridgeToJSON(value: Bridge): BridgeJSON {
+  return {
+    id: value.id,
+    name: value.name,
+    logo_uri: value.logoURI,
   };
 }

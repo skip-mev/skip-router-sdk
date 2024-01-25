@@ -1224,4 +1224,65 @@ describe("client", () => {
       );
     });
   });
+
+  describe("bridges", () => {
+    it("returns a list of bridges", async () => {
+      server.use(
+        rest.get(`${SKIP_API_URL}/v2/info/bridges`, (_, res, ctx) => {
+          return res(
+            ctx.status(200),
+            ctx.json({
+              bridges: [
+                {
+                  id: "IBC",
+                  name: "IBC",
+                  logo_uri:
+                    "https://raw.githubusercontent.com/skip-mev/skip-api-registry/main/bridges/ibc/logo.svg",
+                },
+                {
+                  id: "AXELAR",
+                  name: "Axelar",
+                  logo_uri:
+                    "https://raw.githubusercontent.com/skip-mev/skip-api-registry/main/bridges/axelar/logo.svg",
+                },
+                {
+                  id: "CCTP",
+                  name: "CCTP",
+                  logo_uri:
+                    "https://raw.githubusercontent.com/skip-mev/skip-api-registry/main/bridges/cctp/logo.svg",
+                },
+              ],
+            }),
+          );
+        }),
+      );
+
+      const client = new SkipRouter({
+        apiURL: SKIP_API_URL,
+      });
+
+      const result = await client.bridges();
+
+      expect(result).toEqual([
+        {
+          id: "IBC",
+          name: "IBC",
+          logoURI:
+            "https://raw.githubusercontent.com/skip-mev/skip-api-registry/main/bridges/ibc/logo.svg",
+        },
+        {
+          id: "AXELAR",
+          name: "Axelar",
+          logoURI:
+            "https://raw.githubusercontent.com/skip-mev/skip-api-registry/main/bridges/axelar/logo.svg",
+        },
+        {
+          id: "CCTP",
+          name: "CCTP",
+          logoURI:
+            "https://raw.githubusercontent.com/skip-mev/skip-api-registry/main/bridges/cctp/logo.svg",
+        },
+      ]);
+    });
+  });
 });
