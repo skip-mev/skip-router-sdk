@@ -92,6 +92,12 @@ import {
   AssetsFromSourceRequestJSON,
   AssetsRequest,
   AssetsRequestJSON,
+  Bridge,
+  BridgeJSON,
+  BridgesRequest,
+  BridgesRequestJSON,
+  BridgesResponse,
+  BridgesResponseJSON,
   Msg,
   MsgJSON,
   MsgsRequest,
@@ -382,6 +388,7 @@ export function routeRequestFromJSON(
       allowUnsafe: routeRequestJSON.allow_unsafe,
       clientID: routeRequestJSON.client_id,
       experimentalFeatures: routeRequestJSON.experimental_features,
+      bridges: routeRequestJSON.bridges,
     };
   }
 
@@ -399,6 +406,7 @@ export function routeRequestFromJSON(
     allowUnsafe: routeRequestJSON.allow_unsafe,
     clientID: routeRequestJSON.client_id,
     experimentalFeatures: routeRequestJSON.experimental_features,
+    bridges: routeRequestJSON.bridges,
   };
 }
 
@@ -420,6 +428,7 @@ export function routeRequestToJSON(
       allow_unsafe: routeRequest.allowUnsafe,
       client_id: routeRequest.clientID,
       experimental_features: routeRequest.experimentalFeatures,
+      bridges: routeRequest.bridges,
     };
   }
 
@@ -437,6 +446,7 @@ export function routeRequestToJSON(
     allow_unsafe: routeRequest.allowUnsafe,
     client_id: routeRequest.clientID,
     experimental_features: routeRequest.experimentalFeatures,
+    bridges: routeRequest.bridges,
   };
 }
 
@@ -1469,5 +1479,53 @@ export function assetRecommendationRequestToJSON(
     source_asset_chain_id: value.sourceAssetChainID,
     dest_chain_id: value.destChainID,
     reason: value.reason,
+  };
+}
+
+export function bridgesRequestFromJSON(
+  value: BridgesRequestJSON,
+): BridgesRequest {
+  return {
+    clientID: value.client_id,
+  };
+}
+
+export function bridgesRequestToJSON(
+  value: BridgesRequest,
+): BridgesRequestJSON {
+  return {
+    client_id: value.clientID,
+  };
+}
+
+export function bridgesResponseFromJSON(
+  value: BridgesResponseJSON,
+): BridgesResponse {
+  return {
+    bridges: value.bridges.map(bridgeFromJSON),
+  };
+}
+
+export function bridgesResponseToJSON(
+  value: BridgesResponse,
+): BridgesResponseJSON {
+  return {
+    bridges: value.bridges.map(bridgeToJSON),
+  };
+}
+
+export function bridgeFromJSON(value: BridgeJSON): Bridge {
+  return {
+    id: value.id,
+    name: value.name,
+    logoURI: value.logo_uri,
+  };
+}
+
+export function bridgeToJSON(value: Bridge): BridgeJSON {
+  return {
+    id: value.id,
+    name: value.name,
+    logo_uri: value.logoURI,
   };
 }

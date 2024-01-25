@@ -78,6 +78,9 @@ import {
   AssetsRequest,
   AssetsRequestJSON,
   assetsRequestToJSON,
+  Bridge,
+  bridgesResponseFromJSON,
+  BridgesResponseJSON,
   Chain,
   chainFromJSON,
   ChainJSON,
@@ -282,6 +285,17 @@ export class SkipRouter {
       );
 
     return assetsBetweenChainsResponseFromJSON(response).assetsBetweenChains;
+  }
+
+  async bridges(): Promise<Bridge[]> {
+    const response = await this.requestClient.get<BridgesResponseJSON>(
+      "/v2/info/bridges",
+      {
+        client_id: this.clientID,
+      },
+    );
+
+    return bridgesResponseFromJSON(response).bridges;
   }
 
   async chains(
