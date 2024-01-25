@@ -1226,42 +1226,39 @@ describe("client", () => {
   });
 
   describe("bridges", () => {
-    it("works", async () => {
+    it("returns a list of bridges", async () => {
       server.use(
-        rest.get(
-          "https://solve-dev.skip.money/v2/info/bridges",
-          (_, res, ctx) => {
-            return res(
-              ctx.status(200),
-              ctx.json({
-                bridges: [
-                  {
-                    id: "IBC",
-                    name: "IBC",
-                    logo_uri:
-                      "https://raw.githubusercontent.com/skip-mev/skip-api-registry/main/bridges/ibc/logo.svg",
-                  },
-                  {
-                    id: "AXELAR",
-                    name: "Axelar",
-                    logo_uri:
-                      "https://raw.githubusercontent.com/skip-mev/skip-api-registry/main/bridges/axelar/logo.svg",
-                  },
-                  {
-                    id: "CCTP",
-                    name: "CCTP",
-                    logo_uri:
-                      "https://raw.githubusercontent.com/skip-mev/skip-api-registry/main/bridges/cctp/logo.svg",
-                  },
-                ],
-              }),
-            );
-          },
-        ),
+        rest.get(`${SKIP_API_URL}/v2/info/bridges`, (_, res, ctx) => {
+          return res(
+            ctx.status(200),
+            ctx.json({
+              bridges: [
+                {
+                  id: "IBC",
+                  name: "IBC",
+                  logo_uri:
+                    "https://raw.githubusercontent.com/skip-mev/skip-api-registry/main/bridges/ibc/logo.svg",
+                },
+                {
+                  id: "AXELAR",
+                  name: "Axelar",
+                  logo_uri:
+                    "https://raw.githubusercontent.com/skip-mev/skip-api-registry/main/bridges/axelar/logo.svg",
+                },
+                {
+                  id: "CCTP",
+                  name: "CCTP",
+                  logo_uri:
+                    "https://raw.githubusercontent.com/skip-mev/skip-api-registry/main/bridges/cctp/logo.svg",
+                },
+              ],
+            }),
+          );
+        }),
       );
 
       const client = new SkipRouter({
-        apiURL: "https://solve-dev.skip.money",
+        apiURL: SKIP_API_URL,
       });
 
       const result = await client.bridges();
