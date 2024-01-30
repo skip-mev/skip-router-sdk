@@ -3,6 +3,10 @@ import {
   AxelarTransferInfoJSON,
   AxelarTransferTransactions,
   AxelarTransferTransactionsJSON,
+  CCTPTransferInfo,
+  CCTPTransferInfoJSON,
+  CCTPTransferTransactions,
+  CCTPTransferTransactionsJSON,
   ChainTransaction,
   ChainTransactionJSON,
   ContractCallWithTokenTransactions,
@@ -1293,6 +1297,12 @@ export function transferEventFromJSON(value: TransferEventJSON): TransferEvent {
     };
   }
 
+  if ("cctp_transfer" in value) {
+    return {
+      cctpTransfer: cctpTransferInfoFromJSON(value.cctp_transfer),
+    };
+  }
+
   return {
     axelarTransfer: axelarTransferInfoFromJSON(value.axelar_transfer),
   };
@@ -1302,6 +1312,12 @@ export function transferEventToJSON(value: TransferEvent): TransferEventJSON {
   if ("ibcTransfer" in value) {
     return {
       ibc_transfer: transferInfoToJSON(value.ibcTransfer),
+    };
+  }
+
+  if ("cctpTransfer" in value) {
+    return {
+      cctp_transfer: cctpTransferInfoToJSON(value.cctpTransfer),
     };
   }
 
@@ -1533,5 +1549,49 @@ export function bridgeToJSON(value: Bridge): BridgeJSON {
     id: value.id,
     name: value.name,
     logo_uri: value.logoURI,
+  };
+}
+
+export function cctpTransferTransactionsFromJSON(
+  value: CCTPTransferTransactionsJSON,
+): CCTPTransferTransactions {
+  return {
+    sendTx: value.send_tx ? chainTransactionFromJSON(value.send_tx) : null,
+    receiveTx: value.receive_tx
+      ? chainTransactionFromJSON(value.receive_tx)
+      : null,
+  };
+}
+
+export function cctpTransferTransactionsToJSON(
+  value: CCTPTransferTransactions,
+): CCTPTransferTransactionsJSON {
+  return {
+    send_tx: value.sendTx ? chainTransactionToJSON(value.sendTx) : null,
+    receive_tx: value.receiveTx
+      ? chainTransactionToJSON(value.receiveTx)
+      : null,
+  };
+}
+
+export function cctpTransferInfoFromJSON(
+  value: CCTPTransferInfoJSON,
+): CCTPTransferInfo {
+  return {
+    srcChainID: value.src_chain_id,
+    dstChainID: value.dst_chain_id,
+    state: value.state,
+    txs: value.txs && cctpTransferTransactionsFromJSON(value.txs),
+  };
+}
+
+export function cctpTransferInfoToJSON(
+  value: CCTPTransferInfo,
+): CCTPTransferInfoJSON {
+  return {
+    src_chain_id: value.srcChainID,
+    dst_chain_id: value.dstChainID,
+    state: value.state,
+    txs: value.txs && cctpTransferTransactionsToJSON(value.txs),
   };
 }

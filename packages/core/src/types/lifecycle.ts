@@ -315,26 +315,49 @@ export type SendTokenError = {
   type: SendTokenErrorType;
 };
 
+export type CCTPTransferState =
+  | "CCTP_TRANSFER_UNKNOWN"
+  | "CCTP_TRANSFER_SENT"
+  | "CCTP_TRANSFER_PENDING_CONFIRMATION"
+  | "CCTP_TRANSFER_CONFIRMED"
+  | "CCTP_TRANSFER_RECEIVED";
+
+export type CCTPTransferTransactionsJSON = {
+  send_tx: ChainTransactionJSON | null;
+  receive_tx: ChainTransactionJSON | null;
+};
+
+export type CCTPTransferTransactions = {
+  sendTx: ChainTransaction | null;
+  receiveTx: ChainTransaction | null;
+};
+
+export type CCTPTransferInfoJSON = {
+  src_chain_id: string;
+  dst_chain_id: string;
+  state: CCTPTransferState;
+  txs: CCTPTransferTransactionsJSON;
+};
+
+export type CCTPTransferInfo = {
+  srcChainID: string;
+  dstChainID: string;
+  state: CCTPTransferState;
+  txs: CCTPTransferTransactions;
+};
+
 export type TransferEventJSON =
   | {
       ibc_transfer: TransferInfoJSON;
     }
   | {
       axelar_transfer: AxelarTransferInfoJSON;
-    };
+    }
+  | { cctp_transfer: CCTPTransferInfoJSON };
 
 export type TransferEvent =
   | {
       ibcTransfer: TransferInfo;
     }
-  | { axelarTransfer: AxelarTransferInfo };
-
-// message StatusV2Response {
-//   StatusState status = 1;
-//   repeated TransferEvent transfer_sequence = 2;
-//   NextBlockingTransfer next_blocking_transfer = 3;
-//   TransferAssetRelease transfer_asset_release = 4;
-
-//   StatusError error = 5;
-//   StatusState state = 6;
-// }
+  | { axelarTransfer: AxelarTransferInfo }
+  | { cctpTransfer: CCTPTransferInfo };
