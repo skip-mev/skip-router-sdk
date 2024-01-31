@@ -1,5 +1,11 @@
 # @skip-router/core
 
+## 1.2.10
+
+### Patch Changes
+
+- b361077: Add allow_multi_tx parameter to route request
+
 ## 1.2.9
 
 ### Patch Changes
