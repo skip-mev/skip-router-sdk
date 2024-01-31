@@ -1203,6 +1203,9 @@ export class SkipRouter {
     const client = await SigningCosmWasmClient.connectWithSigner(
       endpoint,
       signer,
+      {
+        registry: this.registry,
+      },
     );
 
     const gasNeeded = await getGasAmountForMessage(
