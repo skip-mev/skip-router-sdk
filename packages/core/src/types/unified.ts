@@ -135,6 +135,7 @@ export type RouteRequestBaseJSON = {
   client_id?: string;
   experimental_features?: ExperimentalFeature[];
   bridges?: BridgeType[];
+  allow_multi_tx?: boolean;
 };
 
 export type RouteRequestGivenInJSON = RouteRequestBaseJSON & {
@@ -163,6 +164,7 @@ export type RouteRequestBase = {
   clientID?: string;
   experimentalFeatures?: ExperimentalFeature[];
   bridges?: BridgeType[];
+  allowMultiTx?: boolean;
 };
 
 export type RouteRequestGivenIn = RouteRequestBase & {

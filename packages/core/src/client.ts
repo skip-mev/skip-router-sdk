@@ -1041,6 +1041,7 @@ export class SkipRouter {
     signerAddress: string,
     message: MultiChainMsg,
   ): Promise<string> {
+    circle.cctp.v1.load(this.registry);
     return getGasAmountForMessage(client, signerAddress, message);
   }
 
@@ -1202,6 +1203,9 @@ export class SkipRouter {
     const client = await SigningCosmWasmClient.connectWithSigner(
       endpoint,
       signer,
+      {
+        registry: this.registry,
+      },
     );
 
     const gasNeeded = await getGasAmountForMessage(
