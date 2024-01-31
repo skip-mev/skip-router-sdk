@@ -393,6 +393,7 @@ export function routeRequestFromJSON(
       clientID: routeRequestJSON.client_id,
       experimentalFeatures: routeRequestJSON.experimental_features,
       bridges: routeRequestJSON.bridges,
+      allowMultiTx: routeRequestJSON.allow_multi_tx,
     };
   }
 
@@ -411,6 +412,7 @@ export function routeRequestFromJSON(
     clientID: routeRequestJSON.client_id,
     experimentalFeatures: routeRequestJSON.experimental_features,
     bridges: routeRequestJSON.bridges,
+    allowMultiTx: routeRequestJSON.allow_multi_tx,
   };
 }
 
@@ -433,6 +435,7 @@ export function routeRequestToJSON(
       client_id: routeRequest.clientID,
       experimental_features: routeRequest.experimentalFeatures,
       bridges: routeRequest.bridges,
+      allow_multi_tx: routeRequest.allowMultiTx,
     };
   }
 
@@ -451,6 +454,7 @@ export function routeRequestToJSON(
     client_id: routeRequest.clientID,
     experimental_features: routeRequest.experimentalFeatures,
     bridges: routeRequest.bridges,
+    allow_multi_tx: routeRequest.allowMultiTx,
   };
 }
 
