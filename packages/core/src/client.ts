@@ -153,6 +153,10 @@ export type ExecuteRouteOptions = {
     txHash: string;
     chainID: string;
   }) => Promise<void>;
+  onTransactionTracked?: (txInfo: {
+    txHash: string;
+    chainID: string;
+  }) => Promise<void>;
   onTransactionCompleted?: (
     chainID: string,
     txHash: string,
@@ -160,7 +164,9 @@ export type ExecuteRouteOptions = {
   ) => Promise<void>;
   validateGasBalance?: boolean;
   slippageTolerancePercent?: string;
-  // If `getGasPrice` is undefined, or returns undefined, the router will attempt to set the recommended gas price
+  /**
+   * If `getGasPrice` is undefined, or returns undefined, the router will attempt to set the recommended gas price
+   **/
   getGasPrice?: (chainID: string) => Promise<GasPrice | undefined>;
   gasAmountMultiplier?: number;
 };
@@ -427,6 +433,7 @@ export class SkipRouter {
         const txStatusResponse = await this.waitForTransaction({
           chainID: multiChainMsg.chainID,
           txHash: tx.transactionHash,
+          onTransactionTracked: options.onTransactionTracked,
         });
 
         if (options.onTransactionCompleted) {
@@ -466,6 +473,7 @@ export class SkipRouter {
         const txStatusResponse = await this.waitForTransaction({
           chainID: evmTx.chainID,
           txHash: txReceipt.transactionHash,
+          onTransactionTracked: options.onTransactionTracked,
         });
 
         if (options.onTransactionCompleted) {
@@ -1001,15 +1009,22 @@ export class SkipRouter {
   async waitForTransaction({
     chainID,
     txHash,
+    onTransactionTracked,
   }: {
     chainID: string;
     txHash: string;
+    onTransactionTracked?: (txInfo: {
+      txHash: string;
+      chainID: string;
+    }) => Promise<void>;
   }) {
     await this.trackTransaction({
       chainID,
       txHash,
     });
-
+    if (onTransactionTracked) {
+      await onTransactionTracked({ txHash, chainID });
+    }
     // eslint-disable-next-line no-constant-condition
     while (true) {
       const txStatusResponse = await this.transactionStatus({
