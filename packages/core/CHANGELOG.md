@@ -1,5 +1,11 @@
 # @skip-router/core
 
+## 1.2.11
+
+### Patch Changes
+
+- 74643e9: added onTransactionTracked opts
+
 ## 1.2.10
 
 ### Patch Changes
