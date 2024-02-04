@@ -29,7 +29,7 @@ cd skip-router-sdk
 npm install
 
 # run watch server to build on changes
-npm -w @skip-router/core run watch:cjs
+npm -w @skip-router/core run watch
 
 # build packages
 npm run build

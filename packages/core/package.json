@@ -10,8 +10,7 @@
   ],
   "sideEffects": false,
   "scripts": {
-    "build:cjs": "tsc -p tsconfig/tsconfig.cjs.json",
-    "build": "npm run clean && npm run build:cjs",
+    "build": "tsup",
     "clean": "rm -rf dist",
     "e2e:clean": "make stop clean",
     "e2e:setup": "make setup && make setup-kind",
@@ -19,7 +18,7 @@
     "e2e:stop": "make stop",
     "e2e:test": "vitest --dangerouslyIgnoreUnhandledErrors -c vitest.e2e.config.ts --test-timeout=30000",
     "test": "vitest -c vitest.unit.config.ts",
-    "watch:cjs": "tsc -w -p tsconfig/tsconfig.cjs.json"
+    "watch": "tsup --watch"
   },
   "peerDependencies": {
     "chain-registry": "^1.28.0"
