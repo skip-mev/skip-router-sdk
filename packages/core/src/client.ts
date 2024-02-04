@@ -393,6 +393,7 @@ export class SkipRouter {
           endpoint,
           signer,
           {
+            aminoTypes: this.aminoTypes,
             registry: this.registry,
           },
         );
@@ -501,6 +502,7 @@ export class SkipRouter {
       endpoint,
       signer,
       {
+        aminoTypes: this.aminoTypes,
         registry: this.registry,
       },
     );
@@ -1214,6 +1216,7 @@ export class SkipRouter {
       endpoint,
       signer,
       {
+        aminoTypes: this.aminoTypes,
         registry: this.registry,
       },
     );
@@ -1379,6 +1382,7 @@ export class SkipRouter {
           endpoint,
           signer,
           {
+            aminoTypes: this.aminoTypes,
             registry: this.registry,
           },
         );
