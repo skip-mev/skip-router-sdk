@@ -46,11 +46,7 @@ import Long from "long";
 import { maxUint256, publicActions, WalletClient } from "viem";
 
 import chains from "./chains";
-// import {
-//   MsgDepositForBurn,
-//   MsgDepositForBurnProtoMsg,
-// } from "./codegen/circle/cctp/v1/tx";
-import { circle } from "./codegen";
+import { circleAminoConverters, circleProtoRegistry } from "./codegen";
 import { erc20ABI } from "./constants/abis";
 import { DEFAULT_GAS_DENOM_OVERRIDES } from "./constants/constants";
 import { createTransaction } from "./injective";
@@ -218,15 +214,14 @@ export class SkipRouter {
     this.aminoTypes = new AminoTypes({
       ...createDefaultAminoConverters(),
       ...createWasmAminoConverters(),
+      ...circleAminoConverters,
     });
 
-    this.registry = new Registry(defaultRegistryTypes);
-    this.registry.register(
-      "/cosmwasm.wasm.v1.MsgExecuteContract",
-      MsgExecuteContract,
-    );
-
-    circle.cctp.v1.load(this.registry);
+    this.registry = new Registry([
+      ...defaultRegistryTypes,
+      ["/cosmwasm.wasm.v1.MsgExecuteContract", MsgExecuteContract],
+      ...circleProtoRegistry,
+    ]);
 
     this.endpointOptions = options.endpointOptions ?? {};
     this.getCosmosSigner = options.getCosmosSigner;
@@ -1056,7 +1051,6 @@ export class SkipRouter {
     signerAddress: string,
     message: MultiChainMsg,
   ): Promise<string> {
-    circle.cctp.v1.load(this.registry);
     return getGasAmountForMessage(client, signerAddress, message);
   }
 
