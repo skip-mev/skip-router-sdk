@@ -37,6 +37,7 @@
     "cosmjs-types": "^0.8.0",
     "faker": "^6.6.6",
     "keccak256": "^1.0.6",
+    "stridejs": "^0.8.0-alpha.5",
     "viem": "^1.12.2"
   },
   "devDependencies": {

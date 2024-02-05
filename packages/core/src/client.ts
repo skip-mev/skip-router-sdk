@@ -21,6 +21,7 @@ import {
   TxBodyEncodeObject,
 } from "@cosmjs/proto-signing";
 import {
+  AccountParser,
   AminoTypes,
   calculateFee,
   createDefaultAminoConverters,
@@ -43,14 +44,12 @@ import { SignMode } from "cosmjs-types/cosmos/tx/signing/v1beta1/signing";
 import { TxRaw } from "cosmjs-types/cosmos/tx/v1beta1/tx";
 import { MsgExecuteContract } from "cosmjs-types/cosmwasm/wasm/v1/tx";
 import Long from "long";
+import { strideAccountParser } from "stridejs";
 import { maxUint256, publicActions, WalletClient } from "viem";
 
 import chains from "./chains";
-// import {
-//   MsgDepositForBurn,
-//   MsgDepositForBurnProtoMsg,
-// } from "./codegen/circle/cctp/v1/tx";
-import { circle } from "./codegen";
+import { AminoConverter as circleAminoConverters } from "./codegen/circle/cctp/v1/tx.amino";
+import { registry as circleRegistry } from "./codegen/circle/cctp/v1/tx.registry";
 import { erc20ABI } from "./constants/abis";
 import { DEFAULT_GAS_DENOM_OVERRIDES } from "./constants/constants";
 import { createTransaction } from "./injective";
@@ -218,15 +217,14 @@ export class SkipRouter {
     this.aminoTypes = new AminoTypes({
       ...createDefaultAminoConverters(),
       ...createWasmAminoConverters(),
+      ...circleAminoConverters,
     });
 
-    this.registry = new Registry(defaultRegistryTypes);
-    this.registry.register(
-      "/cosmwasm.wasm.v1.MsgExecuteContract",
-      MsgExecuteContract,
-    );
-
-    circle.cctp.v1.load(this.registry);
+    this.registry = new Registry([
+      ...defaultRegistryTypes,
+      ["/cosmwasm.wasm.v1.MsgExecuteContract", MsgExecuteContract],
+      ...circleRegistry,
+    ]);
 
     this.endpointOptions = options.endpointOptions ?? {};
     this.getCosmosSigner = options.getCosmosSigner;
@@ -397,6 +395,7 @@ export class SkipRouter {
           endpoint,
           signer,
           {
+            aminoTypes: this.aminoTypes,
             registry: this.registry,
           },
         );
@@ -505,6 +504,7 @@ export class SkipRouter {
       endpoint,
       signer,
       {
+        aminoTypes: this.aminoTypes,
         registry: this.registry,
       },
     );
@@ -827,7 +827,13 @@ export class SkipRouter {
         multiChainMessage.chainID,
       );
 
-      const client = await StargateClient.connect(endpoint);
+      let accountParser: AccountParser | undefined;
+      if (multiChainMessage.chainID.includes("stride")) {
+        accountParser = strideAccountParser;
+      }
+      const client = await StargateClient.connect(endpoint, {
+        accountParser,
+      });
 
       const currentHeight = await client.getHeight();
 
@@ -1056,7 +1062,6 @@ export class SkipRouter {
     signerAddress: string,
     message: MultiChainMsg,
   ): Promise<string> {
-    circle.cctp.v1.load(this.registry);
     return getGasAmountForMessage(client, signerAddress, message);
   }
 
@@ -1071,7 +1076,13 @@ export class SkipRouter {
 
     const endpoint = await this.getRpcEndpointForChain(chainID);
 
-    const client = await StargateClient.connect(endpoint);
+    let accountParser: AccountParser | undefined;
+    if (chainID.includes("stride")) {
+      accountParser = strideAccountParser;
+    }
+    const client = await StargateClient.connect(endpoint, {
+      accountParser,
+    });
 
     const account = await client.getAccount(address);
 
@@ -1219,6 +1230,7 @@ export class SkipRouter {
       endpoint,
       signer,
       {
+        aminoTypes: this.aminoTypes,
         registry: this.registry,
       },
     );
@@ -1384,6 +1396,7 @@ export class SkipRouter {
           endpoint,
           signer,
           {
+            aminoTypes: this.aminoTypes,
             registry: this.registry,
           },
         );
