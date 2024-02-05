@@ -1,5 +1,11 @@
 # @skip-router/core
 
+## 1.2.12
+
+### Patch Changes
+
+- 9b9cb70: Improve amino/registry types, handle stride account parsing
+
 ## 1.2.11
 
 ### Patch Changes
