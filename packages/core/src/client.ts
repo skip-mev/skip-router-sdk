@@ -1072,11 +1072,6 @@ export class SkipRouter {
 
   async getAccountNumberAndSequence(address: string, chainID: string) {
     if (chainID.includes("dymension")) {
-      // const { data } = await axios.get(
-      //   `https://dymension-api.polkachu.com/cosmos/auth/v1beta1/accounts/${address}`,
-      // );
-      // console.log(data);
-      // throw new Error("Not implemented");
       return this.getAccountNumberAndSequenceFromDymension(address, chainID);
     }
     if (chainID.includes("evmos")) {
