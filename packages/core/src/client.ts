@@ -1284,13 +1284,13 @@ export class SkipRouter {
 
     const defaultGasToken = await this.getDefaultGasTokenForChain(chainID);
 
-    if (!defaultGasToken) {
+    if (!defaultGasToken && !skipChain.feeAssets) {
       return undefined;
     }
 
-    const skipFeeInfo = skipChain.feeAssets.find(
-      (skipFee) => skipFee.denom === defaultGasToken,
-    );
+    const skipFeeInfo = defaultGasToken
+      ? skipChain.feeAssets.find((skipFee) => skipFee.denom === defaultGasToken)
+      : skipChain.feeAssets[0];
 
     if (skipFeeInfo && skipFeeInfo.gasPrice !== null) {
       return skipFeeInfo;
