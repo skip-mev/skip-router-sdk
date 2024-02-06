@@ -32,7 +32,6 @@
     "@cosmjs/tendermint-rpc": "^0.31.1",
     "@injectivelabs/core-proto-ts": "^0.0.18",
     "@injectivelabs/sdk-ts": "^1.12.1",
-    "@keplr-wallet/proto-types": "^0.12.67",
     "axios": "^1.4.0",
     "chain-registry": "^1.25.4",
     "cosmjs-types": "^0.8.0",
