@@ -656,6 +656,10 @@ export class SkipRouter {
       encodeSecp256k1Pubkey(accountFromSigner.pubkey),
     );
 
+    if ((accountFromSigner.algo as string) === "ethsecp256k1") {
+      pubkey.typeUrl = "/ethermint.crypto.v1.ethsecp256k1.PubKey";
+    }
+
     const txBodyEncodeObject: TxBodyEncodeObject = {
       typeUrl: "/cosmos.tx.v1beta1.TxBody",
       value: {
