@@ -32,6 +32,7 @@
     "@cosmjs/tendermint-rpc": "^0.31.1",
     "@injectivelabs/core-proto-ts": "^0.0.18",
     "@injectivelabs/sdk-ts": "^1.12.1",
+    "@keplr-wallet/proto-types": "^0.12.67",
     "axios": "^1.4.0",
     "chain-registry": "^1.25.4",
     "cosmjs-types": "^0.8.0",
@@ -43,6 +44,7 @@
   "devDependencies": {
     "@cosmjs/faucet": "^0.31.1",
     "@cosmjs/faucet-client": "^0.31.1",
+    "@protobufs/cosmos": "^0.1.0",
     "@protobufs/gogoproto": "^0.0.10",
     "@types/jest": "^29.5.3",
     "@typescript-eslint/eslint-plugin": "^6.4.0",

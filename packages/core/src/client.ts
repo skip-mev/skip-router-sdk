@@ -50,6 +50,7 @@ import { maxUint256, publicActions, WalletClient } from "viem";
 import chains from "./chains";
 import { AminoConverter as circleAminoConverters } from "./codegen/circle/cctp/v1/tx.amino";
 import { registry as circleRegistry } from "./codegen/circle/cctp/v1/tx.registry";
+import { EthAccount } from "./codegen/evmos/proto/ethermint/types/v1/account";
 import { erc20ABI } from "./constants/abis";
 import { DEFAULT_GAS_DENOM_OVERRIDES } from "./constants/constants";
 import { createTransaction } from "./injective";
@@ -220,10 +221,12 @@ export class SkipRouter {
       ...circleAminoConverters,
     });
 
+    // @ts-expect-error TODO: the type error is not correct, find out why
     this.registry = new Registry([
       ...defaultRegistryTypes,
-      ["/cosmwasm.wasm.v1.MsgExecuteContract", MsgExecuteContract],
       ...circleRegistry,
+      ["/cosmwasm.wasm.v1.MsgExecuteContract", MsgExecuteContract],
+      ["/ethermint.types.v1.EthAccount", EthAccount],
     ]);
 
     this.endpointOptions = options.endpointOptions ?? {};
