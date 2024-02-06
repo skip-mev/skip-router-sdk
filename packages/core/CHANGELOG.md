@@ -1,5 +1,11 @@
 # @skip-router/core
 
+## 1.2.14
+
+### Patch Changes
+
+- e313807: When getting default gas token don't fail on no chain registry data
+
 ## 1.2.13
 
 ### Patch Changes
