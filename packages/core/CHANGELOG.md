@@ -1,5 +1,11 @@
 # @skip-router/core
 
+## 1.2.13
+
+### Patch Changes
+
+- 586a771: Set proper typeUrl on pubkey when it is an ethermint key
+
 ## 1.2.12
 
 ### Patch Changes
