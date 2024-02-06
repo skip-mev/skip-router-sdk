@@ -1,6 +1,6 @@
 {
   "name": "@skip-router/core",
-  "version": "1.2.12",
+  "version": "1.2.13",
   "description": "",
   "main": "dist/cjs/index.js",
   "types": "dist/cjs/index.d.ts",
