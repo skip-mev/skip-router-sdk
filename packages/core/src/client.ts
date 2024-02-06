@@ -52,6 +52,7 @@ import { AminoConverter as circleAminoConverters } from "./codegen/circle/cctp/v
 import { registry as circleRegistry } from "./codegen/circle/cctp/v1/tx.registry";
 import { erc20ABI } from "./constants/abis";
 import { DEFAULT_GAS_DENOM_OVERRIDES } from "./constants/constants";
+import { EthAccount } from "./ethermint/types";
 import { createTransaction } from "./injective";
 import { RequestClient } from "./request-client";
 import {
@@ -224,6 +225,7 @@ export class SkipRouter {
       ...defaultRegistryTypes,
       ["/cosmwasm.wasm.v1.MsgExecuteContract", MsgExecuteContract],
       ...circleRegistry,
+      [EthAccount.typeUrl, EthAccount],
     ]);
 
     this.endpointOptions = options.endpointOptions ?? {};
