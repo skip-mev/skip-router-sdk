@@ -1,5 +1,12 @@
 # @skip-router/core
 
+## 1.2.15
+
+### Patch Changes
+
+- 1cba455: undo cosmjs upgrade
+- ae1b120: Register EthAccount proto type
+
 ## 1.2.14
 
 ### Patch Changes
