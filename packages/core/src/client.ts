@@ -52,6 +52,7 @@ import { AminoConverter as circleAminoConverters } from "./codegen/circle/cctp/v
 import { registry as circleRegistry } from "./codegen/circle/cctp/v1/tx.registry";
 import { erc20ABI } from "./constants/abis";
 import { DEFAULT_GAS_DENOM_OVERRIDES } from "./constants/constants";
+import { EthAccount } from "./ethermint/types";
 import { createTransaction } from "./injective";
 import { RequestClient } from "./request-client";
 import {
@@ -224,6 +225,7 @@ export class SkipRouter {
       ...defaultRegistryTypes,
       ["/cosmwasm.wasm.v1.MsgExecuteContract", MsgExecuteContract],
       ...circleRegistry,
+      [EthAccount.typeUrl, EthAccount],
     ]);
 
     this.endpointOptions = options.endpointOptions ?? {};
@@ -409,8 +411,6 @@ export class SkipRouter {
 
         const fee = calculateFee(Math.ceil(parseFloat(estimatedGas)), gasPrice);
 
-        console.log(fee);
-
         if (!fee) {
           throw new Error("Unable to get fee for message");
         }
@@ -513,6 +513,7 @@ export class SkipRouter {
       signerAddress,
       message.chainID,
     );
+
     let rawTx: TxRaw;
     if (isOfflineDirectSigner(signer)) {
       rawTx = await this.signMultiChainMessageDirect({
@@ -1070,8 +1071,11 @@ export class SkipRouter {
   }
 
   async getAccountNumberAndSequence(address: string, chainID: string) {
+    if (chainID.includes("dymension")) {
+      return this.getAccountNumberAndSequenceFromDymension(address, chainID);
+    }
     if (chainID.includes("evmos")) {
-      return this.getAccountNumberAndSequenceEvmos(address, chainID);
+      return this.getAccountNumberAndSequenceFromEvmos(address, chainID);
     }
 
     if (chainID.includes("injective")) {
@@ -1085,7 +1089,7 @@ export class SkipRouter {
       accountParser = strideAccountParser;
     }
     const client = await StargateClient.connect(endpoint, {
-      accountParser,
+      accountParser: accountParser,
     });
 
     const account = await client.getAccount(address);
@@ -1102,7 +1106,26 @@ export class SkipRouter {
     };
   }
 
-  private async getAccountNumberAndSequenceEvmos(
+  private async getAccountNumberAndSequenceFromDymension(
+    address: string,
+    chainID: string,
+  ) {
+    const endpoint = await this.getRestEndpointForChain(chainID);
+
+    const response = await axios.get(
+      `${endpoint}/cosmos/auth/v1beta1/accounts/${address}`,
+    );
+
+    const accountNumber = response.data.account.account_number as number;
+    const sequence = response.data.account.sequence as number;
+
+    return {
+      accountNumber,
+      sequence,
+    };
+  }
+
+  private async getAccountNumberAndSequenceFromEvmos(
     address: string,
     chainID: string,
   ) {
@@ -1393,6 +1416,7 @@ export class SkipRouter {
 
       if ("multiChainMsg" in message) {
         const signer = await getOfflineSigner(message.multiChainMsg.chainID);
+
         const endpoint = await this.getRpcEndpointForChain(
           message.multiChainMsg.chainID,
         );
