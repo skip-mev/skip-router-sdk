@@ -1286,3 +1286,15 @@ describe("client", () => {
     });
   });
 });
+
+test("dymension", async () => {
+  const client = new SkipRouter({
+    apiURL: SKIP_API_URL,
+  });
+
+  const feeInfo = await client.getFeeInfoForChain("dymension_1100-1");
+
+  console.log(feeInfo);
+
+  // const result = await client
+});
