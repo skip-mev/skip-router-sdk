@@ -9,7 +9,12 @@ const eslintConfig = {
     "plugin:@typescript-eslint/recommended",
     "plugin:prettier/recommended",
   ],
-  ignorePatterns: ["node_modules", "dist"],
+  ignorePatterns: [
+    "dist/",
+    "node_modules/",
+    "src/codegen/",
+    //
+  ],
   parser: "@typescript-eslint/parser",
   parserOptions: {
     ecmaVersion: "latest",
