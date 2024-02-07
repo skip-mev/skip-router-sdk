@@ -25,6 +25,9 @@ Read more at Skip API docs website on [Getting Started: TypeScript SDK](https://
 git clone https://github.com/skip-mev/skip-router-sdk.git
 cd skip-router-sdk
 
+# prepare submodules
+git submodule update --init --recursive
+
 # install dependencies
 npm install
 
