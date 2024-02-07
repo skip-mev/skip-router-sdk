@@ -6,7 +6,7 @@
   "scripts": {
     "build": "turbo run build",
     "codegen": "node scripts/codegen.js",
-    "postinstall": "npm run codegen",
+    "postinstall": "git submodule update --init --recursive && npm run codegen",
     "release": "turbo run build lint test && changeset publish",
     "test": "turbo run test"
   },
