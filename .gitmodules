@@ -1,0 +1,15 @@
+[submodule "vendor/cosmos-proto"]
+path = vendor/cosmos-proto
+url = https://github.com/cosmos/cosmos-proto.git
+
+[submodule "vendor/cosmos-sdk"]
+path = vendor/cosmos-sdk
+url = https://github.com/cosmos/cosmos-sdk.git
+
+[submodule "vendor/evmos"]
+path = vendor/evmos
+url = https://github.com/evmos/evmos.git
+
+[submodule "vendor/noble-cctp"]
+path = vendor/noble-cctp
+url = https://github.com/circlefin/noble-cctp.git
