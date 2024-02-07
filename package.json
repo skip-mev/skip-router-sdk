@@ -5,12 +5,15 @@
   ],
   "scripts": {
     "build": "turbo run build",
+    "codegen": "node scripts/codegen.js",
     "release": "turbo run build lint test && changeset publish",
     "test": "turbo run test"
   },
   "devDependencies": {
     "@changesets/cli": "^2.27.1",
+    "@cosmology/telescope": "^1.4.12",
     "@protobufs/gogoproto": "^0.0.10",
+    "@protobufs/google": "^0.0.10",
     "@types/jest": "^29.5.12",
     "@typescript-eslint/eslint-plugin": "^6.21.0",
     "@typescript-eslint/parser": "^6.21.0",
