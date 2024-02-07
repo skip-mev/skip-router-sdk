@@ -854,6 +854,10 @@ export class SkipRouter {
       encodeSecp256k1Pubkey(accountFromSigner.pubkey),
     );
 
+    if ((accountFromSigner.algo as string) === "ethsecp256k1") {
+      pubkey.typeUrl = "/ethermint.crypto.v1.ethsecp256k1.PubKey";
+    }
+
     const signMode = SignMode.SIGN_MODE_LEGACY_AMINO_JSON;
 
     const msgs = [this.aminoTypes.toAmino(message)];
