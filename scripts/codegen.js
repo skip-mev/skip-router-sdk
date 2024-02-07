@@ -24,6 +24,7 @@ async function codegen() {
         },
         enabled: true,
         typeUrlToAmino: (typeUrl) => {
+          // https://github.com/circlefin/noble-cctp/blob/release-2024-01-09T183203/x/cctp/types/codec.go#L30-L56
           if (typeUrl.startsWith("/circle.cctp.v1.Msg")) {
             return typeUrl.replace("/circle.cctp.v1.Msg", "cctp/");
           }
