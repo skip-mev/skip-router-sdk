@@ -20,6 +20,15 @@ export default defineConfig(async () => {
       entry: [
         "src/index.ts",
         "src/transactions.ts",
+        "src/types/index.ts",
+        //
+      ],
+      external: [
+        /^@cosmjs\/.*/,
+        /^@injectivelabs\/.*/,
+        /^@protobufjs\/.*/,
+        "long",
+        "protobufjs",
         //
       ],
     },
