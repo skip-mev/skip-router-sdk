@@ -46,5 +46,9 @@
     "@cosmjs/faucet": "0.31.x",
     "@cosmjs/faucet-client": "0.31.x",
     "vitest": "^1.2.2"
+  },
+  "publishConfig": {
+    "access": "public",
+    "provenance": true
   }
 }
