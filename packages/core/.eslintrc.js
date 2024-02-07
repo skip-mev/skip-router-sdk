@@ -4,7 +4,12 @@ const eslintConfig = {
     browser: true,
     node: true,
   },
-  extends: ["eslint:recommended", "plugin:@typescript-eslint/recommended", "plugin:prettier/recommended"],
+  extends: [
+    "eslint:recommended",
+    "plugin:@typescript-eslint/recommended",
+    "plugin:prettier/recommended",
+  ],
+  ignorePatterns: ["node_modules", "dist"],
   parser: "@typescript-eslint/parser",
   parserOptions: {
     ecmaVersion: "latest",
