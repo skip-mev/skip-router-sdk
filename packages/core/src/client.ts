@@ -12,6 +12,7 @@ import { Int53 } from "@cosmjs/math";
 import { Decimal } from "@cosmjs/math";
 import {
   encodePubkey,
+  GeneratedType,
   isOfflineDirectSigner,
   makeAuthInfoBytes,
   makeSignDoc,
@@ -21,6 +22,7 @@ import {
   TxBodyEncodeObject,
 } from "@cosmjs/proto-signing";
 import {
+  AminoConverters,
   AminoTypes,
   calculateFee,
   createDefaultAminoConverters,
@@ -143,6 +145,8 @@ export interface SkipRouterOptions {
     getRpcEndpointForChain?: (chainID: string) => Promise<string>;
     getRestEndpointForChain?: (chainID: string) => Promise<string>;
   };
+  aminoTypes?: AminoConverters;
+  registryTypes?: Iterable<[string, GeneratedType]>;
 }
 
 export type ExecuteRouteOptions = {
@@ -220,12 +224,14 @@ export class SkipRouter {
       ...createDefaultAminoConverters(),
       ...createWasmAminoConverters(),
       ...circleAminoConverters,
+      ...(options.aminoTypes ?? {}),
     });
 
     this.registry = new Registry([
       ...defaultRegistryTypes,
       ["/cosmwasm.wasm.v1.MsgExecuteContract", MsgExecuteContract],
       ...circleProtoRegistry,
+      ...(options.registryTypes ?? []),
     ]);
 
     this.endpointOptions = options.endpointOptions ?? {};
