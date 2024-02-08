@@ -48,8 +48,10 @@ import { accountParser } from "./parser";
 import { maxUint256, publicActions, WalletClient } from "viem";
 
 import chains from "./chains";
-import { AminoConverter as circleAminoConverters } from "./codegen/circle/cctp/v1/tx.amino";
-import { registry as circleRegistry } from "./codegen/circle/cctp/v1/tx.registry";
+import {
+  circleAminoConverters,
+  circleProtoRegistry,
+} from "./codegen/circle/client";
 import { erc20ABI } from "./constants/abis";
 import { DEFAULT_GAS_DENOM_OVERRIDES } from "./constants/constants";
 import { createTransaction } from "./injective";
@@ -223,7 +225,7 @@ export class SkipRouter {
     this.registry = new Registry([
       ...defaultRegistryTypes,
       ["/cosmwasm.wasm.v1.MsgExecuteContract", MsgExecuteContract],
-      ...circleRegistry,
+      ...circleProtoRegistry,
     ]);
 
     this.endpointOptions = options.endpointOptions ?? {};
