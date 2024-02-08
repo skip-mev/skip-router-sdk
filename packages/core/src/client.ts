@@ -21,7 +21,6 @@ import {
   TxBodyEncodeObject,
 } from "@cosmjs/proto-signing";
 import {
-  AccountParser,
   AminoTypes,
   calculateFee,
   createDefaultAminoConverters,
@@ -42,9 +41,10 @@ import {
 import axios from "axios";
 import { SignMode } from "cosmjs-types/cosmos/tx/signing/v1beta1/signing";
 import { TxRaw } from "cosmjs-types/cosmos/tx/v1beta1/tx";
+
 import { MsgExecuteContract } from "cosmjs-types/cosmwasm/wasm/v1/tx";
 import Long from "long";
-import { strideAccountParser } from "stridejs";
+import { accountParser } from "./parser";
 import { maxUint256, publicActions, WalletClient } from "viem";
 
 import chains from "./chains";
@@ -848,10 +848,6 @@ export class SkipRouter {
         multiChainMessage.chainID,
       );
 
-      let accountParser: AccountParser | undefined;
-      if (multiChainMessage.chainID.includes("stride")) {
-        accountParser = strideAccountParser;
-      }
       const client = await StargateClient.connect(endpoint, {
         accountParser,
       });
@@ -1100,10 +1096,6 @@ export class SkipRouter {
 
     const endpoint = await this.getRpcEndpointForChain(chainID);
 
-    let accountParser: AccountParser | undefined;
-    if (chainID.includes("stride")) {
-      accountParser = strideAccountParser;
-    }
     const client = await StargateClient.connect(endpoint, {
       accountParser: accountParser,
     });
