@@ -1,7 +1,6 @@
 import {
   encodeSecp256k1Pubkey,
   makeSignDoc as makeSignDocAmino,
-  OfflineAminoSigner,
 } from "@cosmjs/amino";
 import {
   createWasmAminoConverters,
@@ -12,7 +11,6 @@ import { Int53 } from "@cosmjs/math";
 import { Decimal } from "@cosmjs/math";
 import {
   encodePubkey,
-  GeneratedType,
   isOfflineDirectSigner,
   makeAuthInfoBytes,
   makeSignDoc,
@@ -22,7 +20,6 @@ import {
   TxBodyEncodeObject,
 } from "@cosmjs/proto-signing";
 import {
-  AminoConverters,
   AminoTypes,
   calculateFee,
   createDefaultAminoConverters,
@@ -64,140 +61,10 @@ import {
   getEncodeObjectFromMultiChainMessageInjective,
   getGasAmountForMessage,
 } from "./transactions";
-import {
-  Asset,
-  AssetBetweenChains,
-  assetFromJSON,
-  AssetJSON,
-  AssetOrError,
-  AssetRecommendationRequest,
-  AssetsBetweenChainsRequest,
-  assetsBetweenChainsRequestToJSON,
-  assetsBetweenChainsResponseFromJSON,
-  AssetsBetweenChainsResponseJSON,
-  AssetsFromSourceRequest,
-  AssetsFromSourceRequestJSON,
-  assetsFromSourceRequestToJSON,
-  AssetsRequest,
-  AssetsRequestJSON,
-  assetsRequestToJSON,
-  Bridge,
-  bridgesResponseFromJSON,
-  BridgesResponseJSON,
-  Chain,
-  chainFromJSON,
-  ChainJSON,
-  DenomWithChainID,
-  EvmTx,
-  FeeAsset,
-  Msg,
-  msgFromJSON,
-  MsgsRequest,
-  MsgsRequestJSON,
-  msgsRequestToJSON,
-  MsgsResponseJSON,
-  MultiChainMsg,
-  originAssetsRequestToJSON,
-  originAssetsResponseFromJSON,
-  OriginAssetsResponseJSON,
-  recommendAssetsRequestToJSON,
-  recommendAssetsResponseFromJSON,
-  RecommendAssetsResponseJSON,
-  RouteRequest,
-  RouteRequestJSON,
-  routeRequestToJSON,
-  RouteResponse,
-  routeResponseFromJSON,
-  RouteResponseJSON,
-  StatusRequestJSON,
-  SubmitTxRequestJSON,
-  SubmitTxResponse,
-  submitTxResponseFromJSON,
-  SubmitTxResponseJSON,
-  SwapVenue,
-  swapVenueFromJSON,
-  SwapVenueJSON,
-  TrackTxRequestJSON,
-  TrackTxResponse,
-  trackTxResponseFromJSON,
-  TrackTxResponseJSON,
-  TxStatusResponse,
-  txStatusResponseFromJSON,
-  TxStatusResponseJSON,
-} from "./types";
-
-const wait = (ms: number) => new Promise((resolve) => setTimeout(resolve, ms));
+import * as types from "./types";
+import * as clientTypes from "./client-types";
 
 export const SKIP_API_URL = "https://api.skip.money";
-
-export type EndpointOptions = {
-  rpc?: string;
-  rest?: string;
-};
-
-export interface SkipRouterOptions {
-  apiURL?: string;
-  clientID?: string;
-  getEVMSigner?: (chainID: string) => Promise<WalletClient>;
-  getCosmosSigner?: (chainID: string) => Promise<OfflineSigner>;
-  endpointOptions?: {
-    endpoints?: Record<string, EndpointOptions>;
-    getRpcEndpointForChain?: (chainID: string) => Promise<string>;
-    getRestEndpointForChain?: (chainID: string) => Promise<string>;
-  };
-  aminoTypes?: AminoConverters;
-  registryTypes?: Iterable<[string, GeneratedType]>;
-}
-
-export type ExecuteRouteOptions = {
-  route: RouteResponse;
-  userAddresses: Record<string, string>;
-  getEVMSigner?: (chainID: string) => Promise<WalletClient>;
-  getCosmosSigner?: (chainID: string) => Promise<OfflineSigner>;
-  onTransactionBroadcast?: (txInfo: {
-    txHash: string;
-    chainID: string;
-  }) => Promise<void>;
-  onTransactionTracked?: (txInfo: {
-    txHash: string;
-    chainID: string;
-  }) => Promise<void>;
-  onTransactionCompleted?: (
-    chainID: string,
-    txHash: string,
-    status: TxStatusResponse,
-  ) => Promise<void>;
-  validateGasBalance?: boolean;
-  slippageTolerancePercent?: string;
-  /**
-   * If `getGasPrice` is undefined, or returns undefined, the router will attempt to set the recommended gas price
-   **/
-  getGasPrice?: (chainID: string) => Promise<GasPrice | undefined>;
-  gasAmountMultiplier?: number;
-};
-
-export type ExecuteMultiChainMessageOptions = {
-  signerAddress: string;
-  signer: OfflineSigner;
-  message: MultiChainMsg;
-  fee: StdFee;
-};
-
-export type SignMultiChainMessageDirectOptions = {
-  signerAddress: string;
-  signer: OfflineDirectSigner;
-  multiChainMessage: MultiChainMsg;
-  fee: StdFee;
-  signerData: SignerData;
-};
-
-export type SignMultiChainMessageAminoOptions = {
-  signerAddress: string;
-  signer: OfflineAminoSigner;
-  multiChainMessage: MultiChainMsg;
-  fee: StdFee;
-  signerData: SignerData;
-};
 
 export class SkipRouter {
   private requestClient: RequestClient;
@@ -208,7 +75,7 @@ export class SkipRouter {
   private clientID: string;
 
   private endpointOptions: {
-    endpoints?: Record<string, EndpointOptions>;
+    endpoints?: Record<string, clientTypes.EndpointOptions>;
     getRpcEndpointForChain?: (chainID: string) => Promise<string>;
     getRestEndpointForChain?: (chainID: string) => Promise<string>;
   };
@@ -216,7 +83,7 @@ export class SkipRouter {
   private getCosmosSigner?: (chainID: string) => Promise<OfflineSigner>;
   private getEVMSigner?: (chainID: string) => Promise<WalletClient>;
 
-  constructor(options: SkipRouterOptions = {}) {
+  constructor(options: clientTypes.SkipRouterOptions = {}) {
     this.clientID = options.clientID || "skip-router-js";
     this.requestClient = new RequestClient(options.apiURL || SKIP_API_URL);
 
@@ -239,15 +106,17 @@ export class SkipRouter {
     this.getEVMSigner = options.getEVMSigner;
   }
 
-  async assets(options: AssetsRequest = {}): Promise<Record<string, Asset[]>> {
+  async assets(
+    options: types.AssetsRequest = {},
+  ): Promise<Record<string, types.Asset[]>> {
     const response = await this.requestClient.get<
       {
-        chain_to_assets_map: Record<string, { assets: AssetJSON[] }>;
+        chain_to_assets_map: Record<string, { assets: types.AssetJSON[] }>;
       },
-      AssetsRequestJSON
+      types.AssetsRequestJSON
     >(
       "/v1/fungible/assets",
-      assetsRequestToJSON({
+      types.assetsRequestToJSON({
         ...options,
         clientID: this.clientID,
       }),
@@ -255,24 +124,24 @@ export class SkipRouter {
 
     return Object.entries(response.chain_to_assets_map).reduce(
       (acc, [chainID, { assets }]) => {
-        acc[chainID] = assets.map((asset) => assetFromJSON(asset));
+        acc[chainID] = assets.map((asset) => types.assetFromJSON(asset));
         return acc;
       },
-      {} as Record<string, Asset[]>,
+      {} as Record<string, types.Asset[]>,
     );
   }
 
   async assetsFromSource(
-    options: AssetsFromSourceRequest,
-  ): Promise<Record<string, Asset[]>> {
+    options: types.AssetsFromSourceRequest,
+  ): Promise<Record<string, types.Asset[]>> {
     const response = await this.requestClient.post<
       {
-        dest_assets: Record<string, { assets: AssetJSON[] }>;
+        dest_assets: Record<string, { assets: types.AssetJSON[] }>;
       },
-      AssetsFromSourceRequestJSON
+      types.AssetsFromSourceRequestJSON
     >(
       "/v1/fungible/assets_from_source",
-      assetsFromSourceRequestToJSON({
+      types.assetsFromSourceRequestToJSON({
         ...options,
         clientID: this.clientID,
       }),
@@ -280,34 +149,35 @@ export class SkipRouter {
 
     return Object.entries(response.dest_assets).reduce(
       (acc, [chainID, { assets }]) => {
-        acc[chainID] = assets.map((asset) => assetFromJSON(asset));
+        acc[chainID] = assets.map((asset) => types.assetFromJSON(asset));
         return acc;
       },
-      {} as Record<string, Asset[]>,
+      {} as Record<string, types.Asset[]>,
     );
   }
 
   async assetsBetweenChains(
-    options: AssetsBetweenChainsRequest,
-  ): Promise<AssetBetweenChains[]> {
+    options: types.AssetsBetweenChainsRequest,
+  ): Promise<types.AssetBetweenChains[]> {
     const response =
-      await this.requestClient.post<AssetsBetweenChainsResponseJSON>(
+      await this.requestClient.post<types.AssetsBetweenChainsResponseJSON>(
         "/v2/fungible/assets_between_chains",
-        assetsBetweenChainsRequestToJSON(options),
+        types.assetsBetweenChainsRequestToJSON(options),
       );
 
-    return assetsBetweenChainsResponseFromJSON(response).assetsBetweenChains;
+    return types.assetsBetweenChainsResponseFromJSON(response)
+      .assetsBetweenChains;
   }
 
-  async bridges(): Promise<Bridge[]> {
-    const response = await this.requestClient.get<BridgesResponseJSON>(
+  async bridges(): Promise<types.Bridge[]> {
+    const response = await this.requestClient.get<types.BridgesResponseJSON>(
       "/v2/info/bridges",
       {
         client_id: this.clientID,
       },
     );
 
-    return bridgesResponseFromJSON(response).bridges;
+    return types.bridgesResponseFromJSON(response).bridges;
   }
 
   async chains(
@@ -316,19 +186,18 @@ export class SkipRouter {
     }: {
       includeEVM?: boolean;
     } = { includeEVM: false },
-  ): Promise<Chain[]> {
-    const response = await this.requestClient.get<{ chains: ChainJSON[] }>(
-      "/v1/info/chains",
-      {
-        include_evm: includeEVM,
-        client_id: this.clientID,
-      },
-    );
+  ): Promise<types.Chain[]> {
+    const response = await this.requestClient.get<{
+      chains: types.ChainJSON[];
+    }>("/v1/info/chains", {
+      include_evm: includeEVM,
+      client_id: this.clientID,
+    });
 
-    return response.chains.map((chain) => chainFromJSON(chain));
+    return response.chains.map((chain) => types.chainFromJSON(chain));
   }
 
-  async executeRoute(options: ExecuteRouteOptions) {
+  async executeRoute(options: clientTypes.ExecuteRouteOptions) {
     const {
       route,
       userAddresses,
@@ -496,7 +365,9 @@ export class SkipRouter {
     }
   }
 
-  async executeMultiChainMessage(options: ExecuteMultiChainMessageOptions) {
+  async executeMultiChainMessage(
+    options: clientTypes.ExecuteMultiChainMessageOptions,
+  ) {
     const { signerAddress, signer, message, fee } = options;
 
     const accounts = await signer.getAccounts();
@@ -564,7 +435,7 @@ export class SkipRouter {
     message,
     signer,
   }: {
-    message: EvmTx;
+    message: types.EvmTx;
     signer: WalletClient;
   }) {
     if (!signer.account) {
@@ -628,7 +499,7 @@ export class SkipRouter {
   }
 
   async signMultiChainMessageDirect(
-    options: SignMultiChainMessageDirectOptions,
+    options: clientTypes.SignMultiChainMessageDirectOptions,
   ): Promise<TxRaw> {
     const {
       signer,
@@ -723,7 +594,7 @@ export class SkipRouter {
   private async signMultiChainMessageDirectEvmos(
     signerAddress: string,
     signer: OfflineDirectSigner,
-    multiChainMessage: MultiChainMsg,
+    multiChainMessage: types.MultiChainMsg,
     fee: StdFee,
     { accountNumber, sequence, chainId }: SignerData,
   ): Promise<TxRaw> {
@@ -772,7 +643,7 @@ export class SkipRouter {
   private async signMultiChainMessageDirectInjective(
     signerAddress: string,
     signer: OfflineDirectSigner,
-    multiChainMessage: MultiChainMsg,
+    multiChainMessage: types.MultiChainMsg,
     fee: StdFee,
     { accountNumber, sequence, chainId }: SignerData,
   ): Promise<TxRaw> {
@@ -828,7 +699,7 @@ export class SkipRouter {
   }
 
   async signMultiChainMessageAmino(
-    options: SignMultiChainMessageAminoOptions,
+    options: clientTypes.SignMultiChainMessageAminoOptions,
   ): Promise<TxRaw> {
     const {
       signer,
@@ -927,57 +798,64 @@ export class SkipRouter {
     });
   }
 
-  async messages(options: MsgsRequest): Promise<Msg[]> {
+  async messages(options: types.MsgsRequest): Promise<types.Msg[]> {
     const response = await this.requestClient.post<
-      MsgsResponseJSON,
-      MsgsRequestJSON
+      types.MsgsResponseJSON,
+      types.MsgsRequestJSON
     >("/v2/fungible/msgs", {
-      ...msgsRequestToJSON(options),
+      ...types.msgsRequestToJSON(options),
       slippage_tolerance_percent: options.slippageTolerancePercent || "0",
       client_id: this.clientID,
     });
 
-    return response.msgs.map((msg) => msgFromJSON(msg));
+    return response.msgs.map((msg) => types.msgFromJSON(msg));
   }
 
-  async route(options: RouteRequest): Promise<RouteResponse> {
+  async route(options: types.RouteRequest): Promise<types.RouteResponse> {
     const response = await this.requestClient.post<
-      RouteResponseJSON,
-      RouteRequestJSON
+      types.RouteResponseJSON,
+      types.RouteRequestJSON
     >("/v2/fungible/route", {
-      ...routeRequestToJSON(options),
+      ...types.routeRequestToJSON(options),
       cumulative_affiliate_fee_bps: options.cumulativeAffiliateFeeBPS || "0",
       client_id: this.clientID,
     });
 
-    return routeResponseFromJSON(response);
+    return types.routeResponseFromJSON(response);
   }
 
   async recommendAssets(
-    request: AssetRecommendationRequest | AssetRecommendationRequest[],
+    request:
+      | types.AssetRecommendationRequest
+      | types.AssetRecommendationRequest[],
   ) {
-    const options = recommendAssetsRequestToJSON({
+    const options = types.recommendAssetsRequestToJSON({
       requests: Array.isArray(request) ? request : [request],
       clientID: this.clientID,
     });
 
-    const response = await this.requestClient.post<RecommendAssetsResponseJSON>(
-      "/v2/fungible/recommend_assets",
-      options,
-    );
+    const response =
+      await this.requestClient.post<types.RecommendAssetsResponseJSON>(
+        "/v2/fungible/recommend_assets",
+        options,
+      );
 
-    return recommendAssetsResponseFromJSON(response).recommendationEntries;
+    return types.recommendAssetsResponseFromJSON(response)
+      .recommendationEntries;
   }
 
-  async ibcOriginAssets(assets: DenomWithChainID[]): Promise<AssetOrError[]> {
-    const response = await this.requestClient.post<OriginAssetsResponseJSON>(
-      "/v2/fungible/ibc_origin_assets",
-      originAssetsRequestToJSON({
-        assets,
-      }),
-    );
+  async ibcOriginAssets(
+    assets: types.DenomWithChainID[],
+  ): Promise<types.AssetOrError[]> {
+    const response =
+      await this.requestClient.post<types.OriginAssetsResponseJSON>(
+        "/v2/fungible/ibc_origin_assets",
+        types.originAssetsRequestToJSON({
+          assets,
+        }),
+      );
 
-    return originAssetsResponseFromJSON(response).originAssets;
+    return types.originAssetsResponseFromJSON(response).originAssets;
   }
 
   async submitTransaction({
@@ -986,17 +864,17 @@ export class SkipRouter {
   }: {
     chainID: string;
     tx: string;
-  }): Promise<SubmitTxResponse> {
+  }): Promise<types.SubmitTxResponse> {
     const response = await this.requestClient.post<
-      SubmitTxResponseJSON,
-      SubmitTxRequestJSON
+      types.SubmitTxResponseJSON,
+      types.SubmitTxRequestJSON
     >("/v2/tx/submit", {
       chain_id: chainID,
       tx: tx,
       client_id: this.clientID,
     });
 
-    return submitTxResponseFromJSON(response);
+    return types.submitTxResponseFromJSON(response);
   }
 
   async trackTransaction({
@@ -1005,17 +883,17 @@ export class SkipRouter {
   }: {
     chainID: string;
     txHash: string;
-  }): Promise<TrackTxResponse> {
+  }): Promise<types.TrackTxResponse> {
     const response = await this.requestClient.post<
-      TrackTxResponseJSON,
-      TrackTxRequestJSON
+      types.TrackTxResponseJSON,
+      types.TrackTxRequestJSON
     >("/v2/tx/track", {
       chain_id: chainID,
       tx_hash: txHash,
       client_id: this.clientID,
     });
 
-    return trackTxResponseFromJSON(response);
+    return types.trackTxResponseFromJSON(response);
   }
 
   async transactionStatus({
@@ -1024,17 +902,17 @@ export class SkipRouter {
   }: {
     chainID: string;
     txHash: string;
-  }): Promise<TxStatusResponse> {
+  }): Promise<types.TxStatusResponse> {
     const response = await this.requestClient.get<
-      TxStatusResponseJSON,
-      StatusRequestJSON
+      types.TxStatusResponseJSON,
+      types.StatusRequestJSON
     >("/v2/tx/status", {
       chain_id: chainID,
       tx_hash: txHash,
       client_id: this.clientID,
     });
 
-    return txStatusResponseFromJSON(response);
+    return types.txStatusResponseFromJSON(response);
   }
 
   async waitForTransaction({
@@ -1071,21 +949,20 @@ export class SkipRouter {
     }
   }
 
-  async venues(): Promise<SwapVenue[]> {
-    const response = await this.requestClient.get<{ venues: SwapVenueJSON[] }>(
-      "/v1/fungible/venues",
-      {
-        client_id: this.clientID,
-      },
-    );
+  async venues(): Promise<types.SwapVenue[]> {
+    const response = await this.requestClient.get<{
+      venues: types.SwapVenueJSON[];
+    }>("/v1/fungible/venues", {
+      client_id: this.clientID,
+    });
 
-    return response.venues.map((venue) => swapVenueFromJSON(venue));
+    return response.venues.map((venue) => types.swapVenueFromJSON(venue));
   }
 
   async getGasAmountForMessage(
     client: SigningCosmWasmClient,
     signerAddress: string,
-    message: MultiChainMsg,
+    message: types.MultiChainMsg,
   ): Promise<string> {
     return getGasAmountForMessage(client, signerAddress, message);
   }
@@ -1251,7 +1128,7 @@ export class SkipRouter {
   }
 
   async getFeeForMessage(
-    msg: MultiChainMsg,
+    msg: types.MultiChainMsg,
     gasAmountMultiplier: number = DEFAULT_GAS_MULTIPLIER,
     signer?: OfflineSigner,
     gasPrice?: GasPrice,
@@ -1322,7 +1199,9 @@ export class SkipRouter {
     return new GasPrice(Decimal.fromUserInput(price, 18), feeInfo.denom);
   }
 
-  async getFeeInfoForChain(chainID: string): Promise<FeeAsset | undefined> {
+  async getFeeInfoForChain(
+    chainID: string,
+  ): Promise<types.FeeAsset | undefined> {
     const skipChains = await this.chains();
 
     const skipChain = skipChains.find((chain) => chain.chainID === chainID);
@@ -1433,7 +1312,7 @@ export class SkipRouter {
   }
 
   private async validateGasBalances(
-    messages: Msg[],
+    messages: types.Msg[],
     userAddresses: Record<string, string>,
     getOfflineSigner: (chainID: string) => Promise<OfflineSigner>,
     getGasPrice?: (chainID: string) => Promise<GasPrice | undefined>,
@@ -1479,7 +1358,7 @@ export class SkipRouter {
     client: SigningCosmWasmClient,
     signer: OfflineSigner,
     signerAddress: string,
-    message: MultiChainMsg,
+    message: types.MultiChainMsg,
     getGasPrice?: (chainID: string) => Promise<GasPrice | undefined>,
     gasAmountMultiplier?: number,
   ) {
@@ -1517,4 +1396,8 @@ export class SkipRouter {
 
 function raise(message?: string, options?: ErrorOptions): never {
   throw new Error(message, options);
+}
+
+function wait(ms: number) {
+  return new Promise((resolve) => setTimeout(resolve, ms));
 }
