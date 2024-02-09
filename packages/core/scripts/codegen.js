@@ -1,22 +1,23 @@
 // @ts-check
+/* eslint-disable @typescript-eslint/no-var-requires */
 
 const fs = require("fs/promises");
 const path = require("path");
 const telescope = require("@cosmology/telescope").default;
+const protoDirs = require("../../../vendor");
 
 async function codegen() {
-  const cwd = process.cwd();
-  const outPath = path.resolve(cwd, "packages/core/src/codegen/");
-  await fs.rm(outPath, { recursive: true, force: true }).catch(() => {});
+  const outPath = path.resolve(__dirname, "../src/codegen/");
+
+  await fs
+    .rm(outPath, { recursive: true, force: true })
+    .catch(() => {})
+    .then(() => fs.mkdir(outPath, { recursive: true }))
+    .then(() => fs.writeFile(path.resolve(outPath, ".gitkeep"), "", "utf-8"));
+
   await telescope({
-    protoDirs: [
-      "./node_modules/@protobufs/",
-      path.resolve(cwd, "vendor/cosmos-proto/proto"),
-      path.resolve(cwd, "vendor/cosmos-sdk/proto"),
-      path.resolve(cwd, "vendor/evmos/proto"),
-      path.resolve(cwd, "vendor/noble-cctp/proto"),
-    ],
-    outPath: path.resolve(cwd, "packages/core/src/codegen/"),
+    protoDirs,
+    outPath,
     options: {
       aminoEncoding: {
         customTypes: {
@@ -24,9 +25,11 @@ async function codegen() {
         },
         enabled: true,
         exceptions: {
+          // https://github.com/evmos/evmos/blob/v16.0.3/crypto/ethsecp256k1/ethsecp256k1.go#L33
           "/ethermint.crypto.v1.ethsecp256k1.PrivKey": {
             aminoType: "ethermint/PrivKeyEthSecp256k1",
           },
+          // https://github.com/evmos/evmos/blob/v16.0.3/crypto/ethsecp256k1/ethsecp256k1.go#L35
           "/ethermint.crypto.v1.ethsecp256k1.PubKey": {
             aminoType: "ethermint/PubKeyEthSecp256k1",
           },
@@ -57,20 +60,22 @@ async function codegen() {
            * - mod      : ethermint
            * - submod   : evm
            * - type     : ethermint/MsgUpdateParams
+           *
+           * @type {Record<string, string>}
            */
           const lookup = {
             ethermint: "evm",
             evmos: "revenue",
           };
 
-          if (lookup[mod]) {
+          if (mod && lookup[mod]) {
             if (type === "MsgUpdateParams" && lookup[mod] === submod) {
               return `${mod}/MsgUpdateParams`;
             }
             if (type === "MsgUpdateParams") {
               return `${mod}/${submod}/MsgUpdateParams`;
             }
-            if (type.startsWith("Msg")) {
+            if (type?.startsWith("Msg")) {
               return `${mod}/${type}`;
             }
             return `${submod}/${type}`;
