@@ -93,6 +93,16 @@ async function codegen() {
         addTypeUrlToObjects: true,
         enableRegistryLoader: false,
         enabled: true,
+        methods: {
+          decode: true,
+          encode: true,
+          fromAmino: true,
+          fromJSON: true,
+          fromProto: true,
+          toAmino: true,
+          toJSON: true,
+          toProto: true,
+        },
         parser: {
           keepCase: false,
         },
