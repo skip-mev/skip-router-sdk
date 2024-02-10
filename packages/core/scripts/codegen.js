@@ -116,7 +116,7 @@ async function codegen() {
             useCosmosSDKDec: true,
           },
           duration: "duration",
-          num64: "bigint",
+          num64: "long",
           timestamp: "date",
           useDeepPartial: false,
           useExact: false,
