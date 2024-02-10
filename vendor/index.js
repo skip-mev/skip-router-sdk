@@ -8,6 +8,7 @@ const protoDirs = [
   path.resolve(__dirname, "cosmos-sdk/proto"),
   path.resolve(__dirname, "evmos/proto"),
   path.resolve(__dirname, "noble-cctp/proto"),
+  path.resolve(__dirname, "wasmd/proto"),
 ];
 
 module.exports = protoDirs;
