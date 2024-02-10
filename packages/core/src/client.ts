@@ -9,8 +9,9 @@ import {
 import { fromBase64 } from "@cosmjs/encoding";
 import { Int53 } from "@cosmjs/math";
 import { Decimal } from "@cosmjs/math";
+import { encodeEthSecp256k1Pubkey } from "./amino/encoding";
+import { encodePubkey } from "./proto-signing/pubkey";
 import {
-  encodePubkey,
   isOfflineDirectSigner,
   makeAuthInfoBytes,
   makeSignDoc,
@@ -542,13 +543,14 @@ export class SkipRouter {
 
     const message = getEncodeObjectFromMultiChainMessage(multiChainMessage);
 
-    const pubkey = encodePubkey(
-      encodeSecp256k1Pubkey(accountFromSigner.pubkey),
-    );
+    const algo = `${accountFromSigner.algo}`;
+    const isEthSecp256k1 = algo === "eth_secp256k1" || algo === "ethsecp256k1";
 
-    if ((accountFromSigner.algo as string) === "ethsecp256k1") {
-      pubkey.typeUrl = "/ethermint.crypto.v1.ethsecp256k1.PubKey";
-    }
+    const pubKey = isEthSecp256k1
+      ? encodeEthSecp256k1Pubkey(accountFromSigner.pubkey)
+      : encodeSecp256k1Pubkey(accountFromSigner.pubkey);
+
+    const encodedPubKey = encodePubkey(pubKey);
 
     const txBodyEncodeObject: TxBodyEncodeObject = {
       typeUrl: "/cosmos.tx.v1beta1.TxBody",
@@ -562,7 +564,7 @@ export class SkipRouter {
     const gasLimit = Int53.fromString(fee.gas).toNumber();
 
     const authInfoBytes = makeAuthInfoBytes(
-      [{ pubkey, sequence }],
+      [{ pubkey: encodedPubKey, sequence }],
       fee.amount,
       gasLimit,
       fee.granter,
@@ -741,9 +743,14 @@ export class SkipRouter {
       message.value.timeoutTimestamp = Long.fromNumber(0);
     }
 
-    const pubkey = encodePubkey(
-      encodeSecp256k1Pubkey(accountFromSigner.pubkey),
-    );
+    const algo = `${accountFromSigner.algo}`;
+    const isEthSecp256k1 = algo === "eth_secp256k1" || algo === "ethsecp256k1";
+
+    const pubKey = isEthSecp256k1
+      ? encodeEthSecp256k1Pubkey(accountFromSigner.pubkey)
+      : encodeSecp256k1Pubkey(accountFromSigner.pubkey);
+
+    const encodedPubKey = encodePubkey(pubKey);
 
     const signMode = SignMode.SIGN_MODE_LEGACY_AMINO_JSON;
 
@@ -783,7 +790,7 @@ export class SkipRouter {
     const signedSequence = Int53.fromString(signed.sequence).toNumber();
 
     const signedAuthInfoBytes = makeAuthInfoBytes(
-      [{ pubkey, sequence: signedSequence }],
+      [{ pubkey: encodedPubKey, sequence: signedSequence }],
       signed.fee.amount,
       signedGasLimit,
       signed.fee.granter,
@@ -974,7 +981,6 @@ export class SkipRouter {
     if (chainID.includes("evmos")) {
       return this.getAccountNumberAndSequenceFromEvmos(address, chainID);
     }
-
     if (chainID.includes("injective")) {
       return this.getAccountNumberAndSequenceInjective(address, chainID);
     }
@@ -982,7 +988,7 @@ export class SkipRouter {
     const endpoint = await this.getRpcEndpointForChain(chainID);
 
     const client = await StargateClient.connect(endpoint, {
-      accountParser: accountParser,
+      accountParser,
     });
 
     const account = await client.getAccount(address);
