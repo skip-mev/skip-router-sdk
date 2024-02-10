@@ -1,19 +1,25 @@
-# skip-router
+![header](https://files.readme.io/4f92aa7-DALLE_Cover_Photo_1..png)
 
-Skip Router is a SDK for the Skip API that helps developers create more seamless cross-chain experiences for their end-users with IBC.
+# Skip Router SDK
 
-## [NPM Package](https://www.npmjs.com/package/@skip-router/core) 
+Skip Router is an SDK for Skip API for creating seamless cross-chain experiences for end-users with IBC.
 
-https://www.npmjs.com/package/@skip-router/core
+## Packages
 
-## Example Usage: [@skip-router/examples](https://github.com/skip-mev/skip-router/tree/main/packages/examples) 
+- [`@skip-router/core`](https://npm.im/@skip-router/core) - JavaScript SDK for Skip API
 
-## More docs: https://api-docs.skip.money   
+## Documentation
 
-See the main documentation site for the Skip-API for more usage information
+- [Skip API documentation](https://api-docs.skip.money)
+- [Skip API Reference](https://api-docs.skip.money/reference)
+- [Skip API Reference (Swagger)](https://api-swagger.skip.money)
 
-## Packages  
+## Examples
 
-| Name                                                                                 | Type | Description                 |
-| ------------------------------------------------------------------------------------ | ---- | --------------------------- |
-| [@skip-router/core](https://github.com/skip-mev/skip-router/tree/main/packages/core) | Core | Core Skip-API functionality |
+- https://github.com/skip-mev/skip-router/tree/main/packages/examples
+
+## Maintainers
+
+- @thal0x
+- @codingki
+- @grikomsn

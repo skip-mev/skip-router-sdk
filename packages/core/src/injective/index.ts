@@ -48,6 +48,10 @@ export function createTransaction({
 
   const body = createBody({ message, memo, timeoutHeight });
 
+  if (!fee.amount[0]) {
+    throw new Error("createTransaction error: unable to get fee amount");
+  }
+
   const feeMessage = createFee({
     fee: fee.amount[0],
     payer: fee.payer,

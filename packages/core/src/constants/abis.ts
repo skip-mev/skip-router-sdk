@@ -1,4 +1,10 @@
-export const erc20ABI = [
+import { Abi } from "viem";
+
+export function createAbi<TAbi extends Abi>(abi: TAbi) {
+  return abi;
+}
+
+export const erc20ABI = /* #__PURE__ */ createAbi([
   {
     type: "event",
     name: "Approval",
@@ -194,4 +200,4 @@ export const erc20ABI = [
       },
     ],
   },
-] as const;
+] as const);

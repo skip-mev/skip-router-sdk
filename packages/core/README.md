@@ -1,57 +1,73 @@
-# `@skip-router/core`
+![header](https://files.readme.io/4f92aa7-DALLE_Cover_Photo_1..png)
 
-Provides core functionality for interacting with the Skip API.
+[![npm/v](https://badgen.net/npm/v/@skip-router/core)](https://www.npmjs.com/package/@skip-router/core)
+[![npm/dt](https://badgen.net/npm/dt/@skip-router/core?)](https://www.npmjs.com/package/@skip-router/core)
+[![stars](https://badgen.net/github/stars/skip-mev/skip-router-sdk?)](https://github.com/skip-mev/skip-router-sdk)
 
-## Installation
+# @skip-router/core
+
+JavaScript SDK for Skip API
+
+## Install
 
 ```bash
 npm install @skip-router/core
 ```
 
-## Running Unit Tests
+## Usage
 
-To run tests simply run:
+Read more at Skip API docs website on [Getting Started: TypeScript SDK](https://api-docs.skip.money/docs/getting-started).
+
+## Development
 
 ```bash
-npm test
+# clone repository
+git clone https://github.com/skip-mev/skip-router-sdk.git
+cd skip-router-sdk
+
+# install dependencies
+npm install
+
+# run watch server to build on changes
+npm -w @skip-router/core run watch
+
+# build packages
+npm run build
 ```
 
-Watch mode:
+## Unit Tests
 
 ```bash
+# run unit tests
+npm run test
+
+# run unit tests in watch mode
 npm run test -- --watch
-```
 
-Get Coverage:
-
-```bash
+# run unit tests with coverage
 npm run test -- --coverage
 ```
 
-## Running e2e Tests
+## E2E Tests
 
-e2e tests depend on [Starship](https://starship.cosmology.tech/) to test interactions with various blockchains.
-
-Setup and install Starship dependencies:
+E2E tests depend on [Starship](https://starship.cosmology.tech) to test interactions with various blockchains.
 
 ```bash
+# run starship setup
 npm run e2e:setup
-```
 
-Start the Starship devnets:
-
-```bash
+# run starship devnets
 npm run e2e:start
-```
 
-Run the e2e tests:
+# run e2e tests
+npm run e2e:test
 
-```bash
-npm run e2e:test # or npm run e2e:test -- --watch
-```
-
-Stop the Starship devnets:
-
-```bash
+# stop starship devnets
 npm run e2e:stop
 ```
+
+## Documentation
+
+- [Skip API documentation](https://api-docs.skip.money)
+- [Skip API Reference](https://api-docs.skip.money/reference)
+- [Skip API Reference (Swagger)](https://api-swagger.skip.money)

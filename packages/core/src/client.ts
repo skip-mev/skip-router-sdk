@@ -212,8 +212,8 @@ export class SkipRouter {
   private getEVMSigner?: (chainID: string) => Promise<WalletClient>;
 
   constructor(options: SkipRouterOptions = {}) {
-    this.clientID = options.clientID ?? "skip-router-js";
-    this.requestClient = new RequestClient(options.apiURL ?? SKIP_API_URL);
+    this.clientID = options.clientID || "skip-router-js";
+    this.requestClient = new RequestClient(options.apiURL || SKIP_API_URL);
 
     this.aminoTypes = new AminoTypes({
       ...createDefaultAminoConverters(),
@@ -331,16 +331,19 @@ export class SkipRouter {
       gasAmountMultiplier = DEFAULT_GAS_MULTIPLIER,
     } = options;
 
-    let getOfflineSigner = this.getCosmosSigner;
-    if (options.getCosmosSigner) {
-      getOfflineSigner = options.getCosmosSigner;
-    }
-
+    const getOfflineSigner = this.getCosmosSigner || options.getCosmosSigner;
     if (!getOfflineSigner) {
       throw new Error(
-        "Unable to get Cosmos signer. Please provide a signer or a function to get a signer",
+        "executeRoute error: 'getCosmosSigner' is not provided or configured in skip router",
       );
     }
+
+    const addressList = route.chainIDs.map((chainID) => {
+      return (
+        userAddresses[chainID] ||
+        raise(`executeRoute error: invalid address for chain '${chainID}'`)
+      );
+    });
 
     const messages = await this.messages({
       sourceAssetDenom: route.sourceAssetDenom,
@@ -348,10 +351,10 @@ export class SkipRouter {
       destAssetDenom: route.destAssetDenom,
       destAssetChainID: route.destAssetChainID,
       amountIn: route.amountIn,
-      amountOut: route.estimatedAmountOut ?? "0",
-      addressList: route.chainIDs.map((chainID) => userAddresses[chainID]),
+      amountOut: route.estimatedAmountOut || "0",
+      addressList: addressList,
       operations: route.operations,
-      slippageTolerancePercent: options.slippageTolerancePercent ?? "1",
+      slippageTolerancePercent: options.slippageTolerancePercent || "1",
     });
 
     if (validateGasBalance) {
@@ -367,27 +370,20 @@ export class SkipRouter {
 
     // execute txs
     for (let i = 0; i < messages.length; i++) {
-      const message = messages[i];
+      const message = messages[i]!;
 
       if ("multiChainMsg" in message) {
         const { multiChainMsg } = message;
 
         const signer = await getOfflineSigner(multiChainMsg.chainID);
 
-        let gasPrice: GasPrice | undefined;
-        if (getGasPrice) {
-          gasPrice = await getGasPrice(multiChainMsg.chainID);
-        }
+        const gasPriceResolver = getGasPrice || this.getRecommendedGasPrice;
 
-        if (!gasPrice) {
-          gasPrice = await this.getRecommendedGasPrice(multiChainMsg.chainID);
-
-          if (!gasPrice) {
-            throw new Error(
-              `Unable to get gas price for chain: ${multiChainMsg.chainID}`,
-            );
-          }
-        }
+        const gasPrice =
+          (await gasPriceResolver(multiChainMsg.chainID)) ||
+          raise(
+            `executeRoute error: unable to get gas prices for chain '${multiChainMsg.chainID}'`,
+          );
 
         const endpoint = await this.getRpcEndpointForChain(
           multiChainMsg.chainID,
@@ -402,9 +398,16 @@ export class SkipRouter {
           },
         );
 
+        const currentUserAddress = userAddresses[multiChainMsg.chainID];
+        if (!currentUserAddress) {
+          throw new Error(
+            `executeRoute error: invalid address for chain '${multiChainMsg.chainID}'`,
+          );
+        }
+
         const estimatedGas = await getGasAmountForMessage(
           client,
-          userAddresses[multiChainMsg.chainID],
+          currentUserAddress,
           multiChainMsg,
           gasAmountMultiplier,
         );
@@ -412,11 +415,13 @@ export class SkipRouter {
         const fee = calculateFee(Math.ceil(parseFloat(estimatedGas)), gasPrice);
 
         if (!fee) {
-          throw new Error("Unable to get fee for message");
+          throw new Error(
+            `executeRoute error: unable to get fee for message #${i}`,
+          );
         }
 
         const tx = await this.executeMultiChainMessage({
-          signerAddress: userAddresses[multiChainMsg.chainID],
+          signerAddress: currentUserAddress,
           signer,
           message: multiChainMsg,
           fee,
@@ -447,12 +452,11 @@ export class SkipRouter {
       if ("evmTx" in message) {
         const { evmTx } = message;
 
-        let getEVMSigner = this.getEVMSigner;
-        if (options.getEVMSigner) {
-          getEVMSigner = options.getEVMSigner;
-        }
+        const getEVMSigner = options.getEVMSigner || this.getEVMSigner;
         if (!getEVMSigner) {
-          throw new Error("Unable to get EVM signer");
+          throw new Error(
+            "executeRoute error: 'getEVMSigner' is not provided or configured in skip router",
+          );
         }
 
         const evmSigner = await getEVMSigner(evmTx.chainID);
@@ -495,7 +499,9 @@ export class SkipRouter {
     );
 
     if (!accountFromSigner) {
-      throw new Error("Failed to retrieve account from signer");
+      throw new Error(
+        "executeMultiChainMessage error: failed to retrieve account from signer",
+      );
     }
 
     const endpoint = await this.getRpcEndpointForChain(message.chainID);
@@ -556,7 +562,9 @@ export class SkipRouter {
     signer: WalletClient;
   }) {
     if (!signer.account) {
-      throw new Error("Failed to retrieve account from signer");
+      throw new Error(
+        "executeEVMTransaction error: failed to retrieve account from signer",
+      );
     }
 
     const extendedSigner = signer.extend(publicActions);
@@ -591,7 +599,9 @@ export class SkipRouter {
       });
 
       if (receipt.status === "reverted") {
-        throw new Error(`EVM tx reverted: ${receipt.transactionHash}`);
+        throw new Error(
+          `executeEVMTransaction error: evm tx reverted for hash ${receipt.transactionHash}`,
+        );
       }
     }
 
@@ -648,7 +658,9 @@ export class SkipRouter {
     );
 
     if (!accountFromSigner) {
-      throw new Error("Failed to retrieve account from signer");
+      throw new Error(
+        "signMultiChainMessageDirect error: failed to retrieve account from signer",
+      );
     }
 
     const message = getEncodeObjectFromMultiChainMessage(multiChainMessage);
@@ -715,7 +727,9 @@ export class SkipRouter {
     );
 
     if (!accountFromSigner) {
-      throw new Error("Failed to retrieve account from signer");
+      throw new Error(
+        "signMultiChainMessageDirectEvmos: failed to retrieve account from signer",
+      );
     }
 
     const message =
@@ -762,7 +776,9 @@ export class SkipRouter {
     );
 
     if (!accountFromSigner) {
-      throw new Error("Failed to retrieve account from signer");
+      throw new Error(
+        "signMultiChainMessageDirectInjective: failed to retrieve account from signer",
+      );
     }
 
     const restEndpoint = await this.getRestEndpointForChain(
@@ -822,7 +838,9 @@ export class SkipRouter {
     );
 
     if (!accountFromSigner) {
-      throw new Error("Failed to retrieve account from signer");
+      throw new Error(
+        "signMultiChainMessageAmino: failed to retrieve account from signer",
+      );
     }
 
     const message = getEncodeObjectFromMultiChainMessage(multiChainMessage);
@@ -858,7 +876,7 @@ export class SkipRouter {
 
     const msgs = [this.aminoTypes.toAmino(message)];
 
-    msgs[0].value.memo = message.value.memo;
+    msgs[0]!.value.memo = message.value.memo;
 
     const signDoc = makeSignDocAmino(
       msgs,
@@ -879,7 +897,7 @@ export class SkipRouter {
       memo: signed.memo,
     };
 
-    signedTxBody.messages[0].value.memo = message.value.memo;
+    signedTxBody.messages[0]!.value.memo = message.value.memo;
 
     const signedTxBodyEncodeObject: TxBodyEncodeObject = {
       typeUrl: "/cosmos.tx.v1beta1.TxBody",
@@ -913,7 +931,7 @@ export class SkipRouter {
       MsgsRequestJSON
     >("/v2/fungible/msgs", {
       ...msgsRequestToJSON(options),
-      slippage_tolerance_percent: options.slippageTolerancePercent ?? "0",
+      slippage_tolerance_percent: options.slippageTolerancePercent || "0",
       client_id: this.clientID,
     });
 
@@ -926,7 +944,7 @@ export class SkipRouter {
       RouteRequestJSON
     >("/v2/fungible/route", {
       ...routeRequestToJSON(options),
-      cumulative_affiliate_fee_bps: options.cumulativeAffiliateFeeBPS ?? "0",
+      cumulative_affiliate_fee_bps: options.cumulativeAffiliateFeeBPS || "0",
       client_id: this.clientID,
     });
 
@@ -1095,7 +1113,9 @@ export class SkipRouter {
     const account = await client.getAccount(address);
 
     if (!account) {
-      throw new Error("Failed to retrieve account");
+      throw new Error(
+        "getAccountNumberAndSequence: failed to retrieve account",
+      );
     }
 
     client.disconnect();
@@ -1174,7 +1194,7 @@ export class SkipRouter {
     ) {
       const endpointOptions = this.endpointOptions.endpoints[chainID];
 
-      if (endpointOptions.rpc) {
+      if (endpointOptions?.rpc) {
         return endpointOptions.rpc;
       }
     }
@@ -1182,13 +1202,17 @@ export class SkipRouter {
     const chain = chains().find((chain) => chain.chain_id === chainID);
 
     if (!chain) {
-      throw new Error(`Failed to find chain with ID ${chainID} in registry`);
+      throw new Error(
+        `getRpcEndpointForChain: failed to find chain id '${chainID}' in registry`,
+      );
     }
 
-    const endpoint = chain.apis?.rpc?.[0].address;
+    const endpoint = chain.apis?.rpc?.[0]?.address;
 
     if (!endpoint) {
-      throw new Error(`Failed to find RPC endpoint for chain ${chainID}`);
+      throw new Error(
+        `getRpcEndpointForChain error: failed to find RPC endpoint for chain '${chainID}'`,
+      );
     }
 
     return endpoint;
@@ -1205,20 +1229,24 @@ export class SkipRouter {
     ) {
       const endpointOptions = this.endpointOptions.endpoints[chainID];
 
-      if (endpointOptions.rest) {
+      if (endpointOptions?.rest) {
         return endpointOptions.rest;
       }
     }
 
     const chain = chains().find((chain) => chain.chain_id === chainID);
     if (!chain) {
-      throw new Error(`Failed to find chain with ID ${chainID} in registry`);
+      throw new Error(
+        `getRestEndpointForChain error: failed to find chain id '${chainID}' in registry`,
+      );
     }
 
-    const endpoint = chain.apis?.rest?.[0].address;
+    const endpoint = chain.apis?.rest?.[0]?.address;
 
     if (!endpoint) {
-      throw new Error(`Failed to find REST endpoint for chain ${chainID}`);
+      throw new Error(
+        `getRestEndpointForChain error: failed to find REST endpoint for chain '${chainID}'`,
+      );
     }
 
     return endpoint;
@@ -1230,26 +1258,26 @@ export class SkipRouter {
     signer?: OfflineSigner,
     gasPrice?: GasPrice,
   ) {
+    gasPrice ||= await this.getRecommendedGasPrice(msg.chainID);
     if (!gasPrice) {
-      gasPrice = await this.getRecommendedGasPrice(msg.chainID);
-
-      if (!gasPrice) {
-        throw new Error(`Unable to get gas price for chain: ${msg.chainID}`);
-      }
+      throw new Error(
+        `getFeeForMessage error: Unable to get gas price for chain: ${msg.chainID}`,
+      );
     }
 
-    if (!signer && this.getCosmosSigner) {
-      signer = await this.getCosmosSigner(msg.chainID);
-    }
-
+    signer ||= await this.getCosmosSigner?.(msg.chainID);
     if (!signer) {
       throw new Error(
-        "Unable to get Cosmos signer. Must pass a signer to getFeeForMessage, or configure the getCosmosSigner option in SkipRouterOptions when instantiating SkipRouter",
+        "getFeeForMessage error: signer is not provided or 'getCosmosSigner' is not configured in skip router",
       );
     }
 
     const accounts = await signer.getAccounts();
-    const signerAddress = accounts[0].address;
+    const signerAddress =
+      accounts[0]?.address ||
+      raise(
+        `getFeeForMessage error: unable to resolve account address from signer`,
+      );
 
     const endpoint = await this.getRpcEndpointForChain(msg.chainID);
 
@@ -1272,7 +1300,7 @@ export class SkipRouter {
     const fee = calculateFee(Math.ceil(parseFloat(gasNeeded)), gasPrice);
 
     if (!fee) {
-      throw new Error("Unable to get fee for message");
+      throw new Error("getFeeForMessage error: unable to get fee for message");
     }
 
     return fee;
@@ -1355,7 +1383,7 @@ export class SkipRouter {
   private getDefaultGasTokenForChain(chainID: string) {
     const gasDenom = DEFAULT_GAS_DENOM_OVERRIDES[chainID];
     if (gasDenom) {
-      return gasDenom as string;
+      return gasDenom;
     }
 
     const chain = chains().find((chain) => chain.chain_id === chainID);
@@ -1371,7 +1399,7 @@ export class SkipRouter {
     const stakingTokens = this.getStakingTokensForChain(chainID);
     if (stakingTokens && stakingTokens.length > 0) {
       const feeAsset = chain.fees.fee_tokens.find(
-        (feeToken) => feeToken.denom === stakingTokens[0].denom,
+        (feeToken) => feeToken.denom === stakingTokens[0]?.denom,
       );
 
       if (feeAsset) {
@@ -1388,13 +1416,15 @@ export class SkipRouter {
     }
 
     // if all else fails, just return the first token in the array
-    return chain.fees.fee_tokens[0].denom;
+    return chain.fees.fee_tokens[0]?.denom;
   }
 
   private getStakingTokensForChain(chainID: string) {
     const chain = chains().find((chain) => chain.chain_id === chainID);
     if (!chain) {
-      throw new Error(`Failed to find chain with ID ${chainID} in registry`);
+      throw new Error(
+        `getStakingTokensForChain error: failed to find chain id '${chainID}' in registry`,
+      );
     }
 
     if (!chain.staking) {
@@ -1412,7 +1442,7 @@ export class SkipRouter {
     gasAmountMultiplier?: number,
   ) {
     for (let i = 0; i < messages.length; i++) {
-      const message = messages[i];
+      const message = messages[i]!;
 
       if ("multiChainMsg" in message) {
         const signer = await getOfflineSigner(message.multiChainMsg.chainID);
@@ -1429,10 +1459,16 @@ export class SkipRouter {
           },
         );
 
+        const currentAddress =
+          userAddresses[message.multiChainMsg.chainID] ||
+          raise(
+            `validateGasBalance error: invalid address for chain '${message.multiChainMsg.chainID}'`,
+          );
+
         await this.validateCosmosGasBalance(
           client,
           signer,
-          userAddresses[message.multiChainMsg.chainID],
+          currentAddress,
           message.multiChainMsg,
           getGasPrice,
           gasAmountMultiplier,
@@ -1461,6 +1497,12 @@ export class SkipRouter {
       gasPrice,
     );
 
+    if (!fee.amount[0]) {
+      throw new Error(
+        `validateCosmosGasBalance error: unable to get fee amount`,
+      );
+    }
+
     const balance = await client.getBalance(signerAddress, fee.amount[0].denom);
 
     if (parseInt(balance.amount) < parseInt(fee.amount[0].amount)) {
@@ -1473,4 +1515,8 @@ export class SkipRouter {
       );
     }
   }
+}
+
+function raise(message?: string, options?: ErrorOptions): never {
+  throw new Error(message, options);
 }
