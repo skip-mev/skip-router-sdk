@@ -2,22 +2,22 @@
   "$schema": "https://turbo.build/schema.json",
   "pipeline": {
     "build": {
-      "dependsOn": ["^build", "codegen"],
-      "outputs": [".next/**", "!.next/cache/**", "dist/**"]
+      "dependsOn": ["codegen"],
+      "outputs": ["dist/**"]
     },
     "codegen": {
       "dependsOn": [],
-      "outputs": ["codegen/**"]
+      "outputs": ["src/codegen/**"]
     },
     "dev": {
       "cache": false,
       "persistent": true
     },
     "lint": {
-      "dependsOn": []
+      "dependsOn": ["build"]
     },
     "test": {
-      "dependsOn": []
+      "dependsOn": ["build"]
     }
   }
 }
