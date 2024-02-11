@@ -13,10 +13,11 @@ const defaultOptions: Options = {
   tsconfig: "./tsconfig.build.json",
 };
 
-export default defineConfig(async () => {
+export default defineConfig(async ({ watch }) => {
   return [
     {
       ...defaultOptions,
+      clean: !watch,
       entry: {
         index: "src/index.ts",
         parser: "src/parser.ts",

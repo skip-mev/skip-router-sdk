@@ -1,0 +1,5 @@
+{
+  "name": "vendor",
+  "main": "index.js",
+  "private": true
+}
