@@ -1,12 +1,14 @@
 {
   "name": "@skip-router/core",
   "description": "JavaScript SDK for Skip API",
-  "version": "1.2.11",
+  "version": "1.2.15",
   "repository": "https://github.com/skip-mev/skip-router-sdk",
-  "main": "dist/cjs/index.js",
-  "types": "dist/cjs/index.d.ts",
+  "main": "dist/index.js",
+  "types": "dist/index.d.ts",
   "files": [
-    "dist/cjs"
+    "dist/*",
+    "*.js",
+    "*.d.ts"
   ],
   "sideEffects": false,
   "scripts": {
@@ -35,11 +37,11 @@
     "@cosmjs/tendermint-rpc": "0.31.x",
     "@injectivelabs/core-proto-ts": "0.0.x",
     "@injectivelabs/sdk-ts": "1.x",
+    "@keplr-wallet/unit": "^0.12.67",
     "axios": "1.x",
     "cosmjs-types": "0.8.x",
     "keccak256": "1.x",
-    "kujira.js": "^0.9.121",
-    "stridejs": "^0.8.0-alpha.5",
+    "kujira.js": "0.9.x",
     "viem": "1.x"
   },
   "devDependencies": {

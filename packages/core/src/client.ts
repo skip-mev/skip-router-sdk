@@ -12,6 +12,7 @@ import { Int53 } from "@cosmjs/math";
 import { Decimal } from "@cosmjs/math";
 import {
   encodePubkey,
+  GeneratedType,
   isOfflineDirectSigner,
   makeAuthInfoBytes,
   makeSignDoc,
@@ -21,7 +22,7 @@ import {
   TxBodyEncodeObject,
 } from "@cosmjs/proto-signing";
 import {
-  AccountParser,
+  AminoConverters,
   AminoTypes,
   calculateFee,
   createDefaultAminoConverters,
@@ -42,17 +43,19 @@ import {
 import axios from "axios";
 import { SignMode } from "cosmjs-types/cosmos/tx/signing/v1beta1/signing";
 import { TxRaw } from "cosmjs-types/cosmos/tx/v1beta1/tx";
+
 import { MsgExecuteContract } from "cosmjs-types/cosmwasm/wasm/v1/tx";
 import Long from "long";
-import { strideAccountParser } from "stridejs";
+import { accountParser } from "./parser";
 import { maxUint256, publicActions, WalletClient } from "viem";
 
 import chains from "./chains";
-import { AminoConverter as circleAminoConverters } from "./codegen/circle/cctp/v1/tx.amino";
-import { registry as circleRegistry } from "./codegen/circle/cctp/v1/tx.registry";
+import {
+  circleAminoConverters,
+  circleProtoRegistry,
+} from "./codegen/circle/client";
 import { erc20ABI } from "./constants/abis";
 import { DEFAULT_GAS_DENOM_OVERRIDES } from "./constants/constants";
-import { EthAccount } from "./ethermint/types";
 import { createTransaction } from "./injective";
 import { RequestClient } from "./request-client";
 import {
@@ -142,6 +145,8 @@ export interface SkipRouterOptions {
     getRpcEndpointForChain?: (chainID: string) => Promise<string>;
     getRestEndpointForChain?: (chainID: string) => Promise<string>;
   };
+  aminoTypes?: AminoConverters;
+  registryTypes?: Iterable<[string, GeneratedType]>;
 }
 
 export type ExecuteRouteOptions = {
@@ -219,13 +224,14 @@ export class SkipRouter {
       ...createDefaultAminoConverters(),
       ...createWasmAminoConverters(),
       ...circleAminoConverters,
+      ...(options.aminoTypes ?? {}),
     });
 
     this.registry = new Registry([
       ...defaultRegistryTypes,
       ["/cosmwasm.wasm.v1.MsgExecuteContract", MsgExecuteContract],
-      ...circleRegistry,
-      [EthAccount.typeUrl, EthAccount],
+      ...circleProtoRegistry,
+      ...(options.registryTypes ?? []),
     ]);
 
     this.endpointOptions = options.endpointOptions ?? {};
@@ -850,10 +856,6 @@ export class SkipRouter {
         multiChainMessage.chainID,
       );
 
-      let accountParser: AccountParser | undefined;
-      if (multiChainMessage.chainID.includes("stride")) {
-        accountParser = strideAccountParser;
-      }
       const client = await StargateClient.connect(endpoint, {
         accountParser,
       });
@@ -1102,10 +1104,6 @@ export class SkipRouter {
 
     const endpoint = await this.getRpcEndpointForChain(chainID);
 
-    let accountParser: AccountParser | undefined;
-    if (chainID.includes("stride")) {
-      accountParser = strideAccountParser;
-    }
     const client = await StargateClient.connect(endpoint, {
       accountParser: accountParser,
     });

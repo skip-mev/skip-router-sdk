@@ -17,7 +17,12 @@ export default defineConfig(async () => {
   return [
     {
       ...defaultOptions,
-      entry: ["src/index.ts"],
+      entry: {
+        index: "src/index.ts",
+        parser: "src/parser.ts",
+        transactions: "src/transactions.ts",
+        types: "src/types/index.ts",
+      },
       external: [
         /^@cosmjs\/.*/,
         /^@injectivelabs\/.*/,

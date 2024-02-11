@@ -1,5 +1,6 @@
 import * as chainRegistry from "chain-registry";
 
+/** @deprecated */
 const DYDX_CHAIN = {
   $schema: "../chain.schema.json",
   chain_name: "dydx",
@@ -207,6 +208,7 @@ const DYDX_CHAIN = {
   ],
 };
 
+/** @deprecated */
 const CELESTIA_CHAIN = {
   $schema: "../chain.schema.json",
   chain_name: "celestia",
@@ -299,7 +301,8 @@ const CELESTIA_CHAIN = {
   ],
 };
 
-export default function () {
+/** @deprecated */
+export default function chains() {
   const chains = chainRegistry.chains;
 
   if (chains.findIndex((chain) => chain.chain_id === "dydx-mainnet-1") === -1) {
