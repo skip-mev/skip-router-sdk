@@ -13,8 +13,24 @@ import { PubKey } from "cosmjs-types/cosmos/crypto/secp256k1/keys";
 import { Any } from "cosmjs-types/google/protobuf/any";
 import { encodeEthSecp256k1Pubkey } from "../amino/encoding";
 import { isEthSecp256k1Pubkey } from "../amino/pubkey";
+import { AccountData } from "./signer";
 
-export function encodePubkey(pubkey: Pubkey): Any {
+export function makePubkeyAnyFromAccount(account: AccountData) {
+  const algo = `${account.algo}`;
+
+  // Some impl use `eth_secp256k1` and some use `ethsecp256k1`, so we check for both
+  const isEthSecp256k1 = algo === "eth_secp256k1" || algo === "ethsecp256k1";
+
+  const pubkey = isEthSecp256k1
+    ? encodeEthSecp256k1Pubkey(account.pubkey)
+    : encodeSecp256k1Pubkey(account.pubkey);
+
+  const pubkeyAny = encodePubkeyToAny(pubkey);
+
+  return pubkeyAny;
+}
+
+export function encodePubkeyToAny(pubkey: Pubkey): Any {
   if (isEthSecp256k1Pubkey(pubkey)) {
     const pubkeyProto = PubKey.fromPartial({
       key: fromBase64(pubkey.value),
@@ -28,7 +44,7 @@ export function encodePubkey(pubkey: Pubkey): Any {
   }
 }
 
-function decodeSinglePubkey(pubkey: Any): SinglePubkey {
+function decodeAnyToPubkey(pubkey: Any): SinglePubkey {
   switch (pubkey.typeUrl) {
     case "/ethermint.crypto.v1.ethsecp256k1.PubKey": {
       const { key } = PubKey.decode(pubkey.value);
@@ -52,10 +68,10 @@ export function decodePubkey(pubkey?: Any | null): Pubkey | null {
 
   switch (pubkey.typeUrl) {
     case "/ethermint.crypto.v1.ethsecp256k1.PubKey": {
-      return decodeSinglePubkey(pubkey);
+      return decodeAnyToPubkey(pubkey);
     }
     case "/cosmos.crypto.secp256k1.PubKey": {
-      return decodeSinglePubkey(pubkey);
+      return decodeAnyToPubkey(pubkey);
     }
     case "/cosmos.crypto.multisig.LegacyAminoPubKey": {
       const { threshold, publicKeys } = LegacyAminoPubKey.decode(pubkey.value);
@@ -63,7 +79,7 @@ export function decodePubkey(pubkey?: Any | null): Pubkey | null {
         type: "tendermint/PubKeyMultisigThreshold",
         value: {
           threshold: threshold.toString(),
-          pubkeys: publicKeys.map(decodeSinglePubkey),
+          pubkeys: publicKeys.map(decodeAnyToPubkey),
         },
       };
       return out;

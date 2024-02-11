@@ -1,7 +1,4 @@
-import {
-  encodeSecp256k1Pubkey,
-  makeSignDoc as makeSignDocAmino,
-} from "@cosmjs/amino";
+import { makeSignDoc as makeSignDocAmino } from "@cosmjs/amino";
 import {
   createWasmAminoConverters,
   SigningCosmWasmClient,
@@ -9,8 +6,7 @@ import {
 import { fromBase64 } from "@cosmjs/encoding";
 import { Int53 } from "@cosmjs/math";
 import { Decimal } from "@cosmjs/math";
-import { encodeEthSecp256k1Pubkey } from "./amino/encoding";
-import { encodePubkey } from "./proto-signing/pubkey";
+import { makePubkeyAnyFromAccount } from "./proto-signing/pubkey";
 import {
   isOfflineDirectSigner,
   makeAuthInfoBytes,
@@ -543,15 +539,6 @@ export class SkipRouter {
 
     const message = getEncodeObjectFromMultiChainMessage(multiChainMessage);
 
-    const algo = `${accountFromSigner.algo}`;
-    const isEthSecp256k1 = algo === "eth_secp256k1" || algo === "ethsecp256k1";
-
-    const pubKey = isEthSecp256k1
-      ? encodeEthSecp256k1Pubkey(accountFromSigner.pubkey)
-      : encodeSecp256k1Pubkey(accountFromSigner.pubkey);
-
-    const encodedPubKey = encodePubkey(pubKey);
-
     const txBodyEncodeObject: TxBodyEncodeObject = {
       typeUrl: "/cosmos.tx.v1beta1.TxBody",
       value: {
@@ -563,8 +550,10 @@ export class SkipRouter {
 
     const gasLimit = Int53.fromString(fee.gas).toNumber();
 
+    const pubkeyAny = makePubkeyAnyFromAccount(accountFromSigner);
+
     const authInfoBytes = makeAuthInfoBytes(
-      [{ pubkey: encodedPubKey, sequence }],
+      [{ pubkey: pubkeyAny, sequence }],
       fee.amount,
       gasLimit,
       fee.granter,
@@ -743,15 +732,6 @@ export class SkipRouter {
       message.value.timeoutTimestamp = Long.fromNumber(0);
     }
 
-    const algo = `${accountFromSigner.algo}`;
-    const isEthSecp256k1 = algo === "eth_secp256k1" || algo === "ethsecp256k1";
-
-    const pubKey = isEthSecp256k1
-      ? encodeEthSecp256k1Pubkey(accountFromSigner.pubkey)
-      : encodeSecp256k1Pubkey(accountFromSigner.pubkey);
-
-    const encodedPubKey = encodePubkey(pubKey);
-
     const signMode = SignMode.SIGN_MODE_LEGACY_AMINO_JSON;
 
     const msgs = [this.aminoTypes.toAmino(message)];
@@ -789,8 +769,10 @@ export class SkipRouter {
     const signedGasLimit = Int53.fromString(signed.fee.gas).toNumber();
     const signedSequence = Int53.fromString(signed.sequence).toNumber();
 
+    const pubkeyAny = makePubkeyAnyFromAccount(accountFromSigner);
+
     const signedAuthInfoBytes = makeAuthInfoBytes(
-      [{ pubkey: encodedPubKey, sequence: signedSequence }],
+      [{ pubkey: pubkeyAny, sequence: signedSequence }],
       signed.fee.amount,
       signedGasLimit,
       signed.fee.granter,
