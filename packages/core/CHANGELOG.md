@@ -1,5 +1,11 @@
 # @skip-router/core
 
+## 1.3.0
+
+### Minor Changes
+
+- a61ce2e: Improve stargate account parser, proto signing, and bundling
+
 ## 1.2.15
 
 ### Patch Changes
