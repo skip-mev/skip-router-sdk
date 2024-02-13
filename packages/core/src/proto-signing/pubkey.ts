@@ -15,7 +15,10 @@ import { encodeEthSecp256k1Pubkey } from "../amino/encoding";
 import { isEthSecp256k1Pubkey } from "../amino/pubkey";
 import { AccountData } from "./signer";
 
-export function makePubkeyAnyFromAccount(account: AccountData) {
+export function makePubkeyAnyFromAccount(
+  account: AccountData,
+  chainId?: string,
+) {
   const algo = `${account.algo}`;
 
   // Some impl use `eth_secp256k1` and some use `ethsecp256k1`, so we check for both
@@ -25,18 +28,24 @@ export function makePubkeyAnyFromAccount(account: AccountData) {
     ? encodeEthSecp256k1Pubkey(account.pubkey)
     : encodeSecp256k1Pubkey(account.pubkey);
 
-  const pubkeyAny = encodePubkeyToAny(pubkey);
+  const pubkeyAny = encodePubkeyToAny(pubkey, chainId);
 
   return pubkeyAny;
 }
 
-export function encodePubkeyToAny(pubkey: Pubkey): Any {
+export function encodePubkeyToAny(pubkey: Pubkey, chainId?: string): Any {
   if (isEthSecp256k1Pubkey(pubkey)) {
     const pubkeyProto = PubKey.fromPartial({
       key: fromBase64(pubkey.value),
     });
+    let typeUrl = "";
+    if (chainId?.includes("injective")) {
+      typeUrl = "/injective.crypto.v1beta1.ethsecp256k1.PubKey";
+    } else {
+      typeUrl = "/ethermint.crypto.v1.ethsecp256k1.PubKey";
+    }
     return Any.fromPartial({
-      typeUrl: "/ethermint.crypto.v1.ethsecp256k1.PubKey",
+      typeUrl,
       value: Uint8Array.from(PubKey.encode(pubkeyProto).finish()),
     });
   } else {
