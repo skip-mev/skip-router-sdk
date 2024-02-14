@@ -963,7 +963,7 @@ export class SkipRouter {
 
   async getAccountNumberAndSequence(address: string, chainID: string) {
     if (chainID.includes("dymension")) {
-      return this.getAccountNumberAndSequenceFromDymension(address, chainID);
+      return this.getAccountNumberAndSequenceFromDymension(address, chainID)
     }
     const endpoint = await this.getRpcEndpointForChain(chainID);
     const client = await StargateClient.connect(endpoint, {
@@ -997,8 +997,7 @@ export class SkipRouter {
     let accountNumber = 0;
     if (response.data.account.base_account) {
       sequence = response.data.account.base_account.sequence as number;
-      accountNumber = response.data.account.base_account
-        .account_number as number;
+      accountNumber = response.data.account.base_account.account_number as number;
     } else {
       sequence = response.data.account.sequence as number;
       accountNumber = response.data.account.account_number as number;
