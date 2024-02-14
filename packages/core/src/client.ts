@@ -963,16 +963,6 @@ export class SkipRouter {
   }
 
   async getAccountNumberAndSequence(address: string, chainID: string) {
-    if (chainID.includes("dymension")) {
-      return this.getAccountNumberAndSequenceFromDymension(address, chainID);
-    }
-    if (chainID.includes("evmos")) {
-      return this.getAccountNumberAndSequenceFromEvmos(address, chainID);
-    }
-    if (chainID.includes("injective")) {
-      return this.getAccountNumberAndSequenceInjective(address, chainID);
-    }
-
     const endpoint = await this.getRpcEndpointForChain(chainID);
 
     const client = await StargateClient.connect(endpoint, {
