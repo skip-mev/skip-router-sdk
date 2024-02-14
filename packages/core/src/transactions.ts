@@ -91,7 +91,7 @@ export function getEncodeObjectFromMultiChainMessageInjective(
     return MsgExecuteContractInjective.fromJSON({
       sender: msgJson.sender,
       contractAddress: msgJson.contract,
-      msg: toUtf8(JSON.stringify(msgJson.msg)),
+      msg: msgJson.msg,
       funds: msgJson.funds,
     });
   }
