@@ -1,5 +1,11 @@
 # @skip-router/core
 
+## 1.3.3
+
+### Patch Changes
+
+- cc0b2bd: properly encode MsgExecuteContract for Injective
+
 ## 1.3.2
 
 ### Patch Changes
