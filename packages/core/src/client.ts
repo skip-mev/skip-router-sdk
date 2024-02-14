@@ -967,7 +967,7 @@ export class SkipRouter {
     }
     const endpoint = await this.getRpcEndpointForChain(chainID);
     const client = await StargateClient.connect(endpoint, {
-      accountParser: accountParser,
+      accountParser,
     });
     const account = await client.getAccount(address);
     if (!account) {
