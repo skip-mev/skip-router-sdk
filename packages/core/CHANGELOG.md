@@ -1,5 +1,11 @@
 # @skip-router/core
 
+## 1.3.2
+
+### Patch Changes
+
+- a624a2a: Fix a bug in BaseAccount signing for dymension
+
 ## 1.3.1
 
 ### Patch Changes
