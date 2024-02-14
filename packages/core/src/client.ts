@@ -26,10 +26,7 @@ import {
   StargateClient,
   StdFee,
 } from "@cosmjs/stargate";
-import {
-  ChainRestAuthApi,
-  ChainRestTendermintApi,
-} from "@injectivelabs/sdk-ts/dist/cjs/client/chain/rest";
+import { ChainRestTendermintApi } from "@injectivelabs/sdk-ts/dist/cjs/client/chain/rest";
 import {
   BigNumberInBase,
   DEFAULT_BLOCK_TIMEOUT_HEIGHT,
@@ -961,9 +958,12 @@ export class SkipRouter {
     return getGasAmountForMessage(client, signerAddress, message);
   }
 
-  async getAccountNumberAndSequence(address: string, chainID: string) {
+  async getAccountNumberAndSequence(
+    address: string,
+    chainID: string,
+  ): Promise<{ accountNumber: number; sequence: number }> {
     if (chainID.includes("dymension")) {
-      return this.getAccountNumberAndSequenceFromDymension(address, chainID)
+      return this.getAccountNumberAndSequenceFromRest(address, chainID);
     }
     const endpoint = await this.getRpcEndpointForChain(chainID);
     const client = await StargateClient.connect(endpoint, {
@@ -984,65 +984,41 @@ export class SkipRouter {
     };
   }
 
-  private async getAccountNumberAndSequenceFromDymension(
+  private async getAccountNumberAndSequenceFromRest(
     address: string,
     chainID: string,
-  ) {
+  ): Promise<{ accountNumber: number; sequence: number }> {
     const endpoint = await this.getRestEndpointForChain(chainID);
 
-    const response = await axios.get(
+    type PartialAccount = {
+      account_number: string | number;
+      sequence: string | number;
+    };
+    type AccountResponse = {
+      account: PartialAccount & { base_account?: PartialAccount };
+    };
+
+    const { data } = await axios.get<AccountResponse>(
       `${endpoint}/cosmos/auth/v1beta1/accounts/${address}`,
     );
-    let sequence = 0;
-    let accountNumber = 0;
-    if (response.data.account.base_account) {
-      sequence = response.data.account.base_account.sequence as number;
-      accountNumber = response.data.account.base_account.account_number as number;
+
+    let accountNumber: string | number;
+    let sequence: string | number;
+
+    if (data.account.base_account) {
+      accountNumber = data.account.base_account.account_number;
+      sequence = data.account.base_account.sequence;
     } else {
-      sequence = response.data.account.sequence as number;
-      accountNumber = response.data.account.account_number as number;
+      accountNumber = data.account.account_number;
+      sequence = data.account.sequence;
     }
-    return {
-      accountNumber,
-      sequence,
-    };
-  }
-
-  private async getAccountNumberAndSequenceFromEvmos(
-    address: string,
-    chainID: string,
-  ) {
-    const endpoint = await this.getRestEndpointForChain(chainID);
-
-    const response = await axios.get(
-      `${endpoint}/cosmos/auth/v1beta1/accounts/${address}`,
-    );
-
-    const accountNumber = response.data.account.base_account
-      .account_number as number;
-    const sequence = response.data.account.base_account.sequence as number;
 
     return {
-      accountNumber,
-      sequence,
-    };
-  }
-
-  private async getAccountNumberAndSequenceInjective(
-    address: string,
-    chainID: string,
-  ) {
-    const endpoint = await this.getRestEndpointForChain(chainID);
-
-    const chainRestAuthApi = new ChainRestAuthApi(endpoint);
-
-    const accountDetailsResponse = await chainRestAuthApi.fetchAccount(address);
-
-    return {
-      accountNumber: parseInt(
-        accountDetailsResponse.account.base_account.account_number,
-      ),
-      sequence: parseInt(accountDetailsResponse.account.base_account.sequence),
+      accountNumber:
+        typeof accountNumber === "string"
+          ? parseInt(accountNumber)
+          : accountNumber,
+      sequence: typeof sequence === "string" ? parseInt(sequence) : sequence,
     };
   }
 
