@@ -550,7 +550,10 @@ export class SkipRouter {
 
     const gasLimit = Int53.fromString(fee.gas).toNumber();
 
-    const pubkeyAny = makePubkeyAnyFromAccount(accountFromSigner);
+    const pubkeyAny = makePubkeyAnyFromAccount(
+      accountFromSigner,
+      multiChainMessage.chainID,
+    );
 
     const authInfoBytes = makeAuthInfoBytes(
       [{ pubkey: pubkeyAny, sequence }],
@@ -769,7 +772,10 @@ export class SkipRouter {
     const signedGasLimit = Int53.fromString(signed.fee.gas).toNumber();
     const signedSequence = Int53.fromString(signed.sequence).toNumber();
 
-    const pubkeyAny = makePubkeyAnyFromAccount(accountFromSigner);
+    const pubkeyAny = makePubkeyAnyFromAccount(
+      accountFromSigner,
+      multiChainMessage.chainID,
+    );
 
     const signedAuthInfoBytes = makeAuthInfoBytes(
       [{ pubkey: pubkeyAny, sequence: signedSequence }],
