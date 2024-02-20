@@ -918,6 +918,7 @@ export function nextBlockingTransferFromJSON(
 ): NextBlockingTransfer {
   return {
     transferSequenceIndex: nextBlockingTransferJSON.transfer_sequence_index,
+    transferState: nextBlockingTransferJSON.transfer_state,
   };
 }
 
@@ -926,6 +927,7 @@ export function nextBlockingTransferToJSON(
 ): NextBlockingTransferJSON {
   return {
     transfer_sequence_index: nextBlockingTransfer.transferSequenceIndex,
+    transfer_state: nextBlockingTransfer.transferState,
   };
 }
 

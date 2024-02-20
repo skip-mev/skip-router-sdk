@@ -41,7 +41,7 @@ export type NextBlockingTransferJSON = {
 
 export type NextBlockingTransfer = {
   transferSequenceIndex: number;
-  transfer_state: BlockingTransferState;
+  transferState: BlockingTransferState;
 };
 
 export type StatusRequestJSON = {
