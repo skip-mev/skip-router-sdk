@@ -62,9 +62,10 @@ export type ExecuteRouteOptions = {
 
 export type ExecuteMultiChainMessageOptions = {
   signerAddress: string;
-  signer: OfflineSigner;
+  getCosmosSigner: (chainID: string) => Promise<OfflineSigner>;
+  getGasPrice?: (chainID: string) => Promise<GasPrice | undefined>;
   message: types.MultiChainMsg;
-  fee: StdFee;
+  gasAmountMultiplier?: number;
 };
 
 export type SignMultiChainMessageDirectOptions = {

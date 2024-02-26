@@ -146,6 +146,16 @@ export type RouteRequestJSON =
   | RouteRequestGivenInJSON
   | RouteRequestGivenOutJSON;
 
+export type MsgsDirectResponse = {
+  msgs: Msg[]
+  route: RouteResponse
+}
+
+export type MsgsDirectResponseJSON = {
+  msgs: MsgJSON[]
+  route: RouteResponseJSON
+}
+
 export type RouteRequestBase = {
   sourceAssetDenom: string;
   sourceAssetChainID: string;
@@ -282,6 +292,55 @@ export type MsgsRequest = {
   postRouteHandler?: PostHandler;
 
   clientID?: string;
+};
+
+export type MsgsDirectRequestJSON = {
+  source_asset_denom: string
+  source_asset_chain_id: string
+  dest_asset_denom: string
+  dest_asset_chain_id: string
+  amount_in: string
+  amount_out: string
+  chain_ids_to_addresses: {
+    [key: string]: string
+  }
+  swap_venue?: SwapVenueJSON
+  slippage_tolerance_percent?: string
+  timeout_seconds?: string
+
+  affiliates?: AffiliateJSON[]
+
+  post_route_handler?: PostHandlerJSON
+
+  allow_unsafe?: boolean;
+  client_id?: string;
+  experimental_features?: ExperimentalFeature[];
+  bridges?: BridgeType[];
+  allow_multi_tx?: boolean;
+}
+
+export type MsgsDirectRequest = {
+  sourceAssetDenom: string;
+  sourceAssetChainID: string;
+  destAssetDenom: string;
+  destAssetChainID: string;
+  amountIn: string;
+  amountOut: string;
+  chainIdsToAddresses: {
+    [key: string]: string
+  };
+  swapVenue?: SwapVenue;
+  slippageTolerancePercent?: string;
+  timeoutSeconds?: string;
+  affiliates?: Affiliate[];
+
+  postRouteHandler?: PostHandler;
+  
+  allowUnsafe?: boolean;
+  clientID?: string;
+  experimentalFeatures?: ExperimentalFeature[];
+  bridges?: BridgeType[];
+  allowMultiTx?: boolean;
 };
 
 export type MsgJSON =

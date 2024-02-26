@@ -47,7 +47,7 @@ describe("transaction execution", () => {
       msgTypeURL: "/ibc.applications.transfer.v1.MsgTransfer",
     };
 
-    const tx = await client.executeMultiChainMessage({
+    const tx = await client.executeCosmosMultiChainMessage({
       signerAddress,
       signer,
       message,
@@ -90,7 +90,7 @@ describe("transaction execution", () => {
       msgTypeURL: "/ibc.applications.transfer.v1.MsgTransfer",
     };
 
-    const tx = await client.executeMultiChainMessage({
+    const tx = await client.executeCosmosMultiChainMessage({
       signerAddress,
       signer,
       message,
@@ -137,7 +137,7 @@ describe("transaction execution", () => {
       msgTypeURL: "/ibc.applications.transfer.v1.MsgTransfer",
     };
 
-    const tx = await client.executeMultiChainMessage({
+    const tx = await client.executeCosmosMultiChainMessage({
       signerAddress,
       // eslint-disable-next-line @typescript-eslint/ban-ts-comment
       // @ts-ignore
@@ -188,7 +188,7 @@ describe("transaction execution", () => {
       msgTypeURL: "/ibc.applications.transfer.v1.MsgTransfer",
     };
 
-    const tx = await client.executeMultiChainMessage({
+    const tx = await client.executeCosmosMultiChainMessage({
       signerAddress,
       // eslint-disable-next-line @typescript-eslint/ban-ts-comment
       // @ts-ignore
@@ -233,7 +233,7 @@ describe("transaction execution", () => {
       msgTypeURL: "/cosmwasm.wasm.v1.MsgExecuteContract",
     };
 
-    const tx = await client.executeMultiChainMessage({
+    const tx = await client.executeCosmosMultiChainMessage({
       signerAddress,
       signer,
       message,
@@ -281,7 +281,7 @@ describe("transaction execution", () => {
       msgTypeURL: "/cosmwasm.wasm.v1.MsgExecuteContract",
     };
 
-    const tx = await client.executeMultiChainMessage({
+    const tx = await client.executeCosmosMultiChainMessage({
       signerAddress,
       signer,
       message,

@@ -114,6 +114,8 @@ import {
   BridgesResponseJSON,
   Msg,
   MsgJSON,
+  MsgsDirectRequest,
+  MsgsDirectRequestJSON,
   MsgsRequest,
   MsgsRequestJSON,
   Operation,
@@ -1811,5 +1813,58 @@ export function hyperlaneTransferInfoToJSON(
     to_chain_id: value.toChainID,
     state: value.state,
     txs: value.txs && hyperlaneTransferTransactionsToJSON(value.txs),
+  };
+
+}
+
+export function msgsDirectRequestFromJSON(
+  msgDirectRequestJSON: MsgsDirectRequestJSON,
+): MsgsDirectRequest {
+  return {
+    sourceAssetDenom: msgDirectRequestJSON.source_asset_denom,
+    sourceAssetChainID: msgDirectRequestJSON.source_asset_chain_id,
+    destAssetDenom: msgDirectRequestJSON.dest_asset_denom,
+    destAssetChainID: msgDirectRequestJSON.dest_asset_chain_id,
+    amountIn: msgDirectRequestJSON.amount_in,
+    amountOut: msgDirectRequestJSON.amount_out,
+    chainIdsToAddresses: msgDirectRequestJSON.chain_ids_to_addresses,
+    slippageTolerancePercent: msgDirectRequestJSON.slippage_tolerance_percent,
+    affiliates: msgDirectRequestJSON.affiliates?.map(affiliateFromJSON),
+    timeoutSeconds: msgDirectRequestJSON.timeout_seconds,
+    postRouteHandler:
+      msgDirectRequestJSON.post_route_handler &&
+      postHandlerFromJSON(msgDirectRequestJSON.post_route_handler),
+    swapVenue: 
+        msgDirectRequestJSON.swap_venue && 
+        swapVenueFromJSON(msgDirectRequestJSON.swap_venue),
+
+  };
+}
+
+export function msgsDirectRequestToJSON(
+  msgDirectRequest: MsgsDirectRequest,
+): MsgsDirectRequestJSON {
+  return {
+    source_asset_denom: msgDirectRequest.sourceAssetDenom,
+    source_asset_chain_id: msgDirectRequest.sourceAssetChainID,
+    dest_asset_denom: msgDirectRequest.destAssetDenom,
+    dest_asset_chain_id: msgDirectRequest.destAssetChainID,
+    amount_in: msgDirectRequest.amountIn,
+    amount_out: msgDirectRequest.amountOut,
+    chain_ids_to_addresses: msgDirectRequest.chainIdsToAddresses,
+    slippage_tolerance_percent: msgDirectRequest.slippageTolerancePercent,
+    affiliates: msgDirectRequest.affiliates?.map(affiliateToJSON),
+    allow_multi_tx: msgDirectRequest.allowMultiTx,
+    allow_unsafe: msgDirectRequest.allowUnsafe,
+    bridges: msgDirectRequest.bridges,
+    timeout_seconds: msgDirectRequest.timeoutSeconds,
+    client_id: msgDirectRequest.clientID,
+    experimental_features: msgDirectRequest.experimentalFeatures,
+    swap_venue: 
+      msgDirectRequest.swapVenue &&
+      swapVenueToJSON(msgDirectRequest.swapVenue),
+    post_route_handler:
+      msgDirectRequest.postRouteHandler &&
+      postHandlerToJSON(msgDirectRequest.postRouteHandler),
   };
 }
