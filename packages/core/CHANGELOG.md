@@ -1,5 +1,11 @@
 # @skip-router/core
 
+## 1.3.4
+
+### Patch Changes
+
+- 76c37d4: fix cosmos ledger signing
+
 ## 1.3.3
 
 ### Patch Changes
