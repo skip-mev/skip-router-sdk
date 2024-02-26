@@ -741,7 +741,7 @@ export class SkipRouter {
       msgs,
       fee,
       chainId,
-      msgs[0]?.value.memo,
+      "",
       accountNumber,
       sequence,
     );
