@@ -1,5 +1,11 @@
 # @skip-router/core
 
+## 1.3.6
+
+### Patch Changes
+
+- a11b433: add usdFeeAmount in axelarTransfer route operations
+
 ## 1.3.5
 
 ### Patch Changes
