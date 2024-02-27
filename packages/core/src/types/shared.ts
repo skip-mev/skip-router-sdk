@@ -85,6 +85,7 @@ export type AxelarTransferJSON = {
   should_unwrap: boolean;
   fee_amount: string;
   fee_asset: AssetJSON;
+  usd_fee_amount: string;
   is_testnet: boolean;
   bridge_id: BridgeType;
 };
@@ -98,6 +99,7 @@ export type AxelarTransfer = {
   shouldUnwrap: boolean;
   feeAmount: string;
   feeAsset: Asset;
+  usdFeeAmount: string;
   isTestnet: boolean;
   bridgeID: BridgeType;
 };

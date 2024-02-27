@@ -1053,6 +1053,7 @@ export function axelarTransferFromJSON(
     shouldUnwrap: axelarTransferJSON.should_unwrap,
     feeAmount: axelarTransferJSON.fee_amount,
     feeAsset: assetFromJSON(axelarTransferJSON.fee_asset),
+    usdFeeAmount: axelarTransferJSON.usd_fee_amount,
     isTestnet: axelarTransferJSON.is_testnet,
     bridgeID: axelarTransferJSON.bridge_id,
   };
@@ -1072,6 +1073,7 @@ export function axelarTransferToJSON(
     fee_asset: assetToJSON(axelarTransfer.feeAsset),
     is_testnet: axelarTransfer.isTestnet,
     bridge_id: axelarTransfer.bridgeID,
+    usd_fee_amount: axelarTransfer.usdFeeAmount,
   };
 }
 
