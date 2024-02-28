@@ -132,6 +132,30 @@ export type CCTPTransfer = {
   bridgeID: BridgeType;
 };
 
+export type HyperlaneTransferJSON = {
+  from_chain_id: string;
+  to_chain_id: string;
+  denom_in: string;
+  denom_out: string;
+  hyperlane_contract_address: string;
+  fee_amount: string;
+  usd_fee_amount?: string;
+  fee_asset: AssetJSON;
+  bridge_id: BridgeType;
+};
+
+export type HyperlaneTransfer = {
+  fromChainID: string;
+  toChainID: string;
+  denomIn: string;
+  denomOut: string;
+  hyperlaneContractAddress: string;
+  feeAmount: string;
+  usdFeeAmount?: string;
+  feeAsset: Asset;
+  bridgeID: BridgeType;
+};
+
 export type SwapVenueJSON = {
   name: string;
   chain_id: string;
