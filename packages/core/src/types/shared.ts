@@ -53,27 +53,57 @@ export type Asset = {
 export type TransferJSON = {
   port: string;
   channel: string;
-  chain_id: string;
+  from_chain_id: string;
+  to_chain_id: string;
   pfm_enabled: boolean;
-  dest_denom: string;
   supports_memo: boolean;
+
+  denom_in: string;
+  denom_out: string;
+
   fee_amount?: string;
   usd_fee_amount?: string;
   fee_asset?: AssetJSON;
+
   bridge_id: BridgeType;
+
+  /**
+   * @deprecated use `from_chain_id` and `to_chain_id` instead
+   */
+  chain_id: string;
+
+  /**
+   * @deprecated use `denom_out` instead
+   */
+  dest_denom: string;
 };
 
 export type Transfer = {
   port: string;
   channel: string;
-  chainID: string;
+  fromChainID: string;
+  toChainID: string;
   pfmEnabled: boolean;
-  destDenom: string;
   supportsMemo: boolean;
+
+  denomIn: string;
+  denomOut: string;
+
   feeAmount?: string;
   usdFeeAmount?: string;
   feeAsset?: Asset;
+
   bridgeID: BridgeType;
+
+  /**
+   * @deprecated use `fromChainID` and `toChainID` instead
+   */
+  chainID: string;
+
+  /**
+   * @deprecated use `denomOut` instead
+   */
+  destDenom: string;
 };
 
 export type AxelarTransferJSON = {
@@ -83,10 +113,18 @@ export type AxelarTransferJSON = {
   to_chain_id: string;
   asset: string;
   should_unwrap: boolean;
+
+  denom_in: string;
+  denom_out: string;
+
   fee_amount: string;
-  fee_asset: AssetJSON;
   usd_fee_amount: string;
+  fee_asset: AssetJSON;
+
   is_testnet: boolean;
+
+  ibc_transfer_to_axelar?: TransferJSON;
+
   bridge_id: BridgeType;
 };
 
@@ -97,11 +135,29 @@ export type AxelarTransfer = {
   toChainID: string;
   asset: string;
   shouldUnwrap: boolean;
+
+  denomIn: string;
+  denomOut: string;
+
   feeAmount: string;
-  feeAsset: Asset;
   usdFeeAmount: string;
+  feeAsset: Asset;
+
   isTestnet: boolean;
+
+  ibcTransferToAxelar?: Transfer;
+
   bridgeID: BridgeType;
+};
+
+export type BankSendJSON = {
+  chain_id: string;
+  denom: string;
+};
+
+export type BankSend = {
+  chainID: string;
+  denom: string;
 };
 
 export type MultiChainMsgJSON = {
@@ -211,6 +267,9 @@ export type SwapJSON = (
   | { swap_out: SwapExactCoinOutJSON }
 ) & {
   estimated_affiliate_fee?: string;
+  chain_id: string;
+  denom_in: string;
+  denom_out: string;
 };
 
 export type Swap = (
@@ -218,6 +277,9 @@ export type Swap = (
   | { swapOut: SwapExactCoinOut }
 ) & {
   estimatedAffiliateFee?: string;
+  chainID: string;
+  denomIn: string;
+  denomOut: string;
 };
 
 export type AffiliateJSON = {
