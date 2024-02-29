@@ -6,6 +6,8 @@ import {
   AssetJSON,
   AxelarTransfer,
   AxelarTransferJSON,
+  BankSend,
+  BankSendJSON,
   CCTPTransfer,
   CCTPTransferJSON,
   EvmTx,
@@ -192,6 +194,7 @@ export type RouteWarning = {
 
 export type OperationJSON =
   | { transfer: TransferJSON }
+  | { bank_send: BankSendJSON }
   | { swap: SwapJSON }
   | { axelar_transfer: AxelarTransferJSON }
   | { cctp_transfer: CCTPTransferJSON }
@@ -199,6 +202,7 @@ export type OperationJSON =
 
 export type Operation =
   | { transfer: Transfer }
+  | { bankSend: BankSend }
   | { swap: Swap }
   | { axelarTransfer: AxelarTransfer }
   | { cctpTransfer: CCTPTransfer }

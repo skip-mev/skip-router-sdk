@@ -48,6 +48,8 @@ import {
   AssetOrErrorJSON,
   AxelarTransfer,
   AxelarTransferJSON,
+  BankSend,
+  BankSendJSON,
   CCTPTransfer,
   CCTPTransferJSON,
   CosmWasmContractMsg,
@@ -464,14 +466,22 @@ export function transferFromJSON(transferJSON: TransferJSON): Transfer {
   return {
     port: transferJSON.port,
     channel: transferJSON.channel,
-    chainID: transferJSON.chain_id,
+    fromChainID: transferJSON.from_chain_id,
+    toChainID: transferJSON.to_chain_id,
     pfmEnabled: transferJSON.pfm_enabled,
-    destDenom: transferJSON.dest_denom,
     supportsMemo: transferJSON.supports_memo,
+
+    denomIn: transferJSON.denom_in,
+    denomOut: transferJSON.denom_out,
+
     feeAmount: transferJSON.fee_amount,
     usdFeeAmount: transferJSON.usd_fee_amount,
     feeAsset: transferJSON.fee_asset && assetFromJSON(transferJSON.fee_asset),
+
     bridgeID: transferJSON.bridge_id,
+
+    destDenom: transferJSON.dest_denom,
+    chainID: transferJSON.chain_id,
   };
 }
 
@@ -479,14 +489,22 @@ export function transferToJSON(transfer: Transfer): TransferJSON {
   return {
     port: transfer.port,
     channel: transfer.channel,
-    chain_id: transfer.chainID,
+    from_chain_id: transfer.fromChainID,
+    to_chain_id: transfer.toChainID,
     pfm_enabled: transfer.pfmEnabled,
-    dest_denom: transfer.destDenom,
     supports_memo: transfer.supportsMemo,
+
+    denom_in: transfer.denomIn,
+    denom_out: transfer.denomOut,
+
     fee_amount: transfer.feeAmount,
     usd_fee_amount: transfer.usdFeeAmount,
     fee_asset: transfer.feeAsset && assetToJSON(transfer.feeAsset),
+
     bridge_id: transfer.bridgeID,
+
+    dest_denom: transfer.destDenom,
+    chain_id: transfer.chainID,
   };
 }
 
@@ -563,12 +581,18 @@ export function swapFromJSON(swapJSON: SwapJSON): Swap {
     return {
       swapIn: swapExactCoinInFromJSON(swapJSON.swap_in),
       estimatedAffiliateFee: swapJSON.estimated_affiliate_fee,
+      chainID: swapJSON.chain_id,
+      denomIn: swapJSON.denom_in,
+      denomOut: swapJSON.denom_out,
     };
   }
 
   return {
     swapOut: swapExactCoinOutFromJSON(swapJSON.swap_out),
     estimatedAffiliateFee: swapJSON.estimated_affiliate_fee,
+    chainID: swapJSON.chain_id,
+    denomIn: swapJSON.denom_in,
+    denomOut: swapJSON.denom_out,
   };
 }
 
@@ -577,18 +601,28 @@ export function swapToJSON(swap: Swap): SwapJSON {
     return {
       swap_in: swapExactCoinInToJSON(swap.swapIn),
       estimated_affiliate_fee: swap.estimatedAffiliateFee,
+      chain_id: swap.chainID,
+      denom_in: swap.denomIn,
+      denom_out: swap.denomOut,
     };
   }
 
   return {
     swap_out: swapExactCoinOutToJSON(swap.swapOut),
     estimated_affiliate_fee: swap.estimatedAffiliateFee,
+    chain_id: swap.chainID,
+    denom_in: swap.denomIn,
+    denom_out: swap.denomOut,
   };
 }
 
 export function operationFromJSON(operationJSON: OperationJSON): Operation {
   if ("transfer" in operationJSON) {
     return { transfer: transferFromJSON(operationJSON.transfer) };
+  }
+
+  if ("bank_send" in operationJSON) {
+    return { bankSend: bankSendFromJSON(operationJSON.bank_send) };
   }
 
   if ("axelar_transfer" in operationJSON) {
@@ -615,6 +649,10 @@ export function operationFromJSON(operationJSON: OperationJSON): Operation {
 export function operationToJSON(operation: Operation): OperationJSON {
   if ("transfer" in operation) {
     return { transfer: transferToJSON(operation.transfer) };
+  }
+
+  if ("bankSend" in operation) {
+    return { bank_send: bankSendToJSON(operation.bankSend) };
   }
 
   if ("axelarTransfer" in operation) {
@@ -1067,10 +1105,20 @@ export function axelarTransferFromJSON(
     toChainID: axelarTransferJSON.to_chain_id,
     asset: axelarTransferJSON.asset,
     shouldUnwrap: axelarTransferJSON.should_unwrap,
+
+    denomIn: axelarTransferJSON.denom_in,
+    denomOut: axelarTransferJSON.denom_out,
+
     feeAmount: axelarTransferJSON.fee_amount,
-    feeAsset: assetFromJSON(axelarTransferJSON.fee_asset),
     usdFeeAmount: axelarTransferJSON.usd_fee_amount,
+    feeAsset: assetFromJSON(axelarTransferJSON.fee_asset),
+
     isTestnet: axelarTransferJSON.is_testnet,
+
+    ibcTransferToAxelar: axelarTransferJSON.ibc_transfer_to_axelar
+      ? transferFromJSON(axelarTransferJSON.ibc_transfer_to_axelar)
+      : undefined,
+
     bridgeID: axelarTransferJSON.bridge_id,
   };
 }
@@ -1085,11 +1133,35 @@ export function axelarTransferToJSON(
     to_chain_id: axelarTransfer.toChainID,
     asset: axelarTransfer.asset,
     should_unwrap: axelarTransfer.shouldUnwrap,
+
+    denom_in: axelarTransfer.denomIn,
+    denom_out: axelarTransfer.denomOut,
+
     fee_amount: axelarTransfer.feeAmount,
     fee_asset: assetToJSON(axelarTransfer.feeAsset),
-    is_testnet: axelarTransfer.isTestnet,
-    bridge_id: axelarTransfer.bridgeID,
     usd_fee_amount: axelarTransfer.usdFeeAmount,
+
+    is_testnet: axelarTransfer.isTestnet,
+
+    ibc_transfer_to_axelar: axelarTransfer.ibcTransferToAxelar
+      ? transferToJSON(axelarTransfer.ibcTransferToAxelar)
+      : undefined,
+
+    bridge_id: axelarTransfer.bridgeID,
+  };
+}
+
+export function bankSendFromJSON(value: BankSendJSON): BankSend {
+  return {
+    chainID: value.chain_id,
+    denom: value.denom,
+  };
+}
+
+export function bankSendToJSON(value: BankSend): BankSendJSON {
+  return {
+    chain_id: value.chainID,
+    denom: value.denom,
   };
 }
 
