@@ -58,6 +58,8 @@ import {
   ERC20ApprovalJSON,
   EvmTx,
   EvmTxJSON,
+  HyperlaneTransfer,
+  HyperlaneTransferJSON,
   IBCAddress,
   IBCAddressJSON,
   MultiChainMsg,
@@ -599,6 +601,14 @@ export function operationFromJSON(operationJSON: OperationJSON): Operation {
     return { cctpTransfer: cctpTransferFromJSON(operationJSON.cctp_transfer) };
   }
 
+  if ("hyperlane_transfer" in operationJSON) {
+    return {
+      hyperlaneTransfer: hyperlaneTransferFromJSON(
+        operationJSON.hyperlane_transfer,
+      ),
+    };
+  }
+
   return { swap: swapFromJSON(operationJSON.swap) };
 }
 
@@ -613,6 +623,12 @@ export function operationToJSON(operation: Operation): OperationJSON {
 
   if ("cctpTransfer" in operation) {
     return { cctp_transfer: cctpTransferToJSON(operation.cctpTransfer) };
+  }
+
+  if ("hyperlaneTransfer" in operation) {
+    return {
+      hyperlane_transfer: hyperlaneTransferToJSON(operation.hyperlaneTransfer),
+    };
   }
 
   return { swap: swapToJSON(operation.swap) };
@@ -1091,6 +1107,38 @@ export function cctpTransferToJSON(value: CCTPTransfer): CCTPTransferJSON {
     from_chain_id: value.fromChainID,
     to_chain_id: value.toChainID,
     burn_token: value.burnToken,
+    bridge_id: value.bridgeID,
+  };
+}
+
+export function hyperlaneTransferFromJSON(
+  value: HyperlaneTransferJSON,
+): HyperlaneTransfer {
+  return {
+    fromChainID: value.from_chain_id,
+    toChainID: value.to_chain_id,
+    denomIn: value.denom_in,
+    denomOut: value.denom_out,
+    hyperlaneContractAddress: value.hyperlane_contract_address,
+    feeAmount: value.fee_amount,
+    usdFeeAmount: value.usd_fee_amount,
+    feeAsset: assetFromJSON(value.fee_asset),
+    bridgeID: value.bridge_id,
+  };
+}
+
+export function hyperlaneTransferToJSON(
+  value: HyperlaneTransfer,
+): HyperlaneTransferJSON {
+  return {
+    from_chain_id: value.fromChainID,
+    to_chain_id: value.toChainID,
+    denom_in: value.denomIn,
+    denom_out: value.denomOut,
+    hyperlane_contract_address: value.hyperlaneContractAddress,
+    fee_amount: value.feeAmount,
+    usd_fee_amount: value.usdFeeAmount,
+    fee_asset: assetToJSON(value.feeAsset),
     bridge_id: value.bridgeID,
   };
 }

@@ -10,6 +10,8 @@ import {
   CCTPTransferJSON,
   EvmTx,
   EvmTxJSON,
+  HyperlaneTransfer,
+  HyperlaneTransferJSON,
   MultiChainMsg,
   MultiChainMsgJSON,
   PostHandler,
@@ -181,7 +183,7 @@ export type RouteRequest = RouteRequestGivenIn | RouteRequestGivenOut;
 
 export type RouteWarningType = "LOW_INFO_WARNING" | "BAD_PRICE_WARNING";
 
-export type ExperimentalFeature = "cctp";
+export type ExperimentalFeature = "cctp" | "hyperlane";
 
 export type RouteWarning = {
   type: RouteWarningType;
@@ -192,13 +194,15 @@ export type OperationJSON =
   | { transfer: TransferJSON }
   | { swap: SwapJSON }
   | { axelar_transfer: AxelarTransferJSON }
-  | { cctp_transfer: CCTPTransferJSON };
+  | { cctp_transfer: CCTPTransferJSON }
+  | { hyperlane_transfer: HyperlaneTransferJSON };
 
 export type Operation =
   | { transfer: Transfer }
   | { swap: Swap }
   | { axelarTransfer: AxelarTransfer }
-  | { cctpTransfer: CCTPTransfer };
+  | { cctpTransfer: CCTPTransfer }
+  | { hyperlaneTransfer: HyperlaneTransfer };
 
 export type RouteResponseJSON = {
   source_asset_denom: string;
@@ -300,7 +304,7 @@ export type MsgsResponse = {
   msgs: Msg[];
 };
 
-export type BridgeType = "IBC" | "AXELAR" | "CCTP";
+export type BridgeType = "IBC" | "AXELAR" | "CCTP" | "HYPERLANE";
 
 export type AssetBetweenChainsJSON = {
   asset_on_source: AssetJSON;
