@@ -249,10 +249,10 @@ export class SkipRouter {
 
         const signer = await getOfflineSigner(multiChainMsg.chainID);
 
-        const gasPriceResolver = getGasPrice || this.getRecommendedGasPrice;
-
         const gasPrice =
-          (await gasPriceResolver(multiChainMsg.chainID)) ||
+          (getGasPrice
+            ? await getGasPrice(multiChainMsg.chainID)
+            : await this.getRecommendedGasPrice(multiChainMsg.chainID)) ||
           raise(
             `executeRoute error: unable to get gas prices for chain '${multiChainMsg.chainID}'`,
           );
