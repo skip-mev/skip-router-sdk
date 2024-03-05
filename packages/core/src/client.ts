@@ -897,12 +897,12 @@ export class SkipRouter {
     options?: {
       /**
        * Retry options
-       * @default { maxRetries: 3, retryInterval: 1000, backoffMultiplier: 2 }
+       * @default { maxRetries: 5, retryInterval: 1000, backoffMultiplier: 2 }
        */
       retry?: {
         /**
          * Maximum number of retries
-         * @default 3
+         * @default 5
          */
         maxRetries?: number;
         /**
@@ -922,6 +922,9 @@ export class SkipRouter {
          * 3rd retry: 4000ms
          *
          * 4th retry: 8000ms
+         *
+         * 5th retry: 16000ms
+         *
          * @default 2
          */
         backoffMultiplier?: number;
