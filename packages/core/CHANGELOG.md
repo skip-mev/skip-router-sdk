@@ -1,5 +1,18 @@
 # @skip-router/core
 
+## 1.3.8
+
+### Patch Changes
+
+- c6dd6dc: fix executeRoute undefined getGasPrice params, transactionStatus retryOptions
+
+## 1.3.7
+
+### Patch Changes
+
+- 445a9c7: Add denom in and denom out to all operations
+- 30f5613: Add types for Hyperlane support
+
 ## 1.3.6
 
 ### Patch Changes
