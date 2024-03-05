@@ -1113,6 +1113,368 @@ describe("client", () => {
         ],
       });
     });
+
+    it("handle 200 OK error with retry options", async () => {
+      let retryCount = 0;
+      const maxRetries = 3;
+      server.use(
+        rest.get("https://api.skip.money/v2/tx/status", (_, res, ctx) => {
+          retryCount++;
+          if (retryCount >= maxRetries) {
+            return res(
+              ctx.status(200),
+              ctx.json({
+                status: "STATE_COMPLETED",
+                transfer_sequence: [
+                  {
+                    ibc_transfer: {
+                      src_chain_id: "axelar-dojo-1",
+                      dst_chain_id: "osomosis-1",
+                      state: "TRANSFER_SUCCESS",
+                      packet_txs: {
+                        send_tx: {
+                          chain_id: "axelar-dojo-1",
+                          tx_hash:
+                            "AAEA76709215A808AF6D7FC2B8FBB8746BC1F196E46FFAE84B79C6F6CD0A79C9",
+                        },
+                        receive_tx: {
+                          chain_id: "osmosis-1",
+                          tx_hash:
+                            "082A6C8024998EC277C2B90BFDDB323CCA506C24A6730C658B9B6DC653198E3D",
+                        },
+                        acknowledge_tx: {
+                          chain_id: "axelar-dojo-1",
+                          tx_hash:
+                            "C9A36F94A5B2CA9C7ABF20402561E46FD8B80EBAC4F0D5B7C01F978E34285CCA",
+                        },
+                        timeout_tx: null,
+                        error: null,
+                      },
+                    },
+                  },
+                  {
+                    ibc_transfer: {
+                      src_chain_id: "osmosis-1",
+                      dst_chain_id: "cosmoshub-4",
+                      state: "TRANSFER_SUCCESS",
+                      packet_txs: {
+                        send_tx: {
+                          chain_id: "osmosis-1",
+                          tx_hash:
+                            "082A6C8024998EC277C2B90BFDDB323CCA506C24A6730C658B9B6DC653198E3D",
+                        },
+                        receive_tx: {
+                          chain_id: "cosmoshub-4",
+                          tx_hash:
+                            "913E2542EBFEF2E885C19DD9C4F8ECB6ADAFFE59D60BB108FAD94FBABF9C5671",
+                        },
+                        acknowledge_tx: {
+                          chain_id: "osmosis-1",
+                          tx_hash:
+                            "1EDB2886E6FD59D6B9C096FBADB1A52585745694F4DFEE3A3CD3FF0153307EBC",
+                        },
+                        timeout_tx: null,
+                        error: null,
+                      },
+                    },
+                  },
+                ],
+                next_blocking_transfer: null,
+                transfer_asset_release: {
+                  chain_id: "cosmoshub-4",
+                  denom: "uatom",
+                },
+                error: null,
+                state: "STATE_COMPLETED",
+                transfers: [
+                  {
+                    state: "STATE_COMPLETED_SUCCESS",
+                    transfer_sequence: [
+                      {
+                        ibc_transfer: {
+                          src_chain_id: "src-chain",
+                          dst_chain_id: "dest-chain",
+                          state: "TRANSFER_SUCCESS",
+                          packet_txs: {
+                            send_tx: null,
+                            receive_tx: null,
+                            acknowledge_tx: null,
+                            timeout_tx: null,
+                            error: null,
+                          },
+                        },
+                      },
+                    ],
+                    next_blocking_transfer: {
+                      transfer_sequence_index: 1,
+                    },
+                    transfer_asset_release: {
+                      chain_id: "cosmoshub-4",
+                      denom: "uatom",
+                    },
+                    error: null,
+                  },
+                ],
+              }),
+            );
+          }
+          return res(
+            ctx.status(500),
+            ctx.json({
+              code: 2,
+              message: "internal server error",
+              details: [],
+            }),
+          );
+        }),
+      );
+
+      const client = new SkipRouter({
+        apiURL: SKIP_API_URL,
+      });
+
+      const response = await client.transactionStatus({
+        chainID: "cosmoshub-4",
+        txHash: "tx_hash123",
+        options: {
+          retry: {
+            retryInterval: 500,
+            maxRetries: maxRetries + 1,
+            backoffMultiplier: 1,
+          },
+        },
+      });
+
+      expect(response).toEqual({
+        status: "STATE_COMPLETED",
+        transferSequence: [
+          {
+            ibcTransfer: {
+              srcChainID: "axelar-dojo-1",
+              dstChainID: "osomosis-1",
+              state: "TRANSFER_SUCCESS",
+              packetTXs: {
+                sendTx: {
+                  chainID: "axelar-dojo-1",
+                  txHash:
+                    "AAEA76709215A808AF6D7FC2B8FBB8746BC1F196E46FFAE84B79C6F6CD0A79C9",
+                },
+                receiveTx: {
+                  chainID: "osmosis-1",
+                  txHash:
+                    "082A6C8024998EC277C2B90BFDDB323CCA506C24A6730C658B9B6DC653198E3D",
+                },
+                acknowledgeTx: {
+                  chainID: "axelar-dojo-1",
+                  txHash:
+                    "C9A36F94A5B2CA9C7ABF20402561E46FD8B80EBAC4F0D5B7C01F978E34285CCA",
+                },
+                timeoutTx: null,
+                error: null,
+              },
+            },
+          },
+          {
+            ibcTransfer: {
+              srcChainID: "osmosis-1",
+              dstChainID: "cosmoshub-4",
+              state: "TRANSFER_SUCCESS",
+              packetTXs: {
+                sendTx: {
+                  chainID: "osmosis-1",
+                  txHash:
+                    "082A6C8024998EC277C2B90BFDDB323CCA506C24A6730C658B9B6DC653198E3D",
+                },
+                receiveTx: {
+                  chainID: "cosmoshub-4",
+                  txHash:
+                    "913E2542EBFEF2E885C19DD9C4F8ECB6ADAFFE59D60BB108FAD94FBABF9C5671",
+                },
+                acknowledgeTx: {
+                  chainID: "osmosis-1",
+                  txHash:
+                    "1EDB2886E6FD59D6B9C096FBADB1A52585745694F4DFEE3A3CD3FF0153307EBC",
+                },
+                timeoutTx: null,
+                error: null,
+              },
+            },
+          },
+        ],
+        nextBlockingTransfer: null,
+        transferAssetRelease: {
+          chainID: "cosmoshub-4",
+          denom: "uatom",
+        },
+        error: null,
+        state: "STATE_COMPLETED",
+        transfers: [
+          {
+            state: "STATE_COMPLETED_SUCCESS",
+            transferSequence: [
+              {
+                ibcTransfer: {
+                  srcChainID: "src-chain",
+                  dstChainID: "dest-chain",
+                  state: "TRANSFER_SUCCESS",
+                  packetTXs: {
+                    sendTx: null,
+                    receiveTx: null,
+                    acknowledgeTx: null,
+                    timeoutTx: null,
+                    error: null,
+                  },
+                },
+              },
+            ],
+            nextBlockingTransfer: {
+              transferSequenceIndex: 1,
+            },
+            transferAssetRelease: {
+              chainID: "cosmoshub-4",
+              denom: "uatom",
+            },
+            error: null,
+          },
+        ],
+      });
+    });
+
+    it("handle 500 error with retry options", async () => {
+      let retryCount = 0;
+      const maxRetries = 2;
+      server.use(
+        rest.get("https://api.skip.money/v2/tx/status", (_, res, ctx) => {
+          retryCount++;
+          if (retryCount >= maxRetries) {
+            return res(
+              ctx.status(200),
+              ctx.json({
+                status: "STATE_COMPLETED",
+                transfer_sequence: [
+                  {
+                    ibc_transfer: {
+                      src_chain_id: "axelar-dojo-1",
+                      dst_chain_id: "osomosis-1",
+                      state: "TRANSFER_SUCCESS",
+                      packet_txs: {
+                        send_tx: {
+                          chain_id: "axelar-dojo-1",
+                          tx_hash:
+                            "AAEA76709215A808AF6D7FC2B8FBB8746BC1F196E46FFAE84B79C6F6CD0A79C9",
+                        },
+                        receive_tx: {
+                          chain_id: "osmosis-1",
+                          tx_hash:
+                            "082A6C8024998EC277C2B90BFDDB323CCA506C24A6730C658B9B6DC653198E3D",
+                        },
+                        acknowledge_tx: {
+                          chain_id: "axelar-dojo-1",
+                          tx_hash:
+                            "C9A36F94A5B2CA9C7ABF20402561E46FD8B80EBAC4F0D5B7C01F978E34285CCA",
+                        },
+                        timeout_tx: null,
+                        error: null,
+                      },
+                    },
+                  },
+                  {
+                    ibc_transfer: {
+                      src_chain_id: "osmosis-1",
+                      dst_chain_id: "cosmoshub-4",
+                      state: "TRANSFER_SUCCESS",
+                      packet_txs: {
+                        send_tx: {
+                          chain_id: "osmosis-1",
+                          tx_hash:
+                            "082A6C8024998EC277C2B90BFDDB323CCA506C24A6730C658B9B6DC653198E3D",
+                        },
+                        receive_tx: {
+                          chain_id: "cosmoshub-4",
+                          tx_hash:
+                            "913E2542EBFEF2E885C19DD9C4F8ECB6ADAFFE59D60BB108FAD94FBABF9C5671",
+                        },
+                        acknowledge_tx: {
+                          chain_id: "osmosis-1",
+                          tx_hash:
+                            "1EDB2886E6FD59D6B9C096FBADB1A52585745694F4DFEE3A3CD3FF0153307EBC",
+                        },
+                        timeout_tx: null,
+                        error: null,
+                      },
+                    },
+                  },
+                ],
+                next_blocking_transfer: null,
+                transfer_asset_release: {
+                  chain_id: "cosmoshub-4",
+                  denom: "uatom",
+                },
+                error: null,
+                state: "STATE_COMPLETED",
+                transfers: [
+                  {
+                    state: "STATE_COMPLETED_SUCCESS",
+                    transfer_sequence: [
+                      {
+                        ibc_transfer: {
+                          src_chain_id: "src-chain",
+                          dst_chain_id: "dest-chain",
+                          state: "TRANSFER_SUCCESS",
+                          packet_txs: {
+                            send_tx: null,
+                            receive_tx: null,
+                            acknowledge_tx: null,
+                            timeout_tx: null,
+                            error: null,
+                          },
+                        },
+                      },
+                    ],
+                    next_blocking_transfer: {
+                      transfer_sequence_index: 1,
+                    },
+                    transfer_asset_release: {
+                      chain_id: "cosmoshub-4",
+                      denom: "uatom",
+                    },
+                    error: null,
+                  },
+                ],
+              }),
+            );
+          }
+          return res(
+            ctx.status(500),
+            ctx.json({
+              code: 2,
+              message: "internal server error",
+              details: [],
+            }),
+          );
+        }),
+      );
+
+      const client = new SkipRouter({
+        apiURL: SKIP_API_URL,
+      });
+
+      try {
+        await client.transactionStatus({
+          chainID: "cosmoshub-4",
+          txHash: "tx_hash123",
+          options: {
+            retry: {
+              retryInterval: 500,
+              maxRetries: maxRetries - 1,
+              backoffMultiplier: 1,
+            },
+          },
+        });
+      } catch (error) {
+        expect(error).toEqual(new Error("internal server error"));
+      }
+    });
   });
 
   describe("ibcOriginAssets", () => {
