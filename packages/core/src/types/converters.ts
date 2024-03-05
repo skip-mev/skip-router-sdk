@@ -1429,6 +1429,12 @@ export function transferEventFromJSON(value: TransferEventJSON): TransferEvent {
     };
   }
 
+  if ("hyperlane_transfer" in value) {
+    return {
+      hyperlaneTransfer: hyperlaneTransferFromJSON(value.hyperlane_transfer),
+    };
+  }
+
   return {
     axelarTransfer: axelarTransferInfoFromJSON(value.axelar_transfer),
   };
@@ -1444,6 +1450,12 @@ export function transferEventToJSON(value: TransferEvent): TransferEventJSON {
   if ("cctpTransfer" in value) {
     return {
       cctp_transfer: cctpTransferInfoToJSON(value.cctpTransfer),
+    };
+  }
+
+  if ("hyperlaneTransfer" in value) {
+    return {
+      hyperlane_transfer: hyperlaneTransferToJSON(value.hyperlaneTransfer),
     };
   }
 

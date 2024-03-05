@@ -1,3 +1,5 @@
+import { HyperlaneTransfer, HyperlaneTransferJSON } from "./shared";
+
 export type SubmitTxRequestJSON = {
   tx: string;
   chain_id: string;
@@ -353,11 +355,13 @@ export type TransferEventJSON =
   | {
       axelar_transfer: AxelarTransferInfoJSON;
     }
-  | { cctp_transfer: CCTPTransferInfoJSON };
+  | { cctp_transfer: CCTPTransferInfoJSON }
+  | { hyperlane_transfer: HyperlaneTransferJSON };
 
 export type TransferEvent =
   | {
       ibcTransfer: TransferInfo;
     }
   | { axelarTransfer: AxelarTransferInfo }
-  | { cctpTransfer: CCTPTransferInfo };
+  | { cctpTransfer: CCTPTransferInfo }
+  | { hyperlaneTransfer: HyperlaneTransfer };
