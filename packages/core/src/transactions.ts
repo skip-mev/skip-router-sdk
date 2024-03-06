@@ -1,4 +1,3 @@
-import { SigningCosmWasmClient } from "@cosmjs/cosmwasm-stargate";
 import { toUtf8 } from "@cosmjs/encoding";
 import { EncodeObject } from "@cosmjs/proto-signing";
 import MsgTransferInjective from "@injectivelabs/sdk-ts/dist/cjs/core/modules/ibc/msgs/MsgTransfer";
@@ -10,6 +9,7 @@ import { MsgTransfer } from "cosmjs-types/ibc/applications/transfer/v1/tx";
 
 import { MsgDepositForBurn } from "./codegen/circle/cctp/v1/tx";
 import { MultiChainMsg } from "./types";
+import { SigningStargateClient } from "@cosmjs/stargate";
 
 export const DEFAULT_GAS_MULTIPLIER = 1.5;
 
@@ -100,7 +100,7 @@ export function getEncodeObjectFromMultiChainMessageInjective(
 }
 
 export async function getGasAmountForMessage(
-  client: SigningCosmWasmClient,
+  client: SigningStargateClient,
   signerAddress: string,
   message: MultiChainMsg,
   multiplier: number = DEFAULT_GAS_MULTIPLIER,
