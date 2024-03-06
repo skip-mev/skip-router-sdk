@@ -298,3 +298,127 @@ describe("transaction execution", () => {
     );
   });
 });
+
+describe("executeRoute", () => {
+  it("with undefined getGasPrice", async () => {
+    const client = new SkipRouter({
+      apiURL: SKIP_API_URL,
+      endpointOptions: {
+        getRpcEndpointForChain: async () => {
+          return COSMOSHUB_ENDPOINT;
+        },
+      },
+      getCosmosSigner: async (chainId) => {
+        const signer = await DirectSecp256k1HdWallet.fromMnemonic(
+          "opinion knife other balcony surge more bamboo canoe romance ask argue teach anxiety adjust spike mystery wolf alone torch tail six decide wash alley",
+        );
+        return signer;
+      },
+    });
+
+    try {
+      await client.executeRoute({
+        route: {
+          sourceAssetDenom: "uatom",
+          sourceAssetChainID: "cosmoshub-4",
+          destAssetDenom: "uakt",
+          destAssetChainID: "akashnet-2",
+          amountIn: "1000000",
+          amountOut: "2526372",
+          operations: [
+            {
+              transfer: {
+                port: "transfer",
+                channel: "channel-141",
+                fromChainID: "cosmoshub-4",
+                toChainID: "osmosis-1",
+                pfmEnabled: true,
+                supportsMemo: true,
+                denomIn: "uatom",
+                denomOut:
+                  "ibc/27394FB092D2ECCD56123C74F36E4C1F926001CEADA9CA97EA622B25F41E5EB2",
+                bridgeID: "IBC",
+                destDenom:
+                  "ibc/27394FB092D2ECCD56123C74F36E4C1F926001CEADA9CA97EA622B25F41E5EB2",
+                chainID: "cosmoshub-4",
+              },
+            },
+            {
+              swap: {
+                swapIn: {
+                  swapVenue: {
+                    name: "osmosis-poolmanager",
+                    chainID: "osmosis-1",
+                  },
+                  swapOperations: [
+                    {
+                      pool: "1282",
+                      denomIn:
+                        "ibc/27394FB092D2ECCD56123C74F36E4C1F926001CEADA9CA97EA622B25F41E5EB2",
+                      denomOut:
+                        "ibc/498A0751C798A0D9A389AA3691123DADA57DAA4FE165D5C75894505B876BA6E4",
+                    },
+                    {
+                      pool: "1480",
+                      denomIn:
+                        "ibc/498A0751C798A0D9A389AA3691123DADA57DAA4FE165D5C75894505B876BA6E4",
+                      denomOut:
+                        "ibc/1480B8FD20AD5FCAE81EA87584D269547DD4D436843C1D20F15E00EB64743EF4",
+                    },
+                  ],
+                  swapAmountIn: "1000000",
+                  priceImpactPercent: "0.5878",
+                },
+                estimatedAffiliateFee:
+                  "0ibc/1480B8FD20AD5FCAE81EA87584D269547DD4D436843C1D20F15E00EB64743EF4",
+                chainID: "osmosis-1",
+                denomIn:
+                  "ibc/27394FB092D2ECCD56123C74F36E4C1F926001CEADA9CA97EA622B25F41E5EB2",
+                denomOut:
+                  "ibc/1480B8FD20AD5FCAE81EA87584D269547DD4D436843C1D20F15E00EB64743EF4",
+              },
+            },
+            {
+              transfer: {
+                port: "transfer",
+                channel: "channel-1",
+                fromChainID: "osmosis-1",
+                toChainID: "akashnet-2",
+                pfmEnabled: true,
+                supportsMemo: true,
+                denomIn:
+                  "ibc/1480B8FD20AD5FCAE81EA87584D269547DD4D436843C1D20F15E00EB64743EF4",
+                denomOut: "uakt",
+                bridgeID: "IBC",
+                destDenom: "uakt",
+                chainID: "osmosis-1",
+              },
+            },
+          ],
+          chainIDs: ["cosmoshub-4", "osmosis-1", "akashnet-2"],
+          doesSwap: true,
+          estimatedAmountOut: "2526372",
+          swapVenue: {
+            name: "osmosis-poolmanager",
+            chainID: "osmosis-1",
+          },
+          txsRequired: 1,
+          usdAmountIn: "13.38",
+          usdAmountOut: "13.39",
+          swapPriceImpactPercent: "0.5878",
+        },
+        userAddresses: {
+          "cosmoshub-4": "cosmos1g3jjhgkyf36pjhe7u5cw8j9u6cgl8x929ej430",
+          "osmosis-1": "osmo1g3jjhgkyf36pjhe7u5cw8j9u6cgl8x92dzp98a",
+          "akashnet-2": "akash1g3jjhgkyf36pjhe7u5cw8j9u6cgl8x92gzljg4",
+        },
+        slippageTolerancePercent: "3",
+        onTransactionTracked: async (tx) => {
+          expect(!!tx).toBe(true);
+        },
+      });
+    } catch (error) {
+      expect(error).toBeFalsy();
+    }
+  });
+});
