@@ -1,5 +1,11 @@
 # @skip-router/core
 
+## 1.3.10
+
+### Patch Changes
+
+- cddd3e8: Define and use correct hyperlane types for lifecycle tracking
+
 ## 1.3.9
 
 ### Patch Changes
