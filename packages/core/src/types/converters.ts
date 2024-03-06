@@ -11,6 +11,10 @@ import {
   ChainTransactionJSON,
   ContractCallWithTokenTransactions,
   ContractCallWithTokenTransactionsJSON,
+  HyperlaneTransferInfo,
+  HyperlaneTransferInfoJSON,
+  HyperlaneTransferTransactions,
+  HyperlaneTransferTransactionsJSON,
   NextBlockingTransfer,
   NextBlockingTransferJSON,
   Packet,
@@ -1431,7 +1435,9 @@ export function transferEventFromJSON(value: TransferEventJSON): TransferEvent {
 
   if ("hyperlane_transfer" in value) {
     return {
-      hyperlaneTransfer: hyperlaneTransferFromJSON(value.hyperlane_transfer),
+      hyperlaneTransfer: hyperlaneTransferInfoFromJSON(
+        value.hyperlane_transfer,
+      ),
     };
   }
 
@@ -1455,7 +1461,7 @@ export function transferEventToJSON(value: TransferEvent): TransferEventJSON {
 
   if ("hyperlaneTransfer" in value) {
     return {
-      hyperlane_transfer: hyperlaneTransferToJSON(value.hyperlaneTransfer),
+      hyperlane_transfer: hyperlaneTransferInfoToJSON(value.hyperlaneTransfer),
     };
   }
 
@@ -1731,5 +1737,49 @@ export function cctpTransferInfoToJSON(
     dst_chain_id: value.dstChainID,
     state: value.state,
     txs: value.txs && cctpTransferTransactionsToJSON(value.txs),
+  };
+}
+
+export function hyperlaneTransferTransactionsFromJSON(
+  value: HyperlaneTransferTransactionsJSON,
+): HyperlaneTransferTransactions {
+  return {
+    sendTx: value.send_tx ? chainTransactionFromJSON(value.send_tx) : null,
+    receiveTx: value.receive_tx
+      ? chainTransactionFromJSON(value.receive_tx)
+      : null,
+  };
+}
+
+export function hyperlaneTransferTransactionsToJSON(
+  value: HyperlaneTransferTransactions,
+): HyperlaneTransferTransactionsJSON {
+  return {
+    send_tx: value.sendTx ? chainTransactionToJSON(value.sendTx) : null,
+    receive_tx: value.receiveTx
+      ? chainTransactionToJSON(value.receiveTx)
+      : null,
+  };
+}
+
+export function hyperlaneTransferInfoFromJSON(
+  value: HyperlaneTransferInfoJSON,
+): HyperlaneTransferInfo {
+  return {
+    fromChainID: value.from_chain_id,
+    toChainID: value.to_chain_id,
+    state: value.state,
+    txs: value.txs && hyperlaneTransferTransactionsFromJSON(value.txs),
+  };
+}
+
+export function hyperlaneTransferInfoToJSON(
+  value: HyperlaneTransferInfo,
+): HyperlaneTransferInfoJSON {
+  return {
+    from_chain_id: value.fromChainID,
+    to_chain_id: value.toChainID,
+    state: value.state,
+    txs: value.txs && hyperlaneTransferTransactionsToJSON(value.txs),
   };
 }
