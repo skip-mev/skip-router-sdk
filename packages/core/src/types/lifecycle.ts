@@ -1,5 +1,3 @@
-import { HyperlaneTransfer, HyperlaneTransferJSON } from "./shared";
-
 export type SubmitTxRequestJSON = {
   tx: string;
   chain_id: string;
@@ -348,6 +346,36 @@ export type CCTPTransferInfo = {
   txs: CCTPTransferTransactions;
 };
 
+export type HyperlaneTransferState =
+  | "HYPERLANE_TRANSFER_UNKNOWN"
+  | "HYPERLANE_TRANSFER_SENT"
+  | "HYPERLANE_TRANSFER_FAILED"
+  | "HYPERLANE_TRANSFER_RECEIVED";
+
+export type HyperlaneTransferTransactionsJSON = {
+  send_tx: ChainTransactionJSON | null;
+  receive_tx: ChainTransactionJSON | null;
+};
+
+export type HyperlaneTransferTransactions = {
+  sendTx: ChainTransaction | null;
+  receiveTx: ChainTransaction | null;
+};
+
+export type HyperlaneTransferInfoJSON = {
+  from_chain_id: string;
+  to_chain_id: string;
+  state: HyperlaneTransferState;
+  txs: HyperlaneTransferTransactionsJSON;
+};
+
+export type HyperlaneTransferInfo = {
+  fromChainID: string;
+  toChainID: string;
+  state: HyperlaneTransferState;
+  txs: HyperlaneTransferTransactions;
+};
+
 export type TransferEventJSON =
   | {
       ibc_transfer: TransferInfoJSON;
@@ -356,7 +384,7 @@ export type TransferEventJSON =
       axelar_transfer: AxelarTransferInfoJSON;
     }
   | { cctp_transfer: CCTPTransferInfoJSON }
-  | { hyperlane_transfer: HyperlaneTransferJSON };
+  | { hyperlane_transfer: HyperlaneTransferInfoJSON };
 
 export type TransferEvent =
   | {
@@ -364,4 +392,4 @@ export type TransferEvent =
     }
   | { axelarTransfer: AxelarTransferInfo }
   | { cctpTransfer: CCTPTransferInfo }
-  | { hyperlaneTransfer: HyperlaneTransfer };
+  | { hyperlaneTransfer: HyperlaneTransferInfo };
