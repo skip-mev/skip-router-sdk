@@ -1,5 +1,11 @@
 # @skip-router/core
 
+## 1.3.11
+
+### Patch Changes
+
+- ddbf415: fix account not parsed by accountParser
+
 ## 1.3.10
 
 ### Patch Changes
