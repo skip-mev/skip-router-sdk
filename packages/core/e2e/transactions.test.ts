@@ -385,6 +385,7 @@ describe("transaction execution", () => {
                 destDenom:
                   "ibc/14F9BC3E44B8A9C1BE1FB08980FAB87034C9905EF17CF2F5008FC085218811CC",
                 chainID: "osmosis-1",
+                rapid_relay: true,
               },
             },
           ],
