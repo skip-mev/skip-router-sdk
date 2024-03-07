@@ -179,6 +179,8 @@ export type CCTPTransferJSON = {
   to_chain_id: string;
   burn_token: string;
   bridge_id: BridgeType;
+  denom_in: string;
+  denom_out: string;
 };
 
 export type CCTPTransfer = {
@@ -186,6 +188,8 @@ export type CCTPTransfer = {
   toChainID: string;
   burnToken: string;
   bridgeID: BridgeType;
+  denomIn: string;
+  denomOut: string;
 };
 
 export type HyperlaneTransferJSON = {

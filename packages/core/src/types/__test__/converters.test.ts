@@ -2196,8 +2196,8 @@ test("packetToJSON", () => {
 
 test("transferInfoFromJSON", () => {
   const transferInfoJSON: TransferInfoJSON = {
-    src_chain_id: "axelar-dojo-1",
-    dst_chain_id: "osomosis-1",
+    from_chain_id: "axelar-dojo-1",
+    to_chain_id: "osomosis-1",
     state: "TRANSFER_SUCCESS",
     packet_txs: {
       send_tx: {
@@ -2227,8 +2227,8 @@ test("transferInfoFromJSON", () => {
   };
 
   expect(transferInfoFromJSON(transferInfoJSON)).toEqual({
-    srcChainID: "axelar-dojo-1",
-    dstChainID: "osomosis-1",
+    fromChainID: "axelar-dojo-1",
+    toChainID: "osomosis-1",
     state: "TRANSFER_SUCCESS",
     packetTXs: {
       sendTx: {
@@ -2260,8 +2260,8 @@ test("transferInfoFromJSON", () => {
 
 test("transferInfoToJSON", () => {
   const transferInfo: TransferInfo = {
-    srcChainID: "axelar-dojo-1",
-    dstChainID: "osomosis-1",
+    fromChainID: "axelar-dojo-1",
+    toChainID: "osomosis-1",
     state: "TRANSFER_SUCCESS",
     packetTXs: {
       sendTx: {
@@ -2291,8 +2291,8 @@ test("transferInfoToJSON", () => {
   };
 
   expect(transferInfoToJSON(transferInfo)).toEqual({
-    src_chain_id: "axelar-dojo-1",
-    dst_chain_id: "osomosis-1",
+    from_chain_id: "axelar-dojo-1",
+    to_chain_id: "osomosis-1",
     state: "TRANSFER_SUCCESS",
     packet_txs: {
       send_tx: {
@@ -2372,8 +2372,8 @@ test("txStatusResponseFromJSON", () => {
     transfer_sequence: [
       {
         ibc_transfer: {
-          src_chain_id: "axelar-dojo-1",
-          dst_chain_id: "osomosis-1",
+          from_chain_id: "axelar-dojo-1",
+          to_chain_id: "osomosis-1",
           state: "TRANSFER_SUCCESS",
           packet_txs: {
             send_tx: {
@@ -2404,8 +2404,8 @@ test("txStatusResponseFromJSON", () => {
       },
       {
         ibc_transfer: {
-          src_chain_id: "osmosis-1",
-          dst_chain_id: "cosmoshub-4",
+          from_chain_id: "osmosis-1",
+          to_chain_id: "cosmoshub-4",
           state: "TRANSFER_SUCCESS",
           packet_txs: {
             send_tx: {
@@ -2448,8 +2448,8 @@ test("txStatusResponseFromJSON", () => {
         transfer_sequence: [
           {
             ibc_transfer: {
-              src_chain_id: "src-chain",
-              dst_chain_id: "dest-chain",
+              from_chain_id: "src-chain",
+              to_chain_id: "dest-chain",
               state: "TRANSFER_SUCCESS",
               packet_txs: {
                 send_tx: null,
@@ -2478,8 +2478,8 @@ test("txStatusResponseFromJSON", () => {
     transferSequence: [
       {
         ibcTransfer: {
-          srcChainID: "axelar-dojo-1",
-          dstChainID: "osomosis-1",
+          fromChainID: "axelar-dojo-1",
+          toChainID: "osomosis-1",
           state: "TRANSFER_SUCCESS",
           packetTXs: {
             sendTx: {
@@ -2510,8 +2510,8 @@ test("txStatusResponseFromJSON", () => {
       },
       {
         ibcTransfer: {
-          srcChainID: "osmosis-1",
-          dstChainID: "cosmoshub-4",
+          fromChainID: "osmosis-1",
+          toChainID: "cosmoshub-4",
           state: "TRANSFER_SUCCESS",
           packetTXs: {
             sendTx: {
@@ -2554,8 +2554,8 @@ test("txStatusResponseFromJSON", () => {
         transferSequence: [
           {
             ibcTransfer: {
-              srcChainID: "src-chain",
-              dstChainID: "dest-chain",
+              fromChainID: "src-chain",
+              toChainID: "dest-chain",
               state: "TRANSFER_SUCCESS",
               packetTXs: {
                 sendTx: null,
@@ -2586,8 +2586,8 @@ test("txStatusResponseToJSON", () => {
     transferSequence: [
       {
         ibcTransfer: {
-          srcChainID: "axelar-dojo-1",
-          dstChainID: "osomosis-1",
+          fromChainID: "axelar-dojo-1",
+          toChainID: "osomosis-1",
           state: "TRANSFER_SUCCESS",
           packetTXs: {
             sendTx: {
@@ -2618,8 +2618,8 @@ test("txStatusResponseToJSON", () => {
       },
       {
         ibcTransfer: {
-          srcChainID: "osmosis-1",
-          dstChainID: "cosmoshub-4",
+          fromChainID: "osmosis-1",
+          toChainID: "cosmoshub-4",
           state: "TRANSFER_SUCCESS",
           packetTXs: {
             sendTx: {
@@ -2662,8 +2662,8 @@ test("txStatusResponseToJSON", () => {
         transferSequence: [
           {
             ibcTransfer: {
-              srcChainID: "src-chain",
-              dstChainID: "dest-chain",
+              fromChainID: "src-chain",
+              toChainID: "dest-chain",
               state: "TRANSFER_SUCCESS",
               packetTXs: {
                 sendTx: null,
@@ -2692,8 +2692,8 @@ test("txStatusResponseToJSON", () => {
     transfer_sequence: [
       {
         ibc_transfer: {
-          src_chain_id: "axelar-dojo-1",
-          dst_chain_id: "osomosis-1",
+          from_chain_id: "axelar-dojo-1",
+          to_chain_id: "osomosis-1",
           state: "TRANSFER_SUCCESS",
           packet_txs: {
             send_tx: {
@@ -2724,8 +2724,8 @@ test("txStatusResponseToJSON", () => {
       },
       {
         ibc_transfer: {
-          src_chain_id: "osmosis-1",
-          dst_chain_id: "cosmoshub-4",
+          from_chain_id: "osmosis-1",
+          to_chain_id: "cosmoshub-4",
           state: "TRANSFER_SUCCESS",
           packet_txs: {
             send_tx: {
@@ -2768,8 +2768,8 @@ test("txStatusResponseToJSON", () => {
         transfer_sequence: [
           {
             ibc_transfer: {
-              src_chain_id: "src-chain",
-              dst_chain_id: "dest-chain",
+              from_chain_id: "src-chain",
+              to_chain_id: "dest-chain",
               state: "TRANSFER_SUCCESS",
               packet_txs: {
                 send_tx: null,
