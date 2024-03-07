@@ -30,12 +30,18 @@ export type StatusState =
   | "STATE_COMPLETED_SUCCESS"
   | "STATE_COMPLETED_ERROR";
 
+export type BlockingTransferState = 
+  | "TRANSFER_PROPAGATING"
+  | "ERROR_PROPAGATING"
+
 export type NextBlockingTransferJSON = {
   transfer_sequence_index: number;
+  transfer_state: BlockingTransferState;
 };
 
 export type NextBlockingTransfer = {
   transferSequenceIndex: number;
+  transferState: BlockingTransferState;
 };
 
 export type StatusRequestJSON = {
