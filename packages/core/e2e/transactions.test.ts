@@ -297,4 +297,89 @@ describe("transaction execution", () => {
       "failed to execute message; message index: 0: contract: not found",
     );
   });
+
+  it("executeRoute with undefined getGasPrice", async () => {
+    const client = new SkipRouter({
+      apiURL: SKIP_API_URL,
+      endpointOptions: {
+        getRpcEndpointForChain: async () => {
+          return OSMOSIS_ENDPOINT;
+        },
+      },
+      getCosmosSigner: async () => {
+        return DirectSecp256k1HdWallet.fromMnemonic(
+          "opinion knife other balcony surge more bamboo canoe romance ask argue teach anxiety adjust spike mystery wolf alone torch tail six decide wash alley",
+          {
+            prefix: "osmo",
+          },
+        );
+      },
+    });
+
+    const signer = await Secp256k1HdWallet.fromMnemonic(
+      "opinion knife other balcony surge more bamboo canoe romance ask argue teach anxiety adjust spike mystery wolf alone torch tail six decide wash alley",
+      {
+        prefix: "osmo",
+      },
+    );
+
+    const accounts = await signer.getAccounts();
+
+    const signerAddress = accounts[0].address;
+
+    const faucet = new FaucetClient(OSMOSIS_FAUCET);
+    await faucet.credit(signerAddress, "uosmo");
+
+    try {
+      await client.executeRoute({
+        route: {
+          sourceAssetDenom: "uosmo",
+          sourceAssetChainID: "osmosis-1",
+          destAssetDenom:
+            "ibc/14F9BC3E44B8A9C1BE1FB08980FAB87034C9905EF17CF2F5008FC085218811CC",
+          destAssetChainID: "cosmoshub-4",
+          amountIn: "1000000",
+          amountOut: "1000000",
+          operations: [
+            {
+              transfer: {
+                port: "transfer",
+                channel: "channel-0",
+                fromChainID: "osmosis-1",
+                toChainID: "cosmoshub-4",
+                pfmEnabled: true,
+                supportsMemo: true,
+                denomIn: "uosmo",
+                denomOut:
+                  "ibc/14F9BC3E44B8A9C1BE1FB08980FAB87034C9905EF17CF2F5008FC085218811CC",
+                bridgeID: "IBC",
+                destDenom:
+                  "ibc/14F9BC3E44B8A9C1BE1FB08980FAB87034C9905EF17CF2F5008FC085218811CC",
+                chainID: "osmosis-1",
+              },
+            },
+          ],
+          chainIDs: ["osmosis-1", "cosmoshub-4"],
+          doesSwap: false,
+          estimatedAmountOut: "1000000",
+          txsRequired: 1,
+          usdAmountIn: "1.68",
+          usdAmountOut: "1.68",
+        },
+        userAddresses: {
+          "osmosis-1": signerAddress,
+          "cosmoshub-4": "cosmos1g3jjhgkyf36pjhe7u5cw8j9u6cgl8x929ej430",
+        },
+        validateGasBalance: true,
+        slippageTolerancePercent: "3",
+        onTransactionBroadcast: async (tx) => {
+          expect(tx).toBeTruthy();
+        },
+      });
+    } catch (error) {
+      // we expect an error here because we are using local rpc endpoint
+      console.log(error);
+      expect(error).toBeTruthy();
+    }
+  });
 });

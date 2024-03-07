@@ -1,8 +1,5 @@
 import { makeSignDoc as makeSignDocAmino } from "@cosmjs/amino";
-import {
-  createWasmAminoConverters,
-  SigningCosmWasmClient,
-} from "@cosmjs/cosmwasm-stargate";
+import { createWasmAminoConverters } from "@cosmjs/cosmwasm-stargate";
 import { fromBase64 } from "@cosmjs/encoding";
 import { Int53 } from "@cosmjs/math";
 import { Decimal } from "@cosmjs/math";
@@ -23,6 +20,7 @@ import {
   defaultRegistryTypes,
   GasPrice,
   SignerData,
+  SigningStargateClient,
   StargateClient,
   StdFee,
 } from "@cosmjs/stargate";
@@ -261,12 +259,13 @@ export class SkipRouter {
           multiChainMsg.chainID,
         );
 
-        const client = await SigningCosmWasmClient.connectWithSigner(
+        const client = await SigningStargateClient.connectWithSigner(
           endpoint,
           signer,
           {
             aminoTypes: this.aminoTypes,
             registry: this.registry,
+            accountParser,
           },
         );
 
@@ -380,12 +379,13 @@ export class SkipRouter {
 
     const endpoint = await this.getRpcEndpointForChain(message.chainID);
 
-    const stargateClient = await SigningCosmWasmClient.connectWithSigner(
+    const stargateClient = await SigningStargateClient.connectWithSigner(
       endpoint,
       signer,
       {
         aminoTypes: this.aminoTypes,
         registry: this.registry,
+        accountParser,
       },
     );
     const { accountNumber, sequence } = await this.getAccountNumberAndSequence(
@@ -1005,7 +1005,7 @@ export class SkipRouter {
   }
 
   async getGasAmountForMessage(
-    client: SigningCosmWasmClient,
+    client: SigningStargateClient,
     signerAddress: string,
     message: types.MultiChainMsg,
   ): Promise<string> {
@@ -1196,12 +1196,13 @@ export class SkipRouter {
 
     const endpoint = await this.getRpcEndpointForChain(msg.chainID);
 
-    const client = await SigningCosmWasmClient.connectWithSigner(
+    const client = await SigningStargateClient.connectWithSigner(
       endpoint,
       signer,
       {
         aminoTypes: this.aminoTypes,
         registry: this.registry,
+        accountParser,
       },
     );
 
@@ -1367,12 +1368,13 @@ export class SkipRouter {
         const endpoint = await this.getRpcEndpointForChain(
           message.multiChainMsg.chainID,
         );
-        const client = await SigningCosmWasmClient.connectWithSigner(
+        const client = await SigningStargateClient.connectWithSigner(
           endpoint,
           signer,
           {
             aminoTypes: this.aminoTypes,
             registry: this.registry,
+            accountParser,
           },
         );
 
@@ -1395,7 +1397,7 @@ export class SkipRouter {
   }
 
   private async validateCosmosGasBalance(
-    client: SigningCosmWasmClient,
+    client: SigningStargateClient,
     signer: OfflineSigner,
     signerAddress: string,
     message: types.MultiChainMsg,
