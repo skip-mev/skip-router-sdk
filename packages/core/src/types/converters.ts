@@ -207,11 +207,6 @@ export function assetsFromSourceRequestFromJSON(
     sourceAssetDenom: assetsFromSourceRequestJSON.source_asset_denom,
     sourceAssetChainID: assetsFromSourceRequestJSON.source_asset_chain_id,
     allowMultiTx: assetsFromSourceRequestJSON.allow_multi_tx,
-    recommendationReason: assetsFromSourceRequestJSON.recommendation_reason,
-    includeSwaps: assetsFromSourceRequestJSON.include_swaps,
-    swapVenues: assetsFromSourceRequestJSON.swap_venues?.map(swapVenueFromJSON),
-    nativeOnly: assetsFromSourceRequestJSON.native_only,
-    groupBy: assetsFromSourceRequestJSON.group_by,
     includeCW20Assets: assetsFromSourceRequestJSON.include_cw20_assets,
     clientID: assetsFromSourceRequestJSON.client_id,
   };
@@ -224,11 +219,6 @@ export function assetsFromSourceRequestToJSON(
     source_asset_denom: assetsFromSourceRequest.sourceAssetDenom,
     source_asset_chain_id: assetsFromSourceRequest.sourceAssetChainID,
     allow_multi_tx: assetsFromSourceRequest.allowMultiTx,
-    recommendation_reason: assetsFromSourceRequest.recommendationReason,
-    include_swaps: assetsFromSourceRequest.includeSwaps,
-    swap_venues: assetsFromSourceRequest.swapVenues?.map(swapVenueToJSON),
-    native_only: assetsFromSourceRequest.nativeOnly,
-    group_by: assetsFromSourceRequest.groupBy,
     include_cw20_assets: assetsFromSourceRequest.includeCW20Assets,
     client_id: assetsFromSourceRequest.clientID,
   };

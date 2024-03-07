@@ -18,7 +18,7 @@ const MNEMONIC = ""; // <---- UPDATE THIS
 async function main() {
   const client = new SkipRouter({
     apiURL: SKIP_API_URL,
-    getOfflineSigner: async (chainID) => {
+    getCosmosSigner: async (chainID) => {
       return DirectSecp256k1HdWallet.fromMnemonic(MNEMONIC);
 
       // using the keplr browser extension:
@@ -42,7 +42,7 @@ async function main() {
   await client.executeRoute({
     route,
     userAddresses: USER_ADDRESSES,
-    onTransactionSuccess: async (tx) => {
+    onTransactionCompleted: async (tx) => {
       console.log(tx);
     },
   });

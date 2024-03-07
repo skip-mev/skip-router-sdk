@@ -48,13 +48,7 @@ export type AssetsRequest = {
 export type AssetsFromSourceRequestJSON = {
   source_asset_denom: string;
   source_asset_chain_id: string;
-
   allow_multi_tx?: boolean;
-  recommendation_reason?: Reason;
-  include_swaps?: boolean;
-  swap_venues?: SwapVenueJSON[];
-  native_only?: boolean;
-  group_by?: string;
   include_cw20_assets: boolean;
   client_id?: string;
 };
@@ -62,13 +56,7 @@ export type AssetsFromSourceRequestJSON = {
 export type AssetsFromSourceRequest = {
   sourceAssetDenom: string;
   sourceAssetChainID: string;
-
   allowMultiTx?: boolean;
-  recommendationReason?: Reason;
-  includeSwaps?: boolean;
-  swapVenues?: SwapVenue[];
-  nativeOnly?: boolean;
-  groupBy?: string;
   includeCW20Assets: boolean;
   clientID?: string;
 };

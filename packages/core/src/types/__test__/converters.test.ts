@@ -320,16 +320,6 @@ test("assetsFromSourceRequestFromJSON", () => {
     source_asset_denom: "uosmo",
     source_asset_chain_id: "osmosis-1",
     allow_multi_tx: true,
-    recommendation_reason: "MOST_LIQUID",
-    include_swaps: true,
-    swap_venues: [
-      {
-        name: "neutron-astroport",
-        chain_id: "neutron-1",
-      },
-    ],
-    native_only: true,
-    group_by: "group-by-value",
     include_cw20_assets: true,
   };
 
@@ -337,16 +327,6 @@ test("assetsFromSourceRequestFromJSON", () => {
     sourceAssetDenom: "uosmo",
     sourceAssetChainID: "osmosis-1",
     allowMultiTx: true,
-    recommendationReason: "MOST_LIQUID",
-    includeSwaps: true,
-    swapVenues: [
-      {
-        name: "neutron-astroport",
-        chainID: "neutron-1",
-      },
-    ],
-    nativeOnly: true,
-    groupBy: "group-by-value",
     includeCW20Assets: true,
   };
 
@@ -360,16 +340,6 @@ test("assetsFromSourceRequestToJSON", () => {
     sourceAssetDenom: "uosmo",
     sourceAssetChainID: "osmosis-1",
     allowMultiTx: true,
-    recommendationReason: "MOST_LIQUID",
-    includeSwaps: true,
-    swapVenues: [
-      {
-        name: "neutron-astroport",
-        chainID: "neutron-1",
-      },
-    ],
-    nativeOnly: true,
-    groupBy: "group-by-value",
     includeCW20Assets: true,
   };
 
@@ -377,16 +347,6 @@ test("assetsFromSourceRequestToJSON", () => {
     source_asset_denom: "uosmo",
     source_asset_chain_id: "osmosis-1",
     allow_multi_tx: true,
-    recommendation_reason: "MOST_LIQUID",
-    include_swaps: true,
-    swap_venues: [
-      {
-        name: "neutron-astroport",
-        chain_id: "neutron-1",
-      },
-    ],
-    native_only: true,
-    group_by: "group-by-value",
     include_cw20_assets: true,
   };
 
