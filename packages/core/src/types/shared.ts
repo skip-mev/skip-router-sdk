@@ -215,9 +215,21 @@ export type HyperlaneTransfer = {
 export type SwapVenueJSON = {
   name: string;
   chain_id: string;
+  logo_uri: string;
 };
 
 export type SwapVenue = {
+  name: string;
+  chainID: string;
+  logoUri: string;
+};
+
+export type SwapVenueRequestJSON = {
+  name: string;
+  chain_id: string;
+};
+
+export type SwapVenueRequest = {
   name: string;
   chainID: string;
 };
