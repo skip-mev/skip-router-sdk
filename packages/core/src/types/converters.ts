@@ -86,6 +86,8 @@ import {
   SwapOperationJSON,
   SwapVenue,
   SwapVenueJSON,
+  SwapVenueRequest,
+  SwapVenueRequestJSON,
   Transfer,
   TransferJSON,
 } from "./shared";
@@ -362,6 +364,7 @@ export function swapVenueFromJSON(swapVenueJSON: SwapVenueJSON): SwapVenue {
   return {
     name: swapVenueJSON.name,
     chainID: swapVenueJSON.chain_id,
+    logoUri: swapVenueJSON.logo_uri,
   };
 }
 
@@ -369,6 +372,25 @@ export function swapVenueToJSON(swapVenue: SwapVenue): SwapVenueJSON {
   return {
     name: swapVenue.name,
     chain_id: swapVenue.chainID,
+    logo_uri: swapVenue.logoUri,
+  };
+}
+
+export function swapVenueRequestFromJSON(
+  SwapVenueRequestJSON: SwapVenueRequestJSON,
+): SwapVenueRequest {
+  return {
+    name: SwapVenueRequestJSON.name,
+    chainID: SwapVenueRequestJSON.chain_id,
+  };
+}
+
+export function swapVenueRequestToJSON(
+  swapVenueRequest: SwapVenueRequest,
+): SwapVenueRequestJSON {
+  return {
+    name: swapVenueRequest.name,
+    chain_id: swapVenueRequest.chainID,
   };
 }
 
@@ -385,7 +407,7 @@ export function routeRequestFromJSON(
 
       cumulativeAffiliateFeeBPS: routeRequestJSON.cumulative_affiliate_fee_bps,
       swapVenue: routeRequestJSON.swap_venue
-        ? swapVenueFromJSON(routeRequestJSON.swap_venue)
+        ? swapVenueRequestFromJSON(routeRequestJSON.swap_venue)
         : undefined,
       allowUnsafe: routeRequestJSON.allow_unsafe,
       clientID: routeRequestJSON.client_id,
@@ -404,7 +426,7 @@ export function routeRequestFromJSON(
 
     cumulativeAffiliateFeeBPS: routeRequestJSON.cumulative_affiliate_fee_bps,
     swapVenue: routeRequestJSON.swap_venue
-      ? swapVenueFromJSON(routeRequestJSON.swap_venue)
+      ? swapVenueRequestFromJSON(routeRequestJSON.swap_venue)
       : undefined,
     allowUnsafe: routeRequestJSON.allow_unsafe,
     clientID: routeRequestJSON.client_id,
@@ -427,7 +449,7 @@ export function routeRequestToJSON(
 
       cumulative_affiliate_fee_bps: routeRequest.cumulativeAffiliateFeeBPS,
       swap_venue: routeRequest.swapVenue
-        ? swapVenueToJSON(routeRequest.swapVenue)
+        ? swapVenueRequestToJSON(routeRequest.swapVenue)
         : undefined,
       allow_unsafe: routeRequest.allowUnsafe,
       client_id: routeRequest.clientID,
@@ -446,7 +468,7 @@ export function routeRequestToJSON(
 
     cumulative_affiliate_fee_bps: routeRequest.cumulativeAffiliateFeeBPS,
     swap_venue: routeRequest.swapVenue
-      ? swapVenueToJSON(routeRequest.swapVenue)
+      ? swapVenueRequestToJSON(routeRequest.swapVenue)
       : undefined,
     allow_unsafe: routeRequest.allowUnsafe,
     client_id: routeRequest.clientID,

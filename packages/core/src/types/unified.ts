@@ -23,6 +23,8 @@ import {
   SwapJSON,
   SwapVenue,
   SwapVenueJSON,
+  SwapVenueRequest,
+  SwapVenueRequestJSON,
   Transfer,
   TransferJSON,
 } from "./shared";
@@ -122,7 +124,7 @@ export type RouteRequestBaseJSON = {
   dest_asset_chain_id: string;
 
   cumulative_affiliate_fee_bps?: string;
-  swap_venue?: SwapVenueJSON;
+  swap_venue?: SwapVenueRequestJSON;
   allow_unsafe?: boolean;
   client_id?: string;
   experimental_features?: ExperimentalFeature[];
@@ -151,7 +153,7 @@ export type RouteRequestBase = {
   destAssetChainID: string;
 
   cumulativeAffiliateFeeBPS?: string;
-  swapVenue?: SwapVenue;
+  swapVenue?: SwapVenueRequest;
   allowUnsafe?: boolean;
   clientID?: string;
   experimentalFeatures?: ExperimentalFeature[];

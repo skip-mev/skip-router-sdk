@@ -645,6 +645,8 @@ describe("client", () => {
                 swapVenue: {
                   name: "osmosis-poolmanager",
                   chainID: "osmosis-1",
+                  logoUri:
+                    "https://raw.githubusercontent.com/skip-mev/skip-api-registry/main/swap-venues/osmosis/logo.svg",
                 },
                 swapOperations: [
                   {
@@ -656,6 +658,10 @@ describe("client", () => {
                 ],
                 swapAmountIn: "1000000",
               },
+              chainID: "osmosis-1",
+              denomIn: "uosmo",
+              denomOut:
+                "ibc/27394FB092D2ECCD56123C74F36E4C1F926001CEADA9CA97EA622B25F41E5EB2",
               estimatedAffiliateFee:
                 "0ibc/27394FB092D2ECCD56123C74F36E4C1F926001CEADA9CA97EA622B25F41E5EB2",
             },
@@ -668,6 +674,7 @@ describe("client", () => {
               pfmEnabled: true,
               destDenom: "uatom",
               supportsMemo: true,
+              bridgeID: "IBC",
             },
           },
         ],
