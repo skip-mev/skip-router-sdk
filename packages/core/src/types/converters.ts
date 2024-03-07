@@ -1049,6 +1049,7 @@ export function transferAssetReleaseFromJSON(
   return {
     chainID: transferAssetReleaseJSON.chain_id,
     denom: transferAssetReleaseJSON.denom,
+    released: transferAssetReleaseJSON.released,
   };
 }
 
@@ -1058,6 +1059,7 @@ export function transferAssetReleaseToJSON(
   return {
     chain_id: transferAssetRelease.chainID,
     denom: transferAssetRelease.denom,
+    released: transferAssetRelease.released,
   };
 }
 

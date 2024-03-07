@@ -80,11 +80,13 @@ export type TransferInfo = {
 export type TransferAssetReleaseJSON = {
   chain_id: string;
   denom: string;
+  released: boolean;
 };
 
 export type TransferAssetRelease = {
   chainID: string;
   denom: string;
+  released: boolean;
 };
 
 export type TxStatusResponseJSON = {
