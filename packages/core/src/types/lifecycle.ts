@@ -59,17 +59,25 @@ export type TransferState =
   | "TRANSFER_FAILURE";
 
 export type TransferInfoJSON = {
-  src_chain_id: string;
-  dst_chain_id: string;
+  from_chain_id: string;
+  to_chain_id: string;
   state: TransferState;
   packet_txs: PacketJSON;
+
+  // Deprecated
+  src_chain_id: string;
+  dst_chain_id: string;
 };
 
 export type TransferInfo = {
-  srcChainID: string;
-  dstChainID: string;
+  fromChainID: string;
+  toChainID: string;
   state: TransferState;
   packetTXs: Packet;
+
+  // Deprecated
+  srcChainID: string;
+  dstChainID: string;
 };
 
 export type TransferAssetReleaseJSON = {
@@ -238,21 +246,29 @@ export type AxelarTransferState =
   | "AXELAR_TRANSFER_FAILURE";
 
 export type AxelarTransferInfoJSON = {
-  src_chain_id: string;
-  dst_chain_id: string;
+  from_chain_id: string;
+  to_chain_id: string;
   type: AxelarTransferType;
   state: AxelarTransferState;
   txs: AxelarTransferTransactionsJSON;
   axelar_scan_link: string;
+
+  // Deprecated
+  src_chain_id: string;
+  dst_chain_id: string;
 };
 
 export type AxelarTransferInfo = {
-  srcChainID: string;
-  dstChainID: string;
+  fromChainID: string;
+  toChainID: string;
   type: AxelarTransferType;
   state: AxelarTransferState;
   txs: AxelarTransferTransactions;
   axelarScanLink: string;
+
+  // Deprecated
+  srcChainID: string;
+  dstChainID: string;
 };
 
 export type AxelarTransferTransactionsJSON =
@@ -336,17 +352,25 @@ export type CCTPTransferTransactions = {
 };
 
 export type CCTPTransferInfoJSON = {
-  src_chain_id: string;
-  dst_chain_id: string;
+  from_chain_id: string;
+  to_chain_id: string;
   state: CCTPTransferState;
   txs: CCTPTransferTransactionsJSON;
+
+  // Deprecated
+  src_chain_id: string;
+  dst_chain_id: string;
 };
 
 export type CCTPTransferInfo = {
-  srcChainID: string;
-  dstChainID: string;
+  fromChainID: string;
+  toChainID: string;
   state: CCTPTransferState;
   txs: CCTPTransferTransactions;
+
+  // Deprecated
+  srcChainID: string;
+  dstChainID: string;
 };
 
 export type HyperlaneTransferState =

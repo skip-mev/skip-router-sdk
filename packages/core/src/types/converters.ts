@@ -1005,12 +1005,14 @@ export function transferInfoFromJSON(
   transferInfoJSON: TransferInfoJSON,
 ): TransferInfo {
   return {
-    srcChainID: transferInfoJSON.src_chain_id,
-    dstChainID: transferInfoJSON.dst_chain_id,
+    fromChainID: transferInfoJSON.from_chain_id,
+    toChainID: transferInfoJSON.to_chain_id,
     state: transferInfoJSON.state,
     packetTXs:
       transferInfoJSON.packet_txs &&
       packetFromJSON(transferInfoJSON.packet_txs),
+    srcChainID: transferInfoJSON.src_chain_id,
+    dstChainID: transferInfoJSON.dst_chain_id,
   };
 }
 
@@ -1018,10 +1020,12 @@ export function transferInfoToJSON(
   transferInfo: TransferInfo,
 ): TransferInfoJSON {
   return {
-    src_chain_id: transferInfo.srcChainID,
-    dst_chain_id: transferInfo.dstChainID,
+    from_chain_id: transferInfo.fromChainID,
+    to_chain_id: transferInfo.toChainID,
     state: transferInfo.state,
     packet_txs: transferInfo.packetTXs && packetToJSON(transferInfo.packetTXs),
+    src_chain_id: transferInfo.srcChainID,
+    dst_chain_id: transferInfo.dstChainID,
   };
 }
 
@@ -1189,6 +1193,8 @@ export function cctpTransferFromJSON(value: CCTPTransferJSON): CCTPTransfer {
     toChainID: value.to_chain_id,
     burnToken: value.burn_token,
     bridgeID: value.bridge_id,
+    denomIn: value.denom_in,
+    denomOut: value.denom_out,
   };
 }
 
@@ -1198,6 +1204,8 @@ export function cctpTransferToJSON(value: CCTPTransfer): CCTPTransferJSON {
     to_chain_id: value.toChainID,
     burn_token: value.burnToken,
     bridge_id: value.bridgeID,
+    denom_in: value.denomIn,
+    denom_out: value.denomOut,
   };
 }
 
@@ -1412,12 +1420,14 @@ export function axelarTransferInfoFromJSON(
   value: AxelarTransferInfoJSON,
 ): AxelarTransferInfo {
   return {
-    srcChainID: value.src_chain_id,
-    dstChainID: value.dst_chain_id,
+    fromChainID: value.from_chain_id,
+    toChainID: value.to_chain_id,
     type: value.type,
     state: value.state,
     txs: value.txs && axelarTransferTransactionsFromJSON(value.txs),
     axelarScanLink: value.axelar_scan_link,
+    srcChainID: value.src_chain_id,
+    dstChainID: value.dst_chain_id,
   };
 }
 
@@ -1425,12 +1435,14 @@ export function axelarTransferInfoToJSON(
   value: AxelarTransferInfo,
 ): AxelarTransferInfoJSON {
   return {
-    src_chain_id: value.srcChainID,
-    dst_chain_id: value.dstChainID,
+    from_chain_id: value.fromChainID,
+    to_chain_id: value.toChainID,
     type: value.type,
     state: value.state,
     txs: value.txs && axelarTransferTransactionsToJSON(value.txs),
     axelar_scan_link: value.axelarScanLink,
+    src_chain_id: value.srcChainID,
+    dst_chain_id: value.dstChainID,
   };
 }
 
@@ -1736,10 +1748,12 @@ export function cctpTransferInfoFromJSON(
   value: CCTPTransferInfoJSON,
 ): CCTPTransferInfo {
   return {
-    srcChainID: value.src_chain_id,
-    dstChainID: value.dst_chain_id,
+    fromChainID: value.from_chain_id,
+    toChainID: value.to_chain_id,
     state: value.state,
     txs: value.txs && cctpTransferTransactionsFromJSON(value.txs),
+    srcChainID: value.src_chain_id,
+    dstChainID: value.dst_chain_id,
   };
 }
 
@@ -1747,10 +1761,12 @@ export function cctpTransferInfoToJSON(
   value: CCTPTransferInfo,
 ): CCTPTransferInfoJSON {
   return {
-    src_chain_id: value.srcChainID,
-    dst_chain_id: value.dstChainID,
+    from_chain_id: value.fromChainID,
+    to_chain_id: value.toChainID,
     state: value.state,
     txs: value.txs && cctpTransferTransactionsToJSON(value.txs),
+    src_chain_id: value.srcChainID,
+    dst_chain_id: value.dstChainID,
   };
 }
 
