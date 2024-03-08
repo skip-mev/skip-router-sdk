@@ -44,7 +44,7 @@
     "cosmjs-types": "0.8.x",
     "keccak256": "1.x",
     "kujira.js": "0.9.x",
-    "viem": "1.x"
+    "viem": "2.x"
   },
   "devDependencies": {
     "@cosmjs/faucet": "0.31.x",
