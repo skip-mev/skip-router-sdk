@@ -2197,7 +2197,9 @@ test("packetToJSON", () => {
 test("transferInfoFromJSON", () => {
   const transferInfoJSON: TransferInfoJSON = {
     from_chain_id: "axelar-dojo-1",
-    to_chain_id: "osomosis-1",
+    to_chain_id: "osmosis-1",
+    src_chain_id: "axelar-dojo-1",
+    dst_chain_id: "osmosis-1",
     state: "TRANSFER_SUCCESS",
     packet_txs: {
       send_tx: {
@@ -2228,7 +2230,9 @@ test("transferInfoFromJSON", () => {
 
   expect(transferInfoFromJSON(transferInfoJSON)).toEqual({
     fromChainID: "axelar-dojo-1",
-    toChainID: "osomosis-1",
+    toChainID: "osmosis-1",
+    srcChainID: "axelar-dojo-1",
+    dstChainID: "osmosis-1",
     state: "TRANSFER_SUCCESS",
     packetTXs: {
       sendTx: {
@@ -2261,7 +2265,9 @@ test("transferInfoFromJSON", () => {
 test("transferInfoToJSON", () => {
   const transferInfo: TransferInfo = {
     fromChainID: "axelar-dojo-1",
-    toChainID: "osomosis-1",
+    toChainID: "osmosis-1",
+    srcChainID: "axelar-dojo-1",
+    dstChainID: "osmosis-1",
     state: "TRANSFER_SUCCESS",
     packetTXs: {
       sendTx: {
@@ -2292,7 +2298,9 @@ test("transferInfoToJSON", () => {
 
   expect(transferInfoToJSON(transferInfo)).toEqual({
     from_chain_id: "axelar-dojo-1",
-    to_chain_id: "osomosis-1",
+    to_chain_id: "osmosis-1",
+    src_chain_id: "axelar-dojo-1",
+    dst_chain_id: "osmosis-1",
     state: "TRANSFER_SUCCESS",
     packet_txs: {
       send_tx: {
@@ -2346,11 +2354,13 @@ test("transferAssetReleaseFromJSON", () => {
   const transferAssetReleaseJSON: TransferAssetReleaseJSON = {
     chain_id: "osmosis-1",
     denom: "uosmo",
+    released: true,
   };
 
   expect(transferAssetReleaseFromJSON(transferAssetReleaseJSON)).toEqual({
     chainID: "osmosis-1",
     denom: "uosmo",
+    released: true,
   });
 });
 
@@ -2358,11 +2368,13 @@ test("transferAssetReleaseToJSON", () => {
   const transferAssetRelease = {
     chainID: "osmosis-1",
     denom: "uosmo",
+    released: true,
   };
 
   expect(transferAssetReleaseToJSON(transferAssetRelease)).toEqual({
     chain_id: "osmosis-1",
     denom: "uosmo",
+    released: true,
   });
 });
 
@@ -2373,7 +2385,9 @@ test("txStatusResponseFromJSON", () => {
       {
         ibc_transfer: {
           from_chain_id: "axelar-dojo-1",
-          to_chain_id: "osomosis-1",
+          to_chain_id: "osmosis-1",
+          src_chain_id: "axelar-dojo-1",
+          dst_chain_id: "osmosis-1",
           state: "TRANSFER_SUCCESS",
           packet_txs: {
             send_tx: {
@@ -2406,6 +2420,8 @@ test("txStatusResponseFromJSON", () => {
         ibc_transfer: {
           from_chain_id: "osmosis-1",
           to_chain_id: "cosmoshub-4",
+          src_chain_id: "osmosis-1",
+          dst_chain_id: "cosmoshub-4",
           state: "TRANSFER_SUCCESS",
           packet_txs: {
             send_tx: {
@@ -2439,6 +2455,7 @@ test("txStatusResponseFromJSON", () => {
     transfer_asset_release: {
       chain_id: "cosmoshub-4",
       denom: "uatom",
+      released: true,
     },
     error: null,
     state: "STATE_COMPLETED_SUCCESS",
@@ -2450,6 +2467,8 @@ test("txStatusResponseFromJSON", () => {
             ibc_transfer: {
               from_chain_id: "src-chain",
               to_chain_id: "dest-chain",
+              src_chain_id: "src-chain",
+              dst_chain_id: "dest-chain",
               state: "TRANSFER_SUCCESS",
               packet_txs: {
                 send_tx: null,
@@ -2467,6 +2486,7 @@ test("txStatusResponseFromJSON", () => {
         transfer_asset_release: {
           chain_id: "cosmoshub-4",
           denom: "uatom",
+          released: true,
         },
         error: null,
       },
@@ -2479,7 +2499,9 @@ test("txStatusResponseFromJSON", () => {
       {
         ibcTransfer: {
           fromChainID: "axelar-dojo-1",
-          toChainID: "osomosis-1",
+          toChainID: "osmosis-1",
+          srcChainID: "axelar-dojo-1",
+          dstChainID: "osmosis-1",
           state: "TRANSFER_SUCCESS",
           packetTXs: {
             sendTx: {
@@ -2512,6 +2534,8 @@ test("txStatusResponseFromJSON", () => {
         ibcTransfer: {
           fromChainID: "osmosis-1",
           toChainID: "cosmoshub-4",
+          srcChainID: "osmosis-1",
+          dstChainID: "cosmoshub-4",
           state: "TRANSFER_SUCCESS",
           packetTXs: {
             sendTx: {
@@ -2545,6 +2569,7 @@ test("txStatusResponseFromJSON", () => {
     transferAssetRelease: {
       chainID: "cosmoshub-4",
       denom: "uatom",
+      released: true,
     },
     error: null,
     state: "STATE_COMPLETED_SUCCESS",
@@ -2556,6 +2581,8 @@ test("txStatusResponseFromJSON", () => {
             ibcTransfer: {
               fromChainID: "src-chain",
               toChainID: "dest-chain",
+              srcChainID: "src-chain",
+              dstChainID: "dest-chain",
               state: "TRANSFER_SUCCESS",
               packetTXs: {
                 sendTx: null,
@@ -2573,6 +2600,7 @@ test("txStatusResponseFromJSON", () => {
         transferAssetRelease: {
           chainID: "cosmoshub-4",
           denom: "uatom",
+          released: true,
         },
         error: null,
       },
@@ -2587,7 +2615,9 @@ test("txStatusResponseToJSON", () => {
       {
         ibcTransfer: {
           fromChainID: "axelar-dojo-1",
-          toChainID: "osomosis-1",
+          toChainID: "osmosis-1",
+          srcChainID: "axelar-dojo-1",
+          dstChainID: "osmosis-1",
           state: "TRANSFER_SUCCESS",
           packetTXs: {
             sendTx: {
@@ -2620,6 +2650,8 @@ test("txStatusResponseToJSON", () => {
         ibcTransfer: {
           fromChainID: "osmosis-1",
           toChainID: "cosmoshub-4",
+          srcChainID: "osmosis-1",
+          dstChainID: "cosmoshub-4",
           state: "TRANSFER_SUCCESS",
           packetTXs: {
             sendTx: {
@@ -2653,6 +2685,7 @@ test("txStatusResponseToJSON", () => {
     transferAssetRelease: {
       chainID: "cosmoshub-4",
       denom: "uatom",
+      released: true,
     },
     error: null,
     state: "STATE_COMPLETED_SUCCESS",
@@ -2664,6 +2697,8 @@ test("txStatusResponseToJSON", () => {
             ibcTransfer: {
               fromChainID: "src-chain",
               toChainID: "dest-chain",
+              srcChainID: "src-chain",
+              dstChainID: "dest-chain",
               state: "TRANSFER_SUCCESS",
               packetTXs: {
                 sendTx: null,
@@ -2681,6 +2716,7 @@ test("txStatusResponseToJSON", () => {
         transferAssetRelease: {
           chainID: "cosmoshub-4",
           denom: "uatom",
+          released: true,
         },
         error: null,
       },
@@ -2693,7 +2729,9 @@ test("txStatusResponseToJSON", () => {
       {
         ibc_transfer: {
           from_chain_id: "axelar-dojo-1",
-          to_chain_id: "osomosis-1",
+          to_chain_id: "osmosis-1",
+          src_chain_id: "axelar-dojo-1",
+          dst_chain_id: "osmosis-1",
           state: "TRANSFER_SUCCESS",
           packet_txs: {
             send_tx: {
@@ -2726,6 +2764,8 @@ test("txStatusResponseToJSON", () => {
         ibc_transfer: {
           from_chain_id: "osmosis-1",
           to_chain_id: "cosmoshub-4",
+          src_chain_id: "osmosis-1",
+          dst_chain_id: "cosmoshub-4",
           state: "TRANSFER_SUCCESS",
           packet_txs: {
             send_tx: {
@@ -2759,6 +2799,7 @@ test("txStatusResponseToJSON", () => {
     transfer_asset_release: {
       chain_id: "cosmoshub-4",
       denom: "uatom",
+      released: true,
     },
     error: null,
     state: "STATE_COMPLETED_SUCCESS",
@@ -2770,6 +2811,8 @@ test("txStatusResponseToJSON", () => {
             ibc_transfer: {
               from_chain_id: "src-chain",
               to_chain_id: "dest-chain",
+              src_chain_id: "src-chain",
+              dst_chain_id: "dest-chain",
               state: "TRANSFER_SUCCESS",
               packet_txs: {
                 send_tx: null,
@@ -2787,6 +2830,7 @@ test("txStatusResponseToJSON", () => {
         transfer_asset_release: {
           chain_id: "cosmoshub-4",
           denom: "uatom",
+          released: true,
         },
         error: null,
       },

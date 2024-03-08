@@ -675,6 +675,10 @@ describe("client", () => {
               destDenom: "uatom",
               supportsMemo: true,
               bridgeID: "IBC",
+              fromChainID: "osmosis-1",
+              toChainID: "cosmoshub-4",
+              denomIn: "ibc/27394FB092D2ECCD56123C74F36E4C1F926001CEADA9CA97EA622B25F41E5EB2",
+              denomOut: "uatom",
             },
           },
         ],
@@ -926,7 +930,9 @@ describe("client", () => {
                 {
                   ibc_transfer: {
                     from_chain_id: "axelar-dojo-1",
-                    to_chain_id: "osomosis-1",
+                    to_chain_id: "osmosis-1",
+                    src_chain_id: "axelar-dojo-1",
+                    dst_chain_id: "osmosis-1",
                     state: "TRANSFER_SUCCESS",
                     packet_txs: {
                       send_tx: {
@@ -953,6 +959,8 @@ describe("client", () => {
                   ibc_transfer: {
                     from_chain_id: "osmosis-1",
                     to_chain_id: "cosmoshub-4",
+                    src_chain_id: "osmosis-1",
+                    dst_chain_id: "cosmoshub-4",
                     state: "TRANSFER_SUCCESS",
                     packet_txs: {
                       send_tx: {
@@ -980,6 +988,7 @@ describe("client", () => {
               transfer_asset_release: {
                 chain_id: "cosmoshub-4",
                 denom: "uatom",
+                released: true,
               },
               error: null,
               state: "STATE_COMPLETED",
@@ -991,6 +1000,8 @@ describe("client", () => {
                       ibc_transfer: {
                         from_chain_id: "src-chain",
                         to_chain_id: "dest-chain",
+                        src_chain_id: "src-chain",
+                        dst_chain_id: "dest-chain",
                         state: "TRANSFER_SUCCESS",
                         packet_txs: {
                           send_tx: null,
@@ -1008,6 +1019,7 @@ describe("client", () => {
                   transfer_asset_release: {
                     chain_id: "cosmoshub-4",
                     denom: "uatom",
+                    released: true,
                   },
                   error: null,
                 },
@@ -1032,7 +1044,9 @@ describe("client", () => {
           {
             ibcTransfer: {
               fromChainID: "axelar-dojo-1",
-              toChainID: "osomosis-1",
+              toChainID: "osmosis-1",
+              srcChainID: "axelar-dojo-1",
+              dstChainID: "osmosis-1",
               state: "TRANSFER_SUCCESS",
               packetTXs: {
                 sendTx: {
@@ -1059,6 +1073,8 @@ describe("client", () => {
             ibcTransfer: {
               fromChainID: "osmosis-1",
               toChainID: "cosmoshub-4",
+              srcChainID: "osmosis-1",
+              dstChainID: "cosmoshub-4",
               state: "TRANSFER_SUCCESS",
               packetTXs: {
                 sendTx: {
@@ -1086,6 +1102,7 @@ describe("client", () => {
         transferAssetRelease: {
           chainID: "cosmoshub-4",
           denom: "uatom",
+          released: true,
         },
         error: null,
         state: "STATE_COMPLETED",
@@ -1097,6 +1114,8 @@ describe("client", () => {
                 ibcTransfer: {
                   fromChainID: "src-chain",
                   toChainID: "dest-chain",
+                  srcChainID: "src-chain",
+                  dstChainID: "dest-chain",
                   state: "TRANSFER_SUCCESS",
                   packetTXs: {
                     sendTx: null,
@@ -1114,6 +1133,7 @@ describe("client", () => {
             transferAssetRelease: {
               chainID: "cosmoshub-4",
               denom: "uatom",
+              released: true,
             },
             error: null,
           },
@@ -1136,7 +1156,9 @@ describe("client", () => {
                   {
                     ibc_transfer: {
                       from_chain_id: "axelar-dojo-1",
-                      to_chain_id: "osomosis-1",
+                      to_chain_id: "osmosis-1",
+                      src_chain_id: "axelar-dojo-1",
+                      dst_chain_id: "osmosis-1",
                       state: "TRANSFER_SUCCESS",
                       packet_txs: {
                         send_tx: {
@@ -1163,6 +1185,8 @@ describe("client", () => {
                     ibc_transfer: {
                       from_chain_id: "osmosis-1",
                       to_chain_id: "cosmoshub-4",
+                      src_chain_id: "osmosis-1",
+                      dst_chain_id: "cosmoshub-4",
                       state: "TRANSFER_SUCCESS",
                       packet_txs: {
                         send_tx: {
@@ -1190,6 +1214,7 @@ describe("client", () => {
                 transfer_asset_release: {
                   chain_id: "cosmoshub-4",
                   denom: "uatom",
+                  released: true,
                 },
                 error: null,
                 state: "STATE_COMPLETED",
@@ -1201,6 +1226,8 @@ describe("client", () => {
                         ibc_transfer: {
                           from_chain_id: "src-chain",
                           to_chain_id: "dest-chain",
+                          src_chain_id: "src-chain",
+                          dst_chain_id: "dest-chain",
                           state: "TRANSFER_SUCCESS",
                           packet_txs: {
                             send_tx: null,
@@ -1218,6 +1245,7 @@ describe("client", () => {
                     transfer_asset_release: {
                       chain_id: "cosmoshub-4",
                       denom: "uatom",
+                      released: true,
                     },
                     error: null,
                   },
@@ -1258,7 +1286,9 @@ describe("client", () => {
           {
             ibcTransfer: {
               fromChainID: "axelar-dojo-1",
-              toChainID: "osomosis-1",
+              toChainID: "osmosis-1",
+              srcChainID: "axelar-dojo-1",
+              dstChainID: "osmosis-1",
               state: "TRANSFER_SUCCESS",
               packetTXs: {
                 sendTx: {
@@ -1285,6 +1315,8 @@ describe("client", () => {
             ibcTransfer: {
               fromChainID: "osmosis-1",
               toChainID: "cosmoshub-4",
+              srcChainID: "osmosis-1",
+              dstChainID: "cosmoshub-4",
               state: "TRANSFER_SUCCESS",
               packetTXs: {
                 sendTx: {
@@ -1312,6 +1344,7 @@ describe("client", () => {
         transferAssetRelease: {
           chainID: "cosmoshub-4",
           denom: "uatom",
+          released: true,
         },
         error: null,
         state: "STATE_COMPLETED",
@@ -1323,6 +1356,8 @@ describe("client", () => {
                 ibcTransfer: {
                   fromChainID: "src-chain",
                   toChainID: "dest-chain",
+                  srcChainID: "src-chain",
+                  dstChainID: "dest-chain",
                   state: "TRANSFER_SUCCESS",
                   packetTXs: {
                     sendTx: null,
@@ -1340,6 +1375,7 @@ describe("client", () => {
             transferAssetRelease: {
               chainID: "cosmoshub-4",
               denom: "uatom",
+              released: true,
             },
             error: null,
           },
@@ -1362,7 +1398,9 @@ describe("client", () => {
                   {
                     ibc_transfer: {
                       from_chain_id: "axelar-dojo-1",
-                      to_chain_id: "osomosis-1",
+                      to_chain_id: "osmosis-1",
+                      src_chain_id: "axelar-dojo-1",
+                      dst_chain_id: "osmosis-1",
                       state: "TRANSFER_SUCCESS",
                       packet_txs: {
                         send_tx: {
@@ -1389,6 +1427,8 @@ describe("client", () => {
                     ibc_transfer: {
                       from_chain_id: "osmosis-1",
                       to_chain_id: "cosmoshub-4",
+                      src_chain_id: "osmosis-1",
+                      dst_chain_id: "cosmoshub-4",
                       state: "TRANSFER_SUCCESS",
                       packet_txs: {
                         send_tx: {
@@ -1416,6 +1456,7 @@ describe("client", () => {
                 transfer_asset_release: {
                   chain_id: "cosmoshub-4",
                   denom: "uatom",
+                  released: true,
                 },
                 error: null,
                 state: "STATE_COMPLETED",
@@ -1427,6 +1468,8 @@ describe("client", () => {
                         ibc_transfer: {
                           from_chain_id: "src-chain",
                           to_chain_id: "dest-chain",
+                          src_chain_id: "src-chain",
+                          dst_chain_id: "dest-chain",
                           state: "TRANSFER_SUCCESS",
                           packet_txs: {
                             send_tx: null,
@@ -1444,6 +1487,7 @@ describe("client", () => {
                     transfer_asset_release: {
                       chain_id: "cosmoshub-4",
                       denom: "uatom",
+                      released: true,
                     },
                     error: null,
                   },

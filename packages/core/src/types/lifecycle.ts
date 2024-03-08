@@ -63,6 +63,10 @@ export type TransferInfoJSON = {
   to_chain_id: string;
   state: TransferState;
   packet_txs: PacketJSON;
+
+  // Deprecated
+  src_chain_id: string;
+  dst_chain_id: string;
 };
 
 export type TransferInfo = {
@@ -70,6 +74,10 @@ export type TransferInfo = {
   toChainID: string;
   state: TransferState;
   packetTXs: Packet;
+
+  // Deprecated
+  srcChainID: string;
+  dstChainID: string;
 };
 
 export type TransferAssetReleaseJSON = {
@@ -244,6 +252,10 @@ export type AxelarTransferInfoJSON = {
   state: AxelarTransferState;
   txs: AxelarTransferTransactionsJSON;
   axelar_scan_link: string;
+
+  // Deprecated
+  src_chain_id: string;
+  dst_chain_id: string;
 };
 
 export type AxelarTransferInfo = {
@@ -253,6 +265,10 @@ export type AxelarTransferInfo = {
   state: AxelarTransferState;
   txs: AxelarTransferTransactions;
   axelarScanLink: string;
+
+  // Deprecated
+  srcChainID: string;
+  dstChainID: string;
 };
 
 export type AxelarTransferTransactionsJSON =
@@ -340,6 +356,10 @@ export type CCTPTransferInfoJSON = {
   to_chain_id: string;
   state: CCTPTransferState;
   txs: CCTPTransferTransactionsJSON;
+
+  // Deprecated
+  src_chain_id: string;
+  dst_chain_id: string;
 };
 
 export type CCTPTransferInfo = {
@@ -347,6 +367,10 @@ export type CCTPTransferInfo = {
   toChainID: string;
   state: CCTPTransferState;
   txs: CCTPTransferTransactions;
+
+  // Deprecated
+  srcChainID: string;
+  dstChainID: string;
 };
 
 export type HyperlaneTransferState =

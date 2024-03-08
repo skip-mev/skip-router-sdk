@@ -1011,6 +1011,8 @@ export function transferInfoFromJSON(
     packetTXs:
       transferInfoJSON.packet_txs &&
       packetFromJSON(transferInfoJSON.packet_txs),
+    srcChainID: transferInfoJSON.src_chain_id,
+    dstChainID: transferInfoJSON.dst_chain_id,
   };
 }
 
@@ -1022,6 +1024,8 @@ export function transferInfoToJSON(
     to_chain_id: transferInfo.toChainID,
     state: transferInfo.state,
     packet_txs: transferInfo.packetTXs && packetToJSON(transferInfo.packetTXs),
+    src_chain_id: transferInfo.srcChainID,
+    dst_chain_id: transferInfo.dstChainID,
   };
 }
 
@@ -1422,6 +1426,8 @@ export function axelarTransferInfoFromJSON(
     state: value.state,
     txs: value.txs && axelarTransferTransactionsFromJSON(value.txs),
     axelarScanLink: value.axelar_scan_link,
+    srcChainID: value.src_chain_id,
+    dstChainID: value.dst_chain_id,
   };
 }
 
@@ -1435,6 +1441,8 @@ export function axelarTransferInfoToJSON(
     state: value.state,
     txs: value.txs && axelarTransferTransactionsToJSON(value.txs),
     axelar_scan_link: value.axelarScanLink,
+    src_chain_id: value.srcChainID,
+    dst_chain_id: value.dstChainID,
   };
 }
 
@@ -1744,6 +1752,8 @@ export function cctpTransferInfoFromJSON(
     toChainID: value.to_chain_id,
     state: value.state,
     txs: value.txs && cctpTransferTransactionsFromJSON(value.txs),
+    srcChainID: value.src_chain_id,
+    dstChainID: value.dst_chain_id,
   };
 }
 
@@ -1755,6 +1765,8 @@ export function cctpTransferInfoToJSON(
     to_chain_id: value.toChainID,
     state: value.state,
     txs: value.txs && cctpTransferTransactionsToJSON(value.txs),
+    src_chain_id: value.srcChainID,
+    dst_chain_id: value.dstChainID,
   };
 }
 
