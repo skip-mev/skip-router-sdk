@@ -1,5 +1,11 @@
 # @skip-router/core
 
+## 1.3.13
+
+### Patch Changes
+
+- c229ca5: Add released field to transfer_asset_release
+
 ## 1.3.12
 
 ### Patch Changes
