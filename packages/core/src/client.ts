@@ -264,7 +264,7 @@ export class SkipRouter {
         if (!currentUserAddress) {
           raise(`executeRoute error: invalid address for chain '${multiChainMessage.chainID}'`);
         }
-        const txResponse = await this.executeCosmosMultiChainMessage({
+        const txResponse = await this.executeCosmosMessage({
           message: multiChainMessage,
           getCosmosSigner: getOfflineSigner,
           getGasPrice: getGasPrice,
@@ -322,7 +322,16 @@ export class SkipRouter {
     });
   }
 
-  async executeCosmosMultiChainMessage(
+  /**
+ * @deprecated The method is renamed to executeCosmosMessage
+ */
+  async executeMultiChainMessage(
+    options: clientTypes.ExecuteMultiChainMessageOptions,
+  ) {
+    return this.executeCosmosMessage(options)
+  }
+  
+  async executeCosmosMessage(
     options: clientTypes.ExecuteMultiChainMessageOptions,
   ) {
     const { signerAddress, getCosmosSigner, message, getGasPrice, gasAmountMultiplier } = options;
@@ -1408,7 +1417,6 @@ export class SkipRouter {
 
         await this.validateCosmosGasBalance(
           client,
-          signer,
           currentAddress,
           message.multiChainMsg,
           getGasPrice,
@@ -1420,7 +1428,6 @@ export class SkipRouter {
 
   private async validateCosmosGasBalance(
     client: SigningStargateClient,
-    signer: OfflineSigner,
     signerAddress: string,
     message: types.MultiChainMsg,
     getGasPrice?: (chainID: string) => Promise<GasPrice | undefined>,
@@ -1431,11 +1438,13 @@ export class SkipRouter {
       gasPrice = await getGasPrice(message.chainID);
     }
 
-    const fee = await this.getFeeForMessage(
-      message,
+    const fee = await this.estimateGasForMessage(
+      client,
+      message.chainID,
+      signerAddress,
       gasAmountMultiplier,
-      signer,
-      gasPrice,
+      getGasPrice,
+      message,
     );
 
     if (!fee.amount[0]) {
