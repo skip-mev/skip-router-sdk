@@ -1,5 +1,11 @@
 # @skip-router/core
 
+## 1.4.0
+
+### Minor Changes
+
+- d9092f9: update viem version to 2.x
+
 ## 1.3.13
 
 ### Patch Changes
