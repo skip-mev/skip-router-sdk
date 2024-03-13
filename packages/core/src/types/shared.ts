@@ -19,6 +19,7 @@ export type AssetJSON = {
   trace: string;
   is_cw20: boolean;
   is_evm: boolean;
+  is_svm: boolean;
 
   symbol: string | undefined;
   name: string | undefined;
@@ -39,6 +40,7 @@ export type Asset = {
   trace: string;
   isCW20: boolean;
   isEVM: boolean;
+  isSVM: boolean;
 
   symbol: string | undefined;
   name: string | undefined;

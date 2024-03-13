@@ -153,6 +153,7 @@ export function assetFromJSON(assetJSON: AssetJSON): Asset {
     trace: assetJSON.trace,
     isCW20: assetJSON.is_cw20,
     isEVM: assetJSON.is_evm,
+    isSVM: assetJSON.is_svm,
     symbol: assetJSON.symbol,
     name: assetJSON.name,
     logoURI: assetJSON.logo_uri,
@@ -173,6 +174,7 @@ export function assetToJSON(asset: Asset): AssetJSON {
     trace: asset.trace,
     is_cw20: asset.isCW20,
     is_evm: asset.isEVM,
+    is_svm: asset.isSVM,
     symbol: asset.symbol,
     name: asset.name,
     logo_uri: asset.logoURI,
@@ -235,6 +237,7 @@ export function assetsRequestFromJSON(
     includeNoMetadataAssets: assetsRequestJSON.include_no_metadata_assets,
     includeCW20Assets: assetsRequestJSON.include_cw20_assets,
     includeEvmAssets: assetsRequestJSON.include_evm_assets,
+    includeSvmAssets: assetsRequestJSON.include_svm_assets,
     clientID: assetsRequestJSON.client_id,
   };
 }
@@ -248,6 +251,7 @@ export function assetsRequestToJSON(
     include_no_metadata_assets: assetsRequest.includeNoMetadataAssets,
     include_cw20_assets: assetsRequest.includeCW20Assets,
     include_evm_assets: assetsRequest.includeEvmAssets,
+    include_svm_assets: assetsRequest.includeSvmAssets,
     client_id: assetsRequest.clientID,
   };
 }

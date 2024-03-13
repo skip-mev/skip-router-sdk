@@ -152,6 +152,7 @@ test("assetFromJSON", () => {
     origin_chain_id: "osmosis-1",
     is_cw20: false,
     is_evm: false,
+    is_svm: false,
     trace: "",
     symbol: "OSMO",
     name: "OSMO",
@@ -171,6 +172,7 @@ test("assetFromJSON", () => {
     originChainID: "osmosis-1",
     isCW20: false,
     isEVM: false,
+    isSVM: false,
     trace: "",
     symbol: "OSMO",
     name: "OSMO",
@@ -193,6 +195,7 @@ test("assetToJSON", () => {
     trace: "",
     isCW20: false,
     isEVM: false,
+    isSVM: false,
     symbol: "OSMO",
     name: "OSMO",
     logoURI:
@@ -211,6 +214,7 @@ test("assetToJSON", () => {
     origin_chain_id: "osmosis-1",
     is_cw20: false,
     is_evm: false,
+    is_svm: false,
     trace: "",
     symbol: "OSMO",
     name: "OSMO",
@@ -234,6 +238,7 @@ test("assetRecommendationFromJSON", () => {
       trace: "",
       is_cw20: false,
       is_evm: false,
+      is_svm: false,
       symbol: "OSMO",
       name: "OSMO",
       logo_uri:
@@ -256,6 +261,7 @@ test("assetRecommendationFromJSON", () => {
       trace: "",
       isCW20: false,
       isEVM: false,
+      isSVM: false,
       symbol: "OSMO",
       name: "OSMO",
       logoURI:
@@ -280,6 +286,7 @@ test("assetRecommendationToJSON", () => {
       trace: "",
       isCW20: false,
       isEVM: false,
+      isSVM: false,
       symbol: "OSMO",
       name: "OSMO",
       logoURI:

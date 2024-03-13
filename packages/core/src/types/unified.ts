@@ -35,6 +35,7 @@ export type AssetsRequestJSON = {
   include_no_metadata_assets?: boolean;
   include_cw20_assets?: boolean;
   include_evm_assets?: boolean;
+  include_svm_assets?: boolean;
   client_id?: string;
 };
 
@@ -44,6 +45,7 @@ export type AssetsRequest = {
   includeNoMetadataAssets?: boolean;
   includeCW20Assets?: boolean;
   includeEvmAssets?: boolean;
+  includeSvmAssets?: boolean;
   clientID?: string;
 };
 
