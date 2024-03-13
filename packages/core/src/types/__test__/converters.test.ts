@@ -308,6 +308,7 @@ test("assetRecommendationToJSON", () => {
       origin_chain_id: "osmosis-1",
       is_cw20: false,
       is_evm: false,
+      is_svm: false,
       trace: "",
       symbol: "OSMO",
       name: "OSMO",
