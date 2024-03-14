@@ -1,5 +1,11 @@
 # @skip-router/core
 
+## 2.0.0-rc.0
+
+### Major Changes
+
+- b9b139d: Add svm flags
+
 ## 2.0.0-2.0.0-rc.0.0
 
 ### Major Changes
