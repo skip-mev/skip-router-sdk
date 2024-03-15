@@ -179,9 +179,11 @@ export class SkipRouter {
     {
       includeEVM,
       includeSVM,
+      includeTestnets,
     }: {
       includeEVM?: boolean;
       includeSVM?: boolean;
+      includeTestnets?: boolean;
     } = { includeEVM: false, includeSVM: false },
   ): Promise<types.Chain[]> {
     const response = await this.requestClient.get<{
@@ -189,6 +191,7 @@ export class SkipRouter {
     }>("/v1/info/chains", {
       include_evm: includeEVM,
       include_svm: includeSVM,
+      include_testnets: includeTestnets,
       client_id: this.clientID,
     });
 
