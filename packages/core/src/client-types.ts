@@ -60,7 +60,6 @@ export type ExecuteRouteOptions = {
   gasAmountMultiplier?: number;
 };
 
-
 export type ExecuteMultiChainMessageOptions = {
   signerAddress: string;
   signer: OfflineSigner;

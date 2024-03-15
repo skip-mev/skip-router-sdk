@@ -1,7 +1,11 @@
 import { Secp256k1HdWallet } from "@cosmjs/amino";
 import { FaucetClient } from "@cosmjs/faucet-client";
 import { coin, DirectSecp256k1HdWallet } from "@cosmjs/proto-signing";
-import { GasPrice, isDeliverTxFailure, isDeliverTxSuccess } from "@cosmjs/stargate";
+import {
+  GasPrice,
+  isDeliverTxFailure,
+  isDeliverTxSuccess,
+} from "@cosmjs/stargate";
 import { InjectiveDirectEthSecp256k1Wallet } from "@injectivelabs/sdk-ts";
 
 import { SKIP_API_URL, SkipRouter } from "../src";
@@ -33,11 +37,11 @@ describe("transaction execution", () => {
 
     const getCosmosSigner = async (chainID: string) => {
       return signer;
-    }
+    };
 
     const getGasPrice = async (chainID: string) => {
       return GasPrice.fromString("0.25uatom");
-    }
+    };
 
     const accounts = await signer.getAccounts();
 
@@ -80,10 +84,10 @@ describe("transaction execution", () => {
     );
     const getCosmosSigner = async (chainID: string) => {
       return signer;
-    }
+    };
     const getGasPrice = async (chainID: string) => {
       return GasPrice.fromString("0.25uatom");
-    }
+    };
 
     const accounts = await signer.getAccounts();
 
@@ -135,14 +139,14 @@ describe("transaction execution", () => {
 
     const getCosmosSigner = async (chainID: string) => {
       return signer;
-    }
+    };
 
     const accounts = await signer.getAccounts();
 
     const signerAddress = accounts[0].address;
     const getGasPrice = async (chainID: string) => {
       return GasPrice.fromString("0.25inj");
-    }
+    };
 
     const timeout = BigInt(Date.now()) * BigInt(1000000);
 
@@ -160,7 +164,6 @@ describe("transaction execution", () => {
       getCosmosSigner,
       getGasPrice,
       message,
-
     });
 
     expect(isDeliverTxSuccess(tx)).toBe(true);
@@ -190,13 +193,13 @@ describe("transaction execution", () => {
     );
     const getCosmosSigner = async (chainID: string) => {
       return signer;
-    }
+    };
 
     const getGasPrice = async (chainID: string) => {
       return GasPrice.fromString("7aevmos");
-    }
- 
-      const accounts = await signer.getAccounts();
+    };
+
+    const accounts = await signer.getAccounts();
 
     const signerAddress = accounts[0].address;
 
@@ -230,11 +233,11 @@ describe("transaction execution", () => {
     );
     const getCosmosSigner = async (chainID: string) => {
       return signer;
-    }
+    };
 
     const getGasPrice = async (chainID: string) => {
       return GasPrice.fromString("0.25uosmo");
-    }
+    };
 
     const accounts = await signer.getAccounts();
     const signerAddress = accounts[0].address;
@@ -290,11 +293,11 @@ describe("transaction execution", () => {
     );
     const getCosmosSigner = async (chainID: string) => {
       return signer;
-    }
+    };
 
     const getGasPrice = async (chainID: string) => {
       return GasPrice.fromString("0.25uosmo");
-    }
+    };
 
     const accounts = await signer.getAccounts();
 
