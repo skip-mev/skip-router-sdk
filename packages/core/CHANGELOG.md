@@ -1,5 +1,11 @@
 # @skip-router/core
 
+## 1.5.0
+
+### Minor Changes
+
+- 7a93093: Essential functions are now public for easier class extension
+
 ## 1.4.0
 
 ### Minor Changes
