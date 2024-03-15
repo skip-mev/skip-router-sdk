@@ -180,14 +180,17 @@ export class SkipRouter {
   async chains(
     {
       includeEVM,
+      includeTestnets,
     }: {
       includeEVM?: boolean;
-    } = { includeEVM: false },
+      includeTestnets?: boolean;
+    } = { includeEVM: false, includeTestnets: false },
   ): Promise<types.Chain[]> {
     const response = await this.requestClient.get<{
       chains: types.ChainJSON[];
     }>("/v1/info/chains", {
       include_evm: includeEVM,
+      include_testnets: includeTestnets,
       client_id: this.clientID,
     });
 
