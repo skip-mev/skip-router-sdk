@@ -1,5 +1,11 @@
 # @skip-router/core
 
+## 1.5.1
+
+### Patch Changes
+
+- 4ad2633: add includeTestnets param to chains
+
 ## 1.5.0
 
 ### Minor Changes
