@@ -46,11 +46,11 @@ describe("client", () => {
                       sum: "h1:rd5guXn/SF6i66PO5rlGaDK0AT81kCpiLixyQ5EJ6Yg=",
                     },
                     "github.com/strangelove-ventures/packet-forward-middleware":
-                    {
-                      path: "github.com/strangelove-ventures/packet-forward-middleware/v4",
-                      version: "v4.0.5",
-                      sum: "h1:KKUqeGhVBK38+1LwThC8IeIcsJZ6COX5kvhiJroFqCM=",
-                    },
+                      {
+                        path: "github.com/strangelove-ventures/packet-forward-middleware/v4",
+                        version: "v4.0.5",
+                        sum: "h1:KKUqeGhVBK38+1LwThC8IeIcsJZ6COX5kvhiJroFqCM=",
+                      },
                   },
                   cosmos_module_support: {
                     authz: true,
@@ -677,7 +677,8 @@ describe("client", () => {
               bridgeID: "IBC",
               fromChainID: "osmosis-1",
               toChainID: "cosmoshub-4",
-              denomIn: "ibc/27394FB092D2ECCD56123C74F36E4C1F926001CEADA9CA97EA622B25F41E5EB2",
+              denomIn:
+                "ibc/27394FB092D2ECCD56123C74F36E4C1F926001CEADA9CA97EA622B25F41E5EB2",
               denomOut: "uatom",
             },
           },

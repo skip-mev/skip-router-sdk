@@ -106,12 +106,10 @@ export async function getGasAmountForMessage(
   encodedMsgs?: EncodeObject[],
   multiplier: number = DEFAULT_GAS_MULTIPLIER,
 ) {
-
-  
   if (!message && !encodedMsgs) {
     throw new Error("Either message or encodedMsg must be provided");
   }
-  
+
   encodedMsgs = encodedMsgs || [getEncodeObjectFromMultiChainMessage(message!)];
   if (
     message?.chainID.includes("evmos") ||
@@ -124,7 +122,6 @@ export async function getGasAmountForMessage(
     }
     return "280000";
   }
-
 
   const estimatedGas = await client.simulate(signerAddress, encodedMsgs, "");
 

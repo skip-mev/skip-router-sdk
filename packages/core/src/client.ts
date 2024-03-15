@@ -1,4 +1,4 @@
-import { coin, makeSignDoc as makeSignDocAmino } from "@cosmjs/amino";
+import { makeSignDoc as makeSignDocAmino } from "@cosmjs/amino";
 import { createWasmAminoConverters } from "@cosmjs/cosmwasm-stargate";
 import { fromBase64 } from "@cosmjs/encoding";
 import { Int53 } from "@cosmjs/math";
@@ -180,14 +180,17 @@ export class SkipRouter {
   async chains(
     {
       includeEVM,
+      includeTestnets,
     }: {
       includeEVM?: boolean;
-    } = { includeEVM: false },
+      includeTestnets?: boolean;
+    } = { includeEVM: false, includeTestnets: false },
   ): Promise<types.Chain[]> {
     const response = await this.requestClient.get<{
       chains: types.ChainJSON[];
     }>("/v1/info/chains", {
       include_evm: includeEVM,
+      include_testnets: includeTestnets,
       client_id: this.clientID,
     });
 
@@ -195,10 +198,7 @@ export class SkipRouter {
   }
 
   async executeRoute(options: clientTypes.ExecuteRouteOptions) {
-    const {
-      route,
-      userAddresses,
-    } = options;
+    const { route, userAddresses } = options;
 
     const addressList = route.chainIDs.map((chainID) => {
       return (
@@ -222,10 +222,11 @@ export class SkipRouter {
     this.executeMultiChainMsgs({ ...options, messages });
   }
 
-  async executeMultiChainMsgs(options: clientTypes.ExecuteRouteOptions & { messages: types.Msg[] }) {
+  async executeMultiChainMsgs(
+    options: clientTypes.ExecuteRouteOptions & { messages: types.Msg[] },
+  ) {
     const {
       messages,
-      route,
       userAddresses,
       validateGasBalance,
       getGasPrice,
@@ -256,33 +257,35 @@ export class SkipRouter {
         raise(`executeRoute error: invalid message at index ${i}`);
       }
 
-      let txResult: { chainID: string, txHash: string };
-      if ("multiChainMsg" in message) { // TODO: use typeguard instead
-        const multiChainMessage = message.multiChainMsg
+      let txResult: { chainID: string; txHash: string };
+      if ("multiChainMsg" in message) {
+        // TODO: use typeguard instead
+        const multiChainMessage = message.multiChainMsg;
 
         const currentUserAddress = userAddresses[multiChainMessage.chainID];
         if (!currentUserAddress) {
-          raise(`executeRoute error: invalid address for chain '${multiChainMessage.chainID}'`);
+          raise(
+            `executeRoute error: invalid address for chain '${multiChainMessage.chainID}'`,
+          );
         }
         const txResponse = await this.executeCosmosMessage({
           message: multiChainMessage,
           getCosmosSigner: getOfflineSigner,
           getGasPrice: getGasPrice,
           gasAmountMultiplier,
-          signerAddress: currentUserAddress
+          signerAddress: currentUserAddress,
         });
-
 
         txResult = {
           chainID: multiChainMessage.chainID,
-          txHash: txResponse.transactionHash
-        }
+          txHash: txResponse.transactionHash,
+        };
       } else if ("evmTx" in message) {
         const txResponse = await this.executeEvmMultiChainMsg(message, options);
         txResult = {
           chainID: message.evmTx.chainID,
           txHash: txResponse.transactionHash,
-        }
+        };
       } else {
         raise(`executeRoute error: invalid message type`);
       }
@@ -306,10 +309,13 @@ export class SkipRouter {
     }
   }
 
-  private async executeEvmMultiChainMsg(message: { evmTx: types.EvmTx; }, options: clientTypes.ExecuteRouteOptions) {
+  private async executeEvmMultiChainMsg(
+    message: { evmTx: types.EvmTx },
+    options: clientTypes.ExecuteRouteOptions,
+  ) {
     const { evmTx } = message;
 
-    let getEVMSigner = options.getEVMSigner || this.getEVMSigner;
+    const getEVMSigner = options.getEVMSigner || this.getEVMSigner;
     if (!getEVMSigner) {
       throw new Error("Unable to get EVM signer");
     }
@@ -323,8 +329,8 @@ export class SkipRouter {
   }
 
   /**
- * @deprecated The method is replaced by `executeCosmosMessage` which internalises the gas estimation, fee calculation and signer selection.
- */
+   * @deprecated The method is replaced by `executeCosmosMessage` which internalises the gas estimation, fee calculation and signer selection.
+   */
   async executeMultiChainMessage(
     options: clientTypes.ExecuteMultiChainMessageOptions,
   ) {
@@ -386,13 +392,16 @@ export class SkipRouter {
     return tx;
   }
 
-  async executeCosmosMessage(
-    options: clientTypes.ExecuteCosmosMessage,
-  ) {
-    const { signerAddress, getCosmosSigner, message, getGasPrice, gasAmountMultiplier } = options;
+  async executeCosmosMessage(options: clientTypes.ExecuteCosmosMessage) {
+    const {
+      signerAddress,
+      getCosmosSigner,
+      message,
+      getGasPrice,
+      gasAmountMultiplier,
+    } = options;
 
     const signer = await getCosmosSigner(message.chainID);
-
 
     const accounts = await signer.getAccounts();
     const accountFromSigner = accounts.find(
@@ -404,7 +413,6 @@ export class SkipRouter {
         "executeMultiChainMessage error: failed to retrieve account from signer",
       );
     }
-
 
     const endpoint = await this.getRpcEndpointForChain(message.chainID);
 
@@ -421,7 +429,12 @@ export class SkipRouter {
     // @note: reusing the stargate client here and for broadcast 👍
     const fee = await this.estimateGasForMessage(
       stargateClient,
-      signerAddress, message.chainID, gasAmountMultiplier, getGasPrice, message);
+      signerAddress,
+      message.chainID,
+      gasAmountMultiplier,
+      getGasPrice,
+      message,
+    );
 
     const { accountNumber, sequence } = await this.getAccountNumberAndSequence(
       signerAddress,
@@ -469,29 +482,30 @@ export class SkipRouter {
     gasAmountMultiplier: number | undefined,
     getGasPrice?: (chainID: string) => Promise<GasPrice | undefined>,
     message?: types.MultiChainMsg,
-    encodedMsgs?: EncodeObject[]
+    encodedMsgs?: EncodeObject[],
   ) {
     const estimatedGas = await getGasAmountForMessage(
       stargateClient,
       signerAddress,
       message,
       encodedMsgs,
-      gasAmountMultiplier
+      gasAmountMultiplier,
     );
 
     const gasPrice =
-    (getGasPrice
-      ? await getGasPrice(chainID)
-      : await this.getRecommendedGasPrice(chainID)) ||
+      (getGasPrice
+        ? await getGasPrice(chainID)
+        : await this.getRecommendedGasPrice(chainID)) ||
       raise(
-        `executeRoute error: unable to get gas prices for chain '${chainID}'`
+        `executeRoute error: unable to get gas prices for chain '${chainID}'`,
       );
-
 
     const fee = calculateFee(Math.ceil(parseFloat(estimatedGas)), gasPrice);
 
     if (!fee) {
-        raise(`executeRoute error: unable to get fee for message(s) ${message || encodedMsgs}`);
+      raise(
+        `executeRoute error: unable to get fee for message(s) ${message || encodedMsgs}`,
+      );
     }
     return fee;
   }
@@ -884,7 +898,9 @@ export class SkipRouter {
     return types.routeResponseFromJSON(response);
   }
 
-  async msgsDirect(options: types.MsgsDirectRequest): Promise<types.MsgsDirectResponse> {
+  async msgsDirect(
+    options: types.MsgsDirectRequest,
+  ): Promise<types.MsgsDirectResponse> {
     const response = await this.requestClient.post<
       types.MsgsDirectResponseJSON,
       types.MsgsDirectRequestJSON
@@ -1487,11 +1503,6 @@ export class SkipRouter {
     getGasPrice?: (chainID: string) => Promise<GasPrice | undefined>,
     gasAmountMultiplier?: number,
   ) {
-    let gasPrice: GasPrice | undefined;
-    if (getGasPrice) {
-      gasPrice = await getGasPrice(message.chainID);
-    }
-
     const fee = await this.estimateGasForMessage(
       client,
       message.chainID,
@@ -1511,8 +1522,10 @@ export class SkipRouter {
 
     if (parseInt(balance.amount) < parseInt(fee.amount[0].amount)) {
       throw new Error(
-        `Insufficient fee token to initiate transfer on ${message.chainID
-        }. Need ${parseInt(fee.amount[0].amount)} ${fee.amount[0].denom
+        `Insufficient fee token to initiate transfer on ${
+          message.chainID
+        }. Need ${parseInt(fee.amount[0].amount)} ${
+          fee.amount[0].denom
         }, but only have ${balance.amount} ${fee.amount[0].denom}.`,
       );
     }
@@ -1526,4 +1539,3 @@ function raise(message?: string, options?: ErrorOptions): never {
 function wait(ms: number) {
   return new Promise((resolve) => setTimeout(resolve, ms));
 }
-
