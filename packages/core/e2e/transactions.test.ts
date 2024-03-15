@@ -1,7 +1,7 @@
 import { Secp256k1HdWallet } from "@cosmjs/amino";
 import { FaucetClient } from "@cosmjs/faucet-client";
 import { coin, DirectSecp256k1HdWallet } from "@cosmjs/proto-signing";
-import { isDeliverTxFailure, isDeliverTxSuccess } from "@cosmjs/stargate";
+import { GasPrice, isDeliverTxFailure, isDeliverTxSuccess } from "@cosmjs/stargate";
 import { InjectiveDirectEthSecp256k1Wallet } from "@injectivelabs/sdk-ts";
 
 import { SKIP_API_URL, SkipRouter } from "../src";
@@ -31,6 +31,14 @@ describe("transaction execution", () => {
       "opinion knife other balcony surge more bamboo canoe romance ask argue teach anxiety adjust spike mystery wolf alone torch tail six decide wash alley",
     );
 
+    const getCosmosSigner = async (chainID: string) => {
+      return signer;
+    }
+
+    const getGasPrice = async (chainID: string) => {
+      return GasPrice.fromString("0.25uatom");
+    }
+
     const accounts = await signer.getAccounts();
 
     const signerAddress = accounts[0].address;
@@ -47,14 +55,11 @@ describe("transaction execution", () => {
       msgTypeURL: "/ibc.applications.transfer.v1.MsgTransfer",
     };
 
-    const tx = await client.executeMultiChainMessage({
+    const tx = await client.executeCosmosMessage({
       signerAddress,
-      signer,
+      getCosmosSigner,
+      getGasPrice,
       message,
-      fee: {
-        amount: [coin(1000000, "uatom")],
-        gas: "200000",
-      },
     });
 
     expect(isDeliverTxSuccess(tx)).toBe(true);
@@ -73,6 +78,12 @@ describe("transaction execution", () => {
     const signer = await Secp256k1HdWallet.fromMnemonic(
       "opinion knife other balcony surge more bamboo canoe romance ask argue teach anxiety adjust spike mystery wolf alone torch tail six decide wash alley",
     );
+    const getCosmosSigner = async (chainID: string) => {
+      return signer;
+    }
+    const getGasPrice = async (chainID: string) => {
+      return GasPrice.fromString("0.25uatom");
+    }
 
     const accounts = await signer.getAccounts();
 
@@ -90,14 +101,11 @@ describe("transaction execution", () => {
       msgTypeURL: "/ibc.applications.transfer.v1.MsgTransfer",
     };
 
-    const tx = await client.executeMultiChainMessage({
+    const tx = await client.executeCosmosMessage({
       signerAddress,
-      signer,
+      getCosmosSigner,
+      getGasPrice,
       message,
-      fee: {
-        amount: [coin(1000000, "uatom")],
-        gas: "200000",
-      },
     });
 
     expect(isDeliverTxSuccess(tx)).toBe(true);
@@ -124,9 +132,17 @@ describe("transaction execution", () => {
         ),
       ),
     );
+
+    const getCosmosSigner = async (chainID: string) => {
+      return signer;
+    }
+
     const accounts = await signer.getAccounts();
 
     const signerAddress = accounts[0].address;
+    const getGasPrice = async (chainID: string) => {
+      return GasPrice.fromString("0.25inj");
+    }
 
     const timeout = BigInt(Date.now()) * BigInt(1000000);
 
@@ -137,16 +153,14 @@ describe("transaction execution", () => {
       msgTypeURL: "/ibc.applications.transfer.v1.MsgTransfer",
     };
 
-    const tx = await client.executeMultiChainMessage({
+    const tx = await client.executeCosmosMessage({
       signerAddress,
       // eslint-disable-next-line @typescript-eslint/ban-ts-comment
       // @ts-ignore
-      signer,
+      getCosmosSigner,
+      getGasPrice,
       message,
-      fee: {
-        amount: [coin(1000000, "inj")],
-        gas: "200000",
-      },
+
     });
 
     expect(isDeliverTxSuccess(tx)).toBe(true);
@@ -174,8 +188,15 @@ describe("transaction execution", () => {
       ),
       "evmos",
     );
+    const getCosmosSigner = async (chainID: string) => {
+      return signer;
+    }
 
-    const accounts = await signer.getAccounts();
+    const getGasPrice = async (chainID: string) => {
+      return GasPrice.fromString("7aevmos");
+    }
+ 
+      const accounts = await signer.getAccounts();
 
     const signerAddress = accounts[0].address;
 
@@ -188,16 +209,13 @@ describe("transaction execution", () => {
       msgTypeURL: "/ibc.applications.transfer.v1.MsgTransfer",
     };
 
-    const tx = await client.executeMultiChainMessage({
+    const tx = await client.executeCosmosMessage({
       signerAddress,
+      message,
       // eslint-disable-next-line @typescript-eslint/ban-ts-comment
       // @ts-ignore
-      signer,
-      message,
-      fee: {
-        amount: [coin(10000000, "aevmos")],
-        gas: "200000",
-      },
+      getCosmosSigner,
+      getGasPrice,
     });
 
     expect(isDeliverTxSuccess(tx)).toBe(true);
@@ -210,6 +228,13 @@ describe("transaction execution", () => {
         prefix: "osmo",
       },
     );
+    const getCosmosSigner = async (chainID: string) => {
+      return signer;
+    }
+
+    const getGasPrice = async (chainID: string) => {
+      return GasPrice.fromString("0.25uosmo");
+    }
 
     const accounts = await signer.getAccounts();
     const signerAddress = accounts[0].address;
@@ -233,14 +258,11 @@ describe("transaction execution", () => {
       msgTypeURL: "/cosmwasm.wasm.v1.MsgExecuteContract",
     };
 
-    const tx = await client.executeMultiChainMessage({
+    const tx = await client.executeCosmosMessage({
       signerAddress,
-      signer,
+      getCosmosSigner,
+      getGasPrice,
       message,
-      fee: {
-        amount: [coin(1000000, "uosmo")],
-        gas: "200000",
-      },
     });
 
     // CheckTx must pass but the execution will fail in DeliverTx due to invalid contract address
@@ -266,6 +288,13 @@ describe("transaction execution", () => {
         prefix: "osmo",
       },
     );
+    const getCosmosSigner = async (chainID: string) => {
+      return signer;
+    }
+
+    const getGasPrice = async (chainID: string) => {
+      return GasPrice.fromString("0.25uosmo");
+    }
 
     const accounts = await signer.getAccounts();
 
@@ -281,14 +310,11 @@ describe("transaction execution", () => {
       msgTypeURL: "/cosmwasm.wasm.v1.MsgExecuteContract",
     };
 
-    const tx = await client.executeMultiChainMessage({
+    const tx = await client.executeCosmosMessage({
       signerAddress,
-      signer,
+      getCosmosSigner,
+      getGasPrice,
       message,
-      fee: {
-        amount: [coin(1000000, "uosmo")],
-        gas: "200000",
-      },
     });
 
     // CheckTx must pass but the execution will fail in DeliverTx due to invalid contract address
