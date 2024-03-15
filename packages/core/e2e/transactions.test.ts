@@ -35,6 +35,10 @@ describe("transaction execution", () => {
       return signer;
     }
 
+    const getGasPrice = async (chainID: string) => {
+      return GasPrice.fromString("0.25uatom");
+    }
+
     const accounts = await signer.getAccounts();
 
     const signerAddress = accounts[0].address;
@@ -54,6 +58,7 @@ describe("transaction execution", () => {
     const tx = await client.executeCosmosMessage({
       signerAddress,
       getCosmosSigner,
+      getGasPrice,
       message,
     });
 
@@ -76,6 +81,9 @@ describe("transaction execution", () => {
     const getCosmosSigner = async (chainID: string) => {
       return signer;
     }
+    const getGasPrice = async (chainID: string) => {
+      return GasPrice.fromString("0.25uatom");
+    }
 
     const accounts = await signer.getAccounts();
 
@@ -96,6 +104,7 @@ describe("transaction execution", () => {
     const tx = await client.executeCosmosMessage({
       signerAddress,
       getCosmosSigner,
+      getGasPrice,
       message,
     });
 
@@ -131,6 +140,9 @@ describe("transaction execution", () => {
     const accounts = await signer.getAccounts();
 
     const signerAddress = accounts[0].address;
+    const getGasPrice = async (chainID: string) => {
+      return GasPrice.fromString("0.25inj");
+    }
 
     const timeout = BigInt(Date.now()) * BigInt(1000000);
 
@@ -146,6 +158,7 @@ describe("transaction execution", () => {
       // eslint-disable-next-line @typescript-eslint/ban-ts-comment
       // @ts-ignore
       getCosmosSigner,
+      getGasPrice,
       message,
 
     });
@@ -179,7 +192,11 @@ describe("transaction execution", () => {
       return signer;
     }
 
-    const accounts = await signer.getAccounts();
+    const getGasPrice = async (chainID: string) => {
+      return GasPrice.fromString("7aevmos");
+    }
+ 
+      const accounts = await signer.getAccounts();
 
     const signerAddress = accounts[0].address;
 
@@ -194,9 +211,11 @@ describe("transaction execution", () => {
 
     const tx = await client.executeCosmosMessage({
       signerAddress,
+      message,
       // eslint-disable-next-line @typescript-eslint/ban-ts-comment
       // @ts-ignore
       getCosmosSigner,
+      getGasPrice,
     });
 
     expect(isDeliverTxSuccess(tx)).toBe(true);
@@ -211,6 +230,10 @@ describe("transaction execution", () => {
     );
     const getCosmosSigner = async (chainID: string) => {
       return signer;
+    }
+
+    const getGasPrice = async (chainID: string) => {
+      return GasPrice.fromString("0.25uosmo");
     }
 
     const accounts = await signer.getAccounts();
@@ -238,6 +261,7 @@ describe("transaction execution", () => {
     const tx = await client.executeCosmosMessage({
       signerAddress,
       getCosmosSigner,
+      getGasPrice,
       message,
     });
 
@@ -268,6 +292,10 @@ describe("transaction execution", () => {
       return signer;
     }
 
+    const getGasPrice = async (chainID: string) => {
+      return GasPrice.fromString("0.25uosmo");
+    }
+
     const accounts = await signer.getAccounts();
 
     const signerAddress = accounts[0].address;
@@ -285,6 +313,7 @@ describe("transaction execution", () => {
     const tx = await client.executeCosmosMessage({
       signerAddress,
       getCosmosSigner,
+      getGasPrice,
       message,
     });
 

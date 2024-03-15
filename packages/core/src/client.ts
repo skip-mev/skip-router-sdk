@@ -323,16 +323,71 @@ export class SkipRouter {
   }
 
   /**
- * @deprecated The method is renamed to executeCosmosMessage
+ * @deprecated The method is replaced by `executeCosmosMessage` which internalises the gas estimation, fee calculation and signer selection.
  */
   async executeMultiChainMessage(
     options: clientTypes.ExecuteMultiChainMessageOptions,
   ) {
-    return this.executeCosmosMessage(options)
+    const { signerAddress, signer, message, fee } = options;
+
+    const accounts = await signer.getAccounts();
+    const accountFromSigner = accounts.find(
+      (account) => account.address === signerAddress,
+    );
+    if (!accountFromSigner) {
+      throw new Error(
+        "executeMultiChainMessage error: failed to retrieve account from signer",
+      );
+    }
+
+    const endpoint = await this.getRpcEndpointForChain(message.chainID);
+
+    const stargateClient = await SigningStargateClient.connectWithSigner(
+      endpoint,
+      signer,
+      {
+        aminoTypes: this.aminoTypes,
+        registry: this.registry,
+        accountParser,
+      },
+    );
+    const { accountNumber, sequence } = await this.getAccountNumberAndSequence(
+      signerAddress,
+      message.chainID,
+    );
+    let rawTx: TxRaw;
+    if (isOfflineDirectSigner(signer)) {
+      rawTx = await this.signMultiChainMessageDirect({
+        signerAddress,
+        signer,
+        multiChainMessage: message,
+        fee,
+        signerData: {
+          accountNumber,
+          sequence,
+          chainId: message.chainID,
+        },
+      });
+    } else {
+      rawTx = await this.signMultiChainMessageAmino({
+        signerAddress,
+        signer,
+        multiChainMessage: message,
+        fee,
+        signerData: {
+          accountNumber,
+          sequence,
+          chainId: message.chainID,
+        },
+      });
+    }
+    const txBytes = TxRaw.encode(rawTx).finish();
+    const tx = await stargateClient.broadcastTx(txBytes);
+    return tx;
   }
-  
+
   async executeCosmosMessage(
-    options: clientTypes.ExecuteMultiChainMessageOptions,
+    options: clientTypes.ExecuteCosmosMessage,
   ) {
     const { signerAddress, getCosmosSigner, message, getGasPrice, gasAmountMultiplier } = options;
 
@@ -349,7 +404,6 @@ export class SkipRouter {
         "executeMultiChainMessage error: failed to retrieve account from signer",
       );
     }
-
 
 
     const endpoint = await this.getRpcEndpointForChain(message.chainID);
