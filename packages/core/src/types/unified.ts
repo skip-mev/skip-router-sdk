@@ -312,7 +312,7 @@ export type MsgsRequest = {
   postRouteHandler?: PostHandler;
 
   clientID?: string;
-  rapid_relay: boolean;
+  rapidRelay: boolean;
 };
 
 export type MsgsDirectRequestJSON = {

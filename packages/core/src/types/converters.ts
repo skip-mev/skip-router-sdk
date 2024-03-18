@@ -823,7 +823,7 @@ export function msgsRequestFromJSON(
       msgsRequestJSON.post_route_handler &&
       postHandlerFromJSON(msgsRequestJSON.post_route_handler),
     clientID: msgsRequestJSON.client_id,
-    rapid_relay: msgsRequestJSON.rapid_relay,
+    rapidRelay: msgsRequestJSON.rapid_relay,
   };
 }
 
@@ -846,7 +846,7 @@ export function msgsRequestToJSON(msgsRequest: MsgsRequest): MsgsRequestJSON {
       msgsRequest.postRouteHandler &&
       postHandlerToJSON(msgsRequest.postRouteHandler),
     client_id: msgsRequest.clientID,
-    rapid_relay: msgsRequest.rapid_relay,
+    rapid_relay: msgsRequest.rapidRelay,
   };
 }
 
