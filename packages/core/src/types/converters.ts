@@ -1,3 +1,4 @@
+import { TxBody } from "@injectivelabs/core-proto-ts/cjs/cosmos/tx/v1beta1/tx";
 import {
   AxelarTransferInfo,
   AxelarTransferInfoJSON,
@@ -58,6 +59,10 @@ import {
   CCTPTransferJSON,
   CosmWasmContractMsg,
   CosmWasmContractMsgJSON,
+  CosmosMsg,
+  CosmosMsgJSON,
+  CosmosTx,
+  CosmosTxJSON,
   DenomWithChainID,
   DenomWithChainIDJSON,
   ERC20Approval,
@@ -130,6 +135,8 @@ import {
   RouteRequestJSON,
   RouteResponse,
   RouteResponseJSON,
+  Tx,
+  TxJSON,
 } from "./unified";
 
 export function affiliateFromJSON(affiliateJSON: AffiliateJSON): Affiliate {
@@ -823,7 +830,6 @@ export function msgsRequestFromJSON(
       msgsRequestJSON.post_route_handler &&
       postHandlerFromJSON(msgsRequestJSON.post_route_handler),
     clientID: msgsRequestJSON.client_id,
-    rapidRelay: msgsRequestJSON.rapid_relay,
   };
 }
 
@@ -846,7 +852,6 @@ export function msgsRequestToJSON(msgsRequest: MsgsRequest): MsgsRequestJSON {
       msgsRequest.postRouteHandler &&
       postHandlerToJSON(msgsRequest.postRouteHandler),
     client_id: msgsRequest.clientID,
-    rapid_relay: msgsRequest.rapidRelay,
   };
 }
 
@@ -869,6 +874,24 @@ export function multiChainMsgToJSON(
     path: multiChainMsg.path,
     msg: multiChainMsg.msg,
     msg_type_url: multiChainMsg.msgTypeURL,
+  };
+}
+
+export function cosmosMsgFromJSON(
+  cosmosMsgJSON: CosmosMsgJSON,
+): CosmosMsg {
+  return {
+    msg: cosmosMsgJSON.msg,
+    msgTypeUrl: cosmosMsgJSON.msg_type_url,
+  };
+}
+
+export function cosmosMsgToJSON(
+  cosmosMsg: CosmosMsg,
+): CosmosMsgJSON {
+  return {
+    msg: cosmosMsg.msg,
+    msg_type_url: cosmosMsg.msgTypeUrl,
   };
 }
 
@@ -1299,6 +1322,50 @@ export function evmTxToJSON(evmTx: EvmTx): EvmTxJSON {
     data: evmTx.data,
     required_erc20_approvals:
       evmTx.requiredERC20Approvals.map(erc20ApprovalToJSON),
+  };
+}
+
+export function cosmosTxFromJSON(cosmosTxJSON: CosmosTxJSON): CosmosTx {
+  return {
+    chainID: cosmosTxJSON.chain_id,
+    path: cosmosTxJSON.path,
+    msgs: cosmosTxJSON.msgs.map(
+      cosmosMsgFromJSON
+    ),
+  };
+}
+
+export function cosmosTxToJSON(cosmosTx: CosmosTx): CosmosTxJSON {
+  return {
+    chain_id: cosmosTx.chainID,
+    path: cosmosTx.path,
+    msgs: cosmosTx.msgs.map(
+      cosmosMsgToJSON
+    ),
+  };
+}
+
+export function txFromJSON(txJSON: TxJSON): Tx {
+  if ("cosmos_tx" in txJSON) {
+    return {
+      cosmosTx: cosmosTxFromJSON(txJSON.cosmos_tx),
+    };
+  }
+
+  return {
+    evmTx: evmTxFromJSON(txJSON.evm_tx),
+  };
+}
+
+export function txToJSON(tx: Tx): TxJSON {
+  if ("cosmosTx" in tx) {
+    return {
+      cosmos_tx: cosmosTxToJSON(tx.cosmosTx),
+    };
+  }
+
+  return {
+    evm_tx: evmTxToJSON(tx.evmTx),
   };
 }
 
@@ -1853,7 +1920,7 @@ export function msgsDirectRequestFromJSON(
     swapVenue: 
         msgDirectRequestJSON.swap_venue && 
         swapVenueFromJSON(msgDirectRequestJSON.swap_venue),
-
+    rapidRelay: msgDirectRequestJSON.rapid_relay,
   };
 }
 
@@ -1882,5 +1949,6 @@ export function msgsDirectRequestToJSON(
     post_route_handler:
       msgDirectRequest.postRouteHandler &&
       postHandlerToJSON(msgDirectRequest.postRouteHandler),
+    rapid_relay: msgDirectRequest.rapidRelay,
   };
 }

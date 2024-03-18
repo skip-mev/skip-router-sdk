@@ -151,11 +151,13 @@ export type RouteRequestJSON =
 
 export type MsgsDirectResponse = {
   msgs: Msg[]
+  txs: Tx[]
   route: RouteResponse
 }
 
 export type MsgsDirectResponseJSON = {
   msgs: MsgJSON[]
+  txs: TxJSON[]
   route: RouteResponseJSON
 }
 
@@ -292,7 +294,6 @@ export type MsgsRequestJSON = {
   post_route_handler?: PostHandlerJSON;
 
   client_id?: string;
-  rapid_relay: boolean;
 };
 
 export type MsgsRequest = {
@@ -312,7 +313,6 @@ export type MsgsRequest = {
   postRouteHandler?: PostHandler;
 
   clientID?: string;
-  rapidRelay: boolean;
 };
 
 export type MsgsDirectRequestJSON = {
@@ -338,6 +338,7 @@ export type MsgsDirectRequestJSON = {
   experimental_features?: ExperimentalFeature[];
   bridges?: BridgeType[];
   allow_multi_tx?: boolean;
+  rapid_relay: boolean;
 }
 
 export type MsgsDirectRequest = {
@@ -362,6 +363,7 @@ export type MsgsDirectRequest = {
   experimentalFeatures?: ExperimentalFeature[];
   bridges?: BridgeType[];
   allowMultiTx?: boolean;
+  rapidRelay: boolean;
 };
 
 export type MsgJSON =
@@ -372,7 +374,7 @@ export type Msg = { multiChainMsg: MultiChainMsg } | { evmTx: EvmTx };
 
 export type TxJSON = { cosmos_tx: CosmosTxJSON } | { evm_tx: EvmTxJSON };
 
-export type Tx = { coxmosTx: CosmosTx } | { evmTx: EvmTx };
+export type Tx = { cosmosTx: CosmosTx } | { evmTx: EvmTx };
 
 export type MsgsResponseJSON = {
   msgs: MsgJSON[];
