@@ -1,5 +1,11 @@
 # @skip-router/core
 
+## 1.5.2
+
+### Patch Changes
+
+- 200c976: fix estimateGasForMessage params passing
+
 ## 1.5.1
 
 ### Patch Changes
