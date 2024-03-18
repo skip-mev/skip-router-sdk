@@ -429,8 +429,8 @@ export class SkipRouter {
     // @note: reusing the stargate client here and for broadcast 👍
     const fee = await this.estimateGasForMessage(
       stargateClient,
-      signerAddress,
       message.chainID,
+      signerAddress,
       gasAmountMultiplier,
       getGasPrice,
       message,
