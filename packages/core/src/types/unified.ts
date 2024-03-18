@@ -27,6 +27,8 @@ import {
   SwapVenueRequestJSON,
   Transfer,
   TransferJSON,
+  CosmosTxJSON,
+  CosmosTx,
 } from "./shared";
 
 export type AssetsRequestJSON = {
@@ -130,6 +132,7 @@ export type RouteRequestBaseJSON = {
   experimental_features?: ExperimentalFeature[];
   bridges?: BridgeType[];
   allow_multi_tx?: boolean;
+  rapid_relay: boolean;
 };
 
 export type RouteRequestGivenInJSON = RouteRequestBaseJSON & {
@@ -169,6 +172,7 @@ export type RouteRequestBase = {
   experimentalFeatures?: ExperimentalFeature[];
   bridges?: BridgeType[];
   allowMultiTx?: boolean;
+  rapidRelay: boolean;
 };
 
 export type RouteRequestGivenIn = RouteRequestBase & {
@@ -190,6 +194,19 @@ export type ExperimentalFeature = "cctp" | "hyperlane";
 export type RouteWarning = {
   type: RouteWarningType;
   message: string;
+};
+
+export type FeeType = "RAPID_RELAY";
+
+export type Fee = {
+  fee_type: FeeType;
+  bridge_id: BridgeType;
+  amount: string;
+  usd_amount: string;
+  origin_asset: Asset;
+  chain_id: string;
+  tx_index: number;
+  operation_index?: number;
 };
 
 export type OperationJSON =
@@ -230,6 +247,7 @@ export type RouteResponseJSON = {
   swap_price_impact_percent?: string;
 
   warning?: RouteWarning;
+  estimated_fees: Fee[];
 };
 
 export type RouteResponse = {
@@ -254,6 +272,7 @@ export type RouteResponse = {
   swapPriceImpactPercent?: string;
 
   warning?: RouteWarning;
+  estimatedFees: Fee[];
 };
 
 export type MsgsRequestJSON = {
@@ -273,6 +292,7 @@ export type MsgsRequestJSON = {
   post_route_handler?: PostHandlerJSON;
 
   client_id?: string;
+  rapid_relay: boolean;
 };
 
 export type MsgsRequest = {
@@ -292,6 +312,7 @@ export type MsgsRequest = {
   postRouteHandler?: PostHandler;
 
   clientID?: string;
+  rapidRelay: boolean;
 };
 
 export type MsgsDirectRequestJSON = {
@@ -349,12 +370,20 @@ export type MsgJSON =
 
 export type Msg = { multiChainMsg: MultiChainMsg } | { evmTx: EvmTx };
 
+export type TxJSON = { cosmos_tx: CosmosTxJSON } | { evm_tx: EvmTxJSON };
+
+export type Tx = { coxmosTx: CosmosTx } | { evmTx: EvmTx };
+
 export type MsgsResponseJSON = {
   msgs: MsgJSON[];
+  estimated_fees: Fee[];
+  txs: TxJSON[];
 };
 
 export type MsgsResponse = {
   msgs: Msg[];
+  estimatedFees: Fee[];
+  txs: Tx[]
 };
 
 export type BridgeType = "IBC" | "AXELAR" | "CCTP" | "HYPERLANE";

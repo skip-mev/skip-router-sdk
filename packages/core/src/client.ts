@@ -217,6 +217,7 @@ export class SkipRouter {
       addressList: addressList,
       operations: route.operations,
       slippageTolerancePercent: options.slippageTolerancePercent || "1",
+      rapidRelay: false,
     });
 
     this.executeMultiChainMsgs({ ...options, messages });
