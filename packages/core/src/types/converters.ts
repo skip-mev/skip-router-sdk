@@ -267,6 +267,7 @@ export function chainFromJSON(chainJSON: ChainJSON): Chain {
     bech32Prefix: chainJSON.bech32_prefix,
     feeAssets: chainJSON.fee_assets.map(feeAssetFromJSON),
     chainType: chainJSON.chain_type,
+    isTestnet: chainJSON.is_testnet,
   };
 }
 
@@ -283,6 +284,7 @@ export function chainToJSON(chain: Chain): ChainJSON {
     bech32_prefix: chain.bech32Prefix,
     fee_assets: chain.feeAssets.map(feeAssetToJSON),
     chain_type: chain.chainType,
+    is_testnet: chain.isTestnet,
   };
 }
 
