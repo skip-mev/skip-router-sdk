@@ -132,7 +132,7 @@ export type RouteRequestBaseJSON = {
   experimental_features?: ExperimentalFeature[];
   bridges?: BridgeType[];
   allow_multi_tx?: boolean;
-  rapid_relay: boolean;
+  rapid_relay?: boolean;
 };
 
 export type RouteRequestGivenInJSON = RouteRequestBaseJSON & {
@@ -174,7 +174,7 @@ export type RouteRequestBase = {
   experimentalFeatures?: ExperimentalFeature[];
   bridges?: BridgeType[];
   allowMultiTx?: boolean;
-  rapidRelay: boolean;
+  rapidRelay?: boolean;
 };
 
 export type RouteRequestGivenIn = RouteRequestBase & {
@@ -338,7 +338,7 @@ export type MsgsDirectRequestJSON = {
   experimental_features?: ExperimentalFeature[];
   bridges?: BridgeType[];
   allow_multi_tx?: boolean;
-  rapid_relay: boolean;
+  rapid_relay?: boolean;
 };
 
 export type MsgsDirectRequest = {
@@ -363,7 +363,7 @@ export type MsgsDirectRequest = {
   experimentalFeatures?: ExperimentalFeature[];
   bridges?: BridgeType[];
   allowMultiTx?: boolean;
-  rapidRelay: boolean;
+  rapidRelay?: boolean;
 };
 
 export type MsgJSON =

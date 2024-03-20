@@ -1,4 +1,3 @@
-import { TxBody } from "@injectivelabs/core-proto-ts/cjs/cosmos/tx/v1beta1/tx";
 import {
   AxelarTransferInfo,
   AxelarTransferInfoJSON,
@@ -877,18 +876,14 @@ export function multiChainMsgToJSON(
   };
 }
 
-export function cosmosMsgFromJSON(
-  cosmosMsgJSON: CosmosMsgJSON,
-): CosmosMsg {
+export function cosmosMsgFromJSON(cosmosMsgJSON: CosmosMsgJSON): CosmosMsg {
   return {
     msg: cosmosMsgJSON.msg,
     msgTypeUrl: cosmosMsgJSON.msg_type_url,
   };
 }
 
-export function cosmosMsgToJSON(
-  cosmosMsg: CosmosMsg,
-): CosmosMsgJSON {
+export function cosmosMsgToJSON(cosmosMsg: CosmosMsg): CosmosMsgJSON {
   return {
     msg: cosmosMsg.msg,
     msg_type_url: cosmosMsg.msgTypeUrl,
@@ -1329,9 +1324,7 @@ export function cosmosTxFromJSON(cosmosTxJSON: CosmosTxJSON): CosmosTx {
   return {
     chainID: cosmosTxJSON.chain_id,
     path: cosmosTxJSON.path,
-    msgs: cosmosTxJSON.msgs.map(
-      cosmosMsgFromJSON
-    ),
+    msgs: cosmosTxJSON.msgs.map(cosmosMsgFromJSON),
   };
 }
 
@@ -1339,9 +1332,7 @@ export function cosmosTxToJSON(cosmosTx: CosmosTx): CosmosTxJSON {
   return {
     chain_id: cosmosTx.chainID,
     path: cosmosTx.path,
-    msgs: cosmosTx.msgs.map(
-      cosmosMsgToJSON
-    ),
+    msgs: cosmosTx.msgs.map(cosmosMsgToJSON),
   };
 }
 
@@ -1897,7 +1888,6 @@ export function hyperlaneTransferInfoToJSON(
     state: value.state,
     txs: value.txs && hyperlaneTransferTransactionsToJSON(value.txs),
   };
-
 }
 
 export function msgsDirectRequestFromJSON(
@@ -1917,9 +1907,9 @@ export function msgsDirectRequestFromJSON(
     postRouteHandler:
       msgDirectRequestJSON.post_route_handler &&
       postHandlerFromJSON(msgDirectRequestJSON.post_route_handler),
-    swapVenue: 
-        msgDirectRequestJSON.swap_venue && 
-        swapVenueFromJSON(msgDirectRequestJSON.swap_venue),
+    swapVenue:
+      msgDirectRequestJSON.swap_venue &&
+      swapVenueFromJSON(msgDirectRequestJSON.swap_venue),
     rapidRelay: msgDirectRequestJSON.rapid_relay,
   };
 }
@@ -1943,9 +1933,8 @@ export function msgsDirectRequestToJSON(
     timeout_seconds: msgDirectRequest.timeoutSeconds,
     client_id: msgDirectRequest.clientID,
     experimental_features: msgDirectRequest.experimentalFeatures,
-    swap_venue: 
-      msgDirectRequest.swapVenue &&
-      swapVenueToJSON(msgDirectRequest.swapVenue),
+    swap_venue:
+      msgDirectRequest.swapVenue && swapVenueToJSON(msgDirectRequest.swapVenue),
     post_route_handler:
       msgDirectRequest.postRouteHandler &&
       postHandlerToJSON(msgDirectRequest.postRouteHandler),
