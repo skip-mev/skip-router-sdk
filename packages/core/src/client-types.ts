@@ -72,7 +72,7 @@ export type ExecuteCosmosMessageOptions = {
 
 export type ExecuteCosmosMessage = {
   signerAddress: string;
-  getCosmosSigner: (chainID: string) => Promise<OfflineSigner>;
+  getCosmosSigner?: (chainID: string) => Promise<OfflineSigner>;
   getGasPrice?: (chainID: string) => Promise<GasPrice | undefined>;
   chainID: string;
   messages: types.CosmosMsg[];
