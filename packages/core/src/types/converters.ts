@@ -761,9 +761,9 @@ export function routeResponseFromJSON(
     swapPriceImpactPercent: routeResponseJSON.swap_price_impact_percent,
 
     warning: routeResponseJSON.warning,
-    estimatedFees: routeResponseJSON.estimated_fees.map((i) =>
-      estimatedFeeFromJSON(i),
-    ),
+    estimatedFees: routeResponseJSON.estimated_fees?.length
+      ? routeResponseJSON.estimated_fees.map((i) => estimatedFeeFromJSON(i))
+      : [],
   };
 }
 
@@ -794,9 +794,9 @@ export function routeResponseToJSON(
     swap_price_impact_percent: routeResponse.swapPriceImpactPercent,
 
     warning: routeResponse.warning,
-    estimated_fees: routeResponse.estimatedFees.map((i) =>
-      estimatedFeeToJSON(i),
-    ),
+    estimated_fees: routeResponse.estimatedFees?.length
+      ? routeResponse.estimatedFees.map((i) => estimatedFeeToJSON(i))
+      : [],
   };
 }
 
