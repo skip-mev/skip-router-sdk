@@ -58,6 +58,10 @@ import {
   CCTPTransferJSON,
   CosmWasmContractMsg,
   CosmWasmContractMsgJSON,
+  CosmosMsg,
+  CosmosMsgJSON,
+  CosmosTx,
+  CosmosTxJSON,
   DenomWithChainID,
   DenomWithChainIDJSON,
   ERC20Approval,
@@ -112,6 +116,8 @@ import {
   BridgesRequestJSON,
   BridgesResponse,
   BridgesResponseJSON,
+  EstimatedFee,
+  EstimatedFeeJSON,
   Msg,
   MsgJSON,
   MsgsDirectRequest,
@@ -130,6 +136,8 @@ import {
   RouteRequestJSON,
   RouteResponse,
   RouteResponseJSON,
+  Tx,
+  TxJSON,
 } from "./unified";
 
 export function affiliateFromJSON(affiliateJSON: AffiliateJSON): Affiliate {
@@ -364,6 +372,36 @@ export function recommendationEntryToJSON(
   };
 }
 
+export function estimatedFeeFromJSON(
+  estimatedFeeJSON: EstimatedFeeJSON,
+): EstimatedFee {
+  return {
+    amount: estimatedFeeJSON.amount,
+    bridgeID: estimatedFeeJSON.bridge_id,
+    chainID: estimatedFeeJSON.chain_id,
+    feeType: estimatedFeeJSON.fee_type,
+    originAsset: assetFromJSON(estimatedFeeJSON.origin_asset),
+    txIndex: estimatedFeeJSON.tx_index,
+    usdAmount: estimatedFeeJSON.usd_amount,
+    operationIndex: estimatedFeeJSON.operation_index,
+  };
+}
+
+export function estimatedFeeToJSON(
+  estimatedFee: EstimatedFee,
+): EstimatedFeeJSON {
+  return {
+    amount: estimatedFee.amount,
+    bridge_id: estimatedFee.bridgeID,
+    chain_id: estimatedFee.chainID,
+    fee_type: estimatedFee.feeType,
+    origin_asset: assetToJSON(estimatedFee.originAsset),
+    tx_index: estimatedFee.txIndex,
+    usd_amount: estimatedFee.usdAmount,
+    operation_index: estimatedFee.operationIndex,
+  };
+}
+
 export function swapVenueFromJSON(swapVenueJSON: SwapVenueJSON): SwapVenue {
   return {
     name: swapVenueJSON.name,
@@ -506,7 +544,7 @@ export function transferFromJSON(transferJSON: TransferJSON): Transfer {
 
     destDenom: transferJSON.dest_denom,
     chainID: transferJSON.chain_id,
-    rapid_relay: transferJSON.rapid_relay,
+    rapidRelay: transferJSON.rapid_relay,
   };
 }
 
@@ -530,7 +568,7 @@ export function transferToJSON(transfer: Transfer): TransferJSON {
 
     dest_denom: transfer.destDenom,
     chain_id: transfer.chainID,
-    rapid_relay: transfer.rapid_relay,
+    rapid_relay: transfer.rapidRelay,
   };
 }
 
@@ -725,7 +763,9 @@ export function routeResponseFromJSON(
     swapPriceImpactPercent: routeResponseJSON.swap_price_impact_percent,
 
     warning: routeResponseJSON.warning,
-    estimatedFees: routeResponseJSON.estimated_fees,
+    estimatedFees: routeResponseJSON.estimated_fees?.length
+      ? routeResponseJSON.estimated_fees.map((i) => estimatedFeeFromJSON(i))
+      : [],
   };
 }
 
@@ -756,7 +796,9 @@ export function routeResponseToJSON(
     swap_price_impact_percent: routeResponse.swapPriceImpactPercent,
 
     warning: routeResponse.warning,
-    estimated_fees: routeResponse.estimatedFees,
+    estimated_fees: routeResponse.estimatedFees?.length
+      ? routeResponse.estimatedFees.map((i) => estimatedFeeToJSON(i))
+      : [],
   };
 }
 
@@ -825,7 +867,6 @@ export function msgsRequestFromJSON(
       msgsRequestJSON.post_route_handler &&
       postHandlerFromJSON(msgsRequestJSON.post_route_handler),
     clientID: msgsRequestJSON.client_id,
-    rapidRelay: msgsRequestJSON.rapid_relay,
   };
 }
 
@@ -848,7 +889,6 @@ export function msgsRequestToJSON(msgsRequest: MsgsRequest): MsgsRequestJSON {
       msgsRequest.postRouteHandler &&
       postHandlerToJSON(msgsRequest.postRouteHandler),
     client_id: msgsRequest.clientID,
-    rapid_relay: msgsRequest.rapidRelay,
   };
 }
 
@@ -871,6 +911,20 @@ export function multiChainMsgToJSON(
     path: multiChainMsg.path,
     msg: multiChainMsg.msg,
     msg_type_url: multiChainMsg.msgTypeURL,
+  };
+}
+
+export function cosmosMsgFromJSON(cosmosMsgJSON: CosmosMsgJSON): CosmosMsg {
+  return {
+    msg: cosmosMsgJSON.msg,
+    msgTypeUrl: cosmosMsgJSON.msg_type_url,
+  };
+}
+
+export function cosmosMsgToJSON(cosmosMsg: CosmosMsg): CosmosMsgJSON {
+  return {
+    msg: cosmosMsg.msg,
+    msg_type_url: cosmosMsg.msgTypeUrl,
   };
 }
 
@@ -1156,7 +1210,7 @@ export function axelarTransferFromJSON(
       : undefined,
 
     bridgeID: axelarTransferJSON.bridge_id,
-    rapid_relay: axelarTransferJSON.rapid_relay,
+    rapidRelay: axelarTransferJSON.rapid_relay,
   };
 }
 
@@ -1185,7 +1239,7 @@ export function axelarTransferToJSON(
       : undefined,
 
     bridge_id: axelarTransfer.bridgeID,
-    rapid_relay: axelarTransfer.rapid_relay,
+    rapid_relay: axelarTransfer.rapidRelay,
   };
 }
 
@@ -1211,7 +1265,7 @@ export function cctpTransferFromJSON(value: CCTPTransferJSON): CCTPTransfer {
     bridgeID: value.bridge_id,
     denomIn: value.denom_in,
     denomOut: value.denom_out,
-    rapid_relay: value.rapid_relay,
+    rapidRelay: value.rapid_relay,
   };
 }
 
@@ -1223,7 +1277,7 @@ export function cctpTransferToJSON(value: CCTPTransfer): CCTPTransferJSON {
     bridge_id: value.bridgeID,
     denom_in: value.denomIn,
     denom_out: value.denomOut,
-    rapid_relay: value.rapid_relay,
+    rapid_relay: value.rapidRelay,
   };
 }
 
@@ -1240,7 +1294,7 @@ export function hyperlaneTransferFromJSON(
     usdFeeAmount: value.usd_fee_amount,
     feeAsset: assetFromJSON(value.fee_asset),
     bridgeID: value.bridge_id,
-    rapid_relay: value.rapid_relay,
+    rapidRelay: value.rapid_relay,
   };
 }
 
@@ -1257,7 +1311,7 @@ export function hyperlaneTransferToJSON(
     usd_fee_amount: value.usdFeeAmount,
     fee_asset: assetToJSON(value.feeAsset),
     bridge_id: value.bridgeID,
-    rapid_relay: value.rapid_relay,
+    rapid_relay: value.rapidRelay,
   };
 }
 
@@ -1301,6 +1355,46 @@ export function evmTxToJSON(evmTx: EvmTx): EvmTxJSON {
     data: evmTx.data,
     required_erc20_approvals:
       evmTx.requiredERC20Approvals.map(erc20ApprovalToJSON),
+  };
+}
+
+export function cosmosTxFromJSON(cosmosTxJSON: CosmosTxJSON): CosmosTx {
+  return {
+    chainID: cosmosTxJSON.chain_id,
+    path: cosmosTxJSON.path,
+    msgs: cosmosTxJSON.msgs.map(cosmosMsgFromJSON),
+  };
+}
+
+export function cosmosTxToJSON(cosmosTx: CosmosTx): CosmosTxJSON {
+  return {
+    chain_id: cosmosTx.chainID,
+    path: cosmosTx.path,
+    msgs: cosmosTx.msgs.map(cosmosMsgToJSON),
+  };
+}
+
+export function txFromJSON(txJSON: TxJSON): Tx {
+  if ("cosmos_tx" in txJSON) {
+    return {
+      cosmosTx: cosmosTxFromJSON(txJSON.cosmos_tx),
+    };
+  }
+
+  return {
+    evmTx: evmTxFromJSON(txJSON.evm_tx),
+  };
+}
+
+export function txToJSON(tx: Tx): TxJSON {
+  if ("cosmosTx" in tx) {
+    return {
+      cosmos_tx: cosmosTxToJSON(tx.cosmosTx),
+    };
+  }
+
+  return {
+    evm_tx: evmTxToJSON(tx.evmTx),
   };
 }
 
@@ -1832,7 +1926,6 @@ export function hyperlaneTransferInfoToJSON(
     state: value.state,
     txs: value.txs && hyperlaneTransferTransactionsToJSON(value.txs),
   };
-
 }
 
 export function msgsDirectRequestFromJSON(
@@ -1852,10 +1945,10 @@ export function msgsDirectRequestFromJSON(
     postRouteHandler:
       msgDirectRequestJSON.post_route_handler &&
       postHandlerFromJSON(msgDirectRequestJSON.post_route_handler),
-    swapVenue: 
-        msgDirectRequestJSON.swap_venue && 
-        swapVenueFromJSON(msgDirectRequestJSON.swap_venue),
-
+    swapVenue:
+      msgDirectRequestJSON.swap_venue &&
+      swapVenueFromJSON(msgDirectRequestJSON.swap_venue),
+    rapidRelay: msgDirectRequestJSON.rapid_relay,
   };
 }
 
@@ -1878,11 +1971,11 @@ export function msgsDirectRequestToJSON(
     timeout_seconds: msgDirectRequest.timeoutSeconds,
     client_id: msgDirectRequest.clientID,
     experimental_features: msgDirectRequest.experimentalFeatures,
-    swap_venue: 
-      msgDirectRequest.swapVenue &&
-      swapVenueToJSON(msgDirectRequest.swapVenue),
+    swap_venue:
+      msgDirectRequest.swapVenue && swapVenueToJSON(msgDirectRequest.swapVenue),
     post_route_handler:
       msgDirectRequest.postRouteHandler &&
       postHandlerToJSON(msgDirectRequest.postRouteHandler),
+    rapid_relay: msgDirectRequest.rapidRelay,
   };
 }

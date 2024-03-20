@@ -217,7 +217,6 @@ export class SkipRouter {
       addressList: addressList,
       operations: route.operations,
       slippageTolerancePercent: options.slippageTolerancePercent || "1",
-      rapidRelay: false,
     });
 
     this.executeMultiChainMsgs({ ...options, messages });
@@ -911,6 +910,7 @@ export class SkipRouter {
 
     return {
       msgs: response.msgs.map((msg) => types.msgFromJSON(msg)),
+      txs: response.txs.map((tx) => types.txFromJSON(tx)),
       route: types.routeResponseFromJSON(response.route),
     };
   }

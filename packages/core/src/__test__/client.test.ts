@@ -680,7 +680,7 @@ describe("client", () => {
               denomIn:
                 "ibc/27394FB092D2ECCD56123C74F36E4C1F926001CEADA9CA97EA622B25F41E5EB2",
               denomOut: "uatom",
-              rapid_relay: true,
+              rapidRelay: true,
             },
           },
         ],
@@ -689,7 +689,6 @@ describe("client", () => {
           "cosmos1f2f9vryyu53gr8vhsksn66kugnxaa7k86kjxet",
         ],
         estimatedAmountOut: "54946",
-        rapid_relay: true,
       });
 
       expect(response).toEqual([
@@ -746,12 +745,14 @@ describe("client", () => {
                     pfm_enabled: true,
                     dest_denom: "uatom",
                     supports_memo: true,
+                    rapid_relay: true,
                   },
                 },
               ],
               chain_ids: ["osmosis-1", "cosmoshub-4"],
               does_swap: true,
               estimated_amount_out: "54906",
+              estimated_fees: [],
               swap_venue: {
                 name: "osmosis-poolmanager",
                 chain_id: "osmosis-1",
@@ -772,6 +773,7 @@ describe("client", () => {
         destAssetChainID: "cosmoshub-4",
         destAssetDenom: "uatom",
         amountIn: "1000000",
+        rapidRelay: false,
       });
 
       expect(response).toEqual({
@@ -809,12 +811,14 @@ describe("client", () => {
               pfmEnabled: true,
               destDenom: "uatom",
               supportsMemo: true,
+              rapidRelay: true,
             },
           },
         ],
         chainIDs: ["osmosis-1", "cosmoshub-4"],
         doesSwap: true,
         estimatedAmountOut: "54906",
+        estimatedFees: [],
         swapVenue: { name: "osmosis-poolmanager", chainID: "osmosis-1" },
         txsRequired: 1,
       });
