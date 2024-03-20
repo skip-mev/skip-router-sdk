@@ -1551,7 +1551,7 @@ export class SkipRouter {
     }
   }
 
-  private async validateCosmosGasBalance(
+  async validateCosmosGasBalance(
     client: SigningStargateClient,
     signerAddress: string,
     chainID: string,
