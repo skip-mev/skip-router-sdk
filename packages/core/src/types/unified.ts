@@ -216,7 +216,7 @@ export type EstimatedFeeJSON = {
   bridge_id: BridgeType;
   amount: string;
   usd_amount: string;
-  origin_asset: Asset;
+  origin_asset: AssetJSON;
   chain_id: string;
   tx_index: number;
   operation_index?: number;
