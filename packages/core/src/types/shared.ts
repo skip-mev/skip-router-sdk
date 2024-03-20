@@ -95,7 +95,7 @@ export type Transfer = {
   feeAsset?: Asset;
 
   bridgeID: BridgeType;
-  rapid_relay: boolean;
+  rapidRelay: boolean;
 
   /**
    * @deprecated use `fromChainID` and `toChainID` instead
@@ -151,7 +151,7 @@ export type AxelarTransfer = {
   ibcTransferToAxelar?: Transfer;
 
   bridgeID: BridgeType;
-  rapid_relay: boolean;
+  rapidRelay: boolean;
 };
 
 export type BankSendJSON = {
@@ -216,7 +216,7 @@ export type CCTPTransfer = {
   bridgeID: BridgeType;
   denomIn: string;
   denomOut: string;
-  rapid_relay: boolean;
+  rapidRelay: boolean;
 };
 
 export type HyperlaneTransferJSON = {
@@ -242,7 +242,7 @@ export type HyperlaneTransfer = {
   usdFeeAmount?: string;
   feeAsset: Asset;
   bridgeID: BridgeType;
-  rapid_relay: boolean;
+  rapidRelay: boolean;
 };
 
 export type SwapVenueJSON = {
