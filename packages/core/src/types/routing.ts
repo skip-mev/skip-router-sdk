@@ -31,6 +31,7 @@ export type Chain = {
   bech32Prefix: string;
   feeAssets: FeeAsset[];
   chainType: string;
+  isTestnet: boolean;
 };
 
 export type ChainJSON = {
@@ -45,6 +46,7 @@ export type ChainJSON = {
   bech32_prefix: string;
   fee_assets: FeeAssetJSON[];
   chain_type: string;
+  is_testnet: boolean;
 };
 
 export type ModuleVersionInfo = {
