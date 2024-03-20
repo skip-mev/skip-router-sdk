@@ -689,7 +689,6 @@ describe("client", () => {
           "cosmos1f2f9vryyu53gr8vhsksn66kugnxaa7k86kjxet",
         ],
         estimatedAmountOut: "54946",
-        rapid_relay: true,
       });
 
       expect(response).toEqual([
@@ -772,6 +771,7 @@ describe("client", () => {
         destAssetChainID: "cosmoshub-4",
         destAssetDenom: "uatom",
         amountIn: "1000000",
+        rapidRelay: false,
       });
 
       expect(response).toEqual({
