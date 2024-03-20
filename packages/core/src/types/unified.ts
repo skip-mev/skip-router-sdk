@@ -200,7 +200,18 @@ export type RouteWarning = {
 
 export type FeeType = "RAPID_RELAY";
 
-export type Fee = {
+export type EstimatedFee = {
+  feeType: FeeType;
+  bridgeID: BridgeType;
+  amount: string;
+  usdAmount: string;
+  originAsset: Asset;
+  chainID: string;
+  txIndex: number;
+  operationIndex?: number;
+};
+
+export type EstimatedFeeJSON = {
   fee_type: FeeType;
   bridge_id: BridgeType;
   amount: string;
@@ -249,7 +260,7 @@ export type RouteResponseJSON = {
   swap_price_impact_percent?: string;
 
   warning?: RouteWarning;
-  estimated_fees: Fee[];
+  estimated_fees: EstimatedFeeJSON[];
 };
 
 export type RouteResponse = {
@@ -274,7 +285,7 @@ export type RouteResponse = {
   swapPriceImpactPercent?: string;
 
   warning?: RouteWarning;
-  estimatedFees: Fee[];
+  estimatedFees: EstimatedFee[];
 };
 
 export type MsgsRequestJSON = {
@@ -378,13 +389,13 @@ export type Tx = { cosmosTx: CosmosTx } | { evmTx: EvmTx };
 
 export type MsgsResponseJSON = {
   msgs: MsgJSON[];
-  estimated_fees: Fee[];
+  estimated_fees: EstimatedFee[];
   txs: TxJSON[];
 };
 
 export type MsgsResponse = {
   msgs: Msg[];
-  estimatedFees: Fee[];
+  estimatedFees: EstimatedFee[];
   txs: Tx[];
 };
 

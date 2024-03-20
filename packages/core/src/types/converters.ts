@@ -116,6 +116,8 @@ import {
   BridgesRequestJSON,
   BridgesResponse,
   BridgesResponseJSON,
+  EstimatedFee,
+  EstimatedFeeJSON,
   Msg,
   MsgJSON,
   MsgsDirectRequest,
@@ -365,6 +367,36 @@ export function recommendationEntryToJSON(
   return {
     recommendations: value.recommendations.map(assetRecommendationToJSON),
     error: value.error,
+  };
+}
+
+export function estimatedFeeFromJSON(
+  estimatedFeeJSON: EstimatedFeeJSON,
+): EstimatedFee {
+  return {
+    amount: estimatedFeeJSON.amount,
+    bridgeID: estimatedFeeJSON.bridge_id,
+    chainID: estimatedFeeJSON.chain_id,
+    feeType: estimatedFeeJSON.fee_type,
+    originAsset: estimatedFeeJSON.origin_asset,
+    txIndex: estimatedFeeJSON.tx_index,
+    usdAmount: estimatedFeeJSON.usd_amount,
+    operationIndex: estimatedFeeJSON.operation_index,
+  };
+}
+
+export function estimatedFeeToJSON(
+  estimatedFee: EstimatedFee,
+): EstimatedFeeJSON {
+  return {
+    amount: estimatedFee.amount,
+    bridge_id: estimatedFee.bridgeID,
+    chain_id: estimatedFee.chainID,
+    fee_type: estimatedFee.feeType,
+    origin_asset: estimatedFee.originAsset,
+    tx_index: estimatedFee.txIndex,
+    usd_amount: estimatedFee.usdAmount,
+    operation_index: estimatedFee.operationIndex,
   };
 }
 
@@ -729,7 +761,9 @@ export function routeResponseFromJSON(
     swapPriceImpactPercent: routeResponseJSON.swap_price_impact_percent,
 
     warning: routeResponseJSON.warning,
-    estimatedFees: routeResponseJSON.estimated_fees,
+    estimatedFees: routeResponseJSON.estimated_fees.map((i) =>
+      estimatedFeeFromJSON(i),
+    ),
   };
 }
 
@@ -760,7 +794,9 @@ export function routeResponseToJSON(
     swap_price_impact_percent: routeResponse.swapPriceImpactPercent,
 
     warning: routeResponse.warning,
-    estimated_fees: routeResponse.estimatedFees,
+    estimated_fees: routeResponse.estimatedFees.map((i) =>
+      estimatedFeeToJSON(i),
+    ),
   };
 }
 
