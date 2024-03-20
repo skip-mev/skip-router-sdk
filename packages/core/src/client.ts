@@ -356,13 +356,12 @@ export class SkipRouter {
       gasAmountMultiplier,
     } = options;
 
-
-    const getOfflineSigner = this.getCosmosSigner || getCosmosSigner;
-    if (!getOfflineSigner) {
-      throw new Error(
+    const getOfflineSigner =
+      this.getCosmosSigner ||
+      getCosmosSigner ||
+      raise(
         "executeRoute error: 'getCosmosSigner' is not provided or configured in skip router",
       );
-    }
 
     const signer = await getOfflineSigner(chainID);
 
@@ -1555,9 +1554,7 @@ export class SkipRouter {
         }
         const signer = await getOfflineSigner(tx.cosmosTx.chainID);
 
-        const endpoint = await this.getRpcEndpointForChain(
-          tx.cosmosTx.chainID,
-        );
+        const endpoint = await this.getRpcEndpointForChain(tx.cosmosTx.chainID);
         // @note: A new client is created for both the gasbalance validation here as the execution later...
         const client = await SigningStargateClient.connectWithSigner(
           endpoint,
