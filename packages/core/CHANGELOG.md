@@ -1,5 +1,11 @@
 # @skip-router/core
 
+## 2.0.0-rc.3
+
+### Patch Changes
+
+- Add svmTx to execute route
+
 ## 2.0.0-rc.2
 
 ### Patch Changes
