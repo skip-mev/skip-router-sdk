@@ -387,6 +387,7 @@ export type SvmTxJSON = {
       is_signer: boolean;
       is_writable: boolean;
     }[];
+    program_id: string;
   }[];
 };
 
@@ -399,6 +400,7 @@ export type SvmTx = {
       isSigner: boolean;
       isWritable: boolean;
     }[];
+    programID: string;
   }[];
 };
 

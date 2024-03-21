@@ -1357,6 +1357,7 @@ export function svmTxFromJSON(svmTxJSON: SvmTxJSON): SvmTx {
           };
         }),
         data: i.data,
+        programID: i.program_id,
       };
     }),
   };
@@ -1375,6 +1376,7 @@ export function svmTxToJSON(svmTx: SvmTx): SvmTxJSON {
           };
         }),
         data: i.data,
+        program_id: i.programID,
       };
     }),
   };

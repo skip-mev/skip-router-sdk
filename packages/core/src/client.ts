@@ -61,7 +61,7 @@ import * as types from "./types";
 import * as clientTypes from "./client-types";
 import { msgsDirectRequestToJSON } from "./types/converters";
 import { Adapter } from "@solana/wallet-adapter-base";
-import { Connection, Transaction } from "@solana/web3.js";
+import { Connection, PublicKey, Transaction } from "@solana/web3.js";
 
 export const SKIP_API_URL = "https://api.skip.money";
 
@@ -610,7 +610,23 @@ export class SkipRouter {
     signer: Adapter;
     message: types.SvmTx;
   }) {
-    const tx = new Transaction().add();
+    const instructions = message.instructions.map((instruction) => {
+      return {
+        keys: instruction.accountKeys.map((i) => {
+          return {
+            pubkey: new PublicKey(i.publicKey),
+            isSigner: i.isSigner,
+            isWritable: i.isWritable,
+          };
+        }),
+        programId: new PublicKey(instruction.programID),
+        data: Buffer.from(instruction.data),
+      };
+    });
+    const tx = new Transaction();
+    instructions.forEach((instruction) => {
+      tx.add(instruction);
+    });
     const endpoint = await this.getRpcEndpointForChain(message.chainID);
     const connection = new Connection(endpoint);
     const signature = await signer.sendTransaction(tx, connection);
