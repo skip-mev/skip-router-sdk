@@ -80,6 +80,8 @@ import {
   OriginAssetsResponseJSON,
   PostHandler,
   PostHandlerJSON,
+  SvmTx,
+  SvmTxJSON,
   Swap,
   SwapExactCoinIn,
   SwapExactCoinInJSON,
@@ -1342,6 +1344,42 @@ export function erc20ApprovalToJSON(
   };
 }
 
+export function svmTxFromJSON(svmTxJSON: SvmTxJSON): SvmTx {
+  return {
+    chainID: svmTxJSON.chain_id,
+    instructions: svmTxJSON.instructions.map((i) => {
+      return {
+        accountKeys: i.account_keys.map((j) => {
+          return {
+            publicKey: j.public_key,
+            isSigner: j.is_signer,
+            isWritable: j.is_writable,
+          };
+        }),
+        data: i.data,
+      };
+    }),
+  };
+}
+
+export function svmTxToJSON(svmTx: SvmTx): SvmTxJSON {
+  return {
+    chain_id: svmTx.chainID,
+    instructions: svmTx.instructions.map((i) => {
+      return {
+        account_keys: i.accountKeys.map((j) => {
+          return {
+            public_key: j.publicKey,
+            is_signer: j.isSigner,
+            is_writable: j.isWritable,
+          };
+        }),
+        data: i.data,
+      };
+    }),
+  };
+}
+
 export function evmTxFromJSON(evmTxJSON: EvmTxJSON): EvmTx {
   return {
     chainID: evmTxJSON.chain_id,
@@ -1387,6 +1425,11 @@ export function txFromJSON(txJSON: TxJSON): Tx {
       cosmosTx: cosmosTxFromJSON(txJSON.cosmos_tx),
     };
   }
+  if ("svm_tx" in txJSON) {
+    return {
+      svmTx: svmTxFromJSON(txJSON.svm_tx),
+    };
+  }
 
   return {
     evmTx: evmTxFromJSON(txJSON.evm_tx),
@@ -1397,6 +1440,11 @@ export function txToJSON(tx: Tx): TxJSON {
   if ("cosmosTx" in tx) {
     return {
       cosmos_tx: cosmosTxToJSON(tx.cosmosTx),
+    };
+  }
+  if ("svmTx" in tx) {
+    return {
+      svm_tx: svmTxToJSON(tx.svmTx),
     };
   }
 
@@ -1411,6 +1459,11 @@ export function msgFromJSON(msgJSON: MsgJSON): Msg {
       multiChainMsg: multiChainMsgFromJSON(msgJSON.multi_chain_msg),
     };
   }
+  if ("svm_tx" in msgJSON) {
+    return {
+      svmTx: svmTxFromJSON(msgJSON.svm_tx),
+    };
+  }
 
   return {
     evmTx: evmTxFromJSON(msgJSON.evm_tx),
@@ -1421,6 +1474,11 @@ export function msgToJSON(msg: Msg): MsgJSON {
   if ("multiChainMsg" in msg) {
     return {
       multi_chain_msg: multiChainMsgToJSON(msg.multiChainMsg),
+    };
+  }
+  if ("svmTx" in msg) {
+    return {
+      svm_tx: svmTxToJSON(msg.svmTx),
     };
   }
 

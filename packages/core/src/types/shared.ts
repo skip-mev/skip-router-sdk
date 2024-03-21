@@ -378,6 +378,30 @@ export type ERC20Approval = {
   amount: string;
 };
 
+export type SvmTxJSON = {
+  chain_id: string;
+  instructions: {
+    data: string;
+    account_keys: {
+      public_key: string;
+      is_signer: boolean;
+      is_writable: boolean;
+    }[];
+  }[];
+};
+
+export type SvmTx = {
+  chainID: string;
+  instructions: {
+    data: string;
+    accountKeys: {
+      publicKey: string;
+      isSigner: boolean;
+      isWritable: boolean;
+    }[];
+  }[];
+};
+
 export type EvmTxJSON = {
   chain_id: string;
   to: string;

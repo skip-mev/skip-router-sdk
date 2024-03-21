@@ -60,6 +60,8 @@ import {
 import * as types from "./types";
 import * as clientTypes from "./client-types";
 import { msgsDirectRequestToJSON } from "./types/converters";
+import { Adapter } from "@solana/wallet-adapter-base";
+import { Connection, Transaction } from "@solana/web3.js";
 
 export const SKIP_API_URL = "https://api.skip.money";
 
@@ -77,8 +79,9 @@ export class SkipRouter {
     getRestEndpointForChain?: (chainID: string) => Promise<string>;
   };
 
-  protected getCosmosSigner?: (chainID: string) => Promise<OfflineSigner>;
-  protected getEVMSigner?: (chainID: string) => Promise<WalletClient>;
+  private getCosmosSigner?: (chainID: string) => Promise<OfflineSigner>;
+  private getEVMSigner?: (chainID: string) => Promise<WalletClient>;
+  private getSVMSigner?: () => Promise<Adapter>;
 
   constructor(options: clientTypes.SkipRouterOptions = {}) {
     this.clientID = options.clientID || "skip-router-js";
@@ -101,6 +104,7 @@ export class SkipRouter {
     this.endpointOptions = options.endpointOptions ?? {};
     this.getCosmosSigner = options.getCosmosSigner;
     this.getEVMSigner = options.getEVMSigner;
+    this.getSVMSigner = options.getSVMSigner;
   }
 
   async assets(
@@ -288,6 +292,25 @@ export class SkipRouter {
         txResult = {
           chainID: message.evmTx.chainID,
           txHash: txResponse.transactionHash,
+        };
+      } else if ("svmTx" in message) {
+        const { svmTx } = message;
+        const getSVMSigner = options.getSVMSigner || this.getSVMSigner;
+        if (!getSVMSigner) {
+          throw new Error(
+            "executeRoute error: 'getSVMSigner' is not provided or configured in skip router",
+          );
+        }
+        const svmSigner = await getSVMSigner();
+
+        const txReceipt = await this.executeSVMTransaction({
+          signer: svmSigner,
+          message: svmTx,
+        });
+
+        txResult = {
+          chainID: svmTx.chainID,
+          txHash: txReceipt,
         };
       } else {
         raise(`executeRoute error: invalid message type`);
@@ -578,6 +601,20 @@ export class SkipRouter {
     });
 
     return receipt;
+  }
+
+  async executeSVMTransaction({
+    signer,
+    message,
+  }: {
+    signer: Adapter;
+    message: types.SvmTx;
+  }) {
+    const tx = new Transaction().add();
+    const endpoint = await this.getRpcEndpointForChain(message.chainID);
+    const connection = new Connection(endpoint);
+    const signature = await signer.sendTransaction(tx, connection);
+    return signature;
   }
 
   async signMultiChainMessageDirect(

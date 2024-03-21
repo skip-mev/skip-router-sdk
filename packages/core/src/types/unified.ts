@@ -29,6 +29,8 @@ import {
   TransferJSON,
   CosmosTxJSON,
   CosmosTx,
+  SvmTxJSON,
+  SvmTx,
 } from "./shared";
 
 export type AssetsRequestJSON = {
@@ -381,13 +383,20 @@ export type MsgsDirectRequest = {
 
 export type MsgJSON =
   | { multi_chain_msg: MultiChainMsgJSON }
-  | { evm_tx: EvmTxJSON };
+  | { evm_tx: EvmTxJSON }
+  | { svm_tx: SvmTxJSON };
 
-export type Msg = { multiChainMsg: MultiChainMsg } | { evmTx: EvmTx };
+export type Msg =
+  | { multiChainMsg: MultiChainMsg }
+  | { evmTx: EvmTx }
+  | { svmTx: SvmTx };
 
-export type TxJSON = { cosmos_tx: CosmosTxJSON } | { evm_tx: EvmTxJSON };
+export type TxJSON =
+  | { cosmos_tx: CosmosTxJSON }
+  | { evm_tx: EvmTxJSON }
+  | { svm_tx: SvmTxJSON };
 
-export type Tx = { cosmosTx: CosmosTx } | { evmTx: EvmTx };
+export type Tx = { cosmosTx: CosmosTx } | { evmTx: EvmTx } | { svmTx: SvmTx };
 
 export type MsgsResponseJSON = {
   msgs: MsgJSON[];
