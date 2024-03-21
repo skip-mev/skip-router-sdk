@@ -1,5 +1,11 @@
 # @skip-router/core
 
+## 2.0.0-rc.2
+
+### Patch Changes
+
+- Catch up to main
+
 ## 2.0.0-rc.1
 
 ### Patch Changes

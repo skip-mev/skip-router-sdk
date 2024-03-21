@@ -8,6 +8,7 @@
   },
   "changesets": [
     "dry-glasses-greet",
+    "hungry-pigs-learn",
     "modern-flowers-fetch"
   ]
 }
