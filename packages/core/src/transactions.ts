@@ -102,24 +102,28 @@ export function getEncodeObjectFromMultiChainMessageInjective(
 export async function getGasAmountForMessage(
   client: SigningStargateClient,
   signerAddress: string,
-  message: MultiChainMsg,
+  message?: MultiChainMsg,
+  encodedMsgs?: EncodeObject[],
   multiplier: number = DEFAULT_GAS_MULTIPLIER,
 ) {
+  if (!message && !encodedMsgs) {
+    throw new Error("Either message or encodedMsg must be provided");
+  }
+
+  encodedMsgs = encodedMsgs || [getEncodeObjectFromMultiChainMessage(message!)];
   if (
-    message.chainID.includes("evmos") ||
-    message.chainID.includes("injective") ||
-    message.chainID.includes("dymension") ||
-    process.env.NODE_ENV === "test"
+    message?.chainID.includes("evmos") ||
+    message?.chainID.includes("injective") ||
+    message?.chainID.includes("dymension") ||
+    process?.env.NODE_ENV === "test"
   ) {
-    if (message.msgTypeURL === "/cosmwasm.wasm.v1.MsgExecuteContract") {
+    if (message?.msgTypeURL === "/cosmwasm.wasm.v1.MsgExecuteContract") {
       return "2400000";
     }
     return "280000";
   }
 
-  const encodeMsg = getEncodeObjectFromMultiChainMessage(message);
-
-  const estimatedGas = await client.simulate(signerAddress, [encodeMsg], "");
+  const estimatedGas = await client.simulate(signerAddress, encodedMsgs, "");
 
   const estimatedGasWithBuffer = estimatedGas * multiplier;
 

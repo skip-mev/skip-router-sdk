@@ -46,11 +46,11 @@ describe("client", () => {
                       sum: "h1:rd5guXn/SF6i66PO5rlGaDK0AT81kCpiLixyQ5EJ6Yg=",
                     },
                     "github.com/strangelove-ventures/packet-forward-middleware":
-                    {
-                      path: "github.com/strangelove-ventures/packet-forward-middleware/v4",
-                      version: "v4.0.5",
-                      sum: "h1:KKUqeGhVBK38+1LwThC8IeIcsJZ6COX5kvhiJroFqCM=",
-                    },
+                      {
+                        path: "github.com/strangelove-ventures/packet-forward-middleware/v4",
+                        version: "v4.0.5",
+                        sum: "h1:KKUqeGhVBK38+1LwThC8IeIcsJZ6COX5kvhiJroFqCM=",
+                      },
                   },
                   cosmos_module_support: {
                     authz: true,
@@ -70,6 +70,7 @@ describe("client", () => {
                       },
                     },
                   ],
+                  is_testnet: false,
                 },
               ] as ChainJSON[],
             }),
@@ -90,6 +91,7 @@ describe("client", () => {
           pfmEnabled: true,
           cosmosSDKVersion: "v0.47.3",
           chainType: "cosmos",
+          isTestnet: false,
           modules: {
             "github.com/cosmos/ibc-go": {
               path: "github.com/cosmos/ibc-go/v4",
@@ -548,6 +550,7 @@ describe("client", () => {
                           decimals: 6,
                           is_cw20: true,
                           is_evm: true,
+                          is_svm: false,
                         },
                         reason: "MOST_LIQUID",
                       },
@@ -590,6 +593,7 @@ describe("client", () => {
                 decimals: 6,
                 isCW20: true,
                 isEVM: true,
+                isSVM: false,
                 tokenContract: undefined,
                 description: undefined,
                 coingeckoID: undefined,
@@ -677,8 +681,10 @@ describe("client", () => {
               bridgeID: "IBC",
               fromChainID: "osmosis-1",
               toChainID: "cosmoshub-4",
-              denomIn: "ibc/27394FB092D2ECCD56123C74F36E4C1F926001CEADA9CA97EA622B25F41E5EB2",
+              denomIn:
+                "ibc/27394FB092D2ECCD56123C74F36E4C1F926001CEADA9CA97EA622B25F41E5EB2",
               denomOut: "uatom",
+              rapidRelay: true,
             },
           },
         ],
@@ -743,12 +749,14 @@ describe("client", () => {
                     pfm_enabled: true,
                     dest_denom: "uatom",
                     supports_memo: true,
+                    rapid_relay: true,
                   },
                 },
               ],
               chain_ids: ["osmosis-1", "cosmoshub-4"],
               does_swap: true,
               estimated_amount_out: "54906",
+              estimated_fees: [],
               swap_venue: {
                 name: "osmosis-poolmanager",
                 chain_id: "osmosis-1",
@@ -769,6 +777,7 @@ describe("client", () => {
         destAssetChainID: "cosmoshub-4",
         destAssetDenom: "uatom",
         amountIn: "1000000",
+        rapidRelay: false,
       });
 
       expect(response).toEqual({
@@ -806,12 +815,14 @@ describe("client", () => {
               pfmEnabled: true,
               destDenom: "uatom",
               supportsMemo: true,
+              rapidRelay: true,
             },
           },
         ],
         chainIDs: ["osmosis-1", "cosmoshub-4"],
         doesSwap: true,
         estimatedAmountOut: "54906",
+        estimatedFees: [],
         swapVenue: { name: "osmosis-poolmanager", chainID: "osmosis-1" },
         txsRequired: 1,
       });
@@ -1541,6 +1552,7 @@ describe("client", () => {
               trace: "",
               is_cw20: false,
               is_evm: false,
+              is_svm: false,
               token_contract: "token-contract-value",
               symbol: "OSMO",
               name: "OSMO",
@@ -1561,6 +1573,7 @@ describe("client", () => {
               trace: "",
               is_cw20: false,
               is_evm: false,
+              is_svm: false,
               token_contract: "token-contract-value",
               symbol: "USDC",
               name: "USDC",

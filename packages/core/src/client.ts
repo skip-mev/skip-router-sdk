@@ -5,6 +5,7 @@ import { Int53 } from "@cosmjs/math";
 import { Decimal } from "@cosmjs/math";
 import { makePubkeyAnyFromAccount } from "./proto-signing/pubkey";
 import {
+  EncodeObject,
   isOfflineDirectSigner,
   makeAuthInfoBytes,
   makeSignDoc,
@@ -58,25 +59,26 @@ import {
 } from "./transactions";
 import * as types from "./types";
 import * as clientTypes from "./client-types";
+import { msgsDirectRequestToJSON } from "./types/converters";
 
 export const SKIP_API_URL = "https://api.skip.money";
 
 export class SkipRouter {
   private requestClient: RequestClient;
 
-  private aminoTypes: AminoTypes;
-  private registry: Registry;
+  protected aminoTypes: AminoTypes;
+  protected registry: Registry;
 
-  private clientID: string;
+  protected clientID: string;
 
-  private endpointOptions: {
+  protected endpointOptions: {
     endpoints?: Record<string, clientTypes.EndpointOptions>;
     getRpcEndpointForChain?: (chainID: string) => Promise<string>;
     getRestEndpointForChain?: (chainID: string) => Promise<string>;
   };
 
-  private getCosmosSigner?: (chainID: string) => Promise<OfflineSigner>;
-  private getEVMSigner?: (chainID: string) => Promise<WalletClient>;
+  protected getCosmosSigner?: (chainID: string) => Promise<OfflineSigner>;
+  protected getEVMSigner?: (chainID: string) => Promise<WalletClient>;
 
   constructor(options: clientTypes.SkipRouterOptions = {}) {
     this.clientID = options.clientID || "skip-router-js";
@@ -199,20 +201,7 @@ export class SkipRouter {
   }
 
   async executeRoute(options: clientTypes.ExecuteRouteOptions) {
-    const {
-      route,
-      userAddresses,
-      validateGasBalance,
-      getGasPrice,
-      gasAmountMultiplier = DEFAULT_GAS_MULTIPLIER,
-    } = options;
-
-    const getOfflineSigner = this.getCosmosSigner || options.getCosmosSigner;
-    if (!getOfflineSigner) {
-      throw new Error(
-        "executeRoute error: 'getCosmosSigner' is not provided or configured in skip router",
-      );
-    }
+    const { route, userAddresses } = options;
 
     const addressList = route.chainIDs.map((chainID) => {
       return (
@@ -233,6 +222,27 @@ export class SkipRouter {
       slippageTolerancePercent: options.slippageTolerancePercent || "1",
     });
 
+    this.executeMultiChainMsgs({ ...options, messages });
+  }
+
+  async executeMultiChainMsgs(
+    options: clientTypes.ExecuteRouteOptions & { messages: types.Msg[] },
+  ) {
+    const {
+      messages,
+      userAddresses,
+      validateGasBalance,
+      getGasPrice,
+      gasAmountMultiplier = DEFAULT_GAS_MULTIPLIER,
+    } = options;
+
+    const getOfflineSigner = this.getCosmosSigner || options.getCosmosSigner;
+    if (!getOfflineSigner) {
+      throw new Error(
+        "executeRoute error: 'getCosmosSigner' is not provided or configured in skip router",
+      );
+    }
+
     if (validateGasBalance) {
       // check balances on chains where a tx is initiated
       await this.validateGasBalances(
@@ -244,133 +254,157 @@ export class SkipRouter {
       );
     }
 
-    // execute txs
     for (let i = 0; i < messages.length; i++) {
-      const message = messages[i]!;
-
-      if ("multiChainMsg" in message) {
-        const { multiChainMsg } = message;
-
-        const signer = await getOfflineSigner(multiChainMsg.chainID);
-
-        const gasPrice =
-          (getGasPrice
-            ? await getGasPrice(multiChainMsg.chainID)
-            : await this.getRecommendedGasPrice(multiChainMsg.chainID)) ||
-          raise(
-            `executeRoute error: unable to get gas prices for chain '${multiChainMsg.chainID}'`,
-          );
-
-        const endpoint = await this.getRpcEndpointForChain(
-          multiChainMsg.chainID,
-        );
-
-        const client = await SigningStargateClient.connectWithSigner(
-          endpoint,
-          signer,
-          {
-            aminoTypes: this.aminoTypes,
-            registry: this.registry,
-            accountParser,
-          },
-        );
-
-        const currentUserAddress = userAddresses[multiChainMsg.chainID];
-        if (!currentUserAddress) {
-          throw new Error(
-            `executeRoute error: invalid address for chain '${multiChainMsg.chainID}'`,
-          );
-        }
-
-        const estimatedGas = await getGasAmountForMessage(
-          client,
-          currentUserAddress,
-          multiChainMsg,
-          gasAmountMultiplier,
-        );
-
-        const fee = calculateFee(Math.ceil(parseFloat(estimatedGas)), gasPrice);
-
-        if (!fee) {
-          throw new Error(
-            `executeRoute error: unable to get fee for message #${i}`,
-          );
-        }
-
-        const tx = await this.executeMultiChainMessage({
-          signerAddress: currentUserAddress,
-          signer,
-          message: multiChainMsg,
-          fee,
-        });
-
-        if (options.onTransactionBroadcast) {
-          await options.onTransactionBroadcast({
-            chainID: multiChainMsg.chainID,
-            txHash: tx.transactionHash,
-          });
-        }
-
-        const txStatusResponse = await this.waitForTransaction({
-          chainID: multiChainMsg.chainID,
-          txHash: tx.transactionHash,
-          onTransactionTracked: options.onTransactionTracked,
-        });
-
-        if (options.onTransactionCompleted) {
-          await options.onTransactionCompleted(
-            multiChainMsg.chainID,
-            tx.transactionHash,
-            txStatusResponse,
-          );
-        }
+      const message = messages[i];
+      if (!message) {
+        raise(`executeRoute error: invalid message at index ${i}`);
       }
 
-      if ("evmTx" in message) {
-        const { evmTx } = message;
+      let txResult: { chainID: string; txHash: string };
+      if ("multiChainMsg" in message) {
+        // TODO: use typeguard instead
+        const multiChainMessage = message.multiChainMsg;
 
-        const getEVMSigner = options.getEVMSigner || this.getEVMSigner;
-        if (!getEVMSigner) {
-          throw new Error(
-            "executeRoute error: 'getEVMSigner' is not provided or configured in skip router",
+        const currentUserAddress = userAddresses[multiChainMessage.chainID];
+        if (!currentUserAddress) {
+          raise(
+            `executeRoute error: invalid address for chain '${multiChainMessage.chainID}'`,
           );
         }
-
-        const evmSigner = await getEVMSigner(evmTx.chainID);
-
-        const txReceipt = await this.executeEVMTransaction({
-          message: evmTx,
-          signer: evmSigner,
+        const txResponse = await this.executeCosmosMessage({
+          message: multiChainMessage,
+          getCosmosSigner: getOfflineSigner,
+          getGasPrice: getGasPrice,
+          gasAmountMultiplier,
+          signerAddress: currentUserAddress,
         });
 
-        if (options.onTransactionBroadcast) {
-          await options.onTransactionBroadcast({
-            chainID: evmTx.chainID,
-            txHash: txReceipt.transactionHash,
-          });
-        }
+        txResult = {
+          chainID: multiChainMessage.chainID,
+          txHash: txResponse.transactionHash,
+        };
+      } else if ("evmTx" in message) {
+        const txResponse = await this.executeEvmMultiChainMsg(message, options);
+        txResult = {
+          chainID: message.evmTx.chainID,
+          txHash: txResponse.transactionHash,
+        };
+      } else {
+        raise(`executeRoute error: invalid message type`);
+      }
 
-        const txStatusResponse = await this.waitForTransaction({
-          chainID: evmTx.chainID,
-          txHash: txReceipt.transactionHash,
-          onTransactionTracked: options.onTransactionTracked,
-        });
+      if (options.onTransactionBroadcast) {
+        await options.onTransactionBroadcast({ ...txResult });
+      }
 
-        if (options.onTransactionCompleted) {
-          await options.onTransactionCompleted(
-            evmTx.chainID,
-            txReceipt.transactionHash,
-            txStatusResponse,
-          );
-        }
+      const txStatusResponse = await this.waitForTransaction({
+        ...txResult,
+        onTransactionTracked: options.onTransactionTracked,
+      });
+
+      if (options.onTransactionCompleted) {
+        await options.onTransactionCompleted(
+          txResult.chainID,
+          txResult.txHash,
+          txStatusResponse,
+        );
       }
     }
   }
 
+  private async executeEvmMultiChainMsg(
+    message: { evmTx: types.EvmTx },
+    options: clientTypes.ExecuteRouteOptions,
+  ) {
+    const { evmTx } = message;
+
+    const getEVMSigner = options.getEVMSigner || this.getEVMSigner;
+    if (!getEVMSigner) {
+      throw new Error("Unable to get EVM signer");
+    }
+
+    const evmSigner = await getEVMSigner(evmTx.chainID);
+
+    return await this.executeEVMTransaction({
+      message: evmTx,
+      signer: evmSigner,
+    });
+  }
+
+  /**
+   * @deprecated The method is replaced by `executeCosmosMessage` which internalises the gas estimation, fee calculation and signer selection.
+   */
   async executeMultiChainMessage(
     options: clientTypes.ExecuteMultiChainMessageOptions,
   ) {
     const { signerAddress, signer, message, fee } = options;
+
+    const accounts = await signer.getAccounts();
+    const accountFromSigner = accounts.find(
+      (account) => account.address === signerAddress,
+    );
+    if (!accountFromSigner) {
+      throw new Error(
+        "executeMultiChainMessage error: failed to retrieve account from signer",
+      );
+    }
+
+    const endpoint = await this.getRpcEndpointForChain(message.chainID);
+
+    const stargateClient = await SigningStargateClient.connectWithSigner(
+      endpoint,
+      signer,
+      {
+        aminoTypes: this.aminoTypes,
+        registry: this.registry,
+        accountParser,
+      },
+    );
+    const { accountNumber, sequence } = await this.getAccountNumberAndSequence(
+      signerAddress,
+      message.chainID,
+    );
+    let rawTx: TxRaw;
+    if (isOfflineDirectSigner(signer)) {
+      rawTx = await this.signMultiChainMessageDirect({
+        signerAddress,
+        signer,
+        multiChainMessage: message,
+        fee,
+        signerData: {
+          accountNumber,
+          sequence,
+          chainId: message.chainID,
+        },
+      });
+    } else {
+      rawTx = await this.signMultiChainMessageAmino({
+        signerAddress,
+        signer,
+        multiChainMessage: message,
+        fee,
+        signerData: {
+          accountNumber,
+          sequence,
+          chainId: message.chainID,
+        },
+      });
+    }
+    const txBytes = TxRaw.encode(rawTx).finish();
+    const tx = await stargateClient.broadcastTx(txBytes);
+    return tx;
+  }
+
+  async executeCosmosMessage(options: clientTypes.ExecuteCosmosMessage) {
+    const {
+      signerAddress,
+      getCosmosSigner,
+      message,
+      getGasPrice,
+      gasAmountMultiplier,
+    } = options;
+
+    const signer = await getCosmosSigner(message.chainID);
 
     const accounts = await signer.getAccounts();
     const accountFromSigner = accounts.find(
@@ -394,6 +428,17 @@ export class SkipRouter {
         accountParser,
       },
     );
+
+    // @note: reusing the stargate client here and for broadcast 👍
+    const fee = await this.estimateGasForMessage(
+      stargateClient,
+      message.chainID,
+      signerAddress,
+      gasAmountMultiplier,
+      getGasPrice,
+      message,
+    );
+
     const { accountNumber, sequence } = await this.getAccountNumberAndSequence(
       signerAddress,
       message.chainID,
@@ -431,6 +476,41 @@ export class SkipRouter {
     const tx = await stargateClient.broadcastTx(txBytes);
 
     return tx;
+  }
+
+  async estimateGasForMessage(
+    stargateClient: SigningStargateClient,
+    chainID: string,
+    signerAddress: string,
+    gasAmountMultiplier: number | undefined,
+    getGasPrice?: (chainID: string) => Promise<GasPrice | undefined>,
+    message?: types.MultiChainMsg,
+    encodedMsgs?: EncodeObject[],
+  ) {
+    const estimatedGas = await getGasAmountForMessage(
+      stargateClient,
+      signerAddress,
+      message,
+      encodedMsgs,
+      gasAmountMultiplier,
+    );
+
+    const gasPrice =
+      (getGasPrice
+        ? await getGasPrice(chainID)
+        : await this.getRecommendedGasPrice(chainID)) ||
+      raise(
+        `executeRoute error: unable to get gas prices for chain '${chainID}'`,
+      );
+
+    const fee = calculateFee(Math.ceil(parseFloat(estimatedGas)), gasPrice);
+
+    if (!fee) {
+      raise(
+        `executeRoute error: unable to get fee for message(s) ${message || encodedMsgs}`,
+      );
+    }
+    return fee;
   }
 
   async executeEVMTransaction({
@@ -821,6 +901,23 @@ export class SkipRouter {
     return types.routeResponseFromJSON(response);
   }
 
+  async msgsDirect(
+    options: types.MsgsDirectRequest,
+  ): Promise<types.MsgsDirectResponse> {
+    const response = await this.requestClient.post<
+      types.MsgsDirectResponseJSON,
+      types.MsgsDirectRequestJSON
+    >("/v2/fungible/msgs_direct", {
+      ...msgsDirectRequestToJSON(options),
+    });
+
+    return {
+      msgs: response.msgs.map((msg) => types.msgFromJSON(msg)),
+      txs: response.txs.map((tx) => types.txFromJSON(tx)),
+      route: types.routeResponseFromJSON(response.route),
+    };
+  }
+
   async recommendAssets(
     request:
       | types.AssetRecommendationRequest
@@ -1104,7 +1201,7 @@ export class SkipRouter {
     };
   }
 
-  private async getRpcEndpointForChain(chainID: string) {
+  async getRpcEndpointForChain(chainID: string) {
     if (this.endpointOptions.getRpcEndpointForChain) {
       return this.endpointOptions.getRpcEndpointForChain(chainID);
     }
@@ -1139,7 +1236,7 @@ export class SkipRouter {
     return endpoint;
   }
 
-  private async getRestEndpointForChain(chainID: string) {
+  async getRestEndpointForChain(chainID: string) {
     if (this.endpointOptions.getRestEndpointForChain) {
       return this.endpointOptions.getRestEndpointForChain(chainID);
     }
@@ -1216,6 +1313,7 @@ export class SkipRouter {
       client,
       signerAddress,
       msg,
+      undefined,
       gasAmountMultiplier,
     );
 
@@ -1374,6 +1472,7 @@ export class SkipRouter {
         const endpoint = await this.getRpcEndpointForChain(
           message.multiChainMsg.chainID,
         );
+        // @note: A new client is created for both the gasbalance validation here as the execution later...
         const client = await SigningStargateClient.connectWithSigner(
           endpoint,
           signer,
@@ -1392,7 +1491,6 @@ export class SkipRouter {
 
         await this.validateCosmosGasBalance(
           client,
-          signer,
           currentAddress,
           message.multiChainMsg,
           getGasPrice,
@@ -1404,22 +1502,18 @@ export class SkipRouter {
 
   private async validateCosmosGasBalance(
     client: SigningStargateClient,
-    signer: OfflineSigner,
     signerAddress: string,
     message: types.MultiChainMsg,
     getGasPrice?: (chainID: string) => Promise<GasPrice | undefined>,
     gasAmountMultiplier?: number,
   ) {
-    let gasPrice: GasPrice | undefined;
-    if (getGasPrice) {
-      gasPrice = await getGasPrice(message.chainID);
-    }
-
-    const fee = await this.getFeeForMessage(
-      message,
+    const fee = await this.estimateGasForMessage(
+      client,
+      message.chainID,
+      signerAddress,
       gasAmountMultiplier,
-      signer,
-      gasPrice,
+      getGasPrice,
+      message,
     );
 
     if (!fee.amount[0]) {

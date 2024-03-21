@@ -68,6 +68,7 @@ export type TransferJSON = {
   fee_asset?: AssetJSON;
 
   bridge_id: BridgeType;
+  rapid_relay: boolean;
 
   /**
    * @deprecated use `from_chain_id` and `to_chain_id` instead
@@ -96,6 +97,7 @@ export type Transfer = {
   feeAsset?: Asset;
 
   bridgeID: BridgeType;
+  rapidRelay: boolean;
 
   /**
    * @deprecated use `fromChainID` and `toChainID` instead
@@ -128,6 +130,7 @@ export type AxelarTransferJSON = {
   ibc_transfer_to_axelar?: TransferJSON;
 
   bridge_id: BridgeType;
+  rapid_relay: boolean;
 };
 
 export type AxelarTransfer = {
@@ -150,6 +153,7 @@ export type AxelarTransfer = {
   ibcTransferToAxelar?: Transfer;
 
   bridgeID: BridgeType;
+  rapidRelay: boolean;
 };
 
 export type BankSendJSON = {
@@ -176,6 +180,27 @@ export type MultiChainMsg = {
   msgTypeURL: string;
 };
 
+export type CosmosMsgJSON = {
+  msg: string;
+  msg_type_url: string;
+};
+export type CosmosMsg = {
+  msg: string;
+  msgTypeUrl: string;
+};
+
+export type CosmosTxJSON = {
+  chain_id: string;
+  path: string[];
+  msgs: CosmosMsgJSON[];
+};
+
+export type CosmosTx = {
+  chainID: string;
+  path: string[];
+  msgs: CosmosMsg[];
+};
+
 export type CCTPTransferJSON = {
   from_chain_id: string;
   to_chain_id: string;
@@ -183,6 +208,7 @@ export type CCTPTransferJSON = {
   bridge_id: BridgeType;
   denom_in: string;
   denom_out: string;
+  rapid_relay: boolean;
 };
 
 export type CCTPTransfer = {
@@ -192,6 +218,7 @@ export type CCTPTransfer = {
   bridgeID: BridgeType;
   denomIn: string;
   denomOut: string;
+  rapidRelay: boolean;
 };
 
 export type HyperlaneTransferJSON = {
@@ -204,6 +231,7 @@ export type HyperlaneTransferJSON = {
   usd_fee_amount?: string;
   fee_asset: AssetJSON;
   bridge_id: BridgeType;
+  rapid_relay: boolean;
 };
 
 export type HyperlaneTransfer = {
@@ -216,6 +244,7 @@ export type HyperlaneTransfer = {
   usdFeeAmount?: string;
   feeAsset: Asset;
   bridgeID: BridgeType;
+  rapidRelay: boolean;
 };
 
 export type SwapVenueJSON = {

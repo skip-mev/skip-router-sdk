@@ -58,6 +58,10 @@ import {
   CCTPTransferJSON,
   CosmWasmContractMsg,
   CosmWasmContractMsgJSON,
+  CosmosMsg,
+  CosmosMsgJSON,
+  CosmosTx,
+  CosmosTxJSON,
   DenomWithChainID,
   DenomWithChainIDJSON,
   ERC20Approval,
@@ -112,8 +116,12 @@ import {
   BridgesRequestJSON,
   BridgesResponse,
   BridgesResponseJSON,
+  EstimatedFee,
+  EstimatedFeeJSON,
   Msg,
   MsgJSON,
+  MsgsDirectRequest,
+  MsgsDirectRequestJSON,
   MsgsRequest,
   MsgsRequestJSON,
   Operation,
@@ -128,6 +136,8 @@ import {
   RouteRequestJSON,
   RouteResponse,
   RouteResponseJSON,
+  Tx,
+  TxJSON,
 } from "./unified";
 
 export function affiliateFromJSON(affiliateJSON: AffiliateJSON): Affiliate {
@@ -269,6 +279,7 @@ export function chainFromJSON(chainJSON: ChainJSON): Chain {
     bech32Prefix: chainJSON.bech32_prefix,
     feeAssets: chainJSON.fee_assets.map(feeAssetFromJSON),
     chainType: chainJSON.chain_type,
+    isTestnet: chainJSON.is_testnet,
   };
 }
 
@@ -285,6 +296,7 @@ export function chainToJSON(chain: Chain): ChainJSON {
     bech32_prefix: chain.bech32Prefix,
     fee_assets: chain.feeAssets.map(feeAssetToJSON),
     chain_type: chain.chainType,
+    is_testnet: chain.isTestnet,
   };
 }
 
@@ -364,6 +376,36 @@ export function recommendationEntryToJSON(
   };
 }
 
+export function estimatedFeeFromJSON(
+  estimatedFeeJSON: EstimatedFeeJSON,
+): EstimatedFee {
+  return {
+    amount: estimatedFeeJSON.amount,
+    bridgeID: estimatedFeeJSON.bridge_id,
+    chainID: estimatedFeeJSON.chain_id,
+    feeType: estimatedFeeJSON.fee_type,
+    originAsset: assetFromJSON(estimatedFeeJSON.origin_asset),
+    txIndex: estimatedFeeJSON.tx_index,
+    usdAmount: estimatedFeeJSON.usd_amount,
+    operationIndex: estimatedFeeJSON.operation_index,
+  };
+}
+
+export function estimatedFeeToJSON(
+  estimatedFee: EstimatedFee,
+): EstimatedFeeJSON {
+  return {
+    amount: estimatedFee.amount,
+    bridge_id: estimatedFee.bridgeID,
+    chain_id: estimatedFee.chainID,
+    fee_type: estimatedFee.feeType,
+    origin_asset: assetToJSON(estimatedFee.originAsset),
+    tx_index: estimatedFee.txIndex,
+    usd_amount: estimatedFee.usdAmount,
+    operation_index: estimatedFee.operationIndex,
+  };
+}
+
 export function swapVenueFromJSON(swapVenueJSON: SwapVenueJSON): SwapVenue {
   return {
     name: swapVenueJSON.name,
@@ -418,6 +460,7 @@ export function routeRequestFromJSON(
       experimentalFeatures: routeRequestJSON.experimental_features,
       bridges: routeRequestJSON.bridges,
       allowMultiTx: routeRequestJSON.allow_multi_tx,
+      rapidRelay: routeRequestJSON.rapid_relay,
     };
   }
 
@@ -437,6 +480,7 @@ export function routeRequestFromJSON(
     experimentalFeatures: routeRequestJSON.experimental_features,
     bridges: routeRequestJSON.bridges,
     allowMultiTx: routeRequestJSON.allow_multi_tx,
+    rapidRelay: routeRequestJSON.rapid_relay,
   };
 }
 
@@ -460,6 +504,7 @@ export function routeRequestToJSON(
       experimental_features: routeRequest.experimentalFeatures,
       bridges: routeRequest.bridges,
       allow_multi_tx: routeRequest.allowMultiTx,
+      rapid_relay: routeRequest.rapidRelay,
     };
   }
 
@@ -479,6 +524,7 @@ export function routeRequestToJSON(
     experimental_features: routeRequest.experimentalFeatures,
     bridges: routeRequest.bridges,
     allow_multi_tx: routeRequest.allowMultiTx,
+    rapid_relay: routeRequest.rapidRelay,
   };
 }
 
@@ -502,6 +548,7 @@ export function transferFromJSON(transferJSON: TransferJSON): Transfer {
 
     destDenom: transferJSON.dest_denom,
     chainID: transferJSON.chain_id,
+    rapidRelay: transferJSON.rapid_relay,
   };
 }
 
@@ -525,6 +572,7 @@ export function transferToJSON(transfer: Transfer): TransferJSON {
 
     dest_denom: transfer.destDenom,
     chain_id: transfer.chainID,
+    rapid_relay: transfer.rapidRelay,
   };
 }
 
@@ -719,6 +767,9 @@ export function routeResponseFromJSON(
     swapPriceImpactPercent: routeResponseJSON.swap_price_impact_percent,
 
     warning: routeResponseJSON.warning,
+    estimatedFees: routeResponseJSON.estimated_fees?.length
+      ? routeResponseJSON.estimated_fees.map((i) => estimatedFeeFromJSON(i))
+      : [],
   };
 }
 
@@ -749,6 +800,12 @@ export function routeResponseToJSON(
     swap_price_impact_percent: routeResponse.swapPriceImpactPercent,
 
     warning: routeResponse.warning,
+    estimated_fees: routeResponse.estimatedFees.map((i) =>
+      estimatedFeeToJSON(i),
+    ),
+    // estimated_fees: routeResponse.estimatedFees?.length
+    //   ? routeResponse.estimatedFees.map((i) => estimatedFeeToJSON(i))
+    //   : [],
   };
 }
 
@@ -861,6 +918,20 @@ export function multiChainMsgToJSON(
     path: multiChainMsg.path,
     msg: multiChainMsg.msg,
     msg_type_url: multiChainMsg.msgTypeURL,
+  };
+}
+
+export function cosmosMsgFromJSON(cosmosMsgJSON: CosmosMsgJSON): CosmosMsg {
+  return {
+    msg: cosmosMsgJSON.msg,
+    msgTypeUrl: cosmosMsgJSON.msg_type_url,
+  };
+}
+
+export function cosmosMsgToJSON(cosmosMsg: CosmosMsg): CosmosMsgJSON {
+  return {
+    msg: cosmosMsg.msg,
+    msg_type_url: cosmosMsg.msgTypeUrl,
   };
 }
 
@@ -1146,6 +1217,7 @@ export function axelarTransferFromJSON(
       : undefined,
 
     bridgeID: axelarTransferJSON.bridge_id,
+    rapidRelay: axelarTransferJSON.rapid_relay,
   };
 }
 
@@ -1174,6 +1246,7 @@ export function axelarTransferToJSON(
       : undefined,
 
     bridge_id: axelarTransfer.bridgeID,
+    rapid_relay: axelarTransfer.rapidRelay,
   };
 }
 
@@ -1199,6 +1272,7 @@ export function cctpTransferFromJSON(value: CCTPTransferJSON): CCTPTransfer {
     bridgeID: value.bridge_id,
     denomIn: value.denom_in,
     denomOut: value.denom_out,
+    rapidRelay: value.rapid_relay,
   };
 }
 
@@ -1210,6 +1284,7 @@ export function cctpTransferToJSON(value: CCTPTransfer): CCTPTransferJSON {
     bridge_id: value.bridgeID,
     denom_in: value.denomIn,
     denom_out: value.denomOut,
+    rapid_relay: value.rapidRelay,
   };
 }
 
@@ -1226,6 +1301,7 @@ export function hyperlaneTransferFromJSON(
     usdFeeAmount: value.usd_fee_amount,
     feeAsset: assetFromJSON(value.fee_asset),
     bridgeID: value.bridge_id,
+    rapidRelay: value.rapid_relay,
   };
 }
 
@@ -1242,6 +1318,7 @@ export function hyperlaneTransferToJSON(
     usd_fee_amount: value.usdFeeAmount,
     fee_asset: assetToJSON(value.feeAsset),
     bridge_id: value.bridgeID,
+    rapid_relay: value.rapidRelay,
   };
 }
 
@@ -1285,6 +1362,46 @@ export function evmTxToJSON(evmTx: EvmTx): EvmTxJSON {
     data: evmTx.data,
     required_erc20_approvals:
       evmTx.requiredERC20Approvals.map(erc20ApprovalToJSON),
+  };
+}
+
+export function cosmosTxFromJSON(cosmosTxJSON: CosmosTxJSON): CosmosTx {
+  return {
+    chainID: cosmosTxJSON.chain_id,
+    path: cosmosTxJSON.path,
+    msgs: cosmosTxJSON.msgs.map(cosmosMsgFromJSON),
+  };
+}
+
+export function cosmosTxToJSON(cosmosTx: CosmosTx): CosmosTxJSON {
+  return {
+    chain_id: cosmosTx.chainID,
+    path: cosmosTx.path,
+    msgs: cosmosTx.msgs.map(cosmosMsgToJSON),
+  };
+}
+
+export function txFromJSON(txJSON: TxJSON): Tx {
+  if ("cosmos_tx" in txJSON) {
+    return {
+      cosmosTx: cosmosTxFromJSON(txJSON.cosmos_tx),
+    };
+  }
+
+  return {
+    evmTx: evmTxFromJSON(txJSON.evm_tx),
+  };
+}
+
+export function txToJSON(tx: Tx): TxJSON {
+  if ("cosmosTx" in tx) {
+    return {
+      cosmos_tx: cosmosTxToJSON(tx.cosmosTx),
+    };
+  }
+
+  return {
+    evm_tx: evmTxToJSON(tx.evmTx),
   };
 }
 
@@ -1815,5 +1932,57 @@ export function hyperlaneTransferInfoToJSON(
     to_chain_id: value.toChainID,
     state: value.state,
     txs: value.txs && hyperlaneTransferTransactionsToJSON(value.txs),
+  };
+}
+
+export function msgsDirectRequestFromJSON(
+  msgDirectRequestJSON: MsgsDirectRequestJSON,
+): MsgsDirectRequest {
+  return {
+    sourceAssetDenom: msgDirectRequestJSON.source_asset_denom,
+    sourceAssetChainID: msgDirectRequestJSON.source_asset_chain_id,
+    destAssetDenom: msgDirectRequestJSON.dest_asset_denom,
+    destAssetChainID: msgDirectRequestJSON.dest_asset_chain_id,
+    amountIn: msgDirectRequestJSON.amount_in,
+    amountOut: msgDirectRequestJSON.amount_out,
+    chainIdsToAddresses: msgDirectRequestJSON.chain_ids_to_addresses,
+    slippageTolerancePercent: msgDirectRequestJSON.slippage_tolerance_percent,
+    affiliates: msgDirectRequestJSON.affiliates?.map(affiliateFromJSON),
+    timeoutSeconds: msgDirectRequestJSON.timeout_seconds,
+    postRouteHandler:
+      msgDirectRequestJSON.post_route_handler &&
+      postHandlerFromJSON(msgDirectRequestJSON.post_route_handler),
+    swapVenue:
+      msgDirectRequestJSON.swap_venue &&
+      swapVenueFromJSON(msgDirectRequestJSON.swap_venue),
+    rapidRelay: msgDirectRequestJSON.rapid_relay,
+  };
+}
+
+export function msgsDirectRequestToJSON(
+  msgDirectRequest: MsgsDirectRequest,
+): MsgsDirectRequestJSON {
+  return {
+    source_asset_denom: msgDirectRequest.sourceAssetDenom,
+    source_asset_chain_id: msgDirectRequest.sourceAssetChainID,
+    dest_asset_denom: msgDirectRequest.destAssetDenom,
+    dest_asset_chain_id: msgDirectRequest.destAssetChainID,
+    amount_in: msgDirectRequest.amountIn,
+    amount_out: msgDirectRequest.amountOut,
+    chain_ids_to_addresses: msgDirectRequest.chainIdsToAddresses,
+    slippage_tolerance_percent: msgDirectRequest.slippageTolerancePercent,
+    affiliates: msgDirectRequest.affiliates?.map(affiliateToJSON),
+    allow_multi_tx: msgDirectRequest.allowMultiTx,
+    allow_unsafe: msgDirectRequest.allowUnsafe,
+    bridges: msgDirectRequest.bridges,
+    timeout_seconds: msgDirectRequest.timeoutSeconds,
+    client_id: msgDirectRequest.clientID,
+    experimental_features: msgDirectRequest.experimentalFeatures,
+    swap_venue:
+      msgDirectRequest.swapVenue && swapVenueToJSON(msgDirectRequest.swapVenue),
+    post_route_handler:
+      msgDirectRequest.postRouteHandler &&
+      postHandlerToJSON(msgDirectRequest.postRouteHandler),
+    rapid_relay: msgDirectRequest.rapidRelay,
   };
 }
