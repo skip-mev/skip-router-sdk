@@ -126,6 +126,8 @@ import {
   MsgsDirectRequestJSON,
   MsgsRequest,
   MsgsRequestJSON,
+  MsgsResponse,
+  MsgsResponseJSON,
   Operation,
   OperationJSON,
   RecommendAssetsRequest,
@@ -1486,6 +1488,16 @@ export function msgToJSON(msg: Msg): MsgJSON {
 
   return {
     evm_tx: evmTxToJSON(msg.evmTx),
+  };
+}
+
+export function messageResponseFromJSON(
+  response: MsgsResponseJSON,
+): MsgsResponse {
+  return {
+    estimatedFees: response.estimated_fees.map(estimatedFeeFromJSON),
+    msgs: response.msgs.map(msgFromJSON),
+    txs: response.txs.map(txFromJSON),
   };
 }
 

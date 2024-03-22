@@ -400,7 +400,7 @@ export type Tx = { cosmosTx: CosmosTx } | { evmTx: EvmTx } | { svmTx: SvmTx };
 
 export type MsgsResponseJSON = {
   msgs: MsgJSON[];
-  estimated_fees: EstimatedFee[];
+  estimated_fees: EstimatedFeeJSON[];
   txs: TxJSON[];
 };
 

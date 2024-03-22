@@ -214,7 +214,7 @@ export class SkipRouter {
       );
     });
 
-    const messages = await this.messages({
+    const { msgs: messages } = await this.messages({
       sourceAssetDenom: route.sourceAssetDenom,
       sourceAssetChainID: route.sourceAssetChainID,
       destAssetDenom: route.destAssetDenom,
@@ -928,7 +928,7 @@ export class SkipRouter {
     });
   }
 
-  async messages(options: types.MsgsRequest): Promise<types.Msg[]> {
+  async messages(options: types.MsgsRequest): Promise<types.MsgsResponse> {
     const response = await this.requestClient.post<
       types.MsgsResponseJSON,
       types.MsgsRequestJSON
@@ -938,7 +938,7 @@ export class SkipRouter {
       client_id: this.clientID,
     });
 
-    return response.msgs.map((msg) => types.msgFromJSON(msg));
+    return types.messageResponseFromJSON(response);
   }
 
   async route(options: types.RouteRequest): Promise<types.RouteResponse> {
