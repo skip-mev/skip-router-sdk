@@ -695,7 +695,7 @@ describe("client", () => {
         estimatedAmountOut: "54946",
       });
 
-      expect(response).toEqual([
+      expect(response.msgs).toEqual([
         {
           multiChainMsg: {
             chainID: "osmosis-1",
