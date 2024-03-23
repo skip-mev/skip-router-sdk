@@ -405,6 +405,9 @@ export type MsgsResponseJSON = {
 };
 
 export type MsgsResponse = {
+  /**
+   * @deprecated Use `txs` instead
+   */
   msgs: Msg[];
   estimatedFees: EstimatedFee[];
   txs: Tx[];

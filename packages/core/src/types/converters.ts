@@ -388,7 +388,9 @@ export function estimatedFeeFromJSON(
     bridgeID: estimatedFeeJSON.bridge_id,
     chainID: estimatedFeeJSON.chain_id,
     feeType: estimatedFeeJSON.fee_type,
-    originAsset: assetFromJSON(estimatedFeeJSON.origin_asset),
+    originAsset:
+      estimatedFeeJSON.origin_asset &&
+      assetFromJSON(estimatedFeeJSON.origin_asset),
     txIndex: estimatedFeeJSON.tx_index,
     usdAmount: estimatedFeeJSON.usd_amount,
     operationIndex: estimatedFeeJSON.operation_index,
@@ -403,7 +405,8 @@ export function estimatedFeeToJSON(
     bridge_id: estimatedFee.bridgeID,
     chain_id: estimatedFee.chainID,
     fee_type: estimatedFee.feeType,
-    origin_asset: assetToJSON(estimatedFee.originAsset),
+    origin_asset:
+      estimatedFee.originAsset && assetToJSON(estimatedFee.originAsset),
     tx_index: estimatedFee.txIndex,
     usd_amount: estimatedFee.usdAmount,
     operation_index: estimatedFee.operationIndex,
@@ -928,14 +931,14 @@ export function multiChainMsgToJSON(
 export function cosmosMsgFromJSON(cosmosMsgJSON: CosmosMsgJSON): CosmosMsg {
   return {
     msg: cosmosMsgJSON.msg,
-    msgTypeUrl: cosmosMsgJSON.msg_type_url,
+    msgTypeURL: cosmosMsgJSON.msg_type_url,
   };
 }
 
 export function cosmosMsgToJSON(cosmosMsg: CosmosMsg): CosmosMsgJSON {
   return {
     msg: cosmosMsg.msg,
-    msg_type_url: cosmosMsg.msgTypeUrl,
+    msg_type_url: cosmosMsg.msgTypeURL,
   };
 }
 
@@ -1349,38 +1352,14 @@ export function erc20ApprovalToJSON(
 export function svmTxFromJSON(svmTxJSON: SvmTxJSON): SvmTx {
   return {
     chainID: svmTxJSON.chain_id,
-    instructions: svmTxJSON.instructions.map((i) => {
-      return {
-        accountKeys: i.account_keys.map((j) => {
-          return {
-            publicKey: j.public_key,
-            isSigner: j.is_signer,
-            isWritable: j.is_writable,
-          };
-        }),
-        data: i.data,
-        programID: i.program_id,
-      };
-    }),
+    unsignedTx: svmTxJSON.unsigned_tx,
   };
 }
 
 export function svmTxToJSON(svmTx: SvmTx): SvmTxJSON {
   return {
     chain_id: svmTx.chainID,
-    instructions: svmTx.instructions.map((i) => {
-      return {
-        account_keys: i.accountKeys.map((j) => {
-          return {
-            public_key: j.publicKey,
-            is_signer: j.isSigner,
-            is_writable: j.isWritable,
-          };
-        }),
-        data: i.data,
-        program_id: i.programID,
-      };
-    }),
+    unsigned_tx: svmTx.unsignedTx,
   };
 }
 
@@ -1495,9 +1474,11 @@ export function messageResponseFromJSON(
   response: MsgsResponseJSON,
 ): MsgsResponse {
   return {
-    estimatedFees: response.estimated_fees.map(estimatedFeeFromJSON),
-    msgs: response.msgs.map(msgFromJSON),
-    txs: response.txs.map(txFromJSON),
+    estimatedFees: response.estimated_fees.map((fee) =>
+      estimatedFeeFromJSON(fee),
+    ),
+    msgs: response.msgs.map((msg) => msgFromJSON(msg)),
+    txs: response.txs.map((tx) => txFromJSON(tx)),
   };
 }
 

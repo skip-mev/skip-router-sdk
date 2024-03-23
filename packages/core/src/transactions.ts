@@ -8,13 +8,13 @@ import { MsgExecuteContract } from "cosmjs-types/cosmwasm/wasm/v1/tx";
 import { MsgTransfer } from "cosmjs-types/ibc/applications/transfer/v1/tx";
 
 import { MsgDepositForBurn } from "./codegen/circle/cctp/v1/tx";
-import { MultiChainMsg } from "./types";
+import { CosmosMsg } from "./types";
 import { SigningStargateClient } from "@cosmjs/stargate";
 
 export const DEFAULT_GAS_MULTIPLIER = 1.5;
 
-export function getEncodeObjectFromMultiChainMessage(
-  message: MultiChainMsg,
+export function getEncodeObjectFromCosmosMessage(
+  message: CosmosMsg,
 ): EncodeObject {
   const msgJson = JSON.parse(message.msg);
 
@@ -70,8 +70,8 @@ export function getEncodeObjectFromMultiChainMessage(
   };
 }
 
-export function getEncodeObjectFromMultiChainMessageInjective(
-  message: MultiChainMsg,
+export function getEncodeObjectFromCosmosMessageInjective(
+  message: CosmosMsg,
 ): Msgs {
   const msgJson = JSON.parse(message.msg);
 
@@ -99,10 +99,11 @@ export function getEncodeObjectFromMultiChainMessageInjective(
   throw new Error("Unsupported message type");
 }
 
-export async function getGasAmountForMessage(
+export async function getCosmosGasAmountForMessage(
   client: SigningStargateClient,
   signerAddress: string,
-  message?: MultiChainMsg,
+  chainID: string,
+  message?: CosmosMsg,
   encodedMsgs?: EncodeObject[],
   multiplier: number = DEFAULT_GAS_MULTIPLIER,
 ) {
@@ -110,11 +111,11 @@ export async function getGasAmountForMessage(
     throw new Error("Either message or encodedMsg must be provided");
   }
 
-  encodedMsgs = encodedMsgs || [getEncodeObjectFromMultiChainMessage(message!)];
+  encodedMsgs = encodedMsgs || [getEncodeObjectFromCosmosMessage(message!)];
   if (
-    message?.chainID.includes("evmos") ||
-    message?.chainID.includes("injective") ||
-    message?.chainID.includes("dymension") ||
+    chainID.includes("evmos") ||
+    chainID.includes("injective") ||
+    chainID.includes("dymension") ||
     process?.env.NODE_ENV === "test"
   ) {
     if (message?.msgTypeURL === "/cosmwasm.wasm.v1.MsgExecuteContract") {

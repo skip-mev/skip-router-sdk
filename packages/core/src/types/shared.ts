@@ -186,7 +186,7 @@ export type CosmosMsgJSON = {
 };
 export type CosmosMsg = {
   msg: string;
-  msgTypeUrl: string;
+  msgTypeURL: string;
 };
 
 export type CosmosTxJSON = {
@@ -380,28 +380,12 @@ export type ERC20Approval = {
 
 export type SvmTxJSON = {
   chain_id: string;
-  instructions: {
-    data: string;
-    account_keys: {
-      public_key: string;
-      is_signer: boolean;
-      is_writable: boolean;
-    }[];
-    program_id: string;
-  }[];
+  unsigned_tx: string;
 };
 
 export type SvmTx = {
   chainID: string;
-  instructions: {
-    data: string;
-    accountKeys: {
-      publicKey: string;
-      isSigner: boolean;
-      isWritable: boolean;
-    }[];
-    programID: string;
-  }[];
+  unsignedTx: string;
 };
 
 export type EvmTxJSON = {
