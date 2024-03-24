@@ -60,7 +60,7 @@ import {
 import * as types from "./types";
 import * as clientTypes from "./client-types";
 import { msgsDirectRequestToJSON } from "./types/converters";
-import { Adapter } from "@solana/wallet-adapter-base";
+import { SignerWalletAdapter } from "@solana/wallet-adapter-base";
 import { Connection, Transaction } from "@solana/web3.js";
 
 export const SKIP_API_URL = "https://api.skip.money";
@@ -81,7 +81,7 @@ export class SkipRouter {
 
   private getCosmosSigner?: (chainID: string) => Promise<OfflineSigner>;
   private getEVMSigner?: (chainID: string) => Promise<WalletClient>;
-  private getSVMSigner?: () => Promise<Adapter>;
+  private getSVMSigner?: () => Promise<SignerWalletAdapter>;
 
   constructor(options: clientTypes.SkipRouterOptions = {}) {
     this.clientID = options.clientID || "skip-router-js";
@@ -299,7 +299,7 @@ export class SkipRouter {
         }
         txResult = cosmosTxResult[0];
       } else if ("evmTx" in tx) {
-        const txResponse = await this.executeEvmMultiMsg(tx, options);
+        const txResponse = await this.executeEvmMsg(tx, options);
         txResult = {
           chainID: tx.evmTx.chainID,
           txHash: txResponse.transactionHash,
@@ -346,7 +346,7 @@ export class SkipRouter {
     }
   }
 
-  private async executeEvmMultiMsg(
+  private async executeEvmMsg(
     message: { evmTx: types.EvmTx },
     options: clientTypes.ExecuteRouteOptions,
   ) {
@@ -558,16 +558,33 @@ export class SkipRouter {
     signer,
     message,
   }: {
-    signer: Adapter;
+    signer: SignerWalletAdapter;
     message: types.SvmTx;
   }) {
     const _tx = Buffer.from(message.tx, "base64");
     const transaction = Transaction.from(_tx);
-    const tx = new Transaction().add(transaction);
+    console.log("tx 1", transaction.signatures[0]?.publicKey.toString());
+    const msgSentEventData = transaction.instructions[0]?.keys[10]?.pubkey;
+    if (!transaction.signatures[0]) throw new Error("No signature found");
+    transaction.signatures[0].publicKey = msgSentEventData!;
+    console.log("tx 2", transaction.signatures[0].publicKey.toString());
+    const tempSig = transaction.signatures[0].signature;
+    console.log("before", transaction.signatures);
+
     const endpoint = await this.getRpcEndpointForChain(message.chainID);
     const connection = new Connection(endpoint);
-    const signature = await signer.sendTransaction(tx, connection);
-    return signature;
+    const sign = await signer.signTransaction(transaction);
+    console.log("after ", sign.signatures);
+    console.log(
+      "pk",
+      sign.signatures.map((i) => i.publicKey.toString()),
+    );
+    sign.signatures[1]!.signature = tempSig!;
+    console.log("after", sign.signatures);
+    const sig = await connection.sendRawTransaction(sign.serialize());
+    console.log("sig", sig);
+    // const signature = await signer.sendTransaction(sign, connection);
+    return sig;
   }
 
   async signCosmosMessageDirect(
