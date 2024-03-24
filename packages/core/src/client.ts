@@ -206,7 +206,6 @@ export class SkipRouter {
 
   async executeRoute(options: clientTypes.ExecuteRouteOptions) {
     const { route, userAddresses } = options;
-
     const addressList = route.chainIDs.map((chainID) => {
       return (
         userAddresses[chainID] ||
@@ -562,9 +561,9 @@ export class SkipRouter {
     signer: Adapter;
     message: types.SvmTx;
   }) {
-    const unsignedTx = Buffer.from(message.unsignedTx, "base64");
-    const tx = Transaction.from(unsignedTx);
-    // TODO: test this
+    const _tx = Buffer.from(message.tx, "base64");
+    const transaction = Transaction.from(_tx);
+    const tx = new Transaction().add(transaction);
     const endpoint = await this.getRpcEndpointForChain(message.chainID);
     const connection = new Connection(endpoint);
     const signature = await signer.sendTransaction(tx, connection);
@@ -865,7 +864,6 @@ export class SkipRouter {
       slippage_tolerance_percent: options.slippageTolerancePercent || "0",
       client_id: this.clientID,
     });
-    console.log("sdk response", response);
     return types.messageResponseFromJSON(response);
   }
 

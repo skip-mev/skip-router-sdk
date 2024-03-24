@@ -1352,14 +1352,14 @@ export function erc20ApprovalToJSON(
 export function svmTxFromJSON(svmTxJSON: SvmTxJSON): SvmTx {
   return {
     chainID: svmTxJSON.chain_id,
-    unsignedTx: svmTxJSON.unsigned_tx,
+    tx: svmTxJSON.tx,
   };
 }
 
 export function svmTxToJSON(svmTx: SvmTx): SvmTxJSON {
   return {
     chain_id: svmTx.chainID,
-    unsigned_tx: svmTx.unsignedTx,
+    tx: svmTx.tx,
   };
 }
 

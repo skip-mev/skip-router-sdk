@@ -380,12 +380,12 @@ export type ERC20Approval = {
 
 export type SvmTxJSON = {
   chain_id: string;
-  unsigned_tx: string;
+  tx: string;
 };
 
 export type SvmTx = {
   chainID: string;
-  unsignedTx: string;
+  tx: string;
 };
 
 export type EvmTxJSON = {
