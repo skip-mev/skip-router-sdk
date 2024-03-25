@@ -1474,11 +1474,11 @@ export function messageResponseFromJSON(
   response: MsgsResponseJSON,
 ): MsgsResponse {
   return {
-    estimatedFees: response.estimated_fees.map((fee) =>
+    estimatedFees: response.estimated_fees?.map((fee) =>
       estimatedFeeFromJSON(fee),
     ),
     msgs: response.msgs.map((msg) => msgFromJSON(msg)),
-    txs: response.txs.map((tx) => txFromJSON(tx)),
+    txs: response.txs?.map((tx) => txFromJSON(tx)),
   };
 }
 
