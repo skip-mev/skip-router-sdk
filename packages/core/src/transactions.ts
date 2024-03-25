@@ -7,8 +7,11 @@ import { MsgSend } from "cosmjs-types/cosmos/bank/v1beta1/tx";
 import { MsgExecuteContract } from "cosmjs-types/cosmwasm/wasm/v1/tx";
 import { MsgTransfer } from "cosmjs-types/ibc/applications/transfer/v1/tx";
 
-import { MsgDepositForBurn } from "./codegen/circle/cctp/v1/tx";
 import { CosmosMsg } from "./types";
+import {
+  MsgDepositForBurn,
+  MsgDepositForBurnWithCaller,
+} from "./codegen/circle/cctp/v1/tx";
 import { SigningStargateClient } from "@cosmjs/stargate";
 
 export const DEFAULT_GAS_MULTIPLIER = 1.5;
@@ -61,6 +64,13 @@ export function getEncodeObjectFromCosmosMessage(
     return {
       typeUrl: message.msgTypeURL,
       value: MsgDepositForBurn.fromAmino(msgJson),
+    };
+  }
+
+  if (message.msgTypeURL === "/circle.cctp.v1.MsgDepositForBurnWithCaller") {
+    return {
+      typeUrl: message.msgTypeURL,
+      value: MsgDepositForBurnWithCaller.fromAmino(msgJson),
     };
   }
 
