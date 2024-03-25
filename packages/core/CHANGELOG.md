@@ -1,5 +1,11 @@
 # @skip-router/core
 
+## 2.0.0-rc.6
+
+### Patch Changes
+
+- track retry and backoff
+
 ## 2.0.0-rc.5
 
 ### Patch Changes
