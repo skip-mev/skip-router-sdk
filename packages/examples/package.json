@@ -1,11 +1,11 @@
 {
   "name": "examples",
-  "version": "1.0.1-rc.6",
+  "version": "1.0.1-rc.7",
   "scripts": {
     "start": "npx ts-node src/index.ts"
   },
   "dependencies": {
-    "@skip-router/core": "2.0.0-rc.6"
+    "@skip-router/core": "2.0.0-rc.7"
   },
   "private": true
 }

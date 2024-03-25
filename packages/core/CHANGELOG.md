@@ -1,5 +1,11 @@
 # @skip-router/core
 
+## 2.0.0-rc.7
+
+### Patch Changes
+
+- fix cctp message MsgDepositForBurnWithCaller
+
 ## 2.0.0-rc.6
 
 ### Patch Changes
