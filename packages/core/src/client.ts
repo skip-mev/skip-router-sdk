@@ -563,28 +563,10 @@ export class SkipRouter {
   }) {
     const _tx = Buffer.from(message.tx, "base64");
     const transaction = Transaction.from(_tx);
-    console.log("tx 1", transaction.signatures[0]?.publicKey.toString());
-    const msgSentEventData = transaction.instructions[0]?.keys[10]?.pubkey;
-    if (!transaction.signatures[0]) throw new Error("No signature found");
-    transaction.signatures[0].publicKey = msgSentEventData!;
-    console.log("tx 2", transaction.signatures[0].publicKey.toString());
-    const tempSig = transaction.signatures[0].signature;
-    console.log("before", transaction.signatures);
-
     const endpoint = await this.getRpcEndpointForChain(message.chainID);
     const connection = new Connection(endpoint);
-    const sign = await signer.signTransaction(transaction);
-    console.log("after ", sign.signatures);
-    console.log(
-      "pk",
-      sign.signatures.map((i) => i.publicKey.toString()),
-    );
-    sign.signatures[1]!.signature = tempSig!;
-    console.log("after", sign.signatures);
-    const sig = await connection.sendRawTransaction(sign.serialize());
-    console.log("sig", sig);
-    // const signature = await signer.sendTransaction(sign, connection);
-    return sig;
+    const signature = await signer.sendTransaction(transaction, connection);
+    return signature;
   }
 
   async signCosmosMessageDirect(
