@@ -952,20 +952,72 @@ export class SkipRouter {
   async trackTransaction({
     chainID,
     txHash,
+    options,
   }: {
     chainID: string;
     txHash: string;
+    options?: {
+      /**
+       * Retry options
+       * @default { maxRetries: 5, retryInterval: 1000, backoffMultiplier: 2 }
+       */
+      retry?: {
+        /**
+         * Maximum number of retries
+         * @default 5
+         */
+        maxRetries?: number;
+        /**
+         * Retry interval in milliseconds
+         * @default 1000
+         */
+        retryInterval?: number;
+        /**
+         * Backoff multiplier for retries
+         *
+         * example: `retryInterval` is set to 1000, backoffMultiplier is set to 2
+         *
+         * 1st retry: 1000ms
+         *
+         * 2nd retry: 2000ms
+         *
+         * 3rd retry: 4000ms
+         *
+         * 4th retry: 8000ms
+         *
+         * 5th retry: 16000ms
+         *
+         * @default 2
+         */
+        backoffMultiplier?: number;
+      };
+    };
   }): Promise<types.TrackTxResponse> {
-    const response = await this.requestClient.post<
-      types.TrackTxResponseJSON,
-      types.TrackTxRequestJSON
-    >("/v2/tx/track", {
-      chain_id: chainID,
-      tx_hash: txHash,
-      client_id: this.clientID,
-    });
+    const maxRetries = options?.retry?.maxRetries ?? 5;
+    const retryInterval = options?.retry?.retryInterval ?? 1000;
+    const backoffMultiplier = options?.retry?.backoffMultiplier ?? 2;
 
-    return types.trackTxResponseFromJSON(response);
+    let retries = 0;
+    let lastError;
+    while (retries < maxRetries) {
+      try {
+        const response = await this.requestClient.post<
+          types.TrackTxResponseJSON,
+          types.TrackTxRequestJSON
+        >("/v2/tx/track", {
+          chain_id: chainID,
+          tx_hash: txHash,
+          client_id: this.clientID,
+        });
+
+        return types.trackTxResponseFromJSON(response);
+      } catch (error) {
+        lastError = error;
+        retries++;
+        await wait(retryInterval * Math.pow(backoffMultiplier, retries - 1));
+      }
+    }
+    throw lastError;
   }
 
   async transactionStatus({
@@ -1056,6 +1108,11 @@ export class SkipRouter {
     await this.trackTransaction({
       chainID,
       txHash,
+      options: {
+        retry: {
+          backoffMultiplier: 2.5,
+        },
+      },
     });
     if (onTransactionTracked) {
       await onTransactionTracked({ txHash, chainID });
