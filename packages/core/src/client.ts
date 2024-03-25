@@ -60,7 +60,7 @@ import {
 import * as types from "./types";
 import * as clientTypes from "./client-types";
 import { msgsDirectRequestToJSON } from "./types/converters";
-import { SignerWalletAdapter } from "@solana/wallet-adapter-base";
+import { Adapter } from "@solana/wallet-adapter-base";
 import { Connection, Transaction } from "@solana/web3.js";
 
 export const SKIP_API_URL = "https://api.skip.money";
@@ -81,7 +81,7 @@ export class SkipRouter {
 
   private getCosmosSigner?: (chainID: string) => Promise<OfflineSigner>;
   private getEVMSigner?: (chainID: string) => Promise<WalletClient>;
-  private getSVMSigner?: () => Promise<SignerWalletAdapter>;
+  private getSVMSigner?: () => Promise<Adapter>;
 
   constructor(options: clientTypes.SkipRouterOptions = {}) {
     this.clientID = options.clientID || "skip-router-js";
@@ -558,7 +558,7 @@ export class SkipRouter {
     signer,
     message,
   }: {
-    signer: SignerWalletAdapter;
+    signer: Adapter;
     message: types.SvmTx;
   }) {
     const _tx = Buffer.from(message.tx, "base64");
