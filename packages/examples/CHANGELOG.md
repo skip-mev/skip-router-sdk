@@ -1,5 +1,12 @@
 # examples
 
+## 1.0.1-rc.5
+
+### Patch Changes
+
+- Updated dependencies
+  - @skip-router/core@2.0.0-rc.5
+
 ## 1.0.1-rc.4
 
 ### Patch Changes
