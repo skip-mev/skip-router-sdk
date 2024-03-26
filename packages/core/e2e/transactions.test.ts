@@ -63,7 +63,8 @@ describe("transaction execution", () => {
       signerAddress,
       getCosmosSigner,
       getGasPrice,
-      message,
+      messages: [message],
+      chainID: "gaia-1",
     });
 
     expect(isDeliverTxSuccess(tx)).toBe(true);
@@ -164,7 +165,7 @@ describe("transaction execution", () => {
       // @ts-ignore
       getCosmosSigner,
       getGasPrice,
-      message,
+      messages: [message],
     });
 
     expect(isDeliverTxSuccess(tx)).toBe(true);
@@ -215,7 +216,7 @@ describe("transaction execution", () => {
 
     const tx = await client.executeCosmosMessage({
       signerAddress,
-      message,
+      messages: [message],
       // eslint-disable-next-line @typescript-eslint/ban-ts-comment
       // @ts-ignore
       getCosmosSigner,
@@ -319,7 +320,8 @@ describe("transaction execution", () => {
       signerAddress,
       getCosmosSigner,
       getGasPrice,
-      message,
+      messages: [message],
+      chainID: "osmosis-1",
     });
 
     // CheckTx must pass but the execution will fail in DeliverTx due to invalid contract address
