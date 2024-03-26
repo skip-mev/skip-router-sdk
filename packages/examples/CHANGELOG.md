@@ -1,5 +1,20 @@
 # examples
 
+## 1.0.1
+
+### Patch Changes
+
+- Updated dependencies [519b34f]
+- Updated dependencies [519b34f]
+- Updated dependencies [519b34f]
+- Updated dependencies [519b34f]
+- Updated dependencies [519b34f]
+- Updated dependencies [519b34f]
+- Updated dependencies [519b34f]
+- Updated dependencies [519b34f]
+- Updated dependencies [519b34f]
+  - @skip-router/core@2.0.0
+
 ## 1.0.1-rc.8
 
 ### Patch Changes

@@ -1,5 +1,22 @@
 # @skip-router/core
 
+## 2.0.0
+
+### Major Changes
+
+- 519b34f: Add svm flags
+
+### Patch Changes
+
+- 519b34f: Add svmTx to execute route
+- 519b34f: Add include testnets
+- 519b34f: fix cctp message MsgDepositForBurnWithCaller
+- 519b34f: Catch up to main
+- 519b34f: solana signing
+- 519b34f: fix cosmos_tx msgs signing
+- 519b34f: track retry and backoff
+- 519b34f: update svmTx type
+
 ## 2.0.0-rc.8
 
 ### Patch Changes
