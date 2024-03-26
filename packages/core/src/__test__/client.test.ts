@@ -70,6 +70,7 @@ describe("client", () => {
                       },
                     },
                   ],
+                  is_testnet: false,
                 },
               ] as ChainJSON[],
             }),
@@ -90,6 +91,7 @@ describe("client", () => {
           pfmEnabled: true,
           cosmosSDKVersion: "v0.47.3",
           chainType: "cosmos",
+          isTestnet: false,
           modules: {
             "github.com/cosmos/ibc-go": {
               path: "github.com/cosmos/ibc-go/v4",
@@ -548,6 +550,7 @@ describe("client", () => {
                           decimals: 6,
                           is_cw20: true,
                           is_evm: true,
+                          is_svm: false,
                         },
                         reason: "MOST_LIQUID",
                       },
@@ -590,6 +593,7 @@ describe("client", () => {
                 decimals: 6,
                 isCW20: true,
                 isEVM: true,
+                isSVM: false,
                 tokenContract: undefined,
                 description: undefined,
                 coingeckoID: undefined,
@@ -691,7 +695,7 @@ describe("client", () => {
         estimatedAmountOut: "54946",
       });
 
-      expect(response).toEqual([
+      expect(response.msgs).toEqual([
         {
           multiChainMsg: {
             chainID: "osmosis-1",
@@ -1548,6 +1552,7 @@ describe("client", () => {
               trace: "",
               is_cw20: false,
               is_evm: false,
+              is_svm: false,
               token_contract: "token-contract-value",
               symbol: "OSMO",
               name: "OSMO",
@@ -1568,6 +1573,7 @@ describe("client", () => {
               trace: "",
               is_cw20: false,
               is_evm: false,
+              is_svm: false,
               token_contract: "token-contract-value",
               symbol: "USDC",
               name: "USDC",

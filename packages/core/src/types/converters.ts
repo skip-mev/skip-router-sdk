@@ -80,6 +80,8 @@ import {
   OriginAssetsResponseJSON,
   PostHandler,
   PostHandlerJSON,
+  SvmTx,
+  SvmTxJSON,
   Swap,
   SwapExactCoinIn,
   SwapExactCoinInJSON,
@@ -124,6 +126,8 @@ import {
   MsgsDirectRequestJSON,
   MsgsRequest,
   MsgsRequestJSON,
+  MsgsResponse,
+  MsgsResponseJSON,
   Operation,
   OperationJSON,
   RecommendAssetsRequest,
@@ -163,6 +167,7 @@ export function assetFromJSON(assetJSON: AssetJSON): Asset {
     trace: assetJSON.trace,
     isCW20: assetJSON.is_cw20,
     isEVM: assetJSON.is_evm,
+    isSVM: assetJSON.is_svm,
     symbol: assetJSON.symbol,
     name: assetJSON.name,
     logoURI: assetJSON.logo_uri,
@@ -183,6 +188,7 @@ export function assetToJSON(asset: Asset): AssetJSON {
     trace: asset.trace,
     is_cw20: asset.isCW20,
     is_evm: asset.isEVM,
+    is_svm: asset.isSVM,
     symbol: asset.symbol,
     name: asset.name,
     logo_uri: asset.logoURI,
@@ -245,6 +251,7 @@ export function assetsRequestFromJSON(
     includeNoMetadataAssets: assetsRequestJSON.include_no_metadata_assets,
     includeCW20Assets: assetsRequestJSON.include_cw20_assets,
     includeEvmAssets: assetsRequestJSON.include_evm_assets,
+    includeSvmAssets: assetsRequestJSON.include_svm_assets,
     clientID: assetsRequestJSON.client_id,
   };
 }
@@ -258,6 +265,7 @@ export function assetsRequestToJSON(
     include_no_metadata_assets: assetsRequest.includeNoMetadataAssets,
     include_cw20_assets: assetsRequest.includeCW20Assets,
     include_evm_assets: assetsRequest.includeEvmAssets,
+    include_svm_assets: assetsRequest.includeSvmAssets,
     client_id: assetsRequest.clientID,
   };
 }
@@ -380,7 +388,9 @@ export function estimatedFeeFromJSON(
     bridgeID: estimatedFeeJSON.bridge_id,
     chainID: estimatedFeeJSON.chain_id,
     feeType: estimatedFeeJSON.fee_type,
-    originAsset: assetFromJSON(estimatedFeeJSON.origin_asset),
+    originAsset:
+      estimatedFeeJSON.origin_asset &&
+      assetFromJSON(estimatedFeeJSON.origin_asset),
     txIndex: estimatedFeeJSON.tx_index,
     usdAmount: estimatedFeeJSON.usd_amount,
     operationIndex: estimatedFeeJSON.operation_index,
@@ -395,7 +405,8 @@ export function estimatedFeeToJSON(
     bridge_id: estimatedFee.bridgeID,
     chain_id: estimatedFee.chainID,
     fee_type: estimatedFee.feeType,
-    origin_asset: assetToJSON(estimatedFee.originAsset),
+    origin_asset:
+      estimatedFee.originAsset && assetToJSON(estimatedFee.originAsset),
     tx_index: estimatedFee.txIndex,
     usd_amount: estimatedFee.usdAmount,
     operation_index: estimatedFee.operationIndex,
@@ -796,9 +807,12 @@ export function routeResponseToJSON(
     swap_price_impact_percent: routeResponse.swapPriceImpactPercent,
 
     warning: routeResponse.warning,
-    estimated_fees: routeResponse.estimatedFees?.length
-      ? routeResponse.estimatedFees.map((i) => estimatedFeeToJSON(i))
-      : [],
+    estimated_fees: routeResponse.estimatedFees.map((i) =>
+      estimatedFeeToJSON(i),
+    ),
+    // estimated_fees: routeResponse.estimatedFees?.length
+    //   ? routeResponse.estimatedFees.map((i) => estimatedFeeToJSON(i))
+    //   : [],
   };
 }
 
@@ -917,14 +931,14 @@ export function multiChainMsgToJSON(
 export function cosmosMsgFromJSON(cosmosMsgJSON: CosmosMsgJSON): CosmosMsg {
   return {
     msg: cosmosMsgJSON.msg,
-    msgTypeUrl: cosmosMsgJSON.msg_type_url,
+    msgTypeURL: cosmosMsgJSON.msg_type_url,
   };
 }
 
 export function cosmosMsgToJSON(cosmosMsg: CosmosMsg): CosmosMsgJSON {
   return {
     msg: cosmosMsg.msg,
-    msg_type_url: cosmosMsg.msgTypeUrl,
+    msg_type_url: cosmosMsg.msgTypeURL,
   };
 }
 
@@ -1335,6 +1349,20 @@ export function erc20ApprovalToJSON(
   };
 }
 
+export function svmTxFromJSON(svmTxJSON: SvmTxJSON): SvmTx {
+  return {
+    chainID: svmTxJSON.chain_id,
+    tx: svmTxJSON.tx,
+  };
+}
+
+export function svmTxToJSON(svmTx: SvmTx): SvmTxJSON {
+  return {
+    chain_id: svmTx.chainID,
+    tx: svmTx.tx,
+  };
+}
+
 export function evmTxFromJSON(evmTxJSON: EvmTxJSON): EvmTx {
   return {
     chainID: evmTxJSON.chain_id,
@@ -1380,6 +1408,11 @@ export function txFromJSON(txJSON: TxJSON): Tx {
       cosmosTx: cosmosTxFromJSON(txJSON.cosmos_tx),
     };
   }
+  if ("svm_tx" in txJSON) {
+    return {
+      svmTx: svmTxFromJSON(txJSON.svm_tx),
+    };
+  }
 
   return {
     evmTx: evmTxFromJSON(txJSON.evm_tx),
@@ -1390,6 +1423,11 @@ export function txToJSON(tx: Tx): TxJSON {
   if ("cosmosTx" in tx) {
     return {
       cosmos_tx: cosmosTxToJSON(tx.cosmosTx),
+    };
+  }
+  if ("svmTx" in tx) {
+    return {
+      svm_tx: svmTxToJSON(tx.svmTx),
     };
   }
 
@@ -1404,6 +1442,11 @@ export function msgFromJSON(msgJSON: MsgJSON): Msg {
       multiChainMsg: multiChainMsgFromJSON(msgJSON.multi_chain_msg),
     };
   }
+  if ("svm_tx" in msgJSON) {
+    return {
+      svmTx: svmTxFromJSON(msgJSON.svm_tx),
+    };
+  }
 
   return {
     evmTx: evmTxFromJSON(msgJSON.evm_tx),
@@ -1416,9 +1459,26 @@ export function msgToJSON(msg: Msg): MsgJSON {
       multi_chain_msg: multiChainMsgToJSON(msg.multiChainMsg),
     };
   }
+  if ("svmTx" in msg) {
+    return {
+      svm_tx: svmTxToJSON(msg.svmTx),
+    };
+  }
 
   return {
     evm_tx: evmTxToJSON(msg.evmTx),
+  };
+}
+
+export function messageResponseFromJSON(
+  response: MsgsResponseJSON,
+): MsgsResponse {
+  return {
+    estimatedFees: response.estimated_fees?.map((fee) =>
+      estimatedFeeFromJSON(fee),
+    ),
+    msgs: response.msgs.map((msg) => msgFromJSON(msg)),
+    txs: response.txs?.map((tx) => txFromJSON(tx)),
   };
 }
 

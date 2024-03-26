@@ -7,17 +7,17 @@ import { MsgSend } from "cosmjs-types/cosmos/bank/v1beta1/tx";
 import { MsgExecuteContract } from "cosmjs-types/cosmwasm/wasm/v1/tx";
 import { MsgTransfer } from "cosmjs-types/ibc/applications/transfer/v1/tx";
 
+import { CosmosMsg } from "./types";
 import {
   MsgDepositForBurn,
   MsgDepositForBurnWithCaller,
 } from "./codegen/circle/cctp/v1/tx";
-import { MultiChainMsg } from "./types";
 import { SigningStargateClient } from "@cosmjs/stargate";
 
 export const DEFAULT_GAS_MULTIPLIER = 1.5;
 
-export function getEncodeObjectFromMultiChainMessage(
-  message: MultiChainMsg,
+export function getEncodeObjectFromCosmosMessage(
+  message: CosmosMsg,
 ): EncodeObject {
   const msgJson = JSON.parse(message.msg);
 
@@ -80,8 +80,8 @@ export function getEncodeObjectFromMultiChainMessage(
   };
 }
 
-export function getEncodeObjectFromMultiChainMessageInjective(
-  message: MultiChainMsg,
+export function getEncodeObjectFromCosmosMessageInjective(
+  message: CosmosMsg,
 ): Msgs {
   const msgJson = JSON.parse(message.msg);
 
@@ -109,25 +109,35 @@ export function getEncodeObjectFromMultiChainMessageInjective(
   throw new Error("Unsupported message type");
 }
 
-export async function getGasAmountForMessage(
+export async function getCosmosGasAmountForMessage(
   client: SigningStargateClient,
   signerAddress: string,
-  message?: MultiChainMsg,
+  chainID: string,
+  messages?: CosmosMsg[],
   encodedMsgs?: EncodeObject[],
   multiplier: number = DEFAULT_GAS_MULTIPLIER,
 ) {
-  if (!message && !encodedMsgs) {
+  if (!messages && !encodedMsgs) {
     throw new Error("Either message or encodedMsg must be provided");
   }
-
-  encodedMsgs = encodedMsgs || [getEncodeObjectFromMultiChainMessage(message!)];
+  const _encodedMsgs = messages?.map((message) =>
+    getEncodeObjectFromCosmosMessage(message),
+  );
+  encodedMsgs = encodedMsgs || _encodedMsgs;
+  if (!encodedMsgs) {
+    throw new Error("Either message or encodedMsg must be provided");
+  }
   if (
-    message?.chainID.includes("evmos") ||
-    message?.chainID.includes("injective") ||
-    message?.chainID.includes("dymension") ||
+    chainID.includes("evmos") ||
+    chainID.includes("injective") ||
+    chainID.includes("dymension") ||
     process?.env.NODE_ENV === "test"
   ) {
-    if (message?.msgTypeURL === "/cosmwasm.wasm.v1.MsgExecuteContract") {
+    if (
+      messages?.find(
+        (i) => i.msgTypeURL === "/cosmwasm.wasm.v1.MsgExecuteContract",
+      )
+    ) {
       return "2400000";
     }
     return "280000";
