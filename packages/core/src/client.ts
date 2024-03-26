@@ -553,7 +553,9 @@ export class SkipRouter {
     const transaction = Transaction.from(_tx);
     const endpoint = await this.getRpcEndpointForChain(message.chainID);
     const connection = new Connection(endpoint);
-    const signature = await signer.sendTransaction(transaction, connection);
+    const signature = await signer.sendTransaction(transaction, connection, {
+      preflightCommitment: "confirmed",
+    });
     return signature;
   }
 
