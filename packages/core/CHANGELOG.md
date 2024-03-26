@@ -4,7 +4,7 @@
 
 ### Major Changes
 
-- 519b34f: Add svm flags
+- 519b34f: Support solana tx and rapid relay
 
 ### Patch Changes
 
