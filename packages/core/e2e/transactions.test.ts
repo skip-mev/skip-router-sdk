@@ -161,11 +161,11 @@ describe("transaction execution", () => {
 
     const tx = await client.executeCosmosMessage({
       signerAddress,
-      // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-      // @ts-ignore
+      // @ts-expect-error : skipping type check for testing purposes
       getCosmosSigner,
       getGasPrice,
       messages: [message],
+      chainID: "injective-1",
     });
 
     expect(isDeliverTxSuccess(tx)).toBe(true);
@@ -217,10 +217,10 @@ describe("transaction execution", () => {
     const tx = await client.executeCosmosMessage({
       signerAddress,
       messages: [message],
-      // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-      // @ts-ignore
+      // @ts-expect-error : skipping type check for testing purposes
       getCosmosSigner,
       getGasPrice,
+      chainID: "evmos_9000-1",
     });
 
     expect(isDeliverTxSuccess(tx)).toBe(true);
