@@ -1,5 +1,11 @@
 # @skip-router/core
 
+## 2.0.0-rc.8
+
+### Patch Changes
+
+- fix cosmos_tx msgs signing
+
 ## 2.0.0-rc.7
 
 ### Patch Changes
