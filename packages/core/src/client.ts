@@ -265,39 +265,27 @@ export class SkipRouter {
       let txResult: { chainID: string; txHash: string };
       if ("cosmosTx" in tx) {
         // TODO: use typeguard instead
-        const cosmosTxResult: { chainID: string; txHash: string }[] = [];
 
         const cosmosTx = tx.cosmosTx;
-
         const currentUserAddress = userAddresses[cosmosTx.chainID];
         if (!currentUserAddress) {
           raise(
             `executeRoute error: invalid address for chain '${cosmosTx.chainID}'`,
           );
         }
-        for (let j = 0; j < cosmosTx.msgs.length; j++) {
-          const message = cosmosTx.msgs[j];
-          if (!message) {
-            raise(`executeRoute error: invalid message at index ${j}`);
-          }
-          const txResponse = await this.executeCosmosMessage({
-            message: message,
-            chainID: cosmosTx.chainID,
-            getCosmosSigner: getOfflineSigner,
-            getGasPrice: getGasPrice,
-            gasAmountMultiplier,
-            signerAddress: currentUserAddress,
-          });
+        const txResponse = await this.executeCosmosMessage({
+          messages: cosmosTx.msgs,
+          chainID: cosmosTx.chainID,
+          getCosmosSigner: getOfflineSigner,
+          getGasPrice: getGasPrice,
+          gasAmountMultiplier,
+          signerAddress: currentUserAddress,
+        });
 
-          cosmosTxResult.push({
-            chainID: cosmosTx.chainID,
-            txHash: txResponse.transactionHash,
-          });
-        }
-        if (!cosmosTxResult[0]) {
-          raise(`executeRoute error: invalid cosmosTxResult for txResult`);
-        }
-        txResult = cosmosTxResult[0];
+        txResult = {
+          chainID: cosmosTx.chainID,
+          txHash: txResponse.transactionHash,
+        };
       } else if ("evmTx" in tx) {
         const txResponse = await this.executeEvmMsg(tx, options);
         txResult = {
@@ -370,7 +358,7 @@ export class SkipRouter {
       signerAddress,
       getCosmosSigner,
       chainID,
-      message,
+      messages,
       getGasPrice,
       gasAmountMultiplier,
     } = options;
@@ -407,7 +395,7 @@ export class SkipRouter {
       signerAddress,
       gasAmountMultiplier,
       getGasPrice,
-      message,
+      messages,
     );
 
     const { accountNumber, sequence } = await this.getAccountNumberAndSequence(
@@ -421,7 +409,7 @@ export class SkipRouter {
         signerAddress,
         signer,
         chainID,
-        cosmosMsg: message,
+        cosmosMsgs: messages,
         fee,
         signerData: {
           accountNumber,
@@ -434,7 +422,7 @@ export class SkipRouter {
         signerAddress,
         signer,
         chainID,
-        cosmosMsg: message,
+        cosmosMsgs: messages,
         fee,
         signerData: {
           accountNumber,
@@ -457,14 +445,14 @@ export class SkipRouter {
     signerAddress: string,
     gasAmountMultiplier: number | undefined,
     getGasPrice?: (chainID: string) => Promise<GasPrice | undefined>,
-    message?: types.CosmosMsg,
+    messages?: types.CosmosMsg[],
     encodedMsgs?: EncodeObject[],
   ) {
     const estimatedGas = await getCosmosGasAmountForMessage(
       stargateClient,
       signerAddress,
       chainID,
-      message,
+      messages,
       encodedMsgs,
       gasAmountMultiplier,
     );
@@ -481,7 +469,7 @@ export class SkipRouter {
 
     if (!fee) {
       raise(
-        `executeRoute error: unable to get fee for message(s) ${message || encodedMsgs}`,
+        `executeRoute error: unable to get fee for message(s) ${messages || encodedMsgs}`,
       );
     }
     return fee;
@@ -576,7 +564,7 @@ export class SkipRouter {
       signer,
       signerAddress,
       chainID,
-      cosmosMsg,
+      cosmosMsgs,
       fee,
       signerData: { accountNumber, sequence, chainId },
     } = options;
@@ -585,7 +573,7 @@ export class SkipRouter {
       return this.signMultiChainMessageDirectEvmos(
         signerAddress,
         signer,
-        cosmosMsg,
+        cosmosMsgs,
         fee,
         { accountNumber, sequence, chainId },
       );
@@ -595,7 +583,7 @@ export class SkipRouter {
       return this.signCosmosMessageDirectInjective(
         signerAddress,
         signer,
-        cosmosMsg,
+        cosmosMsgs,
         fee,
         { accountNumber, sequence, chainId },
       );
@@ -612,12 +600,14 @@ export class SkipRouter {
       );
     }
 
-    const message = getEncodeObjectFromCosmosMessage(cosmosMsg);
+    const messages = cosmosMsgs.map((cosmosMsg) =>
+      getEncodeObjectFromCosmosMessage(cosmosMsg),
+    );
 
     const txBodyEncodeObject: TxBodyEncodeObject = {
       typeUrl: "/cosmos.tx.v1beta1.TxBody",
       value: {
-        messages: [message],
+        messages: messages,
       },
     };
 
@@ -660,7 +650,7 @@ export class SkipRouter {
   private async signMultiChainMessageDirectEvmos(
     signerAddress: string,
     signer: OfflineDirectSigner,
-    cosmosMsg: types.CosmosMsg,
+    cosmosMsgs: types.CosmosMsg[],
     fee: StdFee,
     { accountNumber, sequence, chainId }: SignerData,
   ): Promise<TxRaw> {
@@ -675,14 +665,16 @@ export class SkipRouter {
       );
     }
 
-    const message = getEncodeObjectFromCosmosMessageInjective(cosmosMsg);
+    const messages = cosmosMsgs.map((cosmosMsg) =>
+      getEncodeObjectFromCosmosMessageInjective(cosmosMsg),
+    );
 
     const pk = Buffer.from(accountFromSigner.pubkey).toString("base64");
 
     const { signDoc } = createTransaction({
       pubKey: pk,
       chainId: chainId,
-      message: [message],
+      message: messages,
       sequence,
       accountNumber,
       timeoutHeight: 0,
@@ -708,7 +700,7 @@ export class SkipRouter {
   private async signCosmosMessageDirectInjective(
     signerAddress: string,
     signer: OfflineDirectSigner,
-    cosmosMsg: types.CosmosMsg,
+    cosmosMsgs: types.CosmosMsg[],
     fee: StdFee,
     { accountNumber, sequence, chainId }: SignerData,
   ): Promise<TxRaw> {
@@ -735,12 +727,14 @@ export class SkipRouter {
 
     const pk = Buffer.from(accountFromSigner.pubkey).toString("base64");
 
-    const message = getEncodeObjectFromCosmosMessageInjective(cosmosMsg);
+    const messages = cosmosMsgs.map((cosmosMsg) =>
+      getEncodeObjectFromCosmosMessageInjective(cosmosMsg),
+    );
 
     const { signDoc } = createTransaction({
       pubKey: pk,
       chainId: chainId,
-      message: [message],
+      message: messages,
       sequence,
       accountNumber,
       timeoutHeight: timeoutHeight.toNumber(),
@@ -767,7 +761,7 @@ export class SkipRouter {
       signer,
       signerAddress,
       chainID,
-      cosmosMsg,
+      cosmosMsgs,
       fee,
       signerData: { accountNumber, sequence, chainId },
     } = options;
@@ -783,27 +777,32 @@ export class SkipRouter {
       );
     }
 
-    const message = getEncodeObjectFromCosmosMessage(cosmosMsg);
+    const messages = cosmosMsgs.map((cosmosMsg) =>
+      getEncodeObjectFromCosmosMessage(cosmosMsg),
+    );
 
-    if (message.typeUrl === "/ibc.applications.transfer.v1.MsgTransfer") {
+    const aminoMsgTransferIndex = messages.findIndex(
+      (x) => x.typeUrl === "/ibc.applications.transfer.v1.MsgTransfer",
+    );
+    if (aminoMsgTransferIndex !== -1) {
       const endpoint = await this.getRpcEndpointForChain(chainID);
-
       const client = await StargateClient.connect(endpoint, {
         accountParser,
       });
 
       const currentHeight = await client.getHeight();
 
-      message.value.timeoutHeight = {
+      messages[aminoMsgTransferIndex]!.value.timeoutHeight = {
         revisionHeight: Long.fromNumber(currentHeight).add(100),
         revisionNumber: Long.fromNumber(currentHeight).add(100),
       };
 
-      message.value.timeoutTimestamp = Long.fromNumber(0);
+      messages[aminoMsgTransferIndex]!.value.timeoutTimestamp =
+        Long.fromNumber(0);
     }
 
     const signMode = SignMode.SIGN_MODE_LEGACY_AMINO_JSON;
-    const msgs = [this.aminoTypes.toAmino(message)];
+    const msgs = messages.map((msg) => this.aminoTypes.toAmino(msg));
 
     const signDoc = makeSignDocAmino(
       msgs,
@@ -824,7 +823,7 @@ export class SkipRouter {
       memo: signed.memo,
     };
 
-    signedTxBody.messages[0]!.value.memo = message.value.memo;
+    signedTxBody.messages[0]!.value.memo = messages[0]!.value.memo;
 
     const signedTxBodyEncodeObject: TxBodyEncodeObject = {
       typeUrl: "/cosmos.tx.v1beta1.TxBody",
@@ -1146,13 +1145,13 @@ export class SkipRouter {
     client: SigningStargateClient,
     signerAddress: string,
     chainID: string,
-    cosmosMessage: types.CosmosMsg,
+    cosmosMessages: types.CosmosMsg[],
   ): Promise<string> {
     return getCosmosGasAmountForMessage(
       client,
       signerAddress,
       chainID,
-      cosmosMessage,
+      cosmosMessages,
     );
   }
 
@@ -1313,7 +1312,7 @@ export class SkipRouter {
 
   async getCosmosFeeForMessage(
     chainID: string,
-    msg: types.CosmosMsg,
+    msgs: types.CosmosMsg[],
     gasAmountMultiplier: number = DEFAULT_GAS_MULTIPLIER,
     signer?: OfflineSigner,
     gasPrice?: GasPrice,
@@ -1355,7 +1354,7 @@ export class SkipRouter {
       client,
       signerAddress,
       chainID,
-      msg,
+      msgs,
       undefined,
       gasAmountMultiplier,
     );
@@ -1512,44 +1511,38 @@ export class SkipRouter {
         raise(`validateGasBalances error: invalid tx at index ${i}`);
       }
       if ("cosmosTx" in tx) {
-        for (let j = 0; j < tx.cosmosTx.msgs.length; j++) {
-          const msg = tx.cosmosTx.msgs[j];
-          if (!msg) {
-            raise(
-              `validateGasBalances error: invalid msg at tx ${i} index ${j}`,
-            );
-          }
-          const signer = await getOfflineSigner(tx.cosmosTx.chainID);
-
-          const endpoint = await this.getRpcEndpointForChain(
-            tx.cosmosTx.chainID,
-          );
-          // @note: A new client is created for both the gasbalance validation here as the execution later...
-          const client = await SigningStargateClient.connectWithSigner(
-            endpoint,
-            signer,
-            {
-              aminoTypes: this.aminoTypes,
-              registry: this.registry,
-              accountParser,
-            },
-          );
-
-          const currentAddress =
-            userAddresses[tx.cosmosTx.chainID] ||
-            raise(
-              `validateGasBalance error: invalid address for chain '${tx.cosmosTx.chainID}'`,
-            );
-
-          await this.validateCosmosGasBalance(
-            client,
-            currentAddress,
-            tx.cosmosTx.chainID,
-            msg,
-            getGasPrice,
-            gasAmountMultiplier,
-          );
+        const msgs = tx.cosmosTx.msgs;
+        if (!msgs) {
+          raise(`validateGasBalances error: invalid msgs ${msgs}`);
         }
+        const signer = await getOfflineSigner(tx.cosmosTx.chainID);
+
+        const endpoint = await this.getRpcEndpointForChain(tx.cosmosTx.chainID);
+        // @note: A new client is created for both the gasbalance validation here as the execution later...
+        const client = await SigningStargateClient.connectWithSigner(
+          endpoint,
+          signer,
+          {
+            aminoTypes: this.aminoTypes,
+            registry: this.registry,
+            accountParser,
+          },
+        );
+
+        const currentAddress =
+          userAddresses[tx.cosmosTx.chainID] ||
+          raise(
+            `validateGasBalance error: invalid address for chain '${tx.cosmosTx.chainID}'`,
+          );
+
+        await this.validateCosmosGasBalance(
+          client,
+          currentAddress,
+          tx.cosmosTx.chainID,
+          msgs,
+          getGasPrice,
+          gasAmountMultiplier,
+        );
       }
     }
   }
@@ -1558,7 +1551,7 @@ export class SkipRouter {
     client: SigningStargateClient,
     signerAddress: string,
     chainID: string,
-    message: types.CosmosMsg,
+    messages: types.CosmosMsg[],
     getGasPrice?: (chainID: string) => Promise<GasPrice | undefined>,
     gasAmountMultiplier?: number,
   ) {
@@ -1568,7 +1561,7 @@ export class SkipRouter {
       signerAddress,
       gasAmountMultiplier,
       getGasPrice,
-      message,
+      messages,
     );
 
     if (!fee.amount[0]) {

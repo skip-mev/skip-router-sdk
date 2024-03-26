@@ -113,22 +113,31 @@ export async function getCosmosGasAmountForMessage(
   client: SigningStargateClient,
   signerAddress: string,
   chainID: string,
-  message?: CosmosMsg,
+  messages?: CosmosMsg[],
   encodedMsgs?: EncodeObject[],
   multiplier: number = DEFAULT_GAS_MULTIPLIER,
 ) {
-  if (!message && !encodedMsgs) {
+  if (!messages && !encodedMsgs) {
     throw new Error("Either message or encodedMsg must be provided");
   }
-
-  encodedMsgs = encodedMsgs || [getEncodeObjectFromCosmosMessage(message!)];
+  const _encodedMsgs = messages?.map((message) =>
+    getEncodeObjectFromCosmosMessage(message),
+  );
+  encodedMsgs = encodedMsgs || _encodedMsgs;
+  if (!encodedMsgs) {
+    throw new Error("Either message or encodedMsg must be provided");
+  }
   if (
     chainID.includes("evmos") ||
     chainID.includes("injective") ||
     chainID.includes("dymension") ||
     process?.env.NODE_ENV === "test"
   ) {
-    if (message?.msgTypeURL === "/cosmwasm.wasm.v1.MsgExecuteContract") {
+    if (
+      messages?.find(
+        (i) => i.msgTypeURL === "/cosmwasm.wasm.v1.MsgExecuteContract",
+      )
+    ) {
       return "2400000";
     }
     return "280000";

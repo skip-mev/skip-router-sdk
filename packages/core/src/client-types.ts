@@ -75,7 +75,7 @@ export type ExecuteCosmosMessage = {
   getCosmosSigner: (chainID: string) => Promise<OfflineSigner>;
   getGasPrice?: (chainID: string) => Promise<GasPrice | undefined>;
   chainID: string;
-  message: types.CosmosMsg;
+  messages: types.CosmosMsg[];
   gasAmountMultiplier?: number;
 };
 
@@ -83,7 +83,7 @@ export type SignMultiChainMessageDirectOptions = {
   signerAddress: string;
   signer: OfflineDirectSigner;
   chainID: string;
-  cosmosMsg: types.CosmosMsg;
+  cosmosMsgs: types.CosmosMsg[];
   fee: StdFee;
   signerData: SignerData;
 };
@@ -92,7 +92,7 @@ export type SignMultiChainMessageAminoOptions = {
   signerAddress: string;
   signer: OfflineAminoSigner;
   chainID: string;
-  cosmosMsg: types.CosmosMsg;
+  cosmosMsgs: types.CosmosMsg[];
   fee: StdFee;
   signerData: SignerData;
 };
