@@ -14,6 +14,7 @@ import {
 import { WalletClient } from "viem";
 
 import * as types from "./types";
+import { Adapter } from "@solana/wallet-adapter-base";
 export type EndpointOptions = {
   rpc?: string;
   rest?: string;
@@ -24,6 +25,7 @@ export interface SkipRouterOptions {
   clientID?: string;
   getEVMSigner?: (chainID: string) => Promise<WalletClient>;
   getCosmosSigner?: (chainID: string) => Promise<OfflineSigner>;
+  getSVMSigner?: () => Promise<Adapter>;
   endpointOptions?: {
     endpoints?: Record<string, EndpointOptions>;
     getRpcEndpointForChain?: (chainID: string) => Promise<string>;
@@ -38,6 +40,7 @@ export type ExecuteRouteOptions = {
   userAddresses: Record<string, string>;
   getEVMSigner?: (chainID: string) => Promise<WalletClient>;
   getCosmosSigner?: (chainID: string) => Promise<OfflineSigner>;
+  getSVMSigner?: () => Promise<Adapter>;
   onTransactionBroadcast?: (txInfo: {
     txHash: string;
     chainID: string;
@@ -60,7 +63,7 @@ export type ExecuteRouteOptions = {
   gasAmountMultiplier?: number;
 };
 
-export type ExecuteMultiChainMessageOptions = {
+export type ExecuteCosmosMessageOptions = {
   signerAddress: string;
   signer: OfflineSigner;
   message: types.MultiChainMsg;
@@ -71,22 +74,25 @@ export type ExecuteCosmosMessage = {
   signerAddress: string;
   getCosmosSigner: (chainID: string) => Promise<OfflineSigner>;
   getGasPrice?: (chainID: string) => Promise<GasPrice | undefined>;
-  message: types.MultiChainMsg;
+  chainID: string;
+  messages: types.CosmosMsg[];
   gasAmountMultiplier?: number;
 };
 
-export type SignMultiChainMessageDirectOptions = {
+export type SignCosmosMessageDirectOptions = {
   signerAddress: string;
   signer: OfflineDirectSigner;
-  multiChainMessage: types.MultiChainMsg;
+  chainID: string;
+  cosmosMsgs: types.CosmosMsg[];
   fee: StdFee;
   signerData: SignerData;
 };
 
-export type SignMultiChainMessageAminoOptions = {
+export type SignCosmosMessageAminoOptions = {
   signerAddress: string;
   signer: OfflineAminoSigner;
-  multiChainMessage: types.MultiChainMsg;
+  chainID: string;
+  cosmosMsgs: types.CosmosMsg[];
   fee: StdFee;
   signerData: SignerData;
 };

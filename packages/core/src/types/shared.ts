@@ -19,6 +19,7 @@ export type AssetJSON = {
   trace: string;
   is_cw20: boolean;
   is_evm: boolean;
+  is_svm: boolean;
 
   symbol: string | undefined;
   name: string | undefined;
@@ -39,6 +40,7 @@ export type Asset = {
   trace: string;
   isCW20: boolean;
   isEVM: boolean;
+  isSVM: boolean;
 
   symbol: string | undefined;
   name: string | undefined;
@@ -184,7 +186,7 @@ export type CosmosMsgJSON = {
 };
 export type CosmosMsg = {
   msg: string;
-  msgTypeUrl: string;
+  msgTypeURL: string;
 };
 
 export type CosmosTxJSON = {
@@ -374,6 +376,16 @@ export type ERC20Approval = {
   tokenContract: string;
   spender: string;
   amount: string;
+};
+
+export type SvmTxJSON = {
+  chain_id: string;
+  tx: string;
+};
+
+export type SvmTx = {
+  chainID: string;
+  tx: string;
 };
 
 export type EvmTxJSON = {

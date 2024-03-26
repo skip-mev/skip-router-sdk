@@ -155,6 +155,7 @@ test("assetFromJSON", () => {
     origin_chain_id: "osmosis-1",
     is_cw20: false,
     is_evm: false,
+    is_svm: false,
     trace: "",
     symbol: "OSMO",
     name: "OSMO",
@@ -174,6 +175,7 @@ test("assetFromJSON", () => {
     originChainID: "osmosis-1",
     isCW20: false,
     isEVM: false,
+    isSVM: false,
     trace: "",
     symbol: "OSMO",
     name: "OSMO",
@@ -196,6 +198,7 @@ test("assetToJSON", () => {
     trace: "",
     isCW20: false,
     isEVM: false,
+    isSVM: false,
     symbol: "OSMO",
     name: "OSMO",
     logoURI:
@@ -214,6 +217,7 @@ test("assetToJSON", () => {
     origin_chain_id: "osmosis-1",
     is_cw20: false,
     is_evm: false,
+    is_svm: false,
     trace: "",
     symbol: "OSMO",
     name: "OSMO",
@@ -237,6 +241,7 @@ test("assetRecommendationFromJSON", () => {
       trace: "",
       is_cw20: false,
       is_evm: false,
+      is_svm: false,
       symbol: "OSMO",
       name: "OSMO",
       logo_uri:
@@ -259,6 +264,7 @@ test("assetRecommendationFromJSON", () => {
       trace: "",
       isCW20: false,
       isEVM: false,
+      isSVM: false,
       symbol: "OSMO",
       name: "OSMO",
       logoURI:
@@ -283,6 +289,7 @@ test("assetRecommendationToJSON", () => {
       trace: "",
       isCW20: false,
       isEVM: false,
+      isSVM: false,
       symbol: "OSMO",
       name: "OSMO",
       logoURI:
@@ -304,6 +311,7 @@ test("assetRecommendationToJSON", () => {
       origin_chain_id: "osmosis-1",
       is_cw20: false,
       is_evm: false,
+      is_svm: false,
       trace: "",
       symbol: "OSMO",
       name: "OSMO",
@@ -393,6 +401,7 @@ test("chainFromJSON", () => {
     chain_id: "osmosis-1",
     chain_type: "cosmos",
     pfm_enabled: true,
+    is_testnet: false,
     cosmos_sdk_version: "v0.47.3",
     modules: {
       "github.com/cosmos/ibc-go": {
@@ -437,6 +446,7 @@ test("chainFromJSON", () => {
     pfmEnabled: true,
     cosmosSDKVersion: "v0.47.3",
     chainType: "cosmos",
+    isTestnet: false,
     modules: {
       "github.com/cosmos/ibc-go": {
         path: "github.com/cosmos/ibc-go/v4",
@@ -480,6 +490,7 @@ test("chainToJSON", () => {
     chainName: "osmosis",
     chainID: "osmosis-1",
     pfmEnabled: true,
+    isTestnet: false,
     cosmosSDKVersion: "v0.47.3",
     chainType: "cosmos",
     modules: {
@@ -523,6 +534,7 @@ test("chainToJSON", () => {
     chain_name: "osmosis",
     chain_id: "osmosis-1",
     pfm_enabled: true,
+    is_testnet: false,
     cosmos_sdk_version: "v0.47.3",
     chain_type: "cosmos",
     modules: {

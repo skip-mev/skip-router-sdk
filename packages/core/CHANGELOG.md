@@ -1,22 +1,64 @@
 # @skip-router/core
 
-## 1.5.2
+## 2.0.0-rc.8
 
 ### Patch Changes
 
-- 200c976: fix estimateGasForMessage params passing
+- fix cosmos_tx msgs signing
 
-## 1.5.1
+## 2.0.0-rc.7
 
 ### Patch Changes
 
-- 4ad2633: add includeTestnets param to chains
+- fix cctp message MsgDepositForBurnWithCaller
 
-## 1.5.0
+## 2.0.0-rc.6
 
-### Minor Changes
+### Patch Changes
 
-- 7a93093: Essential functions are now public for easier class extension
+- track retry and backoff
+
+## 2.0.0-rc.5
+
+### Patch Changes
+
+- solana signing
+
+## 2.0.0-rc.4
+
+### Patch Changes
+
+- update svmTx type
+
+## 2.0.0-rc.3
+
+### Patch Changes
+
+- Add svmTx to execute route
+
+## 2.0.0-rc.2
+
+### Patch Changes
+
+- Catch up to main
+
+## 2.0.0-rc.1
+
+### Patch Changes
+
+- Add include testnets
+
+## 2.0.0-rc.0
+
+### Major Changes
+
+- b9b139d: Add svm flags
+
+## 2.0.0-2.0.0-rc.0.0
+
+### Major Changes
+
+- Add svm flags
 
 ## 1.4.0
 

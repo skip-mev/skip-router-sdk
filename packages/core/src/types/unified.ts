@@ -29,6 +29,8 @@ import {
   TransferJSON,
   CosmosTxJSON,
   CosmosTx,
+  SvmTxJSON,
+  SvmTx,
 } from "./shared";
 
 export type AssetsRequestJSON = {
@@ -37,6 +39,7 @@ export type AssetsRequestJSON = {
   include_no_metadata_assets?: boolean;
   include_cw20_assets?: boolean;
   include_evm_assets?: boolean;
+  include_svm_assets?: boolean;
   client_id?: string;
 };
 
@@ -46,6 +49,7 @@ export type AssetsRequest = {
   includeNoMetadataAssets?: boolean;
   includeCW20Assets?: boolean;
   includeEvmAssets?: boolean;
+  includeSvmAssets?: boolean;
   clientID?: string;
 };
 
@@ -379,21 +383,31 @@ export type MsgsDirectRequest = {
 
 export type MsgJSON =
   | { multi_chain_msg: MultiChainMsgJSON }
-  | { evm_tx: EvmTxJSON };
+  | { evm_tx: EvmTxJSON }
+  | { svm_tx: SvmTxJSON };
 
-export type Msg = { multiChainMsg: MultiChainMsg } | { evmTx: EvmTx };
+export type Msg =
+  | { multiChainMsg: MultiChainMsg }
+  | { evmTx: EvmTx }
+  | { svmTx: SvmTx };
 
-export type TxJSON = { cosmos_tx: CosmosTxJSON } | { evm_tx: EvmTxJSON };
+export type TxJSON =
+  | { cosmos_tx: CosmosTxJSON }
+  | { evm_tx: EvmTxJSON }
+  | { svm_tx: SvmTxJSON };
 
-export type Tx = { cosmosTx: CosmosTx } | { evmTx: EvmTx };
+export type Tx = { cosmosTx: CosmosTx } | { evmTx: EvmTx } | { svmTx: SvmTx };
 
 export type MsgsResponseJSON = {
   msgs: MsgJSON[];
-  estimated_fees: EstimatedFee[];
+  estimated_fees: EstimatedFeeJSON[];
   txs: TxJSON[];
 };
 
 export type MsgsResponse = {
+  /**
+   * @deprecated Use `txs` instead
+   */
   msgs: Msg[];
   estimatedFees: EstimatedFee[];
   txs: Tx[];
