@@ -1389,7 +1389,9 @@ export class SkipRouter {
   async getFeeInfoForChain(
     chainID: string,
   ): Promise<types.FeeAsset | undefined> {
-    const skipChains = await this.chains();
+    const skipChains = await this.chains({
+      includeTestnets: true,
+    });
 
     const skipChain = skipChains.find((chain) => chain.chainID === chainID);
 
