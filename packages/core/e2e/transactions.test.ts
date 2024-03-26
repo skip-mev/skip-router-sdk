@@ -1,6 +1,6 @@
 import { Secp256k1HdWallet } from "@cosmjs/amino";
 import { FaucetClient } from "@cosmjs/faucet-client";
-import { coin, DirectSecp256k1HdWallet } from "@cosmjs/proto-signing";
+import { DirectSecp256k1HdWallet } from "@cosmjs/proto-signing";
 import {
   GasPrice,
   isDeliverTxFailure,
@@ -109,7 +109,8 @@ describe("transaction execution", () => {
       signerAddress,
       getCosmosSigner,
       getGasPrice,
-      message,
+      messages: [message],
+      chainID: "gaia-1",
     });
 
     expect(isDeliverTxSuccess(tx)).toBe(true);
@@ -265,7 +266,8 @@ describe("transaction execution", () => {
       signerAddress,
       getCosmosSigner,
       getGasPrice,
-      message,
+      messages: [message],
+      chainID: "osmosis-1",
     });
 
     // CheckTx must pass but the execution will fail in DeliverTx due to invalid contract address
@@ -385,7 +387,7 @@ describe("transaction execution", () => {
                 destDenom:
                   "ibc/14F9BC3E44B8A9C1BE1FB08980FAB87034C9905EF17CF2F5008FC085218811CC",
                 chainID: "osmosis-1",
-                rapid_relay: true,
+                rapidRelay: true,
               },
             },
           ],
@@ -395,6 +397,7 @@ describe("transaction execution", () => {
           txsRequired: 1,
           usdAmountIn: "1.68",
           usdAmountOut: "1.68",
+          estimatedFees: [],
         },
         userAddresses: {
           "osmosis-1": signerAddress,
