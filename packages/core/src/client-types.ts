@@ -63,7 +63,7 @@ export type ExecuteRouteOptions = {
   gasAmountMultiplier?: number;
 };
 
-export type ExecuteMultiChainMessageOptions = {
+export type ExecuteCosmosMessageOptions = {
   signerAddress: string;
   signer: OfflineSigner;
   message: types.MultiChainMsg;
@@ -79,7 +79,7 @@ export type ExecuteCosmosMessage = {
   gasAmountMultiplier?: number;
 };
 
-export type SignMultiChainMessageDirectOptions = {
+export type SignCosmosMessageDirectOptions = {
   signerAddress: string;
   signer: OfflineDirectSigner;
   chainID: string;
@@ -88,7 +88,7 @@ export type SignMultiChainMessageDirectOptions = {
   signerData: SignerData;
 };
 
-export type SignMultiChainMessageAminoOptions = {
+export type SignCosmosMessageAminoOptions = {
   signerAddress: string;
   signer: OfflineAminoSigner;
   chainID: string;

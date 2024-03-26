@@ -558,7 +558,7 @@ export class SkipRouter {
   }
 
   async signCosmosMessageDirect(
-    options: clientTypes.SignMultiChainMessageDirectOptions,
+    options: clientTypes.SignCosmosMessageDirectOptions,
   ): Promise<TxRaw> {
     const {
       signer,
@@ -570,7 +570,7 @@ export class SkipRouter {
     } = options;
 
     if (chainID.includes("evmos")) {
-      return this.signMultiChainMessageDirectEvmos(
+      return this.signCosmosMessageDirectEvmos(
         signerAddress,
         signer,
         cosmosMsgs,
@@ -596,7 +596,7 @@ export class SkipRouter {
 
     if (!accountFromSigner) {
       throw new Error(
-        "signMultiChainMessageDirect error: failed to retrieve account from signer",
+        "signCosmosMessageDirect error: failed to retrieve account from signer",
       );
     }
 
@@ -645,9 +645,9 @@ export class SkipRouter {
   }
 
   // TODO: This is previously existing code, just moved to a new function.
-  // Using signMultiChainMessageDirect on evmos DOES currently fail.
+  // Using signCosmosMessageDirectEvmos on evmos DOES currently fail.
   // I need to investigate what exactly is even different about this and hopefully remove it all together.
-  private async signMultiChainMessageDirectEvmos(
+  private async signCosmosMessageDirectEvmos(
     signerAddress: string,
     signer: OfflineDirectSigner,
     cosmosMsgs: types.CosmosMsg[],
@@ -661,7 +661,7 @@ export class SkipRouter {
 
     if (!accountFromSigner) {
       throw new Error(
-        "signMultiChainMessageDirectEvmos: failed to retrieve account from signer",
+        "signCosmosMessageDirectEvmos: failed to retrieve account from signer",
       );
     }
 
@@ -695,7 +695,7 @@ export class SkipRouter {
   }
 
   // TODO: This is previously existing code, just moved to a new function.
-  // Using signMultiChainMessageDirect on injective DOES currently fail.
+  // Using signCosmosMessageDirectInjective on injective DOES currently fail.
   // I need to investigate what exactly is even different about this and hopefully remove it all together.
   private async signCosmosMessageDirectInjective(
     signerAddress: string,
@@ -711,7 +711,7 @@ export class SkipRouter {
 
     if (!accountFromSigner) {
       throw new Error(
-        "signMultiChainMessageDirectInjective: failed to retrieve account from signer",
+        "signCosmosMessageDirectInjective: failed to retrieve account from signer",
       );
     }
 
@@ -755,7 +755,7 @@ export class SkipRouter {
   }
 
   async signCosmosMessageAmino(
-    options: clientTypes.SignMultiChainMessageAminoOptions,
+    options: clientTypes.SignCosmosMessageAminoOptions,
   ): Promise<TxRaw> {
     const {
       signer,
@@ -773,7 +773,7 @@ export class SkipRouter {
 
     if (!accountFromSigner) {
       throw new Error(
-        "signMultiChainMessageAmino: failed to retrieve account from signer",
+        "signCosmosMessageAmino: failed to retrieve account from signer",
       );
     }
 
