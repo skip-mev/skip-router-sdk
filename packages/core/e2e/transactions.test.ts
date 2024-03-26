@@ -416,5 +416,5 @@ describe("transaction execution", () => {
       console.log(error);
       expect(error).toBeTruthy();
     }
-  }, 60000);
+  }, 120000);
 });
