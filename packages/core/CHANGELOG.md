@@ -1,5 +1,11 @@
 # @skip-router/core
 
+## 2.0.1
+
+### Patch Changes
+
+- 2203797: Use 'confirmed' preflight commitment when sending transactions
+
 ## 2.0.0
 
 ### Major Changes
