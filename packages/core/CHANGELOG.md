@@ -1,5 +1,11 @@
 # @skip-router/core
 
+## 2.0.2
+
+### Patch Changes
+
+- d162e7d: executeSVMTransaction wait finalized tx strategy
+
 ## 2.0.1
 
 ### Patch Changes
