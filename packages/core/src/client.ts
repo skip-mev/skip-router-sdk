@@ -554,9 +554,35 @@ export class SkipRouter {
     const endpoint = await this.getRpcEndpointForChain(message.chainID);
     const connection = new Connection(endpoint);
     const signature = await signer.sendTransaction(transaction, connection, {
-      preflightCommitment: "confirmed",
+      preflightCommitment: "finalized",
     });
-    return signature;
+
+    let getStatusCount = 0;
+    let errorCount = 0;
+    // eslint-disable-next-line no-constant-condition
+    while (true) {
+      try {
+        const result = await connection.getSignatureStatus(signature, {
+          searchTransactionHistory: true,
+        });
+        if (result?.value?.confirmationStatus === "finalized") {
+          return signature;
+        } else if (getStatusCount > 5) {
+          await wait(3000);
+          throw new Error(
+            `executeSVMTransaction error: waiting finalized status timed out for ${signature}`,
+          );
+        }
+        getStatusCount++;
+
+        await wait(3000);
+      } catch (error) {
+        errorCount++;
+        if (errorCount > 5) {
+          throw error;
+        }
+      }
+    }
   }
 
   async signCosmosMessageDirect(
