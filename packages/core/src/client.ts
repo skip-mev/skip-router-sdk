@@ -567,7 +567,8 @@ export class SkipRouter {
         });
         if (result?.value?.confirmationStatus === "finalized") {
           return signature;
-        } else if (getStatusCount > 3) {
+        } else if (getStatusCount > 5) {
+          await wait(3000);
           throw new Error(
             `executeSVMTransaction error: waiting finalized status timed out for ${signature}`,
           );
