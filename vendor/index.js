@@ -9,6 +9,7 @@ const protoDirs = [
   path.resolve(__dirname, "evmos/proto"),
   path.resolve(__dirname, "noble-cctp/proto"),
   path.resolve(__dirname, "wasmd/proto"),
+  path.resolve(__dirname, "../local_vendor/initia/proto")
 ];
 
 module.exports = protoDirs;
