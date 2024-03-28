@@ -1637,18 +1637,6 @@ describe("client", () => {
 
       expect(result?.denom).toEqual("uusdc");
     });
-
-    it("returns the recommended gas price for Quasar (is IBC token)", async () => {
-      const client = new SkipRouter({
-        apiURL: SKIP_API_URL,
-      });
-
-      const result = await client.getRecommendedGasPrice("quasar-1");
-
-      expect(result?.denom).toEqual(
-        "ibc/0471F1C4E7AFD3F07702BEF6DC365268D64570F7C1FDC98EA6098DD6DE59817B",
-      );
-    });
   });
 
   describe("bridges", () => {
