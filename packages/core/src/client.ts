@@ -238,19 +238,12 @@ export class SkipRouter {
       gasAmountMultiplier = DEFAULT_GAS_MULTIPLIER,
     } = options;
 
-    const getOfflineSigner = this.getCosmosSigner || options.getCosmosSigner;
-    if (!getOfflineSigner) {
-      throw new Error(
-        "executeRoute error: 'getCosmosSigner' is not provided or configured in skip router",
-      );
-    }
-
     if (validateGasBalance) {
       // check balances on chains where a tx is initiated
       await this.validateGasBalances(
         txs,
         userAddresses,
-        getOfflineSigner,
+        options.getCosmosSigner,
         getGasPrice,
         gasAmountMultiplier,
       );
@@ -276,7 +269,7 @@ export class SkipRouter {
         const txResponse = await this.executeCosmosMessage({
           messages: cosmosTx.msgs,
           chainID: cosmosTx.chainID,
-          getCosmosSigner: getOfflineSigner,
+          getCosmosSigner: options.getCosmosSigner,
           getGasPrice: getGasPrice,
           gasAmountMultiplier,
           signerAddress: currentUserAddress,
@@ -363,7 +356,14 @@ export class SkipRouter {
       gasAmountMultiplier,
     } = options;
 
-    const signer = await getCosmosSigner(chainID);
+    const getOfflineSigner =
+      this.getCosmosSigner ||
+      getCosmosSigner ||
+      raise(
+        "executeRoute error: 'getCosmosSigner' is not provided or configured in skip router",
+      );
+
+    const signer = await getOfflineSigner(chainID);
 
     const accounts = await signer.getAccounts();
     const accountFromSigner = accounts.find(
@@ -1531,7 +1531,7 @@ export class SkipRouter {
   private async validateGasBalances(
     txs: types.Tx[],
     userAddresses: Record<string, string>,
-    getOfflineSigner: (chainID: string) => Promise<OfflineSigner>,
+    getOfflineSigner?: (chainID: string) => Promise<OfflineSigner>,
     getGasPrice?: (chainID: string) => Promise<GasPrice | undefined>,
     gasAmountMultiplier?: number,
   ) {
@@ -1544,6 +1544,13 @@ export class SkipRouter {
         const msgs = tx.cosmosTx.msgs;
         if (!msgs) {
           raise(`validateGasBalances error: invalid msgs ${msgs}`);
+        }
+
+        getOfflineSigner = this.getCosmosSigner || getOfflineSigner;
+        if (!getOfflineSigner) {
+          throw new Error(
+            "executeRoute error: 'getCosmosSigner' is not provided or configured in skip router",
+          );
         }
         const signer = await getOfflineSigner(tx.cosmosTx.chainID);
 
@@ -1577,7 +1584,7 @@ export class SkipRouter {
     }
   }
 
-  private async validateCosmosGasBalance(
+  async validateCosmosGasBalance(
     client: SigningStargateClient,
     signerAddress: string,
     chainID: string,
