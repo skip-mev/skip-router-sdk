@@ -13,6 +13,7 @@ import {
   MsgDepositForBurnWithCaller,
 } from "./codegen/circle/cctp/v1/tx";
 import { SigningStargateClient } from "@cosmjs/stargate";
+import { MsgExecute } from "./codegen/initia/move/v1/tx"
 
 export const DEFAULT_GAS_MULTIPLIER = 1.5;
 
@@ -71,6 +72,19 @@ export function getEncodeObjectFromCosmosMessage(
     return {
       typeUrl: message.msgTypeURL,
       value: MsgDepositForBurnWithCaller.fromAmino(msgJson),
+    };
+  }
+
+  if (message.msgTypeURL === "/initia.move.v1.MsgExecute") {
+    return {
+      typeUrl: message.msgTypeURL,
+      value: MsgExecute.fromPartial({
+        sender: msgJson.sender,
+        moduleAddress: msgJson.module_address,
+        moduleName: msgJson.module_name,
+        functionName: msgJson.function_name,
+        args: msgJson.args,
+      }),
     };
   }
 
