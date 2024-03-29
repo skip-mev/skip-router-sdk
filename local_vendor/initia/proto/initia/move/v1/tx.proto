@@ -3,7 +3,6 @@
 syntax = "proto3";
 package initia.move.v1;
 
-import "amino/amino.proto";
 import "cosmos/msg/v1/msg.proto";
 import "cosmos_proto/cosmos.proto";
 import "gogoproto/gogo.proto";
@@ -22,7 +21,6 @@ service Msg {
 // MsgExecute is the message to execute the given module function
 message MsgExecute {
   option (cosmos.msg.v1.signer) = "sender";
-  option (amino.name)           = "move/MsgExecute";
 
   // Sender is the that actor that signed the messages
   string sender = 1 [(cosmos_proto.scalar) = "cosmos.AddressString"];
