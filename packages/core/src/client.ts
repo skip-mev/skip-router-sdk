@@ -66,7 +66,7 @@ import { Connection, Transaction } from "@solana/web3.js";
 export const SKIP_API_URL = "https://api.skip.money";
 
 export class SkipRouter {
-  private requestClient: RequestClient;
+  protected requestClient: RequestClient;
 
   protected aminoTypes: AminoTypes;
   protected registry: Registry;
@@ -79,9 +79,9 @@ export class SkipRouter {
     getRestEndpointForChain?: (chainID: string) => Promise<string>;
   };
 
-  private getCosmosSigner?: (chainID: string) => Promise<OfflineSigner>;
-  private getEVMSigner?: (chainID: string) => Promise<WalletClient>;
-  private getSVMSigner?: () => Promise<Adapter>;
+  protected getCosmosSigner?: (chainID: string) => Promise<OfflineSigner>;
+  protected getEVMSigner?: (chainID: string) => Promise<WalletClient>;
+  protected getSVMSigner?: () => Promise<Adapter>;
 
   constructor(options: clientTypes.SkipRouterOptions = {}) {
     this.clientID = options.clientID || "skip-router-js";
@@ -327,7 +327,7 @@ export class SkipRouter {
     }
   }
 
-  private async executeEvmMsg(
+  async executeEvmMsg(
     message: { evmTx: types.EvmTx },
     options: clientTypes.ExecuteRouteOptions,
   ) {
@@ -1528,7 +1528,7 @@ export class SkipRouter {
     return chain.staking.staking_tokens;
   }
 
-  private async validateGasBalances(
+  async validateGasBalances(
     txs: types.Tx[],
     userAddresses: Record<string, string>,
     getOfflineSigner?: (chainID: string) => Promise<OfflineSigner>,
