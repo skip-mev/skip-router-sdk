@@ -38,6 +38,7 @@ import { SignMode } from "cosmjs-types/cosmos/tx/signing/v1beta1/signing";
 import { TxRaw } from "cosmjs-types/cosmos/tx/v1beta1/tx";
 
 import { MsgExecuteContract } from "cosmjs-types/cosmwasm/wasm/v1/tx";
+import { MsgExecute } from "./codegen/initia/move/v1/tx"
 import Long from "long";
 import { accountParser } from "./parser";
 import { maxUint256, publicActions, WalletClient } from "viem";
@@ -97,6 +98,7 @@ export class SkipRouter {
     this.registry = new Registry([
       ...defaultRegistryTypes,
       ["/cosmwasm.wasm.v1.MsgExecuteContract", MsgExecuteContract],
+      ["/initia.move.v1.MsgExecute", MsgExecute],
       ...circleProtoRegistry,
       ...(options.registryTypes ?? []),
     ]);
@@ -554,9 +556,35 @@ export class SkipRouter {
     const endpoint = await this.getRpcEndpointForChain(message.chainID);
     const connection = new Connection(endpoint);
     const signature = await signer.sendTransaction(transaction, connection, {
-      preflightCommitment: "confirmed",
+      preflightCommitment: "finalized",
     });
-    return signature;
+
+    let getStatusCount = 0;
+    let errorCount = 0;
+    // eslint-disable-next-line no-constant-condition
+    while (true) {
+      try {
+        const result = await connection.getSignatureStatus(signature, {
+          searchTransactionHistory: true,
+        });
+        if (result?.value?.confirmationStatus === "finalized") {
+          return signature;
+        } else if (getStatusCount > 5) {
+          await wait(3000);
+          throw new Error(
+            `executeSVMTransaction error: waiting finalized status timed out for ${signature}`,
+          );
+        }
+        getStatusCount++;
+
+        await wait(3000);
+      } catch (error) {
+        errorCount++;
+        if (errorCount > 5) {
+          throw error;
+        }
+      }
+    }
   }
 
   async signCosmosMessageDirect(
