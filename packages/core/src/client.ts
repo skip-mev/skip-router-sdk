@@ -38,7 +38,6 @@ import { SignMode } from "cosmjs-types/cosmos/tx/signing/v1beta1/signing";
 import { TxRaw } from "cosmjs-types/cosmos/tx/v1beta1/tx";
 
 import { MsgExecuteContract } from "cosmjs-types/cosmwasm/wasm/v1/tx";
-import Long from "long";
 import { accountParser } from "./parser";
 import { maxUint256, publicActions, WalletClient } from "viem";
 
@@ -821,12 +820,11 @@ export class SkipRouter {
       const currentHeight = await client.getHeight();
 
       messages[aminoMsgTransferIndex]!.value.timeoutHeight = {
-        revisionHeight: Long.fromNumber(currentHeight).add(100),
-        revisionNumber: Long.fromNumber(currentHeight).add(100),
+        revisionHeight: BigInt(currentHeight + 100),
+        revisionNumber: BigInt(currentHeight + 100),
       };
 
-      messages[aminoMsgTransferIndex]!.value.timeoutTimestamp =
-        Long.fromNumber(0);
+      messages[aminoMsgTransferIndex]!.value.timeoutTimestamp = BigInt(0);
     }
 
     const signMode = SignMode.SIGN_MODE_LEGACY_AMINO_JSON;
