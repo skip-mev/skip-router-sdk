@@ -895,7 +895,6 @@ describe("client", () => {
 
       expect(response).toEqual({
         txHash: "tx_hash123",
-        success: true,
       });
     });
   });
