@@ -27,7 +27,7 @@
     "watch": "tsup --watch"
   },
   "peerDependencies": {
-    "chain-registry": "^1.28.0"
+    "chain-registry": "^1.33.11"
   },
   "dependencies": {
     "@cosmjs/amino": "0.32.3",
