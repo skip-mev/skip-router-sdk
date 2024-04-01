@@ -1,5 +1,11 @@
 # @skip-router/core
 
+## 2.0.4
+
+### Patch Changes
+
+- 8e0de72: bump cosmjs version and chain registry
+
 ## 2.0.3
 
 ### Patch Changes
