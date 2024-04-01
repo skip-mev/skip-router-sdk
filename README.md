@@ -22,4 +22,3 @@ Skip Router is an SDK for Skip API for creating seamless cross-chain experiences
 
 - @thal0x
 - @codingki
-- @grikomsn
