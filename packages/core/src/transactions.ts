@@ -13,7 +13,7 @@ import {
   MsgDepositForBurnWithCaller,
 } from "./codegen/circle/cctp/v1/tx";
 import { SigningStargateClient } from "@cosmjs/stargate";
-import { MsgExecute } from "./codegen/initia/move/v1/tx"
+import { MsgExecute } from "./codegen/initia/move/v1/tx";
 
 export const DEFAULT_GAS_MULTIPLIER = 1.5;
 
