@@ -11,12 +11,10 @@ export type SubmitTxRequest = {
 };
 
 export type SubmitTxResponseJSON = {
-  success: boolean;
   tx_hash: string;
 };
 
 export type SubmitTxResponse = {
-  success: boolean;
   txHash: string;
 };
 
@@ -273,19 +271,19 @@ export type AxelarTransferInfo = {
 
 export type AxelarTransferTransactionsJSON =
   | {
-    contract_call_with_token_txs: ContractCallWithTokenTransactionsJSON;
-  }
+      contract_call_with_token_txs: ContractCallWithTokenTransactionsJSON;
+    }
   | {
-    send_token_txs: SendTokenTransactionsJSON;
-  };
+      send_token_txs: SendTokenTransactionsJSON;
+    };
 
 export type AxelarTransferTransactions =
   | {
-    contractCallWithTokenTxs: ContractCallWithTokenTransactions;
-  }
+      contractCallWithTokenTxs: ContractCallWithTokenTransactions;
+    }
   | {
-    sendTokenTxs: SendTokenTransactions;
-  };
+      sendTokenTxs: SendTokenTransactions;
+    };
 
 export type ContractCallWithTokenTransactionsJSON = {
   send_tx: ChainTransactionJSON | null;
@@ -405,18 +403,18 @@ export type HyperlaneTransferInfo = {
 
 export type TransferEventJSON =
   | {
-    ibc_transfer: TransferInfoJSON;
-  }
+      ibc_transfer: TransferInfoJSON;
+    }
   | {
-    axelar_transfer: AxelarTransferInfoJSON;
-  }
+      axelar_transfer: AxelarTransferInfoJSON;
+    }
   | { cctp_transfer: CCTPTransferInfoJSON }
   | { hyperlane_transfer: HyperlaneTransferInfoJSON };
 
 export type TransferEvent =
   | {
-    ibcTransfer: TransferInfo;
-  }
+      ibcTransfer: TransferInfo;
+    }
   | { axelarTransfer: AxelarTransferInfo }
   | { cctpTransfer: CCTPTransferInfo }
   | { hyperlaneTransfer: HyperlaneTransferInfo };
