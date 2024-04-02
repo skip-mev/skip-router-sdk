@@ -38,7 +38,8 @@ import { SignMode } from "cosmjs-types/cosmos/tx/signing/v1beta1/signing";
 import { TxRaw } from "cosmjs-types/cosmos/tx/v1beta1/tx";
 
 import { MsgExecuteContract } from "cosmjs-types/cosmwasm/wasm/v1/tx";
-import Long from "long";
+import { MsgExecute } from "./codegen/initia/move/v1/tx";
+
 import { accountParser } from "./parser";
 import { maxUint256, publicActions, WalletClient } from "viem";
 
@@ -97,6 +98,7 @@ export class SkipRouter {
     this.registry = new Registry([
       ...defaultRegistryTypes,
       ["/cosmwasm.wasm.v1.MsgExecuteContract", MsgExecuteContract],
+      ["/initia.move.v1.MsgExecute", MsgExecute],
       ...circleProtoRegistry,
       ...(options.registryTypes ?? []),
     ]);
@@ -553,9 +555,27 @@ export class SkipRouter {
     const transaction = Transaction.from(_tx);
     const endpoint = await this.getRpcEndpointForChain(message.chainID);
     const connection = new Connection(endpoint);
-    const signature = await signer.sendTransaction(transaction, connection, {
-      preflightCommitment: "finalized",
-    });
+    let signature;
+    if ("signTransaction" in signer) {
+      const tx = await signer.signTransaction(transaction);
+      const serializedTx = tx.serialize();
+
+      await this.submitTransaction({
+        chainID: message.chainID,
+        tx: Buffer.from(serializedTx).toString("base64"),
+      });
+
+      const sig = await connection.sendRawTransaction(serializedTx, {
+        preflightCommitment: "finalized",
+        maxRetries: 5,
+      });
+
+      signature = sig;
+    }
+
+    if (!signature) {
+      throw new Error("executeSVMTransaction error: signature not found");
+    }
 
     let getStatusCount = 0;
     let errorCount = 0;
@@ -567,7 +587,7 @@ export class SkipRouter {
         });
         if (result?.value?.confirmationStatus === "finalized") {
           return signature;
-        } else if (getStatusCount > 5) {
+        } else if (getStatusCount > 12) {
           await wait(3000);
           throw new Error(
             `executeSVMTransaction error: waiting finalized status timed out for ${signature}`,
@@ -578,7 +598,7 @@ export class SkipRouter {
         await wait(3000);
       } catch (error) {
         errorCount++;
-        if (errorCount > 5) {
+        if (errorCount > 12) {
           throw error;
         }
       }
@@ -821,12 +841,11 @@ export class SkipRouter {
       const currentHeight = await client.getHeight();
 
       messages[aminoMsgTransferIndex]!.value.timeoutHeight = {
-        revisionHeight: Long.fromNumber(currentHeight).add(100),
-        revisionNumber: Long.fromNumber(currentHeight).add(100),
+        revisionHeight: BigInt(currentHeight + 100),
+        revisionNumber: BigInt(currentHeight + 100),
       };
 
-      messages[aminoMsgTransferIndex]!.value.timeoutTimestamp =
-        Long.fromNumber(0);
+      messages[aminoMsgTransferIndex]!.value.timeoutTimestamp = BigInt(0);
     }
 
     const signMode = SignMode.SIGN_MODE_LEGACY_AMINO_JSON;

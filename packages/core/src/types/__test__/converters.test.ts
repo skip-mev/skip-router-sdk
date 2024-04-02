@@ -2102,24 +2102,20 @@ test("submitTxRequestToJSON", () => {
 test("submitTxResponseFromJSON", () => {
   const submitTxResponseJSON: SubmitTxResponseJSON = {
     tx_hash: "txid123",
-    success: true,
   };
 
   expect(submitTxResponseFromJSON(submitTxResponseJSON)).toEqual({
     txHash: "txid123",
-    success: true,
   });
 });
 
 test("submitTxResponseToJSON", () => {
   const submitTxResponse = {
     txHash: "txid123",
-    success: true,
   };
 
   expect(submitTxResponseToJSON(submitTxResponse)).toEqual({
     tx_hash: "txid123",
-    success: true,
   });
 });
 

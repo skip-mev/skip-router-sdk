@@ -967,7 +967,6 @@ export function submitTxResponseFromJSON(
 ): SubmitTxResponse {
   return {
     txHash: submitTxResponseJSON.tx_hash,
-    success: submitTxResponseJSON.success,
   };
 }
 
@@ -976,7 +975,6 @@ export function submitTxResponseToJSON(
 ): SubmitTxResponseJSON {
   return {
     tx_hash: submitTxResponse.txHash,
-    success: submitTxResponse.success,
   };
 }
 
