@@ -1,5 +1,11 @@
 # @skip-router/core
 
+## 2.0.5
+
+### Patch Changes
+
+- 8c4cafb: changes the access level of specific members and methods from private to protected
+
 ## 2.0.4
 
 ### Patch Changes
