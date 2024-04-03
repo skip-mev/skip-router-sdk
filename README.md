@@ -16,6 +16,7 @@ Skip Router is an SDK for Skip API for creating seamless cross-chain experiences
 
 ## Examples
 
+- https://github.com/skip-mev/router-sdk-example
 - https://github.com/skip-mev/skip-router/tree/main/packages/examples
 
 ## Maintainers
