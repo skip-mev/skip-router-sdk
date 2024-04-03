@@ -43,7 +43,7 @@ import { MsgExecute } from "./codegen/initia/move/v1/tx";
 import { accountParser } from "./parser";
 import { maxUint256, publicActions, WalletClient } from "viem";
 
-import chains from "./chains";
+import { chains, initiaChains } from "./chains";
 import {
   circleAminoConverters,
   circleProtoRegistry,
@@ -1304,8 +1304,11 @@ export class SkipRouter {
       }
     }
 
-    const chain = chains().find((chain) => chain.chain_id === chainID);
-
+    var chain
+    chain = chains().find((chain) => chain.chain_id === chainID);
+    if (!chain) {
+      chain = initiaChains().find((chain) => chain.chain_id === chainID);
+    }
     if (!chain) {
       throw new Error(
         `getRpcEndpointForChain: failed to find chain id '${chainID}' in registry`,
@@ -1339,7 +1342,11 @@ export class SkipRouter {
       }
     }
 
-    const chain = chains().find((chain) => chain.chain_id === chainID);
+    var chain
+    chain = chains().find((chain) => chain.chain_id === chainID);
+    if (!chain) {
+      chain = initiaChains().find((chain) => chain.chain_id === chainID);
+    }
     if (!chain) {
       throw new Error(
         `getRestEndpointForChain error: failed to find chain id '${chainID}' in registry`,
@@ -1460,7 +1467,11 @@ export class SkipRouter {
       return skipFeeInfo;
     }
 
-    const chain = chains().find((chain) => chain.chain_id === chainID);
+    var chain
+    chain = chains().find((chain) => chain.chain_id === chainID);
+    if (!chain) {
+      chain = initiaChains().find((chain) => chain.chain_id === chainID);
+    }
     if (!chain) {
       return undefined;
     }
@@ -1499,7 +1510,11 @@ export class SkipRouter {
       return gasDenom;
     }
 
-    const chain = chains().find((chain) => chain.chain_id === chainID);
+    var chain
+    chain = chains().find((chain) => chain.chain_id === chainID);
+    if (!chain) {
+      chain = initiaChains().find((chain) => chain.chain_id === chainID);
+    }
     if (!chain) {
       return undefined;
     }
@@ -1522,10 +1537,17 @@ export class SkipRouter {
 
     // next attempt to get the first non-IBC asset in the fee_tokens array, at least this token will be native to the chain
     const nonIBCAsset = chain.fees.fee_tokens.find(
-      (token) => !token.denom.startsWith("ibc/"),
+      (token) => !token.denom.startsWith("ibc/") && !token.denom.startsWith("l2/"),
     );
     if (nonIBCAsset) {
       return nonIBCAsset.denom;
+    }
+
+    const nonL2Asset = chain.fees.fee_tokens.find(
+      (token) => !token.denom.startsWith("l2/"),
+    );
+    if (nonL2Asset) {
+      return nonL2Asset.denom;
     }
 
     // if all else fails, just return the first token in the array
@@ -1533,7 +1555,11 @@ export class SkipRouter {
   }
 
   private getStakingTokensForChain(chainID: string) {
-    const chain = chains().find((chain) => chain.chain_id === chainID);
+    var chain
+    chain = chains().find((chain) => chain.chain_id === chainID);
+    if (!chain) {
+      chain = initiaChains().find((chain) => chain.chain_id === chainID);
+    }
     if (!chain) {
       throw new Error(
         `getStakingTokensForChain error: failed to find chain id '${chainID}' in registry`,

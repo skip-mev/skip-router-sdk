@@ -1,4 +1,5 @@
 import * as chainRegistry from "chain-registry";
+import * as initiaRegistry from "@initia/initia-registry"
 
 /** @deprecated */
 const DYDX_CHAIN = {
@@ -302,7 +303,7 @@ const CELESTIA_CHAIN = {
 };
 
 /** @deprecated */
-export default function chains() {
+export function chains() {
   const chains = chainRegistry.chains;
 
   if (chains.findIndex((chain) => chain.chain_id === "dydx-mainnet-1") === -1) {
@@ -312,6 +313,12 @@ export default function chains() {
   if (chains.findIndex((chain) => chain.chain_id === "celestia") === -1) {
     chains.push(CELESTIA_CHAIN);
   }
+
+  return chains;
+}
+
+export function initiaChains() {
+  const chains = initiaRegistry.chains;
 
   return chains;
 }

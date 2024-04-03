@@ -13,6 +13,7 @@ url = https://github.com/evmos/evmos.git
 [submodule "vendor/noble-cctp"]
 path = vendor/noble-cctp
 url = https://github.com/circlefin/noble-cctp.git
+
 [submodule "vendor/wasmd"]
-	path = vendor/wasmd
-	url = https://github.com/CosmWasm/wasmd.git
+path = vendor/wasmd
+url = https://github.com/CosmWasm/wasmd.git
