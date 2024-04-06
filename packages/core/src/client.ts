@@ -1304,7 +1304,7 @@ export class SkipRouter {
       }
     }
 
-    var chain
+    let chain;
     chain = chains().find((chain) => chain.chain_id === chainID);
     if (!chain) {
       chain = initiaChains().find((chain) => chain.chain_id === chainID);
@@ -1342,7 +1342,7 @@ export class SkipRouter {
       }
     }
 
-    var chain
+    let chain;
     chain = chains().find((chain) => chain.chain_id === chainID);
     if (!chain) {
       chain = initiaChains().find((chain) => chain.chain_id === chainID);
@@ -1467,7 +1467,7 @@ export class SkipRouter {
       return skipFeeInfo;
     }
 
-    var chain
+    let chain;
     chain = chains().find((chain) => chain.chain_id === chainID);
     if (!chain) {
       chain = initiaChains().find((chain) => chain.chain_id === chainID);
@@ -1510,7 +1510,7 @@ export class SkipRouter {
       return gasDenom;
     }
 
-    var chain
+    let chain;
     chain = chains().find((chain) => chain.chain_id === chainID);
     if (!chain) {
       chain = initiaChains().find((chain) => chain.chain_id === chainID);
@@ -1537,7 +1537,8 @@ export class SkipRouter {
 
     // next attempt to get the first non-IBC asset in the fee_tokens array, at least this token will be native to the chain
     const nonIBCAsset = chain.fees.fee_tokens.find(
-      (token) => !token.denom.startsWith("ibc/") && !token.denom.startsWith("l2/"),
+      (token) =>
+        !token.denom.startsWith("ibc/") && !token.denom.startsWith("l2/"),
     );
     if (nonIBCAsset) {
       return nonIBCAsset.denom;
@@ -1555,7 +1556,7 @@ export class SkipRouter {
   }
 
   private getStakingTokensForChain(chainID: string) {
-    var chain
+    let chain;
     chain = chains().find((chain) => chain.chain_id === chainID);
     if (!chain) {
       chain = initiaChains().find((chain) => chain.chain_id === chainID);
