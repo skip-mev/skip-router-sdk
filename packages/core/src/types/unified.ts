@@ -202,7 +202,7 @@ export type RouteWarning = {
   message: string;
 };
 
-export type FeeType = "RAPID_RELAY";
+export type FeeType = "SMART_RELAY";
 
 export type EstimatedFee = {
   feeType: FeeType;
