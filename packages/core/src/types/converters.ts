@@ -470,7 +470,7 @@ export function routeRequestFromJSON(
       experimentalFeatures: routeRequestJSON.experimental_features,
       bridges: routeRequestJSON.bridges,
       allowMultiTx: routeRequestJSON.allow_multi_tx,
-      rapidRelay: routeRequestJSON.rapid_relay,
+      smartRelay: routeRequestJSON.smart_relay,
     };
   }
 
@@ -488,7 +488,7 @@ export function routeRequestFromJSON(
     experimentalFeatures: routeRequestJSON.experimental_features,
     bridges: routeRequestJSON.bridges,
     allowMultiTx: routeRequestJSON.allow_multi_tx,
-    rapidRelay: routeRequestJSON.rapid_relay,
+    smartRelay: routeRequestJSON.smart_relay,
   };
 }
 
@@ -514,7 +514,7 @@ export function routeRequestToJSON(
       experimental_features: routeRequest.experimentalFeatures,
       bridges: routeRequest.bridges,
       allow_multi_tx: routeRequest.allowMultiTx,
-      rapid_relay: routeRequest.rapidRelay,
+      smart_relay: routeRequest.smartRelay,
     };
   }
 
@@ -532,7 +532,7 @@ export function routeRequestToJSON(
     experimental_features: routeRequest.experimentalFeatures,
     bridges: routeRequest.bridges,
     allow_multi_tx: routeRequest.allowMultiTx,
-    rapid_relay: routeRequest.rapidRelay,
+    smart_relay: routeRequest.smartRelay,
   };
 }
 
@@ -556,7 +556,7 @@ export function transferFromJSON(transferJSON: TransferJSON): Transfer {
 
     destDenom: transferJSON.dest_denom,
     chainID: transferJSON.chain_id,
-    rapidRelay: transferJSON.rapid_relay,
+    smartRelay: transferJSON.smart_relay,
   };
 }
 
@@ -580,7 +580,7 @@ export function transferToJSON(transfer: Transfer): TransferJSON {
 
     dest_denom: transfer.destDenom,
     chain_id: transfer.chainID,
-    rapid_relay: transfer.rapidRelay,
+    smart_relay: transfer.smartRelay,
   };
 }
 
@@ -1223,7 +1223,7 @@ export function axelarTransferFromJSON(
       : undefined,
 
     bridgeID: axelarTransferJSON.bridge_id,
-    rapidRelay: axelarTransferJSON.rapid_relay,
+    smartRelay: axelarTransferJSON.smart_relay,
   };
 }
 
@@ -1252,7 +1252,7 @@ export function axelarTransferToJSON(
       : undefined,
 
     bridge_id: axelarTransfer.bridgeID,
-    rapid_relay: axelarTransfer.rapidRelay,
+    smart_relay: axelarTransfer.smartRelay,
   };
 }
 
@@ -1278,7 +1278,7 @@ export function cctpTransferFromJSON(value: CCTPTransferJSON): CCTPTransfer {
     bridgeID: value.bridge_id,
     denomIn: value.denom_in,
     denomOut: value.denom_out,
-    rapidRelay: value.rapid_relay,
+    smartRelay: value.smart_relay,
   };
 }
 
@@ -1290,7 +1290,7 @@ export function cctpTransferToJSON(value: CCTPTransfer): CCTPTransferJSON {
     bridge_id: value.bridgeID,
     denom_in: value.denomIn,
     denom_out: value.denomOut,
-    rapid_relay: value.rapidRelay,
+    smart_relay: value.smartRelay,
   };
 }
 
@@ -1307,7 +1307,7 @@ export function hyperlaneTransferFromJSON(
     usdFeeAmount: value.usd_fee_amount,
     feeAsset: assetFromJSON(value.fee_asset),
     bridgeID: value.bridge_id,
-    rapidRelay: value.rapid_relay,
+    smartRelay: value.smart_relay,
   };
 }
 
@@ -1324,7 +1324,7 @@ export function hyperlaneTransferToJSON(
     usd_fee_amount: value.usdFeeAmount,
     fee_asset: assetToJSON(value.feeAsset),
     bridge_id: value.bridgeID,
-    rapid_relay: value.rapidRelay,
+    smart_relay: value.smartRelay,
   };
 }
 
@@ -2007,7 +2007,7 @@ export function msgsDirectRequestFromJSON(
     swapVenues:
       msgDirectRequestJSON.swap_venues &&
       msgDirectRequestJSON.swap_venues.map(swapVenueFromJSON),
-    rapidRelay: msgDirectRequestJSON.rapid_relay,
+    smartRelay: msgDirectRequestJSON.smart_relay,
   };
 }
 
@@ -2035,6 +2035,6 @@ export function msgsDirectRequestToJSON(
     post_route_handler:
       msgDirectRequest.postRouteHandler &&
       postHandlerToJSON(msgDirectRequest.postRouteHandler),
-    rapid_relay: msgDirectRequest.rapidRelay,
+      smart_relay: msgDirectRequest.smartRelay,
   };
 }

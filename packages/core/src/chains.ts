@@ -1,5 +1,5 @@
 import * as chainRegistry from "chain-registry";
-import * as initiaRegistry from "@initia/initia-registry"
+import * as initiaRegistry from "@initia/initia-registry";
 
 /** @deprecated */
 const DYDX_CHAIN = {
