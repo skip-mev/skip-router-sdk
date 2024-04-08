@@ -1,5 +1,11 @@
 # @skip-router/core
 
+## 2.1.0
+
+### Minor Changes
+
+- a2f7ffa: Rename rapid_relay to smart_relay
+
 ## 2.0.5
 
 ### Patch Changes
