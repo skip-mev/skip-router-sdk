@@ -684,7 +684,7 @@ describe("client", () => {
               denomIn:
                 "ibc/27394FB092D2ECCD56123C74F36E4C1F926001CEADA9CA97EA622B25F41E5EB2",
               denomOut: "uatom",
-              rapidRelay: true,
+              smartRelay: true,
             },
           },
         ],
@@ -749,7 +749,7 @@ describe("client", () => {
                     pfm_enabled: true,
                     dest_denom: "uatom",
                     supports_memo: true,
-                    rapid_relay: true,
+                    smart_relay: true,
                   },
                 },
               ],
@@ -777,7 +777,7 @@ describe("client", () => {
         destAssetChainID: "cosmoshub-4",
         destAssetDenom: "uatom",
         amountIn: "1000000",
-        rapidRelay: false,
+        smartRelay: false,
       });
 
       expect(response).toEqual({
@@ -815,7 +815,7 @@ describe("client", () => {
               pfmEnabled: true,
               destDenom: "uatom",
               supportsMemo: true,
-              rapidRelay: true,
+              smartRelay: true,
             },
           },
         ],
