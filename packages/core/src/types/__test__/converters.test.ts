@@ -828,7 +828,7 @@ test("transferFromJSON", () => {
     denom_out: "uatom",
     from_chain_id: "osmosis-1",
     to_chain_id: "cosmoshub-4",
-    rapid_relay: true,
+    smart_relay: true,
   };
 
   expect(transferFromJSON(transferJSON)).toEqual({
@@ -843,7 +843,7 @@ test("transferFromJSON", () => {
     denomOut: "uatom",
     fromChainID: "osmosis-1",
     toChainID: "cosmoshub-4",
-    rapidRelay: true,
+    smartRelay: true,
   });
 });
 
@@ -860,7 +860,7 @@ test("transferToJSON", () => {
     denomOut: "uatom",
     fromChainID: "osmosis-1",
     toChainID: "cosmoshub-4",
-    rapidRelay: false,
+    smartRelay: false,
   };
 
   expect(transferToJSON(transfer)).toEqual({
@@ -875,7 +875,7 @@ test("transferToJSON", () => {
     denom_out: "uatom",
     from_chain_id: "osmosis-1",
     to_chain_id: "cosmoshub-4",
-    rapid_relay: false,
+    smart_relay: false,
   });
 });
 
@@ -1257,7 +1257,7 @@ test("operationFromJSON - transfer", () => {
       to_chain_id: "cosmoshub-4",
       denom_in: "uosmo",
       denom_out: "uatom",
-      rapid_relay: false,
+      smart_relay: false,
     },
   };
 
@@ -1274,7 +1274,7 @@ test("operationFromJSON - transfer", () => {
       toChainID: "cosmoshub-4",
       denomIn: "uosmo",
       denomOut: "uatom",
-      rapidRelay: false,
+      smartRelay: false,
     },
   });
 });
@@ -1345,7 +1345,7 @@ test("operationToJSON - transfer", () => {
       toChainID: "cosmoshub-4",
       denomIn: "uosmo",
       denomOut: "uatom",
-      rapidRelay: false,
+      smartRelay: false,
     },
   };
 
@@ -1362,7 +1362,7 @@ test("operationToJSON - transfer", () => {
       to_chain_id: "cosmoshub-4",
       denom_in: "uosmo",
       denom_out: "uatom",
-      rapid_relay: false,
+      smart_relay: false,
     },
   });
 });
@@ -1460,7 +1460,7 @@ test("routeResponseFromJSON", () => {
           pfm_enabled: true,
           dest_denom: "uatom",
           supports_memo: true,
-          rapid_relay: false,
+          smart_relay: false,
           bridge_id: "IBC",
           denom_in: "uosmo",
           denom_out: "uatom",
@@ -1522,7 +1522,7 @@ test("routeResponseFromJSON", () => {
           pfmEnabled: true,
           destDenom: "uatom",
           supportsMemo: true,
-          rapidRelay: false,
+          smartRelay: false,
           bridgeID: "IBC",
           denomIn: "uosmo",
           denomOut: "uatom",
@@ -1586,7 +1586,7 @@ test("routeResponseToJSON", () => {
           pfmEnabled: true,
           destDenom: "uatom",
           supportsMemo: true,
-          rapidRelay: false,
+          smartRelay: false,
           bridgeID: "IBC",
           denomIn: "uosmo",
           denomOut: "uatom",
@@ -1648,7 +1648,7 @@ test("routeResponseToJSON", () => {
           pfm_enabled: true,
           dest_denom: "uatom",
           supports_memo: true,
-          rapid_relay: false,
+          smart_relay: false,
           bridge_id: "IBC",
           denom_in: "uosmo",
           denom_out: "uatom",
@@ -1804,7 +1804,7 @@ test("msgsRequestFromJSON", () => {
           pfm_enabled: true,
           dest_denom: "uatom",
           supports_memo: true,
-          rapid_relay: false,
+          smart_relay: false,
           bridge_id: "IBC",
           denom_in: "uosmo",
           denom_out: "uatom",
@@ -1874,7 +1874,7 @@ test("msgsRequestFromJSON", () => {
           pfmEnabled: true,
           destDenom: "uatom",
           supportsMemo: true,
-          rapidRelay: false,
+          smartRelay: false,
           bridgeID: "IBC",
           denomIn: "uosmo",
           denomOut: "uatom",
@@ -1946,7 +1946,7 @@ test("msgsRequestToJSON", () => {
           pfmEnabled: true,
           destDenom: "uatom",
           supportsMemo: true,
-          rapidRelay: false,
+          smartRelay: false,
           bridgeID: "IBC",
           denomIn: "uosmo",
           denomOut: "uatom",
@@ -2016,7 +2016,7 @@ test("msgsRequestToJSON", () => {
           pfm_enabled: true,
           dest_denom: "uatom",
           supports_memo: true,
-          rapid_relay: false,
+          smart_relay: false,
           bridge_id: "IBC",
           denom_in: "uosmo",
           denom_out: "uatom",
