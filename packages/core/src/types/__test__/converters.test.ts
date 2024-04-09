@@ -704,10 +704,16 @@ test("routeRequestFromJSON - given amount in", () => {
     amount_in: "1000000",
 
     cumulative_affiliate_fee_bps: "100",
-    swap_venue: {
-      name: "neutron-astroport",
-      chain_id: "neutron-1",
-    },
+    swap_venues: [
+      {
+        name: "neutron-astroport",
+        chain_id: "neutron-1",
+      },
+      {
+        name: "osmosis-poolmanager",
+        chain_id: "osmosis-1",
+      },
+    ],
   };
 
   expect(routeRequestFromJSON(routeRequestJSON)).toEqual({
@@ -716,12 +722,17 @@ test("routeRequestFromJSON - given amount in", () => {
     destAssetChainID: "cosmoshub-4",
     destAssetDenom: "uatom",
     amountIn: "1000000",
-
     cumulativeAffiliateFeeBPS: "100",
-    swapVenue: {
-      name: "neutron-astroport",
-      chainID: "neutron-1",
-    },
+    swapVenues: [
+      {
+        name: "neutron-astroport",
+        chainID: "neutron-1",
+      },
+      {
+        name: "osmosis-poolmanager",
+        chainID: "osmosis-1",
+      },
+    ],
   });
 });
 
@@ -734,10 +745,16 @@ test("routeRequestFromJSON - given amount out", () => {
     amount_out: "1000000",
 
     cumulative_affiliate_fee_bps: "100",
-    swap_venue: {
-      name: "neutron-astroport",
-      chain_id: "neutron-1",
-    },
+    swap_venues: [
+      {
+        name: "neutron-astroport",
+        chain_id: "neutron-1",
+      },
+      {
+        name: "osmosis-poolmanager",
+        chain_id: "osmosis-1",
+      },
+    ],
   };
 
   expect(routeRequestFromJSON(routeRequestJSON)).toEqual({
@@ -748,10 +765,16 @@ test("routeRequestFromJSON - given amount out", () => {
     amountOut: "1000000",
 
     cumulativeAffiliateFeeBPS: "100",
-    swapVenue: {
-      name: "neutron-astroport",
-      chainID: "neutron-1",
-    },
+    swapVenues: [
+      {
+        name: "neutron-astroport",
+        chainID: "neutron-1",
+      },
+      {
+        name: "osmosis-poolmanager",
+        chainID: "osmosis-1",
+      },
+    ],
   });
 });
 
@@ -764,10 +787,16 @@ test("routeRequestToJSON - given amount in", () => {
     amountIn: "1000000",
 
     cumulativeAffiliateFeeBPS: "100",
-    swapVenue: {
-      name: "neutron-astroport",
-      chainID: "neutron-1",
-    },
+    swapVenues: [
+      {
+        name: "neutron-astroport",
+        chainID: "neutron-1",
+      },
+      {
+        name: "osmosis-poolmanager",
+        chainID: "osmosis-1",
+      },
+    ],
   };
 
   expect(routeRequestToJSON(routeRequest)).toEqual({
@@ -778,10 +807,16 @@ test("routeRequestToJSON - given amount in", () => {
     amount_in: "1000000",
 
     cumulative_affiliate_fee_bps: "100",
-    swap_venue: {
-      name: "neutron-astroport",
-      chain_id: "neutron-1",
-    },
+    swap_venues: [
+      {
+        name: "neutron-astroport",
+        chain_id: "neutron-1",
+      },
+      {
+        name: "osmosis-poolmanager",
+        chain_id: "osmosis-1",
+      },
+    ],
   });
 });
 
@@ -794,10 +829,16 @@ test("routeRequestToJSON - given amount out", () => {
     amountOut: "1000000",
 
     cumulativeAffiliateFeeBPS: "100",
-    swapVenue: {
-      name: "neutron-astroport",
-      chainID: "neutron-1",
-    },
+    swapVenues: [
+      {
+        name: "neutron-astroport",
+        chainID: "neutron-1",
+      },
+      {
+        name: "osmosis-poolmanager",
+        chainID: "osmosis-1",
+      },
+    ],
   };
 
   expect(routeRequestToJSON(routeRequest)).toEqual({
@@ -808,10 +849,16 @@ test("routeRequestToJSON - given amount out", () => {
     amount_out: "1000000",
 
     cumulative_affiliate_fee_bps: "100",
-    swap_venue: {
-      name: "neutron-astroport",
-      chain_id: "neutron-1",
-    },
+    swap_venues: [
+      {
+        name: "neutron-astroport",
+        chain_id: "neutron-1",
+      },
+      {
+        name: "osmosis-poolmanager",
+        chain_id: "osmosis-1",
+      },
+    ],
   });
 });
 

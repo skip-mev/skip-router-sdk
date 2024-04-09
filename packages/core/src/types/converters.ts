@@ -450,6 +450,11 @@ export function swapVenueRequestToJSON(
 export function routeRequestFromJSON(
   routeRequestJSON: RouteRequestJSON,
 ): RouteRequest {
+
+  const swapVenues = routeRequestJSON.swap_venues ?
+    routeRequestJSON.swap_venues.map(swapVenueRequestFromJSON)
+    : undefined;
+
   if (routeRequestJSON.amount_in !== undefined) {
     return {
       sourceAssetDenom: routeRequestJSON.source_asset_denom,
@@ -459,9 +464,7 @@ export function routeRequestFromJSON(
       amountIn: routeRequestJSON.amount_in,
 
       cumulativeAffiliateFeeBPS: routeRequestJSON.cumulative_affiliate_fee_bps,
-      swapVenue: routeRequestJSON.swap_venue
-        ? swapVenueRequestFromJSON(routeRequestJSON.swap_venue)
-        : undefined,
+      swapVenues: swapVenues,
       allowUnsafe: routeRequestJSON.allow_unsafe,
       clientID: routeRequestJSON.client_id,
       experimentalFeatures: routeRequestJSON.experimental_features,
@@ -479,9 +482,7 @@ export function routeRequestFromJSON(
     amountOut: routeRequestJSON.amount_out,
 
     cumulativeAffiliateFeeBPS: routeRequestJSON.cumulative_affiliate_fee_bps,
-    swapVenue: routeRequestJSON.swap_venue
-      ? swapVenueRequestFromJSON(routeRequestJSON.swap_venue)
-      : undefined,
+    swapVenues: swapVenues,
     allowUnsafe: routeRequestJSON.allow_unsafe,
     clientID: routeRequestJSON.client_id,
     experimentalFeatures: routeRequestJSON.experimental_features,
@@ -494,6 +495,10 @@ export function routeRequestFromJSON(
 export function routeRequestToJSON(
   routeRequest: RouteRequest,
 ): RouteRequestJSON {
+  const swapVenues = routeRequest.swapVenues ?
+    routeRequest.swapVenues.map(swapVenueRequestToJSON)
+    : undefined;
+
   if (routeRequest.amountIn !== undefined) {
     return {
       source_asset_denom: routeRequest.sourceAssetDenom,
@@ -503,9 +508,7 @@ export function routeRequestToJSON(
       amount_in: routeRequest.amountIn,
 
       cumulative_affiliate_fee_bps: routeRequest.cumulativeAffiliateFeeBPS,
-      swap_venue: routeRequest.swapVenue
-        ? swapVenueRequestToJSON(routeRequest.swapVenue)
-        : undefined,
+      swap_venues: swapVenues,
       allow_unsafe: routeRequest.allowUnsafe,
       client_id: routeRequest.clientID,
       experimental_features: routeRequest.experimentalFeatures,
@@ -523,9 +526,7 @@ export function routeRequestToJSON(
     amount_out: routeRequest.amountOut,
 
     cumulative_affiliate_fee_bps: routeRequest.cumulativeAffiliateFeeBPS,
-    swap_venue: routeRequest.swapVenue
-      ? swapVenueRequestToJSON(routeRequest.swapVenue)
-      : undefined,
+    swap_venues: swapVenues,
     allow_unsafe: routeRequest.allowUnsafe,
     client_id: routeRequest.clientID,
     experimental_features: routeRequest.experimentalFeatures,
@@ -2003,10 +2004,10 @@ export function msgsDirectRequestFromJSON(
     postRouteHandler:
       msgDirectRequestJSON.post_route_handler &&
       postHandlerFromJSON(msgDirectRequestJSON.post_route_handler),
-    swapVenue:
-      msgDirectRequestJSON.swap_venue &&
-      swapVenueFromJSON(msgDirectRequestJSON.swap_venue),
-      smartRelay: msgDirectRequestJSON.smart_relay,
+    swapVenues:
+      msgDirectRequestJSON.swap_venues &&
+      msgDirectRequestJSON.swap_venues.map(swapVenueFromJSON),
+    smartRelay: msgDirectRequestJSON.smart_relay,
   };
 }
 
@@ -2029,8 +2030,8 @@ export function msgsDirectRequestToJSON(
     timeout_seconds: msgDirectRequest.timeoutSeconds,
     client_id: msgDirectRequest.clientID,
     experimental_features: msgDirectRequest.experimentalFeatures,
-    swap_venue:
-      msgDirectRequest.swapVenue && swapVenueToJSON(msgDirectRequest.swapVenue),
+    swap_venues:
+      msgDirectRequest.swapVenues && msgDirectRequest.swapVenues.map(swapVenueToJSON),
     post_route_handler:
       msgDirectRequest.postRouteHandler &&
       postHandlerToJSON(msgDirectRequest.postRouteHandler),
