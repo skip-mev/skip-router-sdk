@@ -1,5 +1,11 @@
 # @skip-router/core
 
+## 2.3.0
+
+### Minor Changes
+
+- 9ab81a5: Change solana blockhash commitment level from finalized to confirmed for sendTransaction preflight checks and when checking for transaction inclusion
+
 ## 2.2.0
 
 ### Minor Changes
