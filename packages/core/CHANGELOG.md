@@ -1,5 +1,11 @@
 # @skip-router/core
 
+## 2.2.0
+
+### Minor Changes
+
+- 8b93aa7: Change swap_venue to swap_venues for Route and MsgsDirect requests
+
 ## 2.1.0
 
 ### Minor Changes
