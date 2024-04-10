@@ -566,7 +566,7 @@ export class SkipRouter {
       });
 
       const sig = await connection.sendRawTransaction(serializedTx, {
-        preflightCommitment: "finalized",
+        preflightCommitment: "confirmed",
         maxRetries: 5,
       });
 
