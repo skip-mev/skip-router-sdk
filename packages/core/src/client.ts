@@ -585,7 +585,7 @@ export class SkipRouter {
         const result = await connection.getSignatureStatus(signature, {
           searchTransactionHistory: true,
         });
-        if (result?.value?.confirmationStatus === "finalized") {
+        if (result?.value?.confirmationStatus === "confirmed") {
           return signature;
         } else if (getStatusCount > 12) {
           await wait(3000);
