@@ -1,5 +1,23 @@
 # @skip-router/core
 
+## 2.4.0
+
+### Minor Changes
+
+- 9922837: Add swap_venue for backwards compatibility
+
+## 2.3.0
+
+### Minor Changes
+
+- 9ab81a5: Change solana blockhash commitment level from finalized to confirmed for sendTransaction preflight checks and when checking for transaction inclusion
+
+## 2.2.0
+
+### Minor Changes
+
+- 8b93aa7: Change swap_venue to swap_venues for Route and MsgsDirect requests
+
 ## 2.1.0
 
 ### Minor Changes

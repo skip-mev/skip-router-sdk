@@ -130,6 +130,7 @@ export type RouteRequestBaseJSON = {
   dest_asset_chain_id: string;
 
   cumulative_affiliate_fee_bps?: string;
+  swap_venue?: SwapVenueRequestJSON;
   swap_venues?: SwapVenueRequestJSON[];
   allow_unsafe?: boolean;
   client_id?: string;
@@ -172,6 +173,7 @@ export type RouteRequestBase = {
   destAssetChainID: string;
 
   cumulativeAffiliateFeeBPS?: string;
+  swapVenue?: SwapVenueRequest;
   swapVenues?: SwapVenueRequest[];
   allowUnsafe?: boolean;
   clientID?: string;
@@ -340,6 +342,7 @@ export type MsgsDirectRequestJSON = {
   chain_ids_to_addresses: {
     [key: string]: string;
   };
+  swap_venue?: SwapVenueJSON;
   swap_venues?: SwapVenueJSON[];
   slippage_tolerance_percent?: string;
   timeout_seconds?: string;
@@ -366,6 +369,7 @@ export type MsgsDirectRequest = {
   chainIdsToAddresses: {
     [key: string]: string;
   };
+  swapVenue?: SwapVenue;
   swapVenues?: SwapVenue[];
   slippageTolerancePercent?: string;
   timeoutSeconds?: string;
