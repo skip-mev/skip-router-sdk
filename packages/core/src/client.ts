@@ -66,8 +66,6 @@ import { Connection, Transaction } from "@solana/web3.js";
 
 export const SKIP_API_URL = "https://api.skip.money";
 
-console.log("LACL!!!!");
-
 export class SkipRouter {
   protected requestClient: RequestClient;
 
