@@ -568,7 +568,7 @@ export class SkipRouter {
       });
 
       const sig = await connection.sendRawTransaction(serializedTx, {
-        preflightCommitment: "finalized",
+        preflightCommitment: "confirmed",
         maxRetries: 5,
       });
 
@@ -587,7 +587,7 @@ export class SkipRouter {
         const result = await connection.getSignatureStatus(signature, {
           searchTransactionHistory: true,
         });
-        if (result?.value?.confirmationStatus === "finalized") {
+        if (result?.value?.confirmationStatus === "confirmed") {
           return signature;
         } else if (getStatusCount > 12) {
           await wait(3000);
