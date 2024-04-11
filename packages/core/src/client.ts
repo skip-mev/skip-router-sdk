@@ -66,6 +66,8 @@ import { Connection, Transaction } from "@solana/web3.js";
 
 export const SKIP_API_URL = "https://api.skip.money";
 
+console.log("LACL!!!!");
+
 export class SkipRouter {
   protected requestClient: RequestClient;
 
@@ -841,11 +843,11 @@ export class SkipRouter {
       const currentHeight = await client.getHeight();
 
       messages[aminoMsgTransferIndex]!.value.timeoutHeight = {
-        revisionHeight: BigInt(currentHeight + 100),
-        revisionNumber: BigInt(currentHeight + 100),
+        revisionHeight: currentHeight + 100,
+        revisionNumber: currentHeight + 100,
       };
 
-      messages[aminoMsgTransferIndex]!.value.timeoutTimestamp = BigInt(0);
+      messages[aminoMsgTransferIndex]!.value.timeoutTimestamp = 0;
     }
 
     const signMode = SignMode.SIGN_MODE_LEGACY_AMINO_JSON;
