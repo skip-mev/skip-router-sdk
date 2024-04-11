@@ -1,5 +1,11 @@
 # @skip-router/core
 
+## 2.4.0
+
+### Minor Changes
+
+- 9922837: Add swap_venue for backwards compatibility
+
 ## 2.3.0
 
 ### Minor Changes
