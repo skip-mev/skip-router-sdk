@@ -1,5 +1,11 @@
 # @skip-router/core
 
+## 2.4.1
+
+### Patch Changes
+
+- 6af35dc: Don't use BigInt for amino types
+
 ## 2.4.0
 
 ### Minor Changes
