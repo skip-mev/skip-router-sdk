@@ -669,6 +669,7 @@ export function swapFromJSON(swapJSON: SwapJSON): Swap {
     return {
       swapIn: swapExactCoinInFromJSON(swapJSON.swap_in),
       estimatedAffiliateFee: swapJSON.estimated_affiliate_fee,
+      fromChainID: swapJSON.from_chain_id,
       chainID: swapJSON.chain_id,
       denomIn: swapJSON.denom_in,
       denomOut: swapJSON.denom_out,
@@ -678,6 +679,7 @@ export function swapFromJSON(swapJSON: SwapJSON): Swap {
   return {
     swapOut: swapExactCoinOutFromJSON(swapJSON.swap_out),
     estimatedAffiliateFee: swapJSON.estimated_affiliate_fee,
+    fromChainID: swapJSON.from_chain_id,
     chainID: swapJSON.chain_id,
     denomIn: swapJSON.denom_in,
     denomOut: swapJSON.denom_out,
@@ -689,6 +691,7 @@ export function swapToJSON(swap: Swap): SwapJSON {
     return {
       swap_in: swapExactCoinInToJSON(swap.swapIn),
       estimated_affiliate_fee: swap.estimatedAffiliateFee,
+      from_chain_id: swap.fromChainID,
       chain_id: swap.chainID,
       denom_in: swap.denomIn,
       denom_out: swap.denomOut,
@@ -698,6 +701,7 @@ export function swapToJSON(swap: Swap): SwapJSON {
   return {
     swap_out: swapExactCoinOutToJSON(swap.swapOut),
     estimated_affiliate_fee: swap.estimatedAffiliateFee,
+    from_chain_id: swap.fromChainID,
     chain_id: swap.chainID,
     denom_in: swap.denomIn,
     denom_out: swap.denomOut,
