@@ -710,22 +710,39 @@ export function swapToJSON(swap: Swap): SwapJSON {
 
 export function operationFromJSON(operationJSON: OperationJSON): Operation {
   if ("transfer" in operationJSON) {
-    return { transfer: transferFromJSON(operationJSON.transfer), txIndex: operationJSON.tx_index };
+    return {
+      transfer: transferFromJSON(operationJSON.transfer),
+      txIndex: operationJSON.tx_index,
+      amountIn: operationJSON.amount_in,
+      amountOut: operationJSON.amount_out,
+    };
   }
 
   if ("bank_send" in operationJSON) {
-    return { bankSend: bankSendFromJSON(operationJSON.bank_send), txIndex: operationJSON.tx_index };
+    return {
+      bankSend: bankSendFromJSON(operationJSON.bank_send),
+      txIndex: operationJSON.tx_index,
+      amountIn: operationJSON.amount_in,
+      amountOut: operationJSON.amount_out,
+     };
   }
 
   if ("axelar_transfer" in operationJSON) {
     return {
       axelarTransfer: axelarTransferFromJSON(operationJSON.axelar_transfer),
       txIndex: operationJSON.tx_index,
+      amountIn: operationJSON.amount_in,
+      amountOut: operationJSON.amount_out,
     };
   }
 
   if ("cctp_transfer" in operationJSON) {
-    return { cctpTransfer: cctpTransferFromJSON(operationJSON.cctp_transfer), txIndex: operationJSON.tx_index };
+    return {
+      cctpTransfer: cctpTransferFromJSON(operationJSON.cctp_transfer),
+      txIndex: operationJSON.tx_index,
+      amountIn: operationJSON.amount_in,
+      amountOut: operationJSON.amount_out,
+     };
   }
 
   if ("hyperlane_transfer" in operationJSON) {
@@ -734,37 +751,71 @@ export function operationFromJSON(operationJSON: OperationJSON): Operation {
         operationJSON.hyperlane_transfer,
       ),
       txIndex: operationJSON.tx_index,
+      amountIn: operationJSON.amount_in,
+      amountOut: operationJSON.amount_out,
     };
   }
 
-  return { swap: swapFromJSON(operationJSON.swap), txIndex: operationJSON.tx_index };
+  return {
+    swap: swapFromJSON(operationJSON.swap),
+    txIndex: operationJSON.tx_index,
+    amountIn: operationJSON.amount_in,
+    amountOut: operationJSON.amount_out,
+   };
 }
 
 export function operationToJSON(operation: Operation): OperationJSON {
   if ("transfer" in operation) {
-    return { transfer: transferToJSON(operation.transfer), tx_index: operation.txIndex };
+    return {
+      transfer: transferToJSON(operation.transfer),
+      tx_index: operation.txIndex,
+      amount_in: operation.amountIn,
+      amount_out: operation.amountOut,
+     };
   }
 
   if ("bankSend" in operation) {
-    return { bank_send: bankSendToJSON(operation.bankSend), tx_index: operation.txIndex };
+    return {
+      bank_send: bankSendToJSON(operation.bankSend),
+      tx_index: operation.txIndex,
+      amount_in: operation.amountIn,
+      amount_out: operation.amountOut,
+     };
   }
 
   if ("axelarTransfer" in operation) {
-    return { axelar_transfer: axelarTransferToJSON(operation.axelarTransfer), tx_index: operation.txIndex };
+    return {
+      axelar_transfer: axelarTransferToJSON(operation.axelarTransfer),
+      tx_index: operation.txIndex,
+      amount_in: operation.amountIn,
+      amount_out: operation.amountOut,
+    };
   }
 
   if ("cctpTransfer" in operation) {
-    return { cctp_transfer: cctpTransferToJSON(operation.cctpTransfer), tx_index: operation.txIndex };
+    return {
+      cctp_transfer: cctpTransferToJSON(operation.cctpTransfer),
+      tx_index: operation.txIndex,
+      amount_in: operation.amountIn,
+      amount_out: operation.amountOut,
+     };
   }
 
   if ("hyperlaneTransfer" in operation) {
     return {
       hyperlane_transfer: hyperlaneTransferToJSON(operation.hyperlaneTransfer),
       tx_index: operation.txIndex,
+      amount_in: operation.amountIn,
+      amount_out: operation.amountOut,
     };
   }
 
-  return { swap: swapToJSON(operation.swap), tx_index: operation.txIndex };
+  return {
+    swap: swapToJSON(operation.swap),
+    tx_index: operation.txIndex,
+    amount_in: operation.amountIn,
+    amount_out: operation.amountOut,
+   };
 }
 
 export function routeResponseFromJSON(
