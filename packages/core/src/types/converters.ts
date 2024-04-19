@@ -706,21 +706,22 @@ export function swapToJSON(swap: Swap): SwapJSON {
 
 export function operationFromJSON(operationJSON: OperationJSON): Operation {
   if ("transfer" in operationJSON) {
-    return { transfer: transferFromJSON(operationJSON.transfer) };
+    return { transfer: transferFromJSON(operationJSON.transfer), txIndex: operationJSON.tx_index };
   }
 
   if ("bank_send" in operationJSON) {
-    return { bankSend: bankSendFromJSON(operationJSON.bank_send) };
+    return { bankSend: bankSendFromJSON(operationJSON.bank_send), txIndex: operationJSON.tx_index };
   }
 
   if ("axelar_transfer" in operationJSON) {
     return {
       axelarTransfer: axelarTransferFromJSON(operationJSON.axelar_transfer),
+      txIndex: operationJSON.tx_index,
     };
   }
 
   if ("cctp_transfer" in operationJSON) {
-    return { cctpTransfer: cctpTransferFromJSON(operationJSON.cctp_transfer) };
+    return { cctpTransfer: cctpTransferFromJSON(operationJSON.cctp_transfer), txIndex: operationJSON.tx_index };
   }
 
   if ("hyperlane_transfer" in operationJSON) {
@@ -728,36 +729,38 @@ export function operationFromJSON(operationJSON: OperationJSON): Operation {
       hyperlaneTransfer: hyperlaneTransferFromJSON(
         operationJSON.hyperlane_transfer,
       ),
+      txIndex: operationJSON.tx_index,
     };
   }
 
-  return { swap: swapFromJSON(operationJSON.swap) };
+  return { swap: swapFromJSON(operationJSON.swap), txIndex: operationJSON.tx_index };
 }
 
 export function operationToJSON(operation: Operation): OperationJSON {
   if ("transfer" in operation) {
-    return { transfer: transferToJSON(operation.transfer) };
+    return { transfer: transferToJSON(operation.transfer), tx_index: operation.txIndex };
   }
 
   if ("bankSend" in operation) {
-    return { bank_send: bankSendToJSON(operation.bankSend) };
+    return { bank_send: bankSendToJSON(operation.bankSend), tx_index: operation.txIndex };
   }
 
   if ("axelarTransfer" in operation) {
-    return { axelar_transfer: axelarTransferToJSON(operation.axelarTransfer) };
+    return { axelar_transfer: axelarTransferToJSON(operation.axelarTransfer), tx_index: operation.txIndex };
   }
 
   if ("cctpTransfer" in operation) {
-    return { cctp_transfer: cctpTransferToJSON(operation.cctpTransfer) };
+    return { cctp_transfer: cctpTransferToJSON(operation.cctpTransfer), tx_index: operation.txIndex };
   }
 
   if ("hyperlaneTransfer" in operation) {
     return {
       hyperlane_transfer: hyperlaneTransferToJSON(operation.hyperlaneTransfer),
+      tx_index: operation.txIndex,
     };
   }
 
-  return { swap: swapToJSON(operation.swap) };
+  return { swap: swapToJSON(operation.swap), tx_index: operation.txIndex };
 }
 
 export function routeResponseFromJSON(
@@ -1417,16 +1420,19 @@ export function txFromJSON(txJSON: TxJSON): Tx {
   if ("cosmos_tx" in txJSON) {
     return {
       cosmosTx: cosmosTxFromJSON(txJSON.cosmos_tx),
+      operations: txJSON.operations,
     };
   }
   if ("svm_tx" in txJSON) {
     return {
       svmTx: svmTxFromJSON(txJSON.svm_tx),
+      operations: txJSON.operations,
     };
   }
 
   return {
     evmTx: evmTxFromJSON(txJSON.evm_tx),
+    operations: txJSON.operations,
   };
 }
 
@@ -1434,16 +1440,19 @@ export function txToJSON(tx: Tx): TxJSON {
   if ("cosmosTx" in tx) {
     return {
       cosmos_tx: cosmosTxToJSON(tx.cosmosTx),
+      operations: tx.operations,
     };
   }
   if ("svmTx" in tx) {
     return {
       svm_tx: svmTxToJSON(tx.svmTx),
+      operations: tx.operations,
     };
   }
 
   return {
     evm_tx: evmTxToJSON(tx.evmTx),
+    operations: tx.operations,
   };
 }
 
