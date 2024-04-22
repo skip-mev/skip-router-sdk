@@ -1,5 +1,11 @@
 # @skip-router/core
 
+## 2.4.2
+
+### Patch Changes
+
+- 52f94b7: lock initia-registry deps
+
 ## 2.4.1
 
 ### Patch Changes
