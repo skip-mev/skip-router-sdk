@@ -396,14 +396,14 @@ export type Msg =
   | { svmTx: SvmTx };
 
 export type TxJSON =
-  | { cosmos_tx: CosmosTxJSON, operations: number[] }
-  | { evm_tx: EvmTxJSON, operations: number[] }
-  | { svm_tx: SvmTxJSON, operations: number[] };
+  | { cosmos_tx: CosmosTxJSON, operations_indices: number[] }
+  | { evm_tx: EvmTxJSON, operations_indices: number[] }
+  | { svm_tx: SvmTxJSON, operations_indices: number[] };
 
 export type Tx =
-  | { cosmosTx: CosmosTx, operations: number[] }
-  | { evmTx: EvmTx, operations: number[] }
-  | { svmTx: SvmTx, operations: number[] };
+  | { cosmosTx: CosmosTx, operationsIndices: number[] }
+  | { evmTx: EvmTx, operationsIndices: number[] }
+  | { svmTx: SvmTx, operationsIndices: number[] };
 
 export type MsgsResponseJSON = {
   msgs: MsgJSON[];

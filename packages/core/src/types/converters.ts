@@ -1420,19 +1420,19 @@ export function txFromJSON(txJSON: TxJSON): Tx {
   if ("cosmos_tx" in txJSON) {
     return {
       cosmosTx: cosmosTxFromJSON(txJSON.cosmos_tx),
-      operations: txJSON.operations,
+      operationsIndices: txJSON.operations_indices,
     };
   }
   if ("svm_tx" in txJSON) {
     return {
       svmTx: svmTxFromJSON(txJSON.svm_tx),
-      operations: txJSON.operations,
+      operationsIndices: txJSON.operations_indices,
     };
   }
 
   return {
     evmTx: evmTxFromJSON(txJSON.evm_tx),
-    operations: txJSON.operations,
+    operationsIndices: txJSON.operations_indices,
   };
 }
 
@@ -1440,19 +1440,19 @@ export function txToJSON(tx: Tx): TxJSON {
   if ("cosmosTx" in tx) {
     return {
       cosmos_tx: cosmosTxToJSON(tx.cosmosTx),
-      operations: tx.operations,
+      operations_indices: tx.operationsIndices,
     };
   }
   if ("svmTx" in tx) {
     return {
       svm_tx: svmTxToJSON(tx.svmTx),
-      operations: tx.operations,
+      operations_indices: tx.operationsIndices,
     };
   }
 
   return {
     evm_tx: evmTxToJSON(tx.evmTx),
-    operations: tx.operations,
+    operations_indices: tx.operationsIndices,
   };
 }
 
