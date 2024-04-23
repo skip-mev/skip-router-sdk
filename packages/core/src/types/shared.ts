@@ -314,6 +314,7 @@ export type SwapJSON = (
   | { swap_out: SwapExactCoinOutJSON }
 ) & {
   estimated_affiliate_fee?: string;
+  from_chain_id: string;
   chain_id: string;
   denom_in: string;
   denom_out: string;
@@ -324,6 +325,7 @@ export type Swap = (
   | { swapOut: SwapExactCoinOut }
 ) & {
   estimatedAffiliateFee?: string;
+  fromChainID: string;
   chainID: string;
   denomIn: string;
   denomOut: string;
