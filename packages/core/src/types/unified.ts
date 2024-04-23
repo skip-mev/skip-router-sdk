@@ -229,20 +229,20 @@ export type EstimatedFeeJSON = {
 };
 
 export type OperationJSON =
-  | { transfer: TransferJSON }
-  | { bank_send: BankSendJSON }
-  | { swap: SwapJSON }
-  | { axelar_transfer: AxelarTransferJSON }
-  | { cctp_transfer: CCTPTransferJSON }
-  | { hyperlane_transfer: HyperlaneTransferJSON };
+  | { transfer: TransferJSON, tx_index: number }
+  | { bank_send: BankSendJSON, tx_index: number  }
+  | { swap: SwapJSON, tx_index: number  }
+  | { axelar_transfer: AxelarTransferJSON, tx_index: number  }
+  | { cctp_transfer: CCTPTransferJSON, tx_index: number  }
+  | { hyperlane_transfer: HyperlaneTransferJSON, tx_index: number  };
 
 export type Operation =
-  | { transfer: Transfer }
-  | { bankSend: BankSend }
-  | { swap: Swap }
-  | { axelarTransfer: AxelarTransfer }
-  | { cctpTransfer: CCTPTransfer }
-  | { hyperlaneTransfer: HyperlaneTransfer };
+  | { transfer: Transfer, txIndex: number }
+  | { bankSend: BankSend, txIndex: number }
+  | { swap: Swap, txIndex: number }
+  | { axelarTransfer: AxelarTransfer, txIndex: number }
+  | { cctpTransfer: CCTPTransfer, txIndex: number }
+  | { hyperlaneTransfer: HyperlaneTransfer, txIndex: number };
 
 export type RouteResponseJSON = {
   source_asset_denom: string;
@@ -396,11 +396,14 @@ export type Msg =
   | { svmTx: SvmTx };
 
 export type TxJSON =
-  | { cosmos_tx: CosmosTxJSON }
-  | { evm_tx: EvmTxJSON }
-  | { svm_tx: SvmTxJSON };
+  | { cosmos_tx: CosmosTxJSON, operations_indices: number[] }
+  | { evm_tx: EvmTxJSON, operations_indices: number[] }
+  | { svm_tx: SvmTxJSON, operations_indices: number[] };
 
-export type Tx = { cosmosTx: CosmosTx } | { evmTx: EvmTx } | { svmTx: SvmTx };
+export type Tx =
+  | { cosmosTx: CosmosTx, operationsIndices: number[] }
+  | { evmTx: EvmTx, operationsIndices: number[] }
+  | { svmTx: SvmTx, operationsIndices: number[] };
 
 export type MsgsResponseJSON = {
   msgs: MsgJSON[];
