@@ -1,5 +1,11 @@
 # @skip-router/core
 
+## 2.4.3
+
+### Patch Changes
+
+- 59364ac: [API-2703] Add from_chain_id to swap
+
 ## 2.4.2
 
 ### Patch Changes
