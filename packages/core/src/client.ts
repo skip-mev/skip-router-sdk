@@ -1126,9 +1126,6 @@ export class SkipRouter {
           tx_hash: txHash,
           client_id: this.clientID,
         });
-        if (response.error) {
-          throw new Error(response.error.message);
-        }
         return types.txStatusResponseFromJSON(response);
       } catch (error) {
         lastError = error;
