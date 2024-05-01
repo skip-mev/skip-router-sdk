@@ -1,5 +1,11 @@
 # @skip-router/core
 
+## 2.4.4
+
+### Patch Changes
+
+- b4fd9ed: add amountIn and amountOut in operations
+
 ## 2.4.3
 
 ### Patch Changes
