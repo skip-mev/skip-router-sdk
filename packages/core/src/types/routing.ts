@@ -23,19 +23,19 @@ export type Chain = {
   chainName: string;
   chainID: string;
   pfmEnabled: boolean;
-  cosmosSDKVersion: string;
-  modules: Record<string, ModuleVersionInfo>;
+  cosmosSDKVersion?: string;
+  modules?: Record<string, ModuleVersionInfo>;
   cosmosModuleSupport: ModuleSupport;
   supportsMemo: boolean;
   logoURI?: string;
   bech32Prefix: string;
   feeAssets: FeeAsset[];
   chainType: string;
-  ibc_capabilities: {
-    cosmos_pfm: boolean;
-    cosmos_ibc_hooks: boolean;
-    cosmos_memo: boolean;
-    cosmos_autopilot: boolean;
+  ibcCapabilities: {
+    cosmosPfm: boolean;
+    cosmosIbcHooks: boolean;
+    cosmosMemo: boolean;
+    cosmosAutopilot: boolean;
   };
   isTestnet: boolean;
 };
@@ -44,8 +44,8 @@ export type ChainJSON = {
   chain_name: string;
   chain_id: string;
   pfm_enabled: boolean;
-  cosmos_sdk_version: string;
-  modules: Record<string, ModuleVersionInfo>;
+  cosmos_sdk_version?: string;
+  modules?: Record<string, ModuleVersionInfo>;
   cosmos_module_support: ModuleSupport;
   supports_memo: boolean;
   logo_uri?: string;
