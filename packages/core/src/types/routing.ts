@@ -11,12 +11,12 @@ export type GasPriceInfo = {
 
 export type FeeAsset = {
   denom: string;
-  gasPrice: GasPriceInfo;
+  gasPrice: GasPriceInfo | null;
 };
 
 export type FeeAssetJSON = {
   denom: string;
-  gas_price: GasPriceInfo;
+  gas_price: GasPriceInfo | null;
 };
 
 export type Chain = {
@@ -31,6 +31,12 @@ export type Chain = {
   bech32Prefix: string;
   feeAssets: FeeAsset[];
   chainType: string;
+  ibc_capabilities: {
+    cosmos_pfm: boolean;
+    cosmos_ibc_hooks: boolean;
+    cosmos_memo: boolean;
+    cosmos_autopilot: boolean;
+  };
   isTestnet: boolean;
 };
 
@@ -46,6 +52,12 @@ export type ChainJSON = {
   bech32_prefix: string;
   fee_assets: FeeAssetJSON[];
   chain_type: string;
+  ibc_capabilities: {
+    cosmos_pfm: boolean;
+    cosmos_ibc_hooks: boolean;
+    cosmos_memo: boolean;
+    cosmos_autopilot: boolean;
+  };
   is_testnet: boolean;
 };
 
