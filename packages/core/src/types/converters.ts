@@ -42,7 +42,14 @@ import {
   TxStatusResponse,
   TxStatusResponseJSON,
 } from "./lifecycle";
-import { Chain, ChainJSON, FeeAsset, FeeAssetJSON } from "./routing";
+import {
+  Chain,
+  ChainJSON,
+  FeeAsset,
+  FeeAssetJSON,
+  IbcCapabilities,
+  IbcCapabilitiesJSON,
+} from "./routing";
 import {
   Affiliate,
   AffiliateJSON,
@@ -283,6 +290,7 @@ export function chainFromJSON(chainJSON: ChainJSON): Chain {
     bech32Prefix: chainJSON.bech32_prefix,
     feeAssets: chainJSON.fee_assets.map(feeAssetFromJSON),
     chainType: chainJSON.chain_type,
+    ibcCapabilities: ibcCapabilitiesFromJSON(chainJSON.ibc_capabilities),
     isTestnet: chainJSON.is_testnet,
   };
 }
@@ -300,6 +308,7 @@ export function chainToJSON(chain: Chain): ChainJSON {
     bech32_prefix: chain.bech32Prefix,
     fee_assets: chain.feeAssets.map(feeAssetToJSON),
     chain_type: chain.chainType,
+    ibc_capabilities: ibcCapabilitiesToJSON(chain.ibcCapabilities),
     is_testnet: chain.isTestnet,
   };
 }
@@ -315,6 +324,28 @@ export function feeAssetToJSON(feeAsset: FeeAsset): FeeAssetJSON {
   return {
     denom: feeAsset.denom,
     gas_price: feeAsset.gasPrice,
+  };
+}
+
+export function ibcCapabilitiesFromJSON(
+  ibcCapabilitiesJSON: IbcCapabilitiesJSON,
+): IbcCapabilities {
+  return {
+    cosmosPfm: ibcCapabilitiesJSON.cosmos_pfm,
+    cosmosIbcHooks: ibcCapabilitiesJSON.cosmos_ibc_hooks,
+    cosmosMemo: ibcCapabilitiesJSON.cosmos_memo,
+    cosmosAutopilot: ibcCapabilitiesJSON.cosmos_autopilot,
+  };
+}
+
+export function ibcCapabilitiesToJSON(
+  ibcCapabilities: IbcCapabilities,
+): IbcCapabilitiesJSON {
+  return {
+    cosmos_pfm: ibcCapabilities.cosmosPfm,
+    cosmos_ibc_hooks: ibcCapabilities.cosmosIbcHooks,
+    cosmos_memo: ibcCapabilities.cosmosMemo,
+    cosmos_autopilot: ibcCapabilities.cosmosAutopilot,
   };
 }
 
@@ -450,9 +481,8 @@ export function swapVenueRequestToJSON(
 export function routeRequestFromJSON(
   routeRequestJSON: RouteRequestJSON,
 ): RouteRequest {
-
-  const swapVenues = routeRequestJSON.swap_venues ?
-    routeRequestJSON.swap_venues.map(swapVenueRequestFromJSON)
+  const swapVenues = routeRequestJSON.swap_venues
+    ? routeRequestJSON.swap_venues.map(swapVenueRequestFromJSON)
     : undefined;
 
   if (routeRequestJSON.amount_in !== undefined) {
@@ -501,8 +531,8 @@ export function routeRequestFromJSON(
 export function routeRequestToJSON(
   routeRequest: RouteRequest,
 ): RouteRequestJSON {
-  const swapVenues = routeRequest.swapVenues ?
-    routeRequest.swapVenues.map(swapVenueRequestToJSON)
+  const swapVenues = routeRequest.swapVenues
+    ? routeRequest.swapVenues.map(swapVenueRequestToJSON)
     : undefined;
 
   if (routeRequest.amountIn !== undefined) {
@@ -536,8 +566,8 @@ export function routeRequestToJSON(
 
     cumulative_affiliate_fee_bps: routeRequest.cumulativeAffiliateFeeBPS,
     swap_venue: routeRequest.swapVenue
-        ? swapVenueRequestToJSON(routeRequest.swapVenue)
-        : undefined,
+      ? swapVenueRequestToJSON(routeRequest.swapVenue)
+      : undefined,
     swap_venues: swapVenues,
     allow_unsafe: routeRequest.allowUnsafe,
     client_id: routeRequest.clientID,
@@ -724,7 +754,7 @@ export function operationFromJSON(operationJSON: OperationJSON): Operation {
       txIndex: operationJSON.tx_index,
       amountIn: operationJSON.amount_in,
       amountOut: operationJSON.amount_out,
-     };
+    };
   }
 
   if ("axelar_transfer" in operationJSON) {
@@ -742,7 +772,7 @@ export function operationFromJSON(operationJSON: OperationJSON): Operation {
       txIndex: operationJSON.tx_index,
       amountIn: operationJSON.amount_in,
       amountOut: operationJSON.amount_out,
-     };
+    };
   }
 
   if ("hyperlane_transfer" in operationJSON) {
@@ -761,7 +791,7 @@ export function operationFromJSON(operationJSON: OperationJSON): Operation {
     txIndex: operationJSON.tx_index,
     amountIn: operationJSON.amount_in,
     amountOut: operationJSON.amount_out,
-   };
+  };
 }
 
 export function operationToJSON(operation: Operation): OperationJSON {
@@ -771,7 +801,7 @@ export function operationToJSON(operation: Operation): OperationJSON {
       tx_index: operation.txIndex,
       amount_in: operation.amountIn,
       amount_out: operation.amountOut,
-     };
+    };
   }
 
   if ("bankSend" in operation) {
@@ -780,7 +810,7 @@ export function operationToJSON(operation: Operation): OperationJSON {
       tx_index: operation.txIndex,
       amount_in: operation.amountIn,
       amount_out: operation.amountOut,
-     };
+    };
   }
 
   if ("axelarTransfer" in operation) {
@@ -798,7 +828,7 @@ export function operationToJSON(operation: Operation): OperationJSON {
       tx_index: operation.txIndex,
       amount_in: operation.amountIn,
       amount_out: operation.amountOut,
-     };
+    };
   }
 
   if ("hyperlaneTransfer" in operation) {
@@ -815,7 +845,7 @@ export function operationToJSON(operation: Operation): OperationJSON {
     tx_index: operation.txIndex,
     amount_in: operation.amountIn,
     amount_out: operation.amountOut,
-   };
+  };
 }
 
 export function routeResponseFromJSON(
@@ -846,7 +876,7 @@ export function routeResponseFromJSON(
 
     warning: routeResponseJSON.warning,
     estimatedFees: routeResponseJSON.estimated_fees?.length
-      ? routeResponseJSON.estimated_fees.map((i) => estimatedFeeFromJSON(i))
+      ? routeResponseJSON.estimated_fees.map(i => estimatedFeeFromJSON(i))
       : [],
   };
 }
@@ -878,9 +908,7 @@ export function routeResponseToJSON(
     swap_price_impact_percent: routeResponse.swapPriceImpactPercent,
 
     warning: routeResponse.warning,
-    estimated_fees: routeResponse.estimatedFees.map((i) =>
-      estimatedFeeToJSON(i),
-    ),
+    estimated_fees: routeResponse.estimatedFees.map(i => estimatedFeeToJSON(i)),
     // estimated_fees: routeResponse.estimatedFees?.length
     //   ? routeResponse.estimatedFees.map((i) => estimatedFeeToJSON(i))
     //   : [],
@@ -1450,8 +1478,9 @@ export function evmTxToJSON(evmTx: EvmTx): EvmTxJSON {
     to: evmTx.to,
     value: evmTx.value,
     data: evmTx.data,
-    required_erc20_approvals:
-      evmTx.requiredERC20Approvals.map(erc20ApprovalToJSON),
+    required_erc20_approvals: evmTx.requiredERC20Approvals.map(
+      erc20ApprovalToJSON,
+    ),
   };
 }
 
@@ -1549,11 +1578,11 @@ export function messageResponseFromJSON(
   response: MsgsResponseJSON,
 ): MsgsResponse {
   return {
-    estimatedFees: response.estimated_fees?.map((fee) =>
+    estimatedFees: response.estimated_fees?.map(fee =>
       estimatedFeeFromJSON(fee),
     ),
-    msgs: response.msgs.map((msg) => msgFromJSON(msg)),
-    txs: response.txs?.map((tx) => txFromJSON(tx)),
+    msgs: response.msgs.map(msg => msgFromJSON(msg)),
+    txs: response.txs?.map(tx => txFromJSON(tx)),
   };
 }
 
@@ -2112,10 +2141,11 @@ export function msgsDirectRequestToJSON(
     swap_venue:
       msgDirectRequest.swapVenue && swapVenueToJSON(msgDirectRequest.swapVenue),
     swap_venues:
-      msgDirectRequest.swapVenues && msgDirectRequest.swapVenues.map(swapVenueToJSON),
+      msgDirectRequest.swapVenues &&
+      msgDirectRequest.swapVenues.map(swapVenueToJSON),
     post_route_handler:
       msgDirectRequest.postRouteHandler &&
       postHandlerToJSON(msgDirectRequest.postRouteHandler),
-      smart_relay: msgDirectRequest.smartRelay,
+    smart_relay: msgDirectRequest.smartRelay,
   };
 }

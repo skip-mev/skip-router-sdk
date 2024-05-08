@@ -19,6 +19,20 @@ export type FeeAssetJSON = {
   gas_price: GasPriceInfo | null;
 };
 
+export type IbcCapabilities = {
+  cosmosPfm: boolean;
+  cosmosIbcHooks: boolean;
+  cosmosMemo: boolean;
+  cosmosAutopilot: boolean;
+};
+
+export type IbcCapabilitiesJSON = {
+  cosmos_pfm: boolean;
+  cosmos_ibc_hooks: boolean;
+  cosmos_memo: boolean;
+  cosmos_autopilot: boolean;
+};
+
 export type Chain = {
   chainName: string;
   chainID: string;
@@ -31,12 +45,7 @@ export type Chain = {
   bech32Prefix: string;
   feeAssets: FeeAsset[];
   chainType: string;
-  ibcCapabilities: {
-    cosmosPfm: boolean;
-    cosmosIbcHooks: boolean;
-    cosmosMemo: boolean;
-    cosmosAutopilot: boolean;
-  };
+  ibcCapabilities: IbcCapabilities;
   isTestnet: boolean;
 };
 
@@ -52,12 +61,7 @@ export type ChainJSON = {
   bech32_prefix: string;
   fee_assets: FeeAssetJSON[];
   chain_type: string;
-  ibc_capabilities: {
-    cosmos_pfm: boolean;
-    cosmos_ibc_hooks: boolean;
-    cosmos_memo: boolean;
-    cosmos_autopilot: boolean;
-  };
+  ibc_capabilities: IbcCapabilitiesJSON;
   is_testnet: boolean;
 };
 
