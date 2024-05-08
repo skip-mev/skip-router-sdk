@@ -87,9 +87,13 @@ import {
   SwapExactCoinInJSON,
   SwapExactCoinOut,
   SwapExactCoinOutJSON,
+  SmartSwapExactCoinIn,
+  SmartSwapExactCoinInJSON,
   SwapJSON,
   SwapOperation,
   SwapOperationJSON,
+  SwapRoute,
+  SwapRouteJSON,
   SwapVenue,
   SwapVenueJSON,
   SwapVenueRequest,
@@ -616,6 +620,24 @@ export function swapOperationToJSON(
   };
 }
 
+export function swapRouteFromJSON(
+  swapRouteJSON: SwapRouteJSON,
+): SwapRoute {
+  return {
+    swapAmountIn: swapRouteJSON.swap_amount_in,
+    denomIn: swapRouteJSON.denom_in,
+    swapOperations: swapRouteJSON.swap_operations.map(swapOperationFromJSON),
+  };
+}
+
+export function swapRouteToJSON(swapRoute: SwapRoute): SwapRouteJSON {
+  return {
+    swap_amount_in: swapRoute.swapAmountIn,
+    denom_in: swapRoute.denomIn,
+    swap_operations: swapRoute.swapOperations.map(swapOperationToJSON),
+  };
+}
+
 export function swapExactCoinInFromJSON(
   swapExactCoinInJSON: SwapExactCoinInJSON,
 ): SwapExactCoinIn {
@@ -637,6 +659,26 @@ export function swapExactCoinInToJSON(
     swap_operations: swapExactCoinIn.swapOperations.map(swapOperationToJSON),
     swap_amount_in: swapExactCoinIn.swapAmountIn,
     price_impact_percent: swapExactCoinIn.priceImpactPercent,
+  };
+}
+
+export function smartSwapExactCoinInFromJSON(
+  smartSwapExactCoinInJSON: SmartSwapExactCoinInJSON,
+): SmartSwapExactCoinIn {
+  return {
+    swapVenue: swapVenueFromJSON(smartSwapExactCoinInJSON.swap_venue),
+    swapRoutes: smartSwapExactCoinInJSON.swap_routes.map(
+      swapRouteFromJSON,
+    ),
+  };
+}
+
+export function smartSwapExactCoinInToJSON(
+  smartSwapExactCoinIn: SmartSwapExactCoinIn,
+): SmartSwapExactCoinInJSON {
+  return {
+    swap_venue: swapVenueToJSON(smartSwapExactCoinIn.swapVenue),
+    swap_routes: smartSwapExactCoinIn.swapRoutes.map(swapRouteToJSON),
   };
 }
 
@@ -673,6 +715,17 @@ export function swapFromJSON(swapJSON: SwapJSON): Swap {
       chainID: swapJSON.chain_id,
       denomIn: swapJSON.denom_in,
       denomOut: swapJSON.denom_out,
+      interface: swapJSON.interface,
+    };
+  } else if ("smart_swap_in" in swapJSON) {
+    return {
+      smartSwapIn: smartSwapExactCoinInFromJSON(swapJSON.smart_swap_in),
+      estimatedAffiliateFee: swapJSON.estimated_affiliate_fee,
+      fromChainID: swapJSON.from_chain_id,
+      chainID: swapJSON.chain_id,
+      denomIn: swapJSON.denom_in,
+      denomOut: swapJSON.denom_out,
+      interface: swapJSON.interface,
     };
   }
 
@@ -683,6 +736,7 @@ export function swapFromJSON(swapJSON: SwapJSON): Swap {
     chainID: swapJSON.chain_id,
     denomIn: swapJSON.denom_in,
     denomOut: swapJSON.denom_out,
+    interface: swapJSON.interface,
   };
 }
 
@@ -695,6 +749,17 @@ export function swapToJSON(swap: Swap): SwapJSON {
       chain_id: swap.chainID,
       denom_in: swap.denomIn,
       denom_out: swap.denomOut,
+      interface: swap.interface,
+    };
+  } else if ("smartSwapIn" in swap) {
+    return {
+      smart_swap_in: smartSwapExactCoinInToJSON(swap.smartSwapIn),
+      estimated_affiliate_fee: swap.estimatedAffiliateFee,
+      from_chain_id: swap.fromChainID,
+      chain_id: swap.chainID,
+      denom_in: swap.denomIn,
+      denom_out: swap.denomOut,
+      interface: swap.interface,
     };
   }
 
@@ -705,6 +770,7 @@ export function swapToJSON(swap: Swap): SwapJSON {
     chain_id: swap.chainID,
     denom_in: swap.denomIn,
     denom_out: swap.denomOut,
+    interface: swap.interface,
   };
 }
 
