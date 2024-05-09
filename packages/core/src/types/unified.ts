@@ -138,7 +138,6 @@ export type RouteRequestBaseJSON = {
   bridges?: BridgeType[];
   allow_multi_tx?: boolean;
   smart_relay?: boolean;
-  smart_router?: boolean;
 };
 
 export type RouteRequestGivenInJSON = RouteRequestBaseJSON & {
@@ -182,7 +181,6 @@ export type RouteRequestBase = {
   bridges?: BridgeType[];
   allowMultiTx?: boolean;
   smartRelay?: boolean;
-  smartRouter?: boolean;
 };
 
 export type RouteRequestGivenIn = RouteRequestBase & {
@@ -359,7 +357,6 @@ export type MsgsDirectRequestJSON = {
   bridges?: BridgeType[];
   allow_multi_tx?: boolean;
   smart_relay?: boolean;
-  smart_router?: boolean;
 };
 
 export type MsgsDirectRequest = {
@@ -386,7 +383,6 @@ export type MsgsDirectRequest = {
   bridges?: BridgeType[];
   allowMultiTx?: boolean;
   smartRelay?: boolean;
-  smartRouter?: boolean;
 };
 
 export type MsgJSON =
