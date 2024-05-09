@@ -1,1 +1,4 @@
 src/codegen/**
+# allowed directories/files
+/dist/**/*
+!/dist/**/.gitkeep

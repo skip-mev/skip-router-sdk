@@ -6,9 +6,12 @@
 .vscode
 *.log
 coverage
-dist
 lib
 main
 mjs
 module
 node_modules
+
+# allowed directories/files
+!.gitkeep
+!.env.example
