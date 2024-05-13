@@ -1,5 +1,11 @@
 # @skip-router/core
 
+## 3.0.0
+
+### Major Changes
+
+- 8846e1a: userAddresses param type change in executeRoute
+
 ## 2.4.4
 
 ### Patch Changes
