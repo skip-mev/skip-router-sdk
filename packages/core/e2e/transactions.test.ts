@@ -401,10 +401,16 @@ describe("transaction execution", () => {
           usdAmountOut: "1.68",
           estimatedFees: [],
         },
-        userAddresses: {
-          "osmosis-1": signerAddress,
-          "cosmoshub-4": "cosmos1g3jjhgkyf36pjhe7u5cw8j9u6cgl8x929ej430",
-        },
+        userAddresses: [
+          {
+            address: signerAddress,
+            chainID: "osmosis-1",
+          },
+          {
+            address: "cosmos1g3jjhgkyf36pjhe7u5cw8j9u6cgl8x929ej430",
+            chainID: "cosmoshub-4",
+          },
+        ],
         validateGasBalance: true,
         slippageTolerancePercent: "3",
         onTransactionBroadcast: async (tx) => {
