@@ -1,5 +1,11 @@
 # @skip-router/core
 
+## 3.0.1
+
+### Patch Changes
+
+- ccdb6ef: bump initia-registry
+
 ## 3.0.0
 
 ### Major Changes
