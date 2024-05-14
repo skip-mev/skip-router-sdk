@@ -208,11 +208,13 @@ export class SkipRouter {
 
   async executeRoute(options: clientTypes.ExecuteRouteOptions) {
     const { route, userAddresses } = options;
-    const addressList = route.chainIDs.map((chainID) => {
-      return (
-        userAddresses[chainID] ||
-        raise(`executeRoute error: invalid address for chain '${chainID}'`)
-      );
+
+    const addressList = userAddresses.map(({ chainID, address }, i) => {
+      if (route.chainIDs[i] !== chainID) {
+        raise(`executeRoute error: invalid address for chain '${chainID}'`);
+      }
+
+      return address;
     });
 
     const messages = await this.messages({
@@ -262,7 +264,10 @@ export class SkipRouter {
         // TODO: use typeguard instead
 
         const cosmosTx = tx.cosmosTx;
-        const currentUserAddress = userAddresses[cosmosTx.chainID];
+        const currentUserAddress = userAddresses.find(
+          (x) => x.chainID === cosmosTx.chainID,
+        )?.address;
+
         if (!currentUserAddress) {
           raise(
             `executeRoute error: invalid address for chain '${cosmosTx.chainID}'`,
@@ -1573,7 +1578,7 @@ export class SkipRouter {
 
   async validateGasBalances(
     txs: types.Tx[],
-    userAddresses: Record<string, string>,
+    userAddresses: clientTypes.UserAddress[],
     getOfflineSigner?: (chainID: string) => Promise<OfflineSigner>,
     getGasPrice?: (chainID: string) => Promise<GasPrice | undefined>,
     gasAmountMultiplier?: number,
@@ -1610,7 +1615,9 @@ export class SkipRouter {
         );
 
         const currentAddress =
-          userAddresses[tx.cosmosTx.chainID] ||
+          userAddresses.find(
+            (address) => address.chainID === tx.cosmosTx.chainID,
+          )?.address ||
           raise(
             `validateGasBalance error: invalid address for chain '${tx.cosmosTx.chainID}'`,
           );
