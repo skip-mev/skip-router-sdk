@@ -1551,12 +1551,12 @@ test("routeResponseFromJSON", () => {
     chain_ids: ["osmosis-1", "cosmoshub-4"],
     does_swap: true,
     estimated_amount_out: "54906",
-    swap_venue: {
+    swap_venues: [{
       name: "osmosis-poolmanager",
       chain_id: "osmosis-1",
       logo_uri:
         "https://raw.githubusercontent.com/cosmos/chain-registry/master/osmosis/images/osmosis-chain-logo.png",
-    },
+    }],
     txs_required: 1,
     estimated_fees: [],
   };
@@ -1613,12 +1613,12 @@ test("routeResponseFromJSON", () => {
     chainIDs: ["osmosis-1", "cosmoshub-4"],
     doesSwap: true,
     estimatedAmountOut: "54906",
-    swapVenue: {
+    swapVenues: [{
       name: "osmosis-poolmanager",
       chainID: "osmosis-1",
       logoUri:
         "https://raw.githubusercontent.com/cosmos/chain-registry/master/osmosis/images/osmosis-chain-logo.png",
-    },
+    }],
     estimatedFees: [],
     txsRequired: 1,
   });
@@ -1677,12 +1677,12 @@ test("routeResponseToJSON", () => {
     chainIDs: ["osmosis-1", "cosmoshub-4"],
     doesSwap: true,
     estimatedAmountOut: "54906",
-    swapVenue: {
+    swapVenues: [{
       name: "osmosis-poolmanager",
       chainID: "osmosis-1",
       logoUri:
         "https://raw.githubusercontent.com/cosmos/chain-registry/master/osmosis/images/osmosis-chain-logo.png",
-    },
+    }],
     estimatedFees: [],
     txsRequired: 1,
   };
@@ -1739,12 +1739,12 @@ test("routeResponseToJSON", () => {
     chain_ids: ["osmosis-1", "cosmoshub-4"],
     does_swap: true,
     estimated_amount_out: "54906",
-    swap_venue: {
+    swap_venues: [{
       name: "osmosis-poolmanager",
       chain_id: "osmosis-1",
       logo_uri:
         "https://raw.githubusercontent.com/cosmos/chain-registry/master/osmosis/images/osmosis-chain-logo.png",
-    },
+    }],
     txs_required: 1,
     estimated_fees: [],
   });

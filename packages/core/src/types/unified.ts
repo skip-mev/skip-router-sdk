@@ -257,7 +257,7 @@ export type RouteResponseJSON = {
 
   does_swap: boolean;
   estimated_amount_out?: string;
-  swap_venue?: SwapVenueJSON;
+  swap_venues?: SwapVenueJSON[];
 
   txs_required: number;
 
@@ -282,7 +282,7 @@ export type RouteResponse = {
 
   doesSwap: boolean;
   estimatedAmountOut?: string;
-  swapVenue?: SwapVenue;
+  swapVenues?: SwapVenue[];
 
   txsRequired: number;
 
