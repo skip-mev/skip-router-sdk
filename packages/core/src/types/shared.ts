@@ -273,12 +273,14 @@ export type SwapOperationJSON = {
   pool: string;
   denom_in: string;
   denom_out: string;
+  interface?: string;
 };
 
 export type SwapOperation = {
   pool: string;
   denomIn: string;
   denomOut: string;
+  interface?: string;
 };
 
 export type SwapExactCoinOutJSON = {
@@ -341,7 +343,6 @@ export type SwapJSON = (
   chain_id: string;
   denom_in: string;
   denom_out: string;
-  interface?: string;
 };
 
 export type Swap = (
@@ -354,7 +355,6 @@ export type Swap = (
   chainID: string;
   denomIn: string;
   denomOut: string;
-  interface?: string;
 };
 
 export type AffiliateJSON = {
