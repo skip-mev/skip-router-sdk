@@ -1,4 +1,3 @@
-import { a } from "msw/lib/glossary-de6278a9";
 import {
   affiliateFromJSON,
   affiliateToJSON,
@@ -1158,7 +1157,8 @@ test("swapFromJSON - swap in", () => {
       {
         name: "neutron-astroport",
         chain_id: "neutron-1",
-        logo_uri: "https://raw.githubusercontent.com/skip-mev/skip-api-registry/main/swap-venues/astroport/logo.svg",
+        logo_uri:
+          "https://raw.githubusercontent.com/skip-mev/skip-api-registry/main/swap-venues/astroport/logo.svg",
       },
     ],
   };
@@ -1189,7 +1189,8 @@ test("swapFromJSON - swap in", () => {
       {
         name: "neutron-astroport",
         chainID: "neutron-1",
-        logoUri: "https://raw.githubusercontent.com/skip-mev/skip-api-registry/main/swap-venues/astroport/logo.svg",
+        logoUri:
+          "https://raw.githubusercontent.com/skip-mev/skip-api-registry/main/swap-venues/astroport/logo.svg",
       },
     ],
   });
@@ -1222,7 +1223,8 @@ test("swapFromJSON - swap out", () => {
       {
         name: "neutron-astroport",
         chain_id: "neutron-1",
-        logo_uri: "https://raw.githubusercontent.com/skip-mev/skip-api-registry/main/swap-venues/astroport/logo.svg",
+        logo_uri:
+          "https://raw.githubusercontent.com/skip-mev/skip-api-registry/main/swap-venues/astroport/logo.svg",
       },
     ],
   };
@@ -1253,7 +1255,8 @@ test("swapFromJSON - swap out", () => {
       {
         name: "neutron-astroport",
         chainID: "neutron-1",
-        logoUri: "https://raw.githubusercontent.com/skip-mev/skip-api-registry/main/swap-venues/astroport/logo.svg",
+        logoUri:
+          "https://raw.githubusercontent.com/skip-mev/skip-api-registry/main/swap-venues/astroport/logo.svg",
       },
     ],
   });
@@ -1286,7 +1289,8 @@ test("swapToJSON - swap in", () => {
       {
         name: "neutron-astroport",
         chainID: "neutron-1",
-        logoUri: "https://raw.githubusercontent.com/skip-mev/skip-api-registry/main/swap-venues/astroport/logo.svg",
+        logoUri:
+          "https://raw.githubusercontent.com/skip-mev/skip-api-registry/main/swap-venues/astroport/logo.svg",
       },
     ],
   };
@@ -1317,7 +1321,8 @@ test("swapToJSON - swap in", () => {
       {
         name: "neutron-astroport",
         chain_id: "neutron-1",
-        logo_uri: "https://raw.githubusercontent.com/skip-mev/skip-api-registry/main/swap-venues/astroport/logo.svg",
+        logo_uri:
+          "https://raw.githubusercontent.com/skip-mev/skip-api-registry/main/swap-venues/astroport/logo.svg",
       },
     ],
   });
@@ -1350,7 +1355,8 @@ test("swapToJSON - swap out", () => {
       {
         name: "neutron-astroport",
         chainID: "neutron-1",
-        logoUri: "https://raw.githubusercontent.com/skip-mev/skip-api-registry/main/swap-venues/astroport/logo.svg",
+        logoUri:
+          "https://raw.githubusercontent.com/skip-mev/skip-api-registry/main/swap-venues/astroport/logo.svg",
       },
     ],
   };
@@ -1381,7 +1387,8 @@ test("swapToJSON - swap out", () => {
       {
         name: "neutron-astroport",
         chain_id: "neutron-1",
-        logo_uri: "https://raw.githubusercontent.com/skip-mev/skip-api-registry/main/swap-venues/astroport/logo.svg",
+        logo_uri:
+          "https://raw.githubusercontent.com/skip-mev/skip-api-registry/main/swap-venues/astroport/logo.svg",
       },
     ],
   });
@@ -1457,7 +1464,8 @@ test("operationFromJSON - swap", () => {
         {
           name: "neutron-astroport",
           chain_id: "neutron-1",
-          logo_uri: "https://raw.githubusercontent.com/skip-mev/skip-api-registry/main/swap-venues/astroport/logo.svg",
+          logo_uri:
+            "https://raw.githubusercontent.com/skip-mev/skip-api-registry/main/swap-venues/astroport/logo.svg",
         },
       ],
     },
@@ -1493,7 +1501,8 @@ test("operationFromJSON - swap", () => {
         {
           name: "neutron-astroport",
           chainID: "neutron-1",
-          logoUri: "https://raw.githubusercontent.com/skip-mev/skip-api-registry/main/swap-venues/astroport/logo.svg",
+          logoUri:
+            "https://raw.githubusercontent.com/skip-mev/skip-api-registry/main/swap-venues/astroport/logo.svg",
         },
       ],
     },
@@ -1573,7 +1582,8 @@ test("operationToJSON - swap", () => {
         {
           name: "neutron-astroport",
           chainID: "neutron-1",
-          logoUri: "https://raw.githubusercontent.com/skip-mev/skip-api-registry/main/swap-venues/astroport/logo.svg",
+          logoUri:
+            "https://raw.githubusercontent.com/skip-mev/skip-api-registry/main/swap-venues/astroport/logo.svg",
         },
       ],
     },
@@ -1609,7 +1619,8 @@ test("operationToJSON - swap", () => {
         {
           name: "neutron-astroport",
           chain_id: "neutron-1",
-          logo_uri: "https://raw.githubusercontent.com/skip-mev/skip-api-registry/main/swap-venues/astroport/logo.svg",
+          logo_uri:
+            "https://raw.githubusercontent.com/skip-mev/skip-api-registry/main/swap-venues/astroport/logo.svg",
         },
       ],
     },
@@ -1687,12 +1698,14 @@ test("routeResponseFromJSON", () => {
     chain_ids: ["osmosis-1", "cosmoshub-4"],
     does_swap: true,
     estimated_amount_out: "54906",
-    swap_venues: [{
-      name: "osmosis-poolmanager",
-      chain_id: "osmosis-1",
-      logo_uri:
-        "https://raw.githubusercontent.com/cosmos/chain-registry/master/osmosis/images/osmosis-chain-logo.png",
-    }],
+    swap_venues: [
+      {
+        name: "osmosis-poolmanager",
+        chain_id: "osmosis-1",
+        logo_uri:
+          "https://raw.githubusercontent.com/cosmos/chain-registry/master/osmosis/images/osmosis-chain-logo.png",
+      },
+    ],
     txs_required: 1,
     estimated_fees: [],
   };
@@ -1764,12 +1777,14 @@ test("routeResponseFromJSON", () => {
     chainIDs: ["osmosis-1", "cosmoshub-4"],
     doesSwap: true,
     estimatedAmountOut: "54906",
-    swapVenues: [{
-      name: "osmosis-poolmanager",
-      chainID: "osmosis-1",
-      logoUri:
-        "https://raw.githubusercontent.com/cosmos/chain-registry/master/osmosis/images/osmosis-chain-logo.png",
-    }],
+    swapVenues: [
+      {
+        name: "osmosis-poolmanager",
+        chainID: "osmosis-1",
+        logoUri:
+          "https://raw.githubusercontent.com/cosmos/chain-registry/master/osmosis/images/osmosis-chain-logo.png",
+      },
+    ],
     estimatedFees: [],
     txsRequired: 1,
   });
@@ -1843,12 +1858,14 @@ test("routeResponseToJSON", () => {
     chainIDs: ["osmosis-1", "cosmoshub-4"],
     doesSwap: true,
     estimatedAmountOut: "54906",
-    swapVenues: [{
-      name: "osmosis-poolmanager",
-      chainID: "osmosis-1",
-      logoUri:
-        "https://raw.githubusercontent.com/cosmos/chain-registry/master/osmosis/images/osmosis-chain-logo.png",
-    }],
+    swapVenues: [
+      {
+        name: "osmosis-poolmanager",
+        chainID: "osmosis-1",
+        logoUri:
+          "https://raw.githubusercontent.com/cosmos/chain-registry/master/osmosis/images/osmosis-chain-logo.png",
+      },
+    ],
     estimatedFees: [],
     txsRequired: 1,
   };
@@ -1920,12 +1937,14 @@ test("routeResponseToJSON", () => {
     chain_ids: ["osmosis-1", "cosmoshub-4"],
     does_swap: true,
     estimated_amount_out: "54906",
-    swap_venues: [{
-      name: "osmosis-poolmanager",
-      chain_id: "osmosis-1",
-      logo_uri:
-        "https://raw.githubusercontent.com/cosmos/chain-registry/master/osmosis/images/osmosis-chain-logo.png",
-    }],
+    swap_venues: [
+      {
+        name: "osmosis-poolmanager",
+        chain_id: "osmosis-1",
+        logo_uri:
+          "https://raw.githubusercontent.com/cosmos/chain-registry/master/osmosis/images/osmosis-chain-logo.png",
+      },
+    ],
     txs_required: 1,
     estimated_fees: [],
   });
@@ -2105,7 +2124,7 @@ test("msgsRequestFromJSON", () => {
     },
   };
 
-  expect(msgsRequestFromJSON(msgsRequestJSON)).toEqual({
+  const msgsRequest: MsgsRequest = {
     sourceAssetDenom: "uosmo",
     sourceAssetChainID: "osmosis-1",
     destAssetDenom: "uatom",
@@ -2137,9 +2156,21 @@ test("msgsRequestFromJSON", () => {
           },
           estimatedAffiliateFee: "1000000",
           chainID: "neutron-1",
+          fromChainID: "neutron-1",
           denomIn: "uosmo",
           denomOut: "uatom",
+          swapVenues: [
+            {
+              name: "neutron-astroport",
+              chainID: "neutron-1",
+              logoUri:
+                "https://raw.githubusercontent.com/skip-mev/skip-api-registry/main/swap-venues/astroport/logo.svg",
+            },
+          ],
         },
+        txIndex: 0,
+        amountIn: "100000",
+        amountOut: "100000",
       },
       {
         transfer: {
@@ -2156,9 +2187,11 @@ test("msgsRequestFromJSON", () => {
           fromChainID: "osmosis-1",
           toChainID: "cosmoshub-4",
         },
+        txIndex: 0,
+        amountIn: "100000",
+        amountOut: "100000",
       },
     ],
-
     estimatedAmountOut: "54906",
     slippageTolerancePercent: "0.01",
     affiliates: [
@@ -2173,7 +2206,9 @@ test("msgsRequestFromJSON", () => {
         msg: "cosmwasm message",
       },
     },
-  });
+  };
+
+  expect(msgsRequestFromJSON(msgsRequestJSON)).toEqual(msgsRequest);
 });
 
 test("msgsRequestToJSON", () => {
@@ -2262,7 +2297,7 @@ test("msgsRequestToJSON", () => {
     },
   };
 
-  expect(msgsRequestToJSON(msgsRequest)).toEqual({
+  const mesgsRequestJSON: MsgsRequestJSON = {
     source_asset_denom: "uosmo",
     source_asset_chain_id: "osmosis-1",
     dest_asset_denom: "uatom",
@@ -2294,9 +2329,21 @@ test("msgsRequestToJSON", () => {
           },
           estimated_affiliate_fee: "1000000",
           chain_id: "neutron-1",
+          from_chain_id: "neutron-1",
           denom_in: "uosmo",
           denom_out: "uatom",
+          swap_venues: [
+            {
+              name: "neutron-astroport",
+              chain_id: "neutron-1",
+              logo_uri:
+                "https://raw.githubusercontent.com/skip-mev/skip-api-registry/main/swap-venues/astroport/logo.svg",
+            },
+          ],
         },
+        tx_index: 0,
+        amount_in: "100000",
+        amount_out: "100000",
       },
       {
         transfer: {
@@ -2313,6 +2360,9 @@ test("msgsRequestToJSON", () => {
           from_chain_id: "osmosis-1",
           to_chain_id: "cosmoshub-4",
         },
+        tx_index: 0,
+        amount_in: "100000",
+        amount_out: "100000",
       },
     ],
 
@@ -2330,7 +2380,9 @@ test("msgsRequestToJSON", () => {
         msg: "cosmwasm message",
       },
     },
-  });
+  };
+
+  expect(msgsRequestToJSON(msgsRequest)).toEqual(mesgsRequestJSON);
 });
 
 test("multiChainMsgFromJSON", () => {
