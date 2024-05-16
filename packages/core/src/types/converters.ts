@@ -613,6 +613,7 @@ export function swapOperationFromJSON(
     pool: swapOperationJSON.pool,
     denomIn: swapOperationJSON.denom_in,
     denomOut: swapOperationJSON.denom_out,
+    interface: swapOperationJSON.interface,
   };
 }
 
@@ -623,6 +624,7 @@ export function swapOperationToJSON(
     pool: swapOperation.pool,
     denom_in: swapOperation.denomIn,
     denom_out: swapOperation.denomOut,
+    interface: swapOperation.interface,
   };
 }
 
@@ -721,7 +723,6 @@ export function swapFromJSON(swapJSON: SwapJSON): Swap {
       chainID: swapJSON.chain_id,
       denomIn: swapJSON.denom_in,
       denomOut: swapJSON.denom_out,
-      interface: swapJSON.interface,
     };
   } else if ("smart_swap_in" in swapJSON) {
     return {
@@ -731,7 +732,6 @@ export function swapFromJSON(swapJSON: SwapJSON): Swap {
       chainID: swapJSON.chain_id,
       denomIn: swapJSON.denom_in,
       denomOut: swapJSON.denom_out,
-      interface: swapJSON.interface,
     };
   }
 
@@ -742,7 +742,6 @@ export function swapFromJSON(swapJSON: SwapJSON): Swap {
     chainID: swapJSON.chain_id,
     denomIn: swapJSON.denom_in,
     denomOut: swapJSON.denom_out,
-    interface: swapJSON.interface,
   };
 }
 
@@ -755,7 +754,6 @@ export function swapToJSON(swap: Swap): SwapJSON {
       chain_id: swap.chainID,
       denom_in: swap.denomIn,
       denom_out: swap.denomOut,
-      interface: swap.interface,
     };
   } else if ("smartSwapIn" in swap) {
     return {
@@ -765,7 +763,6 @@ export function swapToJSON(swap: Swap): SwapJSON {
       chain_id: swap.chainID,
       denom_in: swap.denomIn,
       denom_out: swap.denomOut,
-      interface: swap.interface,
     };
   }
 
@@ -776,7 +773,6 @@ export function swapToJSON(swap: Swap): SwapJSON {
     chain_id: swap.chainID,
     denom_in: swap.denomIn,
     denom_out: swap.denomOut,
-    interface: swap.interface,
   };
 }
 
