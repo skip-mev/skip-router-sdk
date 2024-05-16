@@ -757,10 +757,10 @@ describe("client", () => {
               does_swap: true,
               estimated_amount_out: "54906",
               estimated_fees: [],
-              swap_venue: {
+              swap_venues: [{
                 name: "osmosis-poolmanager",
                 chain_id: "osmosis-1",
-              },
+              }],
               txs_required: 1,
             }),
           );
@@ -823,7 +823,7 @@ describe("client", () => {
         doesSwap: true,
         estimatedAmountOut: "54906",
         estimatedFees: [],
-        swapVenue: { name: "osmosis-poolmanager", chainID: "osmosis-1" },
+        swapVenues: [{ name: "osmosis-poolmanager", chainID: "osmosis-1" }],
         txsRequired: 1,
       });
     });

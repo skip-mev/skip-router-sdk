@@ -908,8 +908,8 @@ export function routeResponseFromJSON(
 
     doesSwap: routeResponseJSON.does_swap,
     estimatedAmountOut: routeResponseJSON.estimated_amount_out,
-    swapVenue: routeResponseJSON.swap_venue
-      ? swapVenueFromJSON(routeResponseJSON.swap_venue)
+    swapVenues: routeResponseJSON.swap_venues
+      ? routeResponseJSON.swap_venues.map(swapVenueFromJSON)
       : undefined,
 
     txsRequired: routeResponseJSON.txs_required,
@@ -941,8 +941,8 @@ export function routeResponseToJSON(
 
     does_swap: routeResponse.doesSwap,
     estimated_amount_out: routeResponse.estimatedAmountOut,
-    swap_venue: routeResponse.swapVenue
-      ? swapVenueToJSON(routeResponse.swapVenue)
+    swap_venues: routeResponse.swapVenues
+      ? routeResponse.swapVenues.map(swapVenueToJSON)
       : undefined,
 
     txs_required: routeResponse.txsRequired,
