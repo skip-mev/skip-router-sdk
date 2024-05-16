@@ -103,6 +103,8 @@ import {
   SwapVenueRequestJSON,
   Transfer,
   TransferJSON,
+  SmartSwapOptions,
+  SmartSwapOptionsJSON,
 } from "./shared";
 import {
   AssetBetweenChains,
@@ -504,6 +506,7 @@ export function routeRequestFromJSON(
       bridges: routeRequestJSON.bridges,
       allowMultiTx: routeRequestJSON.allow_multi_tx,
       smartRelay: routeRequestJSON.smart_relay,
+      smartSwapOptions: routeRequestJSON.smart_swap_options ? smartSwapOptionsFromJSON(routeRequestJSON.smart_swap_options) : undefined,
     };
   }
 
@@ -525,6 +528,7 @@ export function routeRequestFromJSON(
     bridges: routeRequestJSON.bridges,
     allowMultiTx: routeRequestJSON.allow_multi_tx,
     smartRelay: routeRequestJSON.smart_relay,
+    smartSwapOptions: routeRequestJSON.smart_swap_options ? smartSwapOptionsFromJSON(routeRequestJSON.smart_swap_options) : undefined,
   };
 }
 
@@ -554,6 +558,7 @@ export function routeRequestToJSON(
       bridges: routeRequest.bridges,
       allow_multi_tx: routeRequest.allowMultiTx,
       smart_relay: routeRequest.smartRelay,
+      smart_swap_options: routeRequest.smartSwapOptions ? smartSwapOptionsToJSON(routeRequest.smartSwapOptions) : undefined,
     };
   }
 
@@ -575,6 +580,7 @@ export function routeRequestToJSON(
     bridges: routeRequest.bridges,
     allow_multi_tx: routeRequest.allowMultiTx,
     smart_relay: routeRequest.smartRelay,
+    smart_swap_options: routeRequest.smartSwapOptions? smartSwapOptionsToJSON(routeRequest.smartSwapOptions) : undefined,
   };
 }
 
@@ -2116,6 +2122,7 @@ export function msgsDirectRequestFromJSON(
       msgDirectRequestJSON.swap_venues &&
       msgDirectRequestJSON.swap_venues.map(swapVenueFromJSON),
     smartRelay: msgDirectRequestJSON.smart_relay,
+    smartSwapOptions: msgDirectRequestJSON.smart_swap_options ? smartSwapOptionsFromJSON(msgDirectRequestJSON.smart_swap_options) : undefined,
   };
 }
 
@@ -2147,5 +2154,22 @@ export function msgsDirectRequestToJSON(
       msgDirectRequest.postRouteHandler &&
       postHandlerToJSON(msgDirectRequest.postRouteHandler),
     smart_relay: msgDirectRequest.smartRelay,
+    smart_swap_options: msgDirectRequest.smartSwapOptions ? smartSwapOptionsToJSON(msgDirectRequest.smartSwapOptions) : undefined,
+  };
+}
+
+export function smartSwapOptionsFromJSON(
+  smartSwapOptionsJSON: SmartSwapOptionsJSON,
+): SmartSwapOptions {
+  return {
+    splitRoutes: smartSwapOptionsJSON.split_routes,
+  };
+}
+
+export function smartSwapOptionsToJSON(
+  smartSwapOptions: SmartSwapOptions,
+): SmartSwapOptionsJSON {
+  return {
+    split_routes: smartSwapOptions.splitRoutes,
   };
 }
