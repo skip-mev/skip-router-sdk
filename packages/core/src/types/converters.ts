@@ -723,6 +723,7 @@ export function swapFromJSON(swapJSON: SwapJSON): Swap {
       chainID: swapJSON.chain_id,
       denomIn: swapJSON.denom_in,
       denomOut: swapJSON.denom_out,
+      swapVenues: swapJSON.swap_venues.map(swapVenueFromJSON),
     };
   } else if ("smart_swap_in" in swapJSON) {
     return {
@@ -732,6 +733,7 @@ export function swapFromJSON(swapJSON: SwapJSON): Swap {
       chainID: swapJSON.chain_id,
       denomIn: swapJSON.denom_in,
       denomOut: swapJSON.denom_out,
+      swapVenues: swapJSON.swap_venues.map(swapVenueFromJSON),
     };
   }
 
@@ -742,6 +744,7 @@ export function swapFromJSON(swapJSON: SwapJSON): Swap {
     chainID: swapJSON.chain_id,
     denomIn: swapJSON.denom_in,
     denomOut: swapJSON.denom_out,
+    swapVenues: swapJSON.swap_venues.map(swapVenueFromJSON),
   };
 }
 
@@ -754,6 +757,7 @@ export function swapToJSON(swap: Swap): SwapJSON {
       chain_id: swap.chainID,
       denom_in: swap.denomIn,
       denom_out: swap.denomOut,
+      swap_venues: swap.swapVenues.map(swapVenueToJSON),
     };
   } else if ("smartSwapIn" in swap) {
     return {
@@ -763,6 +767,7 @@ export function swapToJSON(swap: Swap): SwapJSON {
       chain_id: swap.chainID,
       denom_in: swap.denomIn,
       denom_out: swap.denomOut,
+      swap_venues: swap.swapVenues.map(swapVenueToJSON),
     };
   }
 
@@ -773,6 +778,7 @@ export function swapToJSON(swap: Swap): SwapJSON {
     chain_id: swap.chainID,
     denom_in: swap.denomIn,
     denom_out: swap.denomOut,
+    swap_venues: swap.swapVenues.map(swapVenueToJSON),
   };
 }
 

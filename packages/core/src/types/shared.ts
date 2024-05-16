@@ -343,6 +343,7 @@ export type SwapJSON = (
   chain_id: string;
   denom_in: string;
   denom_out: string;
+  swap_venues: SwapVenueJSON[];
 };
 
 export type Swap = (
@@ -355,6 +356,7 @@ export type Swap = (
   chainID: string;
   denomIn: string;
   denomOut: string;
+  swapVenues: SwapVenue[];
 };
 
 export type AffiliateJSON = {
