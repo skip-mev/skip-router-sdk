@@ -431,9 +431,9 @@ test("chainFromJSON", () => {
       "https://raw.githubusercontent.com/cosmos/chain-registry/master/osmosis/images/osmosis-chain-logo.png",
     bech32_prefix: "osmo",
     ibc_capabilities: {
-      cosmos_pfm: false,
-      cosmos_ibc_hooks: false,
-      cosmos_memo: false,
+      cosmos_pfm: true,
+      cosmos_ibc_hooks: true,
+      cosmos_memo: true,
       cosmos_autopilot: false,
     },
     fee_assets: [
@@ -481,9 +481,9 @@ test("chainFromJSON", () => {
       "https://raw.githubusercontent.com/cosmos/chain-registry/master/osmosis/images/osmosis-chain-logo.png",
     bech32Prefix: "osmo",
     ibcCapabilities: {
-      cosmos_pfm: false,
-      cosmos_ibc_hooks: false,
-      cosmos_memo: false,
+      cosmos_pfm: true,
+      cosmos_ibc_hooks: true,
+      cosmos_memo: true,
       cosmos_autopilot: false,
     },
     feeAssets: [
@@ -533,9 +533,9 @@ test("chainToJSON", () => {
       "https://raw.githubusercontent.com/cosmos/chain-registry/master/osmosis/images/osmosis-chain-logo.png",
     bech32Prefix: "osmo",
     ibcCapabilities: {
-      cosmosPfm: false,
-      cosmosIbcHooks: false,
-      cosmosMemo: false,
+      cosmosPfm: true,
+      cosmosIbcHooks: true,
+      cosmosMemo: true,
       cosmosAutopilot: false,
     },
     feeAssets: [
@@ -583,9 +583,9 @@ test("chainToJSON", () => {
       "https://raw.githubusercontent.com/cosmos/chain-registry/master/osmosis/images/osmosis-chain-logo.png",
     bech32_prefix: "osmo",
     ibc_capabilities: {
-      cosmos_pfm: false,
-      cosmos_ibc_hooks: false,
-      cosmos_memo: false,
+      cosmos_pfm: true,
+      cosmos_ibc_hooks: true,
+      cosmos_memo: true,
       cosmos_autopilot: false,
     },
     fee_assets: [
@@ -643,32 +643,32 @@ test("feeAssetToJSON", () => {
 
 test("ibcCapabilitiesFromJSON", () => {
   const ibcCapabilitiesJSON: IbcCapabilitiesJSON = {
-    cosmos_pfm: false,
-    cosmos_ibc_hooks: false,
-    cosmos_memo: false,
+    cosmos_pfm: true,
+    cosmos_ibc_hooks: true,
+    cosmos_memo: true,
     cosmos_autopilot: false,
   };
 
   expect(ibcCapabilitiesFromJSON(ibcCapabilitiesJSON)).toEqual({
-    cosmosPfm: false,
-    cosmosIbcHooks: false,
-    cosmosMemo: false,
+    cosmosPfm: true,
+    cosmosIbcHooks: true,
+    cosmosMemo: true,
     cosmosAutopilot: false,
   });
 });
 
 test("ibcCapabilitiesToJSON", () => {
   const ibcCapabilities = {
-    cosmosPfm: false,
-    cosmosIbcHooks: false,
-    cosmosMemo: false,
+    cosmosPfm: true,
+    cosmosIbcHooks: true,
+    cosmosMemo: true,
     cosmosAutopilot: false,
   };
 
   expect(ibcCapabilitiesToJSON(ibcCapabilities)).toEqual({
-    cosmos_pfm: false,
-    cosmos_ibc_hooks: false,
-    cosmos_memo: false,
+    cosmos_pfm: true,
+    cosmos_ibc_hooks: true,
+    cosmos_memo: true,
     cosmos_autopilot: false,
   });
 });
