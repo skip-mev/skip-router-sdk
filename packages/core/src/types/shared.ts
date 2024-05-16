@@ -315,23 +315,23 @@ export type SwapRouteJSON = {
   swap_amount_in: string;
   denom_in: string;
   swap_operations: SwapOperationJSON[];
-}
+};
 
 export type SwapRoute = {
   swapAmountIn: string;
   denomIn: string;
   swapOperations: SwapOperation[];
-}
+};
 
 export type SmartSwapExactCoinInJSON = {
   swap_venue: SwapVenueJSON;
   swap_routes: SwapRouteJSON[];
-}
+};
 
 export type SmartSwapExactCoinIn = {
   swapVenue: SwapVenue;
   swapRoutes: SwapRoute[];
-}
+};
 
 export type SwapJSON = (
   | { swap_in: SwapExactCoinInJSON }
@@ -470,8 +470,8 @@ export type OriginAssetsResponse = {
 
 export type SmartSwapOptionsJSON = {
   split_routes: boolean;
-}
+};
 
 export type SmartSwapOptions = {
   splitRoutes: boolean;
-}
+};
