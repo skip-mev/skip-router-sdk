@@ -1427,7 +1427,7 @@ export class SkipRouter {
   async getRecommendedGasPrice(chainID: string) {
     const feeInfo = await this.getFeeInfoForChain(chainID);
 
-    if (!feeInfo) {
+    if (!feeInfo || !feeInfo.gasPrice) {
       return undefined;
     }
 
