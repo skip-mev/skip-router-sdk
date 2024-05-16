@@ -232,7 +232,6 @@ export function assetsFromSourceRequestFromJSON(
     sourceAssetChainID: assetsFromSourceRequestJSON.source_asset_chain_id,
     allowMultiTx: assetsFromSourceRequestJSON.allow_multi_tx,
     includeCW20Assets: assetsFromSourceRequestJSON.include_cw20_assets,
-    clientID: assetsFromSourceRequestJSON.client_id,
   };
 }
 
@@ -244,7 +243,6 @@ export function assetsFromSourceRequestToJSON(
     source_asset_chain_id: assetsFromSourceRequest.sourceAssetChainID,
     allow_multi_tx: assetsFromSourceRequest.allowMultiTx,
     include_cw20_assets: assetsFromSourceRequest.includeCW20Assets,
-    client_id: assetsFromSourceRequest.clientID,
   };
 }
 
@@ -258,7 +256,6 @@ export function assetsRequestFromJSON(
     includeCW20Assets: assetsRequestJSON.include_cw20_assets,
     includeEvmAssets: assetsRequestJSON.include_evm_assets,
     includeSvmAssets: assetsRequestJSON.include_svm_assets,
-    clientID: assetsRequestJSON.client_id,
   };
 }
 
@@ -272,7 +269,6 @@ export function assetsRequestToJSON(
     include_cw20_assets: assetsRequest.includeCW20Assets,
     include_evm_assets: assetsRequest.includeEvmAssets,
     include_svm_assets: assetsRequest.includeSvmAssets,
-    client_id: assetsRequest.clientID,
   };
 }
 
@@ -331,7 +327,6 @@ export function recommendAssetsRequestFromJSON(
     requests: recommendAssetsRequestJSON.requests.map(
       assetRecommendationRequestFromJSON,
     ),
-    clientID: recommendAssetsRequestJSON.client_id,
   };
 }
 
@@ -342,7 +337,6 @@ export function recommendAssetsRequestToJSON(
     requests: recommendAssetsRequest.requests.map(
       assetRecommendationRequestToJSON,
     ),
-    client_id: recommendAssetsRequest.clientID,
   };
 }
 
@@ -475,7 +469,6 @@ export function routeRequestFromJSON(
         : undefined,
       swapVenues: swapVenues,
       allowUnsafe: routeRequestJSON.allow_unsafe,
-      clientID: routeRequestJSON.client_id,
       experimentalFeatures: routeRequestJSON.experimental_features,
       bridges: routeRequestJSON.bridges,
       allowMultiTx: routeRequestJSON.allow_multi_tx,
@@ -497,7 +490,6 @@ export function routeRequestFromJSON(
       : undefined,
     swapVenues: swapVenues,
     allowUnsafe: routeRequestJSON.allow_unsafe,
-    clientID: routeRequestJSON.client_id,
     experimentalFeatures: routeRequestJSON.experimental_features,
     bridges: routeRequestJSON.bridges,
     allowMultiTx: routeRequestJSON.allow_multi_tx,
@@ -527,7 +519,6 @@ export function routeRequestToJSON(
         : undefined,
       swap_venues: swapVenues,
       allow_unsafe: routeRequest.allowUnsafe,
-      client_id: routeRequest.clientID,
       experimental_features: routeRequest.experimentalFeatures,
       bridges: routeRequest.bridges,
       allow_multi_tx: routeRequest.allowMultiTx,
@@ -549,7 +540,6 @@ export function routeRequestToJSON(
         : undefined,
     swap_venues: swapVenues,
     allow_unsafe: routeRequest.allowUnsafe,
-    client_id: routeRequest.clientID,
     experimental_features: routeRequest.experimentalFeatures,
     bridges: routeRequest.bridges,
     allow_multi_tx: routeRequest.allowMultiTx,
@@ -1025,7 +1015,6 @@ export function msgsRequestFromJSON(
     postRouteHandler:
       msgsRequestJSON.post_route_handler &&
       postHandlerFromJSON(msgsRequestJSON.post_route_handler),
-    clientID: msgsRequestJSON.client_id,
   };
 }
 
@@ -1047,7 +1036,6 @@ export function msgsRequestToJSON(msgsRequest: MsgsRequest): MsgsRequestJSON {
     post_route_handler:
       msgsRequest.postRouteHandler &&
       postHandlerToJSON(msgsRequest.postRouteHandler),
-    client_id: msgsRequest.clientID,
   };
 }
 
@@ -1093,7 +1081,6 @@ export function submitTxRequestFromJSON(
   return {
     tx: submitTxRequestJSON.tx,
     chainID: submitTxRequestJSON.chain_id,
-    clientID: submitTxRequestJSON.client_id,
   };
 }
 
@@ -1103,7 +1090,6 @@ export function submitTxRequestToJSON(
   return {
     tx: submitTxRequest.tx,
     chain_id: submitTxRequest.chainID,
-    client_id: submitTxRequest.clientID,
   };
 }
 
@@ -1129,7 +1115,6 @@ export function trackTxRequestFromJSON(
   return {
     txHash: trackRequestJSON.tx_hash,
     chainID: trackRequestJSON.chain_id,
-    clientID: trackRequestJSON.client_id,
   };
 }
 
@@ -1139,7 +1124,6 @@ export function trackTxRequestToJSON(
   return {
     tx_hash: trackRequest.txHash,
     chain_id: trackRequest.chainID,
-    client_id: trackRequest.clientID,
   };
 }
 
@@ -1165,7 +1149,6 @@ export function txStatusRequestFromJSON(
   return {
     txHash: txStatusRequestJSON.tx_hash,
     chainID: txStatusRequestJSON.chain_id,
-    clientID: txStatusRequestJSON.client_id,
   };
 }
 
@@ -1175,7 +1158,6 @@ export function txStatusRequestToJSON(
   return {
     tx_hash: txStatusRequest.txHash,
     chain_id: txStatusRequest.chainID,
-    client_id: txStatusRequest.clientID,
   };
 }
 
@@ -2000,17 +1982,13 @@ export function assetRecommendationRequestToJSON(
 export function bridgesRequestFromJSON(
   value: BridgesRequestJSON,
 ): BridgesRequest {
-  return {
-    clientID: value.client_id,
-  };
+  return {};
 }
 
 export function bridgesRequestToJSON(
   value: BridgesRequest,
 ): BridgesRequestJSON {
-  return {
-    client_id: value.clientID,
-  };
+  return {};
 }
 
 export function bridgesResponseFromJSON(
@@ -2182,7 +2160,6 @@ export function msgsDirectRequestToJSON(
     allow_unsafe: msgDirectRequest.allowUnsafe,
     bridges: msgDirectRequest.bridges,
     timeout_seconds: msgDirectRequest.timeoutSeconds,
-    client_id: msgDirectRequest.clientID,
     experimental_features: msgDirectRequest.experimentalFeatures,
     swap_venue:
       msgDirectRequest.swapVenue && swapVenueToJSON(msgDirectRequest.swapVenue),
