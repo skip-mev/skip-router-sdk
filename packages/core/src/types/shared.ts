@@ -465,3 +465,11 @@ export type OriginAssetsResponseJSON = {
 export type OriginAssetsResponse = {
   originAssets: AssetOrError[];
 };
+
+export type SmartSwapOptionsJSON = {
+  split_routes: boolean;
+}
+
+export type SmartSwapOptions = {
+  splitRoutes: boolean;
+}

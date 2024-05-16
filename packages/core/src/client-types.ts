@@ -15,6 +15,12 @@ import { WalletClient } from "viem";
 
 import * as types from "./types";
 import { Adapter } from "@solana/wallet-adapter-base";
+
+export interface UserAddress {
+  chainID: string;
+  address: string;
+}
+
 export type EndpointOptions = {
   rpc?: string;
   rest?: string;
@@ -37,7 +43,10 @@ export interface SkipRouterOptions {
 
 export type ExecuteRouteOptions = {
   route: types.RouteResponse;
-  userAddresses: Record<string, string>;
+  /**
+   * addresses should be in the same order with the `chainIDs` in the `route`
+   */
+  userAddresses: UserAddress[];
   getEVMSigner?: (chainID: string) => Promise<WalletClient>;
   getCosmosSigner?: (chainID: string) => Promise<OfflineSigner>;
   getSVMSigner?: () => Promise<Adapter>;

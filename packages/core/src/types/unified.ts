@@ -31,6 +31,8 @@ import {
   CosmosTx,
   SvmTxJSON,
   SvmTx,
+  SmartSwapOptions,
+  SmartSwapOptionsJSON,
 } from "./shared";
 
 export type AssetsRequestJSON = {
@@ -138,6 +140,7 @@ export type RouteRequestBaseJSON = {
   bridges?: BridgeType[];
   allow_multi_tx?: boolean;
   smart_relay?: boolean;
+  smart_swap_options?: SmartSwapOptionsJSON;
 };
 
 export type RouteRequestGivenInJSON = RouteRequestBaseJSON & {
@@ -181,6 +184,7 @@ export type RouteRequestBase = {
   bridges?: BridgeType[];
   allowMultiTx?: boolean;
   smartRelay?: boolean;
+  smartSwapOptions?: SmartSwapOptions;
 };
 
 export type RouteRequestGivenIn = RouteRequestBase & {
@@ -229,20 +233,60 @@ export type EstimatedFeeJSON = {
 };
 
 export type OperationJSON =
-  | { transfer: TransferJSON, tx_index: number, amount_in: string, amount_out: string }
-  | { bank_send: BankSendJSON, tx_index: number, amount_in: string, amount_out: string  }
-  | { swap: SwapJSON, tx_index: number, amount_in: string, amount_out: string  }
-  | { axelar_transfer: AxelarTransferJSON, tx_index: number, amount_in: string, amount_out: string  }
-  | { cctp_transfer: CCTPTransferJSON, tx_index: number, amount_in: string, amount_out: string  }
-  | { hyperlane_transfer: HyperlaneTransferJSON, tx_index: number, amount_in: string, amount_out: string  };
+  | {
+      transfer: TransferJSON;
+      tx_index: number;
+      amount_in: string;
+      amount_out: string;
+    }
+  | {
+      bank_send: BankSendJSON;
+      tx_index: number;
+      amount_in: string;
+      amount_out: string;
+    }
+  | { swap: SwapJSON; tx_index: number; amount_in: string; amount_out: string }
+  | {
+      axelar_transfer: AxelarTransferJSON;
+      tx_index: number;
+      amount_in: string;
+      amount_out: string;
+    }
+  | {
+      cctp_transfer: CCTPTransferJSON;
+      tx_index: number;
+      amount_in: string;
+      amount_out: string;
+    }
+  | {
+      hyperlane_transfer: HyperlaneTransferJSON;
+      tx_index: number;
+      amount_in: string;
+      amount_out: string;
+    };
 
 export type Operation =
-  | { transfer: Transfer, txIndex: number, amountIn: string, amountOut: string }
-  | { bankSend: BankSend, txIndex: number, amountIn: string, amountOut: string }
-  | { swap: Swap, txIndex: number, amountIn: string, amountOut: string }
-  | { axelarTransfer: AxelarTransfer, txIndex: number, amountIn: string, amountOut: string }
-  | { cctpTransfer: CCTPTransfer, txIndex: number, amountIn: string, amountOut: string }
-  | { hyperlaneTransfer: HyperlaneTransfer, txIndex: number, amountIn: string, amountOut: string };
+  | { transfer: Transfer; txIndex: number; amountIn: string; amountOut: string }
+  | { bankSend: BankSend; txIndex: number; amountIn: string; amountOut: string }
+  | { swap: Swap; txIndex: number; amountIn: string; amountOut: string }
+  | {
+      axelarTransfer: AxelarTransfer;
+      txIndex: number;
+      amountIn: string;
+      amountOut: string;
+    }
+  | {
+      cctpTransfer: CCTPTransfer;
+      txIndex: number;
+      amountIn: string;
+      amountOut: string;
+    }
+  | {
+      hyperlaneTransfer: HyperlaneTransfer;
+      txIndex: number;
+      amountIn: string;
+      amountOut: string;
+    };
 
 export type RouteResponseJSON = {
   source_asset_denom: string;
@@ -320,6 +364,9 @@ export type MsgsRequest = {
   destAssetChainID: string;
   amountIn: string;
   amountOut: string;
+  /**
+   * addresses should be in the same order with the `chainIDs` in the `route`
+   */
   addressList: string[];
   operations: Operation[];
 
@@ -357,6 +404,7 @@ export type MsgsDirectRequestJSON = {
   bridges?: BridgeType[];
   allow_multi_tx?: boolean;
   smart_relay?: boolean;
+  smart_swap_options?: SmartSwapOptionsJSON;
 };
 
 export type MsgsDirectRequest = {
@@ -383,6 +431,7 @@ export type MsgsDirectRequest = {
   bridges?: BridgeType[];
   allowMultiTx?: boolean;
   smartRelay?: boolean;
+  smartSwapOptions?: SmartSwapOptions;
 };
 
 export type MsgJSON =
@@ -396,14 +445,14 @@ export type Msg =
   | { svmTx: SvmTx };
 
 export type TxJSON =
-  | { cosmos_tx: CosmosTxJSON, operations_indices: number[] }
-  | { evm_tx: EvmTxJSON, operations_indices: number[] }
-  | { svm_tx: SvmTxJSON, operations_indices: number[] };
+  | { cosmos_tx: CosmosTxJSON; operations_indices: number[] }
+  | { evm_tx: EvmTxJSON; operations_indices: number[] }
+  | { svm_tx: SvmTxJSON; operations_indices: number[] };
 
 export type Tx =
-  | { cosmosTx: CosmosTx, operationsIndices: number[] }
-  | { evmTx: EvmTx, operationsIndices: number[] }
-  | { svmTx: SvmTx, operationsIndices: number[] };
+  | { cosmosTx: CosmosTx; operationsIndices: number[] }
+  | { evmTx: EvmTx; operationsIndices: number[] }
+  | { svmTx: SvmTx; operationsIndices: number[] };
 
 export type MsgsResponseJSON = {
   msgs: MsgJSON[];
