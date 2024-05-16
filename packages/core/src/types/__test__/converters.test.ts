@@ -23,6 +23,8 @@ import {
   feeAssetToJSON,
   ibcAddressFromJSON,
   ibcAddressToJSON,
+  ibcCapabilitiesFromJSON,
+  ibcCapabilitiesToJSON,
   msgsRequestFromJSON,
   msgsRequestToJSON,
   multiChainMsgFromJSON,
@@ -94,7 +96,7 @@ import {
   TxStatusResponse,
   TxStatusResponseJSON,
 } from "../lifecycle";
-import { ChainJSON, FeeAssetJSON } from "../routing";
+import { ChainJSON, FeeAssetJSON, IbcCapabilitiesJSON } from "../routing";
 import {
   AffiliateJSON,
   Asset,
@@ -428,6 +430,12 @@ test("chainFromJSON", () => {
     logo_uri:
       "https://raw.githubusercontent.com/cosmos/chain-registry/master/osmosis/images/osmosis-chain-logo.png",
     bech32_prefix: "osmo",
+    ibc_capabilities: {
+      cosmos_pfm: false,
+      cosmos_ibc_hooks: false,
+      cosmos_memo: false,
+      cosmos_autopilot: false,
+    },
     fee_assets: [
       {
         denom: "uosmo",
@@ -472,6 +480,12 @@ test("chainFromJSON", () => {
     logoURI:
       "https://raw.githubusercontent.com/cosmos/chain-registry/master/osmosis/images/osmosis-chain-logo.png",
     bech32Prefix: "osmo",
+    ibcCapabilities: {
+      cosmos_pfm: false,
+      cosmos_ibc_hooks: false,
+      cosmos_memo: false,
+      cosmos_autopilot: false,
+    },
     feeAssets: [
       {
         denom: "uosmo",
@@ -518,6 +532,12 @@ test("chainToJSON", () => {
     logoURI:
       "https://raw.githubusercontent.com/cosmos/chain-registry/master/osmosis/images/osmosis-chain-logo.png",
     bech32Prefix: "osmo",
+    ibcCapabilities: {
+      cosmosPfm: false,
+      cosmosIbcHooks: false,
+      cosmosMemo: false,
+      cosmosAutopilot: false,
+    },
     feeAssets: [
       {
         denom: "uosmo",
@@ -562,6 +582,12 @@ test("chainToJSON", () => {
     logo_uri:
       "https://raw.githubusercontent.com/cosmos/chain-registry/master/osmosis/images/osmosis-chain-logo.png",
     bech32_prefix: "osmo",
+    ibc_capabilities: {
+      cosmos_pfm: false,
+      cosmos_ibc_hooks: false,
+      cosmos_memo: false,
+      cosmos_autopilot: false,
+    },
     fee_assets: [
       {
         denom: "uosmo",
@@ -612,6 +638,38 @@ test("feeAssetToJSON", () => {
       average: "0.025",
       high: "0.04",
     },
+  });
+});
+
+test("ibcCapabilitiesFromJSON", () => {
+  const ibcCapabilitiesJSON: IbcCapabilitiesJSON = {
+    cosmos_pfm: false,
+    cosmos_ibc_hooks: false,
+    cosmos_memo: false,
+    cosmos_autopilot: false,
+  };
+
+  expect(ibcCapabilitiesFromJSON(ibcCapabilitiesJSON)).toEqual({
+    cosmosPfm: false,
+    cosmosIbcHooks: false,
+    cosmosMemo: false,
+    cosmosAutopilot: false,
+  });
+});
+
+test("ibcCapabilitiesToJSON", () => {
+  const ibcCapabilities = {
+    cosmosPfm: false,
+    cosmosIbcHooks: false,
+    cosmosMemo: false,
+    cosmosAutopilot: false,
+  };
+
+  expect(ibcCapabilitiesToJSON(ibcCapabilities)).toEqual({
+    cosmos_pfm: false,
+    cosmos_ibc_hooks: false,
+    cosmos_memo: false,
+    cosmos_autopilot: false,
   });
 });
 
