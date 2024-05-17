@@ -28,7 +28,7 @@ export type EndpointOptions = {
 
 export interface SkipRouterOptions {
   apiURL?: string;
-  clientID?: string;
+  apiKey?: string;
   getEVMSigner?: (chainID: string) => Promise<WalletClient>;
   getCosmosSigner?: (chainID: string) => Promise<OfflineSigner>;
   getSVMSigner?: () => Promise<Adapter>;
