@@ -83,7 +83,10 @@ export class SkipRouter {
   protected getSVMSigner?: () => Promise<Adapter>;
 
   constructor(options: clientTypes.SkipRouterOptions = {}) {
-    this.requestClient = new RequestClient(options.apiURL || SKIP_API_URL);
+    this.requestClient = new RequestClient({
+      baseURL: options.apiURL || SKIP_API_URL,
+      apiKey: options.apiKey,
+    });
 
     this.aminoTypes = new AminoTypes({
       ...createDefaultAminoConverters(),
@@ -168,9 +171,10 @@ export class SkipRouter {
   }
 
   async bridges(): Promise<types.Bridge[]> {
-    const response = await this.requestClient.get<types.BridgesResponseJSON>(
-      "/v2/info/bridges",
-    );
+    const response =
+      await this.requestClient.get<types.BridgesResponseJSON>(
+        "/v2/info/bridges",
+      );
 
     return types.bridgesResponseFromJSON(response).bridges;
   }
