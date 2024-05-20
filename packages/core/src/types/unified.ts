@@ -298,6 +298,7 @@ export type RouteResponseJSON = {
 
   operations: OperationJSON[];
   chain_ids: string[];
+  required_chain_addresses: string[];
 
   does_swap: boolean;
   estimated_amount_out?: string;
@@ -323,6 +324,7 @@ export type RouteResponse = {
 
   operations: Operation[];
   chainIDs: string[];
+  requiredChainAddresses: string[];
 
   doesSwap: boolean;
   estimatedAmountOut?: string;

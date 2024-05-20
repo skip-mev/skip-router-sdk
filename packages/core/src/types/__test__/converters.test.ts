@@ -1549,6 +1549,7 @@ test("routeResponseFromJSON", () => {
       },
     ],
     chain_ids: ["osmosis-1", "cosmoshub-4"],
+    required_chain_addresses: ["osmosis-1", "cosmoshub-4"],
     does_swap: true,
     estimated_amount_out: "54906",
     swap_venue: {
@@ -1611,6 +1612,7 @@ test("routeResponseFromJSON", () => {
       },
     ],
     chainIDs: ["osmosis-1", "cosmoshub-4"],
+    requiredChainAddresses: ["osmosis-1", "cosmoshub-4"],
     doesSwap: true,
     estimatedAmountOut: "54906",
     swapVenue: {
@@ -1675,6 +1677,7 @@ test("routeResponseToJSON", () => {
       },
     ],
     chainIDs: ["osmosis-1", "cosmoshub-4"],
+    requiredChainAddresses: ["osmosis-1", "cosmoshub-4"],
     doesSwap: true,
     estimatedAmountOut: "54906",
     swapVenue: {
@@ -1737,6 +1740,7 @@ test("routeResponseToJSON", () => {
       },
     ],
     chain_ids: ["osmosis-1", "cosmoshub-4"],
+    required_chain_addresses: ["osmosis-1", "cosmoshub-4"],
     does_swap: true,
     estimated_amount_out: "54906",
     swap_venue: {
