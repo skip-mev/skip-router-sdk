@@ -501,10 +501,6 @@ export type AssetsBetweenChainsResponse = {
   assetsBetweenChains: AssetBetweenChains[];
 };
 
-export type BridgesRequestJSON = {};
-
-export type BridgesRequest = {};
-
 export type BridgesResponseJSON = {
   bridges: BridgeJSON[];
 };
