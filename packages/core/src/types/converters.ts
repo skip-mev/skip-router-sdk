@@ -452,9 +452,8 @@ export function swapVenueRequestToJSON(
 export function routeRequestFromJSON(
   routeRequestJSON: RouteRequestJSON,
 ): RouteRequest {
-
-  const swapVenues = routeRequestJSON.swap_venues ?
-    routeRequestJSON.swap_venues.map(swapVenueRequestFromJSON)
+  const swapVenues = routeRequestJSON.swap_venues
+    ? routeRequestJSON.swap_venues.map(swapVenueRequestFromJSON)
     : undefined;
 
   if (routeRequestJSON.amount_in !== undefined) {
@@ -476,7 +475,9 @@ export function routeRequestFromJSON(
       bridges: routeRequestJSON.bridges,
       allowMultiTx: routeRequestJSON.allow_multi_tx,
       smartRelay: routeRequestJSON.smart_relay,
-      smartSwapOptions: routeRequestJSON.smart_swap_options ? smartSwapOptionsFromJSON(routeRequestJSON.smart_swap_options) : undefined,
+      smartSwapOptions: routeRequestJSON.smart_swap_options
+        ? smartSwapOptionsFromJSON(routeRequestJSON.smart_swap_options)
+        : undefined,
     };
   }
 
@@ -498,15 +499,17 @@ export function routeRequestFromJSON(
     bridges: routeRequestJSON.bridges,
     allowMultiTx: routeRequestJSON.allow_multi_tx,
     smartRelay: routeRequestJSON.smart_relay,
-    smartSwapOptions: routeRequestJSON.smart_swap_options ? smartSwapOptionsFromJSON(routeRequestJSON.smart_swap_options) : undefined,
+    smartSwapOptions: routeRequestJSON.smart_swap_options
+      ? smartSwapOptionsFromJSON(routeRequestJSON.smart_swap_options)
+      : undefined,
   };
 }
 
 export function routeRequestToJSON(
   routeRequest: RouteRequest,
 ): RouteRequestJSON {
-  const swapVenues = routeRequest.swapVenues ?
-    routeRequest.swapVenues.map(swapVenueRequestToJSON)
+  const swapVenues = routeRequest.swapVenues
+    ? routeRequest.swapVenues.map(swapVenueRequestToJSON)
     : undefined;
 
   if (routeRequest.amountIn !== undefined) {
@@ -528,7 +531,9 @@ export function routeRequestToJSON(
       bridges: routeRequest.bridges,
       allow_multi_tx: routeRequest.allowMultiTx,
       smart_relay: routeRequest.smartRelay,
-      smart_swap_options: routeRequest.smartSwapOptions ? smartSwapOptionsToJSON(routeRequest.smartSwapOptions) : undefined,
+      smart_swap_options: routeRequest.smartSwapOptions
+        ? smartSwapOptionsToJSON(routeRequest.smartSwapOptions)
+        : undefined,
     };
   }
 
@@ -541,8 +546,8 @@ export function routeRequestToJSON(
 
     cumulative_affiliate_fee_bps: routeRequest.cumulativeAffiliateFeeBPS,
     swap_venue: routeRequest.swapVenue
-        ? swapVenueRequestToJSON(routeRequest.swapVenue)
-        : undefined,
+      ? swapVenueRequestToJSON(routeRequest.swapVenue)
+      : undefined,
     swap_venues: swapVenues,
     allow_unsafe: routeRequest.allowUnsafe,
     client_id: routeRequest.clientID,
@@ -550,7 +555,9 @@ export function routeRequestToJSON(
     bridges: routeRequest.bridges,
     allow_multi_tx: routeRequest.allowMultiTx,
     smart_relay: routeRequest.smartRelay,
-    smart_swap_options: routeRequest.smartSwapOptions? smartSwapOptionsToJSON(routeRequest.smartSwapOptions) : undefined,
+    smart_swap_options: routeRequest.smartSwapOptions
+      ? smartSwapOptionsToJSON(routeRequest.smartSwapOptions)
+      : undefined,
   };
 }
 
@@ -730,7 +737,7 @@ export function operationFromJSON(operationJSON: OperationJSON): Operation {
       txIndex: operationJSON.tx_index,
       amountIn: operationJSON.amount_in,
       amountOut: operationJSON.amount_out,
-     };
+    };
   }
 
   if ("axelar_transfer" in operationJSON) {
@@ -748,7 +755,7 @@ export function operationFromJSON(operationJSON: OperationJSON): Operation {
       txIndex: operationJSON.tx_index,
       amountIn: operationJSON.amount_in,
       amountOut: operationJSON.amount_out,
-     };
+    };
   }
 
   if ("hyperlane_transfer" in operationJSON) {
@@ -767,7 +774,7 @@ export function operationFromJSON(operationJSON: OperationJSON): Operation {
     txIndex: operationJSON.tx_index,
     amountIn: operationJSON.amount_in,
     amountOut: operationJSON.amount_out,
-   };
+  };
 }
 
 export function operationToJSON(operation: Operation): OperationJSON {
@@ -777,7 +784,7 @@ export function operationToJSON(operation: Operation): OperationJSON {
       tx_index: operation.txIndex,
       amount_in: operation.amountIn,
       amount_out: operation.amountOut,
-     };
+    };
   }
 
   if ("bankSend" in operation) {
@@ -786,7 +793,7 @@ export function operationToJSON(operation: Operation): OperationJSON {
       tx_index: operation.txIndex,
       amount_in: operation.amountIn,
       amount_out: operation.amountOut,
-     };
+    };
   }
 
   if ("axelarTransfer" in operation) {
@@ -804,7 +811,7 @@ export function operationToJSON(operation: Operation): OperationJSON {
       tx_index: operation.txIndex,
       amount_in: operation.amountIn,
       amount_out: operation.amountOut,
-     };
+    };
   }
 
   if ("hyperlaneTransfer" in operation) {
@@ -821,7 +828,7 @@ export function operationToJSON(operation: Operation): OperationJSON {
     tx_index: operation.txIndex,
     amount_in: operation.amountIn,
     amount_out: operation.amountOut,
-   };
+  };
 }
 
 export function routeResponseFromJSON(
@@ -837,6 +844,7 @@ export function routeResponseFromJSON(
 
     operations: routeResponseJSON.operations.map(operationFromJSON),
     chainIDs: routeResponseJSON.chain_ids,
+    requiredChainAddresses: routeResponseJSON.required_chain_addresses,
 
     doesSwap: routeResponseJSON.does_swap,
     estimatedAmountOut: routeResponseJSON.estimated_amount_out,
@@ -870,6 +878,7 @@ export function routeResponseToJSON(
 
     operations: routeResponse.operations.map(operationToJSON),
     chain_ids: routeResponse.chainIDs,
+    required_chain_addresses: routeResponse.requiredChainAddresses,
 
     does_swap: routeResponse.doesSwap,
     estimated_amount_out: routeResponse.estimatedAmountOut,
@@ -2093,7 +2102,9 @@ export function msgsDirectRequestFromJSON(
       msgDirectRequestJSON.swap_venues &&
       msgDirectRequestJSON.swap_venues.map(swapVenueFromJSON),
     smartRelay: msgDirectRequestJSON.smart_relay,
-    smartSwapOptions: msgDirectRequestJSON.smart_swap_options ? smartSwapOptionsFromJSON(msgDirectRequestJSON.smart_swap_options) : undefined,
+    smartSwapOptions: msgDirectRequestJSON.smart_swap_options
+      ? smartSwapOptionsFromJSON(msgDirectRequestJSON.smart_swap_options)
+      : undefined,
   };
 }
 
@@ -2119,12 +2130,15 @@ export function msgsDirectRequestToJSON(
     swap_venue:
       msgDirectRequest.swapVenue && swapVenueToJSON(msgDirectRequest.swapVenue),
     swap_venues:
-      msgDirectRequest.swapVenues && msgDirectRequest.swapVenues.map(swapVenueToJSON),
+      msgDirectRequest.swapVenues &&
+      msgDirectRequest.swapVenues.map(swapVenueToJSON),
     post_route_handler:
       msgDirectRequest.postRouteHandler &&
       postHandlerToJSON(msgDirectRequest.postRouteHandler),
     smart_relay: msgDirectRequest.smartRelay,
-    smart_swap_options: msgDirectRequest.smartSwapOptions ? smartSwapOptionsToJSON(msgDirectRequest.smartSwapOptions) : undefined,
+    smart_swap_options: msgDirectRequest.smartSwapOptions
+      ? smartSwapOptionsToJSON(msgDirectRequest.smartSwapOptions)
+      : undefined,
   };
 }
 
