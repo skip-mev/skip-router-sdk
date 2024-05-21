@@ -1,5 +1,11 @@
 # @skip-router/core
 
+## 3.0.2
+
+### Patch Changes
+
+- 2af8ccd: Add required chain addresses field to route response
+
 ## 3.0.1
 
 ### Patch Changes
