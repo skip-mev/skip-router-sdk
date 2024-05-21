@@ -9,6 +9,7 @@ import {
   originAssetsResponseFromJSON,
   OriginAssetsResponseJSON,
   RecommendationEntry,
+  RouteResponse,
   RouteResponseJSON,
 } from "../types";
 
@@ -846,13 +847,14 @@ describe("client", () => {
         smartRelay: false,
       });
 
-      expect(response).toEqual({
+      const routeResponse: RouteResponse = {
         sourceAssetDenom: "uosmo",
         sourceAssetChainID: "osmosis-1",
         destAssetDenom: "uatom",
         destAssetChainID: "cosmoshub-4",
         amountIn: "1000000",
         amountOut: "54906",
+        requiredChainAddresses: ["osmosis-1", "cosmoshub-4"],
         operations: [
           {
             swap: {
@@ -923,7 +925,9 @@ describe("client", () => {
         ],
         estimatedFees: [],
         txsRequired: 1,
-      });
+      };
+
+      expect(response).toEqual(routeResponse);
     });
   });
 
