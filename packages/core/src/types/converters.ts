@@ -94,9 +94,13 @@ import {
   SwapExactCoinInJSON,
   SwapExactCoinOut,
   SwapExactCoinOutJSON,
+  SmartSwapExactCoinIn,
+  SmartSwapExactCoinInJSON,
   SwapJSON,
   SwapOperation,
   SwapOperationJSON,
+  SwapRoute,
+  SwapRouteJSON,
   SwapVenue,
   SwapVenueJSON,
   SwapVenueRequest,
@@ -123,8 +127,6 @@ import {
   AssetsRequestJSON,
   Bridge,
   BridgeJSON,
-  BridgesRequest,
-  BridgesRequestJSON,
   BridgesResponse,
   BridgesResponseJSON,
   EstimatedFee,
@@ -235,7 +237,6 @@ export function assetsFromSourceRequestFromJSON(
     sourceAssetChainID: assetsFromSourceRequestJSON.source_asset_chain_id,
     allowMultiTx: assetsFromSourceRequestJSON.allow_multi_tx,
     includeCW20Assets: assetsFromSourceRequestJSON.include_cw20_assets,
-    clientID: assetsFromSourceRequestJSON.client_id,
   };
 }
 
@@ -247,7 +248,6 @@ export function assetsFromSourceRequestToJSON(
     source_asset_chain_id: assetsFromSourceRequest.sourceAssetChainID,
     allow_multi_tx: assetsFromSourceRequest.allowMultiTx,
     include_cw20_assets: assetsFromSourceRequest.includeCW20Assets,
-    client_id: assetsFromSourceRequest.clientID,
   };
 }
 
@@ -261,7 +261,6 @@ export function assetsRequestFromJSON(
     includeCW20Assets: assetsRequestJSON.include_cw20_assets,
     includeEvmAssets: assetsRequestJSON.include_evm_assets,
     includeSvmAssets: assetsRequestJSON.include_svm_assets,
-    clientID: assetsRequestJSON.client_id,
   };
 }
 
@@ -275,7 +274,6 @@ export function assetsRequestToJSON(
     include_cw20_assets: assetsRequest.includeCW20Assets,
     include_evm_assets: assetsRequest.includeEvmAssets,
     include_svm_assets: assetsRequest.includeSvmAssets,
-    client_id: assetsRequest.clientID,
   };
 }
 
@@ -358,7 +356,6 @@ export function recommendAssetsRequestFromJSON(
     requests: recommendAssetsRequestJSON.requests.map(
       assetRecommendationRequestFromJSON,
     ),
-    clientID: recommendAssetsRequestJSON.client_id,
   };
 }
 
@@ -369,7 +366,6 @@ export function recommendAssetsRequestToJSON(
     requests: recommendAssetsRequest.requests.map(
       assetRecommendationRequestToJSON,
     ),
-    client_id: recommendAssetsRequest.clientID,
   };
 }
 
@@ -501,12 +497,13 @@ export function routeRequestFromJSON(
         : undefined,
       swapVenues: swapVenues,
       allowUnsafe: routeRequestJSON.allow_unsafe,
-      clientID: routeRequestJSON.client_id,
       experimentalFeatures: routeRequestJSON.experimental_features,
       bridges: routeRequestJSON.bridges,
       allowMultiTx: routeRequestJSON.allow_multi_tx,
       smartRelay: routeRequestJSON.smart_relay,
-      smartSwapOptions: routeRequestJSON.smart_swap_options ? smartSwapOptionsFromJSON(routeRequestJSON.smart_swap_options) : undefined,
+      smartSwapOptions: routeRequestJSON.smart_swap_options
+        ? smartSwapOptionsFromJSON(routeRequestJSON.smart_swap_options)
+        : undefined,
     };
   }
 
@@ -523,12 +520,13 @@ export function routeRequestFromJSON(
       : undefined,
     swapVenues: swapVenues,
     allowUnsafe: routeRequestJSON.allow_unsafe,
-    clientID: routeRequestJSON.client_id,
     experimentalFeatures: routeRequestJSON.experimental_features,
     bridges: routeRequestJSON.bridges,
     allowMultiTx: routeRequestJSON.allow_multi_tx,
     smartRelay: routeRequestJSON.smart_relay,
-    smartSwapOptions: routeRequestJSON.smart_swap_options ? smartSwapOptionsFromJSON(routeRequestJSON.smart_swap_options) : undefined,
+    smartSwapOptions: routeRequestJSON.smart_swap_options
+      ? smartSwapOptionsFromJSON(routeRequestJSON.smart_swap_options)
+      : undefined,
   };
 }
 
@@ -553,12 +551,13 @@ export function routeRequestToJSON(
         : undefined,
       swap_venues: swapVenues,
       allow_unsafe: routeRequest.allowUnsafe,
-      client_id: routeRequest.clientID,
       experimental_features: routeRequest.experimentalFeatures,
       bridges: routeRequest.bridges,
       allow_multi_tx: routeRequest.allowMultiTx,
       smart_relay: routeRequest.smartRelay,
-      smart_swap_options: routeRequest.smartSwapOptions ? smartSwapOptionsToJSON(routeRequest.smartSwapOptions) : undefined,
+      smart_swap_options: routeRequest.smartSwapOptions
+        ? smartSwapOptionsToJSON(routeRequest.smartSwapOptions)
+        : undefined,
     };
   }
 
@@ -575,12 +574,13 @@ export function routeRequestToJSON(
       : undefined,
     swap_venues: swapVenues,
     allow_unsafe: routeRequest.allowUnsafe,
-    client_id: routeRequest.clientID,
     experimental_features: routeRequest.experimentalFeatures,
     bridges: routeRequest.bridges,
     allow_multi_tx: routeRequest.allowMultiTx,
     smart_relay: routeRequest.smartRelay,
-    smart_swap_options: routeRequest.smartSwapOptions? smartSwapOptionsToJSON(routeRequest.smartSwapOptions) : undefined,
+    smart_swap_options: routeRequest.smartSwapOptions
+      ? smartSwapOptionsToJSON(routeRequest.smartSwapOptions)
+      : undefined,
   };
 }
 
@@ -639,6 +639,7 @@ export function swapOperationFromJSON(
     pool: swapOperationJSON.pool,
     denomIn: swapOperationJSON.denom_in,
     denomOut: swapOperationJSON.denom_out,
+    interface: swapOperationJSON.interface,
   };
 }
 
@@ -649,6 +650,23 @@ export function swapOperationToJSON(
     pool: swapOperation.pool,
     denom_in: swapOperation.denomIn,
     denom_out: swapOperation.denomOut,
+    interface: swapOperation.interface,
+  };
+}
+
+export function swapRouteFromJSON(swapRouteJSON: SwapRouteJSON): SwapRoute {
+  return {
+    swapAmountIn: swapRouteJSON.swap_amount_in,
+    denomIn: swapRouteJSON.denom_in,
+    swapOperations: swapRouteJSON.swap_operations.map(swapOperationFromJSON),
+  };
+}
+
+export function swapRouteToJSON(swapRoute: SwapRoute): SwapRouteJSON {
+  return {
+    swap_amount_in: swapRoute.swapAmountIn,
+    denom_in: swapRoute.denomIn,
+    swap_operations: swapRoute.swapOperations.map(swapOperationToJSON),
   };
 }
 
@@ -673,6 +691,24 @@ export function swapExactCoinInToJSON(
     swap_operations: swapExactCoinIn.swapOperations.map(swapOperationToJSON),
     swap_amount_in: swapExactCoinIn.swapAmountIn,
     price_impact_percent: swapExactCoinIn.priceImpactPercent,
+  };
+}
+
+export function smartSwapExactCoinInFromJSON(
+  smartSwapExactCoinInJSON: SmartSwapExactCoinInJSON,
+): SmartSwapExactCoinIn {
+  return {
+    swapVenue: swapVenueFromJSON(smartSwapExactCoinInJSON.swap_venue),
+    swapRoutes: smartSwapExactCoinInJSON.swap_routes.map(swapRouteFromJSON),
+  };
+}
+
+export function smartSwapExactCoinInToJSON(
+  smartSwapExactCoinIn: SmartSwapExactCoinIn,
+): SmartSwapExactCoinInJSON {
+  return {
+    swap_venue: swapVenueToJSON(smartSwapExactCoinIn.swapVenue),
+    swap_routes: smartSwapExactCoinIn.swapRoutes.map(swapRouteToJSON),
   };
 }
 
@@ -709,6 +745,17 @@ export function swapFromJSON(swapJSON: SwapJSON): Swap {
       chainID: swapJSON.chain_id,
       denomIn: swapJSON.denom_in,
       denomOut: swapJSON.denom_out,
+      swapVenues: swapJSON.swap_venues.map(swapVenueFromJSON),
+    };
+  } else if ("smart_swap_in" in swapJSON) {
+    return {
+      smartSwapIn: smartSwapExactCoinInFromJSON(swapJSON.smart_swap_in),
+      estimatedAffiliateFee: swapJSON.estimated_affiliate_fee,
+      fromChainID: swapJSON.from_chain_id,
+      chainID: swapJSON.chain_id,
+      denomIn: swapJSON.denom_in,
+      denomOut: swapJSON.denom_out,
+      swapVenues: swapJSON.swap_venues.map(swapVenueFromJSON),
     };
   }
 
@@ -719,6 +766,7 @@ export function swapFromJSON(swapJSON: SwapJSON): Swap {
     chainID: swapJSON.chain_id,
     denomIn: swapJSON.denom_in,
     denomOut: swapJSON.denom_out,
+    swapVenues: swapJSON.swap_venues.map(swapVenueFromJSON),
   };
 }
 
@@ -731,6 +779,17 @@ export function swapToJSON(swap: Swap): SwapJSON {
       chain_id: swap.chainID,
       denom_in: swap.denomIn,
       denom_out: swap.denomOut,
+      swap_venues: swap.swapVenues.map(swapVenueToJSON),
+    };
+  } else if ("smartSwapIn" in swap) {
+    return {
+      smart_swap_in: smartSwapExactCoinInToJSON(swap.smartSwapIn),
+      estimated_affiliate_fee: swap.estimatedAffiliateFee,
+      from_chain_id: swap.fromChainID,
+      chain_id: swap.chainID,
+      denom_in: swap.denomIn,
+      denom_out: swap.denomOut,
+      swap_venues: swap.swapVenues.map(swapVenueToJSON),
     };
   }
 
@@ -741,6 +800,7 @@ export function swapToJSON(swap: Swap): SwapJSON {
     chain_id: swap.chainID,
     denom_in: swap.denomIn,
     denom_out: swap.denomOut,
+    swap_venues: swap.swapVenues.map(swapVenueToJSON),
   };
 }
 
@@ -867,11 +927,12 @@ export function routeResponseFromJSON(
 
     operations: routeResponseJSON.operations.map(operationFromJSON),
     chainIDs: routeResponseJSON.chain_ids,
+    requiredChainAddresses: routeResponseJSON.required_chain_addresses,
 
     doesSwap: routeResponseJSON.does_swap,
     estimatedAmountOut: routeResponseJSON.estimated_amount_out,
-    swapVenue: routeResponseJSON.swap_venue
-      ? swapVenueFromJSON(routeResponseJSON.swap_venue)
+    swapVenues: routeResponseJSON.swap_venues
+      ? routeResponseJSON.swap_venues.map(swapVenueFromJSON)
       : undefined,
 
     txsRequired: routeResponseJSON.txs_required,
@@ -900,11 +961,12 @@ export function routeResponseToJSON(
 
     operations: routeResponse.operations.map(operationToJSON),
     chain_ids: routeResponse.chainIDs,
+    required_chain_addresses: routeResponse.requiredChainAddresses,
 
     does_swap: routeResponse.doesSwap,
     estimated_amount_out: routeResponse.estimatedAmountOut,
-    swap_venue: routeResponse.swapVenue
-      ? swapVenueToJSON(routeResponse.swapVenue)
+    swap_venues: routeResponse.swapVenues
+      ? routeResponse.swapVenues.map(swapVenueToJSON)
       : undefined,
 
     txs_required: routeResponse.txsRequired,
@@ -985,7 +1047,6 @@ export function msgsRequestFromJSON(
     postRouteHandler:
       msgsRequestJSON.post_route_handler &&
       postHandlerFromJSON(msgsRequestJSON.post_route_handler),
-    clientID: msgsRequestJSON.client_id,
   };
 }
 
@@ -1007,7 +1068,6 @@ export function msgsRequestToJSON(msgsRequest: MsgsRequest): MsgsRequestJSON {
     post_route_handler:
       msgsRequest.postRouteHandler &&
       postHandlerToJSON(msgsRequest.postRouteHandler),
-    client_id: msgsRequest.clientID,
   };
 }
 
@@ -1053,7 +1113,6 @@ export function submitTxRequestFromJSON(
   return {
     tx: submitTxRequestJSON.tx,
     chainID: submitTxRequestJSON.chain_id,
-    clientID: submitTxRequestJSON.client_id,
   };
 }
 
@@ -1063,7 +1122,6 @@ export function submitTxRequestToJSON(
   return {
     tx: submitTxRequest.tx,
     chain_id: submitTxRequest.chainID,
-    client_id: submitTxRequest.clientID,
   };
 }
 
@@ -1089,7 +1147,6 @@ export function trackTxRequestFromJSON(
   return {
     txHash: trackRequestJSON.tx_hash,
     chainID: trackRequestJSON.chain_id,
-    clientID: trackRequestJSON.client_id,
   };
 }
 
@@ -1099,7 +1156,6 @@ export function trackTxRequestToJSON(
   return {
     tx_hash: trackRequest.txHash,
     chain_id: trackRequest.chainID,
-    client_id: trackRequest.clientID,
   };
 }
 
@@ -1125,7 +1181,6 @@ export function txStatusRequestFromJSON(
   return {
     txHash: txStatusRequestJSON.tx_hash,
     chainID: txStatusRequestJSON.chain_id,
-    clientID: txStatusRequestJSON.client_id,
   };
 }
 
@@ -1135,7 +1190,6 @@ export function txStatusRequestToJSON(
   return {
     tx_hash: txStatusRequest.txHash,
     chain_id: txStatusRequest.chainID,
-    client_id: txStatusRequest.clientID,
   };
 }
 
@@ -1958,22 +2012,6 @@ export function assetRecommendationRequestToJSON(
   };
 }
 
-export function bridgesRequestFromJSON(
-  value: BridgesRequestJSON,
-): BridgesRequest {
-  return {
-    clientID: value.client_id,
-  };
-}
-
-export function bridgesRequestToJSON(
-  value: BridgesRequest,
-): BridgesRequestJSON {
-  return {
-    client_id: value.clientID,
-  };
-}
-
 export function bridgesResponseFromJSON(
   value: BridgesResponseJSON,
 ): BridgesResponse {
@@ -2122,7 +2160,9 @@ export function msgsDirectRequestFromJSON(
       msgDirectRequestJSON.swap_venues &&
       msgDirectRequestJSON.swap_venues.map(swapVenueFromJSON),
     smartRelay: msgDirectRequestJSON.smart_relay,
-    smartSwapOptions: msgDirectRequestJSON.smart_swap_options ? smartSwapOptionsFromJSON(msgDirectRequestJSON.smart_swap_options) : undefined,
+    smartSwapOptions: msgDirectRequestJSON.smart_swap_options
+      ? smartSwapOptionsFromJSON(msgDirectRequestJSON.smart_swap_options)
+      : undefined,
   };
 }
 
@@ -2143,7 +2183,6 @@ export function msgsDirectRequestToJSON(
     allow_unsafe: msgDirectRequest.allowUnsafe,
     bridges: msgDirectRequest.bridges,
     timeout_seconds: msgDirectRequest.timeoutSeconds,
-    client_id: msgDirectRequest.clientID,
     experimental_features: msgDirectRequest.experimentalFeatures,
     swap_venue:
       msgDirectRequest.swapVenue && swapVenueToJSON(msgDirectRequest.swapVenue),
@@ -2154,7 +2193,9 @@ export function msgsDirectRequestToJSON(
       msgDirectRequest.postRouteHandler &&
       postHandlerToJSON(msgDirectRequest.postRouteHandler),
     smart_relay: msgDirectRequest.smartRelay,
-    smart_swap_options: msgDirectRequest.smartSwapOptions ? smartSwapOptionsToJSON(msgDirectRequest.smartSwapOptions) : undefined,
+    smart_swap_options: msgDirectRequest.smartSwapOptions
+      ? smartSwapOptionsToJSON(msgDirectRequest.smartSwapOptions)
+      : undefined,
   };
 }
 

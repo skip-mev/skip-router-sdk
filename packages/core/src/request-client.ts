@@ -5,9 +5,14 @@ import { AxiosError, AxiosInstance } from "axios";
 export class RequestClient {
   private httpClient: AxiosInstance;
 
-  constructor(baseURL: string) {
+  constructor({ baseURL, apiKey }: { baseURL: string; apiKey?: string }) {
     this.httpClient = axios.create({
       baseURL,
+      headers: apiKey
+        ? {
+            authorization: apiKey,
+          }
+        : undefined,
     });
   }
 
