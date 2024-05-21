@@ -1,5 +1,15 @@
 # @skip-router/core
 
+## 4.0.0
+
+### Major Changes
+
+- 3c91d03: - Remove client_id
+  - Add smart swap types
+  - Add smart swap options
+  - Add smart swap types and swap venues field to swap
+  - Add apiKey param
+
 ## 3.0.2
 
 ### Patch Changes
