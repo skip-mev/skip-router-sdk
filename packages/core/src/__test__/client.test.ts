@@ -61,6 +61,12 @@ describe("client", () => {
                   logo_uri:
                     "https://raw.githubusercontent.com/cosmos/chain-registry/master/osmosis/images/osmosis-chain-logo.png",
                   bech32_prefix: "osmo",
+                  ibc_capabilities: {
+                    cosmos_pfm: true,
+                    cosmos_ibc_hooks: true,
+                    cosmos_memo: true,
+                    cosmos_autopilot: false,
+                  },
                   fee_assets: [
                     {
                       denom: "uosmo",
@@ -118,6 +124,12 @@ describe("client", () => {
           logoURI:
             "https://raw.githubusercontent.com/cosmos/chain-registry/master/osmosis/images/osmosis-chain-logo.png",
           bech32Prefix: "osmo",
+          ibcCapabilities: {
+            cosmosPfm: true,
+            cosmosIbcHooks: true,
+            cosmosMemo: true,
+            cosmosAutopilot: false,
+          },
           feeAssets: [
             {
               denom: "uosmo",

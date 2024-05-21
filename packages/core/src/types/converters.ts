@@ -42,7 +42,14 @@ import {
   TxStatusResponse,
   TxStatusResponseJSON,
 } from "./lifecycle";
-import { Chain, ChainJSON, FeeAsset, FeeAssetJSON } from "./routing";
+import {
+  Chain,
+  ChainJSON,
+  FeeAsset,
+  FeeAssetJSON,
+  IbcCapabilities,
+  IbcCapabilitiesJSON,
+} from "./routing";
 import {
   Affiliate,
   AffiliateJSON,
@@ -283,6 +290,7 @@ export function chainFromJSON(chainJSON: ChainJSON): Chain {
     bech32Prefix: chainJSON.bech32_prefix,
     feeAssets: chainJSON.fee_assets.map(feeAssetFromJSON),
     chainType: chainJSON.chain_type,
+    ibcCapabilities: ibcCapabilitiesFromJSON(chainJSON.ibc_capabilities),
     isTestnet: chainJSON.is_testnet,
   };
 }
@@ -300,6 +308,7 @@ export function chainToJSON(chain: Chain): ChainJSON {
     bech32_prefix: chain.bech32Prefix,
     fee_assets: chain.feeAssets.map(feeAssetToJSON),
     chain_type: chain.chainType,
+    ibc_capabilities: ibcCapabilitiesToJSON(chain.ibcCapabilities),
     is_testnet: chain.isTestnet,
   };
 }
@@ -315,6 +324,28 @@ export function feeAssetToJSON(feeAsset: FeeAsset): FeeAssetJSON {
   return {
     denom: feeAsset.denom,
     gas_price: feeAsset.gasPrice,
+  };
+}
+
+export function ibcCapabilitiesFromJSON(
+  ibcCapabilitiesJSON: IbcCapabilitiesJSON,
+): IbcCapabilities {
+  return {
+    cosmosPfm: ibcCapabilitiesJSON.cosmos_pfm,
+    cosmosIbcHooks: ibcCapabilitiesJSON.cosmos_ibc_hooks,
+    cosmosMemo: ibcCapabilitiesJSON.cosmos_memo,
+    cosmosAutopilot: ibcCapabilitiesJSON.cosmos_autopilot,
+  };
+}
+
+export function ibcCapabilitiesToJSON(
+  ibcCapabilities: IbcCapabilities,
+): IbcCapabilitiesJSON {
+  return {
+    cosmos_pfm: ibcCapabilities.cosmosPfm,
+    cosmos_ibc_hooks: ibcCapabilities.cosmosIbcHooks,
+    cosmos_memo: ibcCapabilities.cosmosMemo,
+    cosmos_autopilot: ibcCapabilities.cosmosAutopilot,
   };
 }
 
@@ -912,7 +943,7 @@ export function routeResponseFromJSON(
 
     warning: routeResponseJSON.warning,
     estimatedFees: routeResponseJSON.estimated_fees?.length
-      ? routeResponseJSON.estimated_fees.map((i) => estimatedFeeFromJSON(i))
+      ? routeResponseJSON.estimated_fees.map(i => estimatedFeeFromJSON(i))
       : [],
   };
 }
@@ -945,9 +976,7 @@ export function routeResponseToJSON(
     swap_price_impact_percent: routeResponse.swapPriceImpactPercent,
 
     warning: routeResponse.warning,
-    estimated_fees: routeResponse.estimatedFees.map((i) =>
-      estimatedFeeToJSON(i),
-    ),
+    estimated_fees: routeResponse.estimatedFees.map(i => estimatedFeeToJSON(i)),
     // estimated_fees: routeResponse.estimatedFees?.length
     //   ? routeResponse.estimatedFees.map((i) => estimatedFeeToJSON(i))
     //   : [],
@@ -1509,8 +1538,9 @@ export function evmTxToJSON(evmTx: EvmTx): EvmTxJSON {
     to: evmTx.to,
     value: evmTx.value,
     data: evmTx.data,
-    required_erc20_approvals:
-      evmTx.requiredERC20Approvals.map(erc20ApprovalToJSON),
+    required_erc20_approvals: evmTx.requiredERC20Approvals.map(
+      erc20ApprovalToJSON,
+    ),
   };
 }
 
@@ -1608,11 +1638,11 @@ export function messageResponseFromJSON(
   response: MsgsResponseJSON,
 ): MsgsResponse {
   return {
-    estimatedFees: response.estimated_fees?.map((fee) =>
+    estimatedFees: response.estimated_fees?.map(fee =>
       estimatedFeeFromJSON(fee),
     ),
-    msgs: response.msgs.map((msg) => msgFromJSON(msg)),
-    txs: response.txs?.map((tx) => txFromJSON(tx)),
+    msgs: response.msgs.map(msg => msgFromJSON(msg)),
+    txs: response.txs?.map(tx => txFromJSON(tx)),
   };
 }
 
