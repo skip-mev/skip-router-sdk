@@ -752,6 +752,7 @@ describe("client", () => {
     dest_asset_chain_id: "cosmoshub-4",
     amount_in: "1000000",
     amount_out: "54906",
+    required_chain_addresses: ["osmosis-1", "cosmoshub-4"],
     operations: [
       {
         swap: {
