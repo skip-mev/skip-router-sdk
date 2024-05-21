@@ -1,5 +1,11 @@
 # @skip-router/core
 
+## 4.0.1
+
+### Patch Changes
+
+- f558aa4: add missing ibcCapabilities from Chain type
+
 ## 4.0.0
 
 ### Major Changes
