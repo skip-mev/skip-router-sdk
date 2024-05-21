@@ -1710,7 +1710,7 @@ describe("client", () => {
       const result = await client.getRecommendedGasPrice("osmosis-1");
 
       expect(result?.denom).toEqual("uosmo");
-    });
+    }, 30000);
 
     it("returns the recommended gas price for Noble (no staking token)", async () => {
       const client = new SkipRouter({
@@ -1720,7 +1720,7 @@ describe("client", () => {
       const result = await client.getRecommendedGasPrice("noble-1");
 
       expect(result?.denom).toEqual("uusdc");
-    });
+    }, 30000);
   });
 
   describe("bridges", () => {
@@ -1791,8 +1791,5 @@ test("dymension", async () => {
   });
 
   const feeInfo = await client.getFeeInfoForChain("dymension_1100-1");
-
-  console.log(feeInfo);
-
-  // const result = await client
-});
+  expect(feeInfo?.denom).toEqual("adym");
+}, 30000);
