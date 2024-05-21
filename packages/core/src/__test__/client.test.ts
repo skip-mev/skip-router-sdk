@@ -9,6 +9,7 @@ import {
   originAssetsResponseFromJSON,
   OriginAssetsResponseJSON,
   RecommendationEntry,
+  RouteResponseJSON,
 } from "../types";
 
 export const server = setupServer();
@@ -641,34 +642,47 @@ describe("client", () => {
         destAssetDenom: "uatom",
         destAssetChainID: "cosmoshub-4",
         amountIn: "1000000",
-        amountOut: "54946",
+        amountOut: "54906",
+        addressList: [
+          "cosmos1xv9tklw7d82sezh9haa573wufgy59vmwe6xxe5",
+          "cosmos1xv9tklw7d82sezh9haa573wufgy59vmwe6xxe5",
+        ],
         operations: [
           {
             swap: {
               swapIn: {
                 swapVenue: {
-                  name: "osmosis-poolmanager",
-                  chainID: "osmosis-1",
+                  name: "neutron-astroport",
+                  chainID: "neutron-1",
                   logoUri:
-                    "https://raw.githubusercontent.com/skip-mev/skip-api-registry/main/swap-venues/osmosis/logo.svg",
+                    "https://raw.githubusercontent.com/skip-mev/skip-api-registry/main/swap-venues/astroport/logo.svg",
                 },
                 swapOperations: [
                   {
-                    pool: "1",
+                    pool: "pool-0",
                     denomIn: "uosmo",
-                    denomOut:
-                      "ibc/27394FB092D2ECCD56123C74F36E4C1F926001CEADA9CA97EA622B25F41E5EB2",
+                    denomOut: "uatom",
                   },
                 ],
                 swapAmountIn: "1000000",
               },
-              chainID: "osmosis-1",
+              estimatedAffiliateFee: "1000000",
+              chainID: "neutron-1",
+              fromChainID: "neutron-1",
               denomIn: "uosmo",
-              denomOut:
-                "ibc/27394FB092D2ECCD56123C74F36E4C1F926001CEADA9CA97EA622B25F41E5EB2",
-              estimatedAffiliateFee:
-                "0ibc/27394FB092D2ECCD56123C74F36E4C1F926001CEADA9CA97EA622B25F41E5EB2",
+              denomOut: "uatom",
+              swapVenues: [
+                {
+                  name: "neutron-astroport",
+                  chainID: "neutron-1",
+                  logoUri:
+                    "https://raw.githubusercontent.com/skip-mev/skip-api-registry/main/swap-venues/astroport/logo.svg",
+                },
+              ],
             },
+            txIndex: 0,
+            amountIn: "100000",
+            amountOut: "100000",
           },
           {
             transfer: {
@@ -678,21 +692,32 @@ describe("client", () => {
               pfmEnabled: true,
               destDenom: "uatom",
               supportsMemo: true,
+              smartRelay: false,
               bridgeID: "IBC",
+              denomIn: "uosmo",
+              denomOut: "uatom",
               fromChainID: "osmosis-1",
               toChainID: "cosmoshub-4",
-              denomIn:
-                "ibc/27394FB092D2ECCD56123C74F36E4C1F926001CEADA9CA97EA622B25F41E5EB2",
-              denomOut: "uatom",
-              smartRelay: true,
             },
+            txIndex: 0,
+            amountIn: "100000",
+            amountOut: "100000",
           },
         ],
-        addressList: [
-          "osmo1f2f9vryyu53gr8vhsksn66kugnxaa7k8jdpk0e",
-          "cosmos1f2f9vryyu53gr8vhsksn66kugnxaa7k86kjxet",
+        estimatedAmountOut: "54906",
+        slippageTolerancePercent: "0.01",
+        affiliates: [
+          {
+            address: "cosmos1xv9tklw7d82sezh9haa573wufgy59vmwe6xxe5",
+            basisPointsFee: "100",
+          },
         ],
-        estimatedAmountOut: "54946",
+        postRouteHandler: {
+          wasmMsg: {
+            contractAddress: "cosmos1xv9tklw7d82sezh9haa573wufgy59vmwe6xxe5",
+            msg: "cosmwasm message",
+          },
+        },
       });
 
       expect(response.msgs).toEqual([
@@ -708,62 +733,90 @@ describe("client", () => {
     });
   });
 
+  const routeResponseJSON: RouteResponseJSON = {
+    source_asset_denom: "uosmo",
+    source_asset_chain_id: "osmosis-1",
+    dest_asset_denom: "uatom",
+    dest_asset_chain_id: "cosmoshub-4",
+    amount_in: "1000000",
+    amount_out: "54906",
+    operations: [
+      {
+        swap: {
+          swap_in: {
+            swap_venue: {
+              name: "neutron-astroport",
+              chain_id: "neutron-1",
+              logo_uri:
+                "https://raw.githubusercontent.com/skip-mev/skip-api-registry/main/swap-venues/astroport/logo.svg",
+            },
+            swap_operations: [
+              {
+                pool: "pool-0",
+                denom_in: "uosmo",
+                denom_out: "uatom",
+              },
+            ],
+            swap_amount_in: "1000000",
+          },
+          estimated_affiliate_fee: "1000000",
+          chain_id: "neutron-1",
+          from_chain_id: "neutron-1",
+          denom_in: "uosmo",
+          denom_out: "uatom",
+          swap_venues: [
+            {
+              name: "neutron-astroport",
+              chain_id: "neutron-1",
+              logo_uri:
+                "https://raw.githubusercontent.com/skip-mev/skip-api-registry/main/swap-venues/astroport/logo.svg",
+            },
+          ],
+        },
+        tx_index: 0,
+        amount_in: "100000",
+        amount_out: "100000",
+      },
+      {
+        transfer: {
+          port: "transfer",
+          channel: "channel-0",
+          chain_id: "osmosis-1",
+          pfm_enabled: true,
+          dest_denom: "uatom",
+          supports_memo: true,
+          smart_relay: false,
+          bridge_id: "IBC",
+          denom_in: "uosmo",
+          denom_out: "uatom",
+          from_chain_id: "osmosis-1",
+          to_chain_id: "cosmoshub-4",
+        },
+        tx_index: 0,
+        amount_in: "100000",
+        amount_out: "100000",
+      },
+    ],
+    chain_ids: ["osmosis-1", "cosmoshub-4"],
+    does_swap: true,
+    estimated_amount_out: "54906",
+    swap_venues: [
+      {
+        name: "osmosis-poolmanager",
+        chain_id: "osmosis-1",
+        logo_uri:
+          "https://raw.githubusercontent.com/cosmos/chain-registry/master/osmosis/images/osmosis-chain-logo.png",
+      },
+    ],
+    txs_required: 1,
+    estimated_fees: [],
+  };
+
   describe("/v1/fungible/route", () => {
     it("handles 200 OK", async () => {
       server.use(
         rest.post("https://api.skip.money/v2/fungible/route", (_, res, ctx) => {
-          return res(
-            ctx.status(200),
-            ctx.json({
-              source_asset_denom: "uosmo",
-              source_asset_chain_id: "osmosis-1",
-              dest_asset_denom: "uatom",
-              dest_asset_chain_id: "cosmoshub-4",
-              amount_in: "1000000",
-              amount_out: "54906",
-              operations: [
-                {
-                  swap: {
-                    swap_in: {
-                      swap_venue: {
-                        name: "neutron-astroport",
-                        chain_id: "neutron-1",
-                      },
-                      swap_operations: [
-                        {
-                          pool: "pool-0",
-                          denom_in: "uosmo",
-                          denom_out: "uatom",
-                        },
-                      ],
-                      swap_amount_in: "1000000",
-                    },
-                    estimated_affiliate_fee: "1000000",
-                  },
-                },
-                {
-                  transfer: {
-                    port: "transfer",
-                    channel: "channel-0",
-                    chain_id: "osmosis-1",
-                    pfm_enabled: true,
-                    dest_denom: "uatom",
-                    supports_memo: true,
-                    smart_relay: true,
-                  },
-                },
-              ],
-              chain_ids: ["osmosis-1", "cosmoshub-4"],
-              does_swap: true,
-              estimated_amount_out: "54906",
-              estimated_fees: [],
-              swap_venue: {
-                name: "osmosis-poolmanager",
-                chain_id: "osmosis-1",
-              },
-              txs_required: 1,
-            }),
-          );
+          return res(ctx.status(200), ctx.json(routeResponseJSON));
         }),
       );
 
@@ -794,6 +847,8 @@ describe("client", () => {
                 swapVenue: {
                   name: "neutron-astroport",
                   chainID: "neutron-1",
+                  logoUri:
+                    "https://raw.githubusercontent.com/skip-mev/skip-api-registry/main/swap-venues/astroport/logo.svg",
                 },
                 swapOperations: [
                   {
@@ -805,7 +860,22 @@ describe("client", () => {
                 swapAmountIn: "1000000",
               },
               estimatedAffiliateFee: "1000000",
+              chainID: "neutron-1",
+              fromChainID: "neutron-1",
+              denomIn: "uosmo",
+              denomOut: "uatom",
+              swapVenues: [
+                {
+                  name: "neutron-astroport",
+                  chainID: "neutron-1",
+                  logoUri:
+                    "https://raw.githubusercontent.com/skip-mev/skip-api-registry/main/swap-venues/astroport/logo.svg",
+                },
+              ],
             },
+            txIndex: 0,
+            amountIn: "100000",
+            amountOut: "100000",
           },
           {
             transfer: {
@@ -815,15 +885,30 @@ describe("client", () => {
               pfmEnabled: true,
               destDenom: "uatom",
               supportsMemo: true,
-              smartRelay: true,
+              smartRelay: false,
+              bridgeID: "IBC",
+              denomIn: "uosmo",
+              denomOut: "uatom",
+              fromChainID: "osmosis-1",
+              toChainID: "cosmoshub-4",
             },
+            txIndex: 0,
+            amountIn: "100000",
+            amountOut: "100000",
           },
         ],
         chainIDs: ["osmosis-1", "cosmoshub-4"],
         doesSwap: true,
         estimatedAmountOut: "54906",
+        swapVenues: [
+          {
+            name: "osmosis-poolmanager",
+            chainID: "osmosis-1",
+            logoUri:
+              "https://raw.githubusercontent.com/cosmos/chain-registry/master/osmosis/images/osmosis-chain-logo.png",
+          },
+        ],
         estimatedFees: [],
-        swapVenue: { name: "osmosis-poolmanager", chainID: "osmosis-1" },
         txsRequired: 1,
       });
     });

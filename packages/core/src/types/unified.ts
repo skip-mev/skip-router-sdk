@@ -42,7 +42,6 @@ export type AssetsRequestJSON = {
   include_cw20_assets?: boolean;
   include_evm_assets?: boolean;
   include_svm_assets?: boolean;
-  client_id?: string;
 };
 
 export type AssetsRequest = {
@@ -52,7 +51,6 @@ export type AssetsRequest = {
   includeCW20Assets?: boolean;
   includeEvmAssets?: boolean;
   includeSvmAssets?: boolean;
-  clientID?: string;
 };
 
 export type AssetsFromSourceRequestJSON = {
@@ -60,7 +58,6 @@ export type AssetsFromSourceRequestJSON = {
   source_asset_chain_id: string;
   allow_multi_tx?: boolean;
   include_cw20_assets: boolean;
-  client_id?: string;
 };
 
 export type AssetsFromSourceRequest = {
@@ -68,7 +65,6 @@ export type AssetsFromSourceRequest = {
   sourceAssetChainID: string;
   allowMultiTx?: boolean;
   includeCW20Assets: boolean;
-  clientID?: string;
 };
 
 export type AssetRecommendation = {
@@ -97,12 +93,10 @@ export type AssetRecommendationRequest = {
 
 export type RecommendAssetsRequestJSON = {
   requests: AssetRecommendationRequestJSON[];
-  client_id?: string;
 };
 
 export type RecommendAssetsRequest = {
   requests: AssetRecommendationRequest[];
-  clientID?: string;
 };
 
 export type RecommendAssetsResponseJSON = {
@@ -135,7 +129,6 @@ export type RouteRequestBaseJSON = {
   swap_venue?: SwapVenueRequestJSON;
   swap_venues?: SwapVenueRequestJSON[];
   allow_unsafe?: boolean;
-  client_id?: string;
   experimental_features?: ExperimentalFeature[];
   bridges?: BridgeType[];
   allow_multi_tx?: boolean;
@@ -179,7 +172,6 @@ export type RouteRequestBase = {
   swapVenue?: SwapVenueRequest;
   swapVenues?: SwapVenueRequest[];
   allowUnsafe?: boolean;
-  clientID?: string;
   experimentalFeatures?: ExperimentalFeature[];
   bridges?: BridgeType[];
   allowMultiTx?: boolean;
@@ -302,7 +294,7 @@ export type RouteResponseJSON = {
 
   does_swap: boolean;
   estimated_amount_out?: string;
-  swap_venue?: SwapVenueJSON;
+  swap_venues?: SwapVenueJSON[];
 
   txs_required: number;
 
@@ -328,7 +320,7 @@ export type RouteResponse = {
 
   doesSwap: boolean;
   estimatedAmountOut?: string;
-  swapVenue?: SwapVenue;
+  swapVenues?: SwapVenue[];
 
   txsRequired: number;
 
@@ -355,8 +347,6 @@ export type MsgsRequestJSON = {
   affiliates?: AffiliateJSON[];
 
   post_route_handler?: PostHandlerJSON;
-
-  client_id?: string;
 };
 
 export type MsgsRequest = {
@@ -377,8 +367,6 @@ export type MsgsRequest = {
   affiliates?: Affiliate[];
 
   postRouteHandler?: PostHandler;
-
-  clientID?: string;
 };
 
 export type MsgsDirectRequestJSON = {
@@ -401,7 +389,6 @@ export type MsgsDirectRequestJSON = {
   post_route_handler?: PostHandlerJSON;
 
   allow_unsafe?: boolean;
-  client_id?: string;
   experimental_features?: ExperimentalFeature[];
   bridges?: BridgeType[];
   allow_multi_tx?: boolean;
@@ -428,7 +415,6 @@ export type MsgsDirectRequest = {
   postRouteHandler?: PostHandler;
 
   allowUnsafe?: boolean;
-  clientID?: string;
   experimentalFeatures?: ExperimentalFeature[];
   bridges?: BridgeType[];
   allowMultiTx?: boolean;
@@ -515,14 +501,6 @@ export type AssetsBetweenChainsResponseJSON = {
 
 export type AssetsBetweenChainsResponse = {
   assetsBetweenChains: AssetBetweenChains[];
-};
-
-export type BridgesRequestJSON = {
-  client_id?: string;
-};
-
-export type BridgesRequest = {
-  clientID?: string;
 };
 
 export type BridgesResponseJSON = {

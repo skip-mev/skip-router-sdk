@@ -273,12 +273,14 @@ export type SwapOperationJSON = {
   pool: string;
   denom_in: string;
   denom_out: string;
+  interface?: string;
 };
 
 export type SwapOperation = {
   pool: string;
   denomIn: string;
   denomOut: string;
+  interface?: string;
 };
 
 export type SwapExactCoinOutJSON = {
@@ -309,26 +311,52 @@ export type SwapExactCoinIn = {
   priceImpactPercent?: string;
 };
 
+export type SwapRouteJSON = {
+  swap_amount_in: string;
+  denom_in: string;
+  swap_operations: SwapOperationJSON[];
+};
+
+export type SwapRoute = {
+  swapAmountIn: string;
+  denomIn: string;
+  swapOperations: SwapOperation[];
+};
+
+export type SmartSwapExactCoinInJSON = {
+  swap_venue: SwapVenueJSON;
+  swap_routes: SwapRouteJSON[];
+};
+
+export type SmartSwapExactCoinIn = {
+  swapVenue: SwapVenue;
+  swapRoutes: SwapRoute[];
+};
+
 export type SwapJSON = (
   | { swap_in: SwapExactCoinInJSON }
   | { swap_out: SwapExactCoinOutJSON }
+  | { smart_swap_in: SmartSwapExactCoinInJSON }
 ) & {
   estimated_affiliate_fee?: string;
   from_chain_id: string;
   chain_id: string;
   denom_in: string;
   denom_out: string;
+  swap_venues: SwapVenueJSON[];
 };
 
 export type Swap = (
   | { swapIn: SwapExactCoinIn }
   | { swapOut: SwapExactCoinOut }
+  | { smartSwapIn: SmartSwapExactCoinIn }
 ) & {
   estimatedAffiliateFee?: string;
   fromChainID: string;
   chainID: string;
   denomIn: string;
   denomOut: string;
+  swapVenues: SwapVenue[];
 };
 
 export type AffiliateJSON = {
@@ -442,8 +470,8 @@ export type OriginAssetsResponse = {
 
 export type SmartSwapOptionsJSON = {
   split_routes: boolean;
-}
+};
 
 export type SmartSwapOptions = {
   splitRoutes: boolean;
-}
+};

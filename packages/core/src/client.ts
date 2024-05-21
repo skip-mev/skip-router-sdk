@@ -72,8 +72,6 @@ export class SkipRouter {
   protected aminoTypes: AminoTypes;
   protected registry: Registry;
 
-  protected clientID: string;
-
   protected endpointOptions: {
     endpoints?: Record<string, clientTypes.EndpointOptions>;
     getRpcEndpointForChain?: (chainID: string) => Promise<string>;
@@ -85,8 +83,10 @@ export class SkipRouter {
   protected getSVMSigner?: () => Promise<Adapter>;
 
   constructor(options: clientTypes.SkipRouterOptions = {}) {
-    this.clientID = options.clientID || "skip-router-js";
-    this.requestClient = new RequestClient(options.apiURL || SKIP_API_URL);
+    this.requestClient = new RequestClient({
+      baseURL: options.apiURL || SKIP_API_URL,
+      apiKey: options.apiKey,
+    });
 
     this.aminoTypes = new AminoTypes({
       ...createDefaultAminoConverters(),
@@ -121,7 +121,6 @@ export class SkipRouter {
       "/v1/fungible/assets",
       types.assetsRequestToJSON({
         ...options,
-        clientID: this.clientID,
       }),
     );
 
@@ -146,7 +145,6 @@ export class SkipRouter {
       "/v1/fungible/assets_from_source",
       types.assetsFromSourceRequestToJSON({
         ...options,
-        clientID: this.clientID,
       }),
     );
 
@@ -173,12 +171,10 @@ export class SkipRouter {
   }
 
   async bridges(): Promise<types.Bridge[]> {
-    const response = await this.requestClient.get<types.BridgesResponseJSON>(
-      "/v2/info/bridges",
-      {
-        client_id: this.clientID,
-      },
-    );
+    const response =
+      await this.requestClient.get<types.BridgesResponseJSON>(
+        "/v2/info/bridges",
+      );
 
     return types.bridgesResponseFromJSON(response).bridges;
   }
@@ -200,7 +196,6 @@ export class SkipRouter {
       include_evm: includeEVM,
       include_svm: includeSVM,
       include_testnets: includeTestnets,
-      client_id: this.clientID,
     });
 
     return response.chains.map((chain) => types.chainFromJSON(chain));
@@ -912,7 +907,6 @@ export class SkipRouter {
     >("/v2/fungible/msgs", {
       ...types.msgsRequestToJSON(options),
       slippage_tolerance_percent: options.slippageTolerancePercent || "0",
-      client_id: this.clientID,
     });
     return types.messageResponseFromJSON(response);
   }
@@ -924,7 +918,6 @@ export class SkipRouter {
     >("/v2/fungible/route", {
       ...types.routeRequestToJSON(options),
       cumulative_affiliate_fee_bps: options.cumulativeAffiliateFeeBPS || "0",
-      client_id: this.clientID,
     });
 
     return types.routeResponseFromJSON(response);
@@ -954,7 +947,6 @@ export class SkipRouter {
   ) {
     const options = types.recommendAssetsRequestToJSON({
       requests: Array.isArray(request) ? request : [request],
-      clientID: this.clientID,
     });
 
     const response =
@@ -994,7 +986,6 @@ export class SkipRouter {
     >("/v2/tx/submit", {
       chain_id: chainID,
       tx: tx,
-      client_id: this.clientID,
     });
 
     return types.submitTxResponseFromJSON(response);
@@ -1058,7 +1049,6 @@ export class SkipRouter {
         >("/v2/tx/track", {
           chain_id: chainID,
           tx_hash: txHash,
-          client_id: this.clientID,
         });
 
         return types.trackTxResponseFromJSON(response);
@@ -1129,7 +1119,6 @@ export class SkipRouter {
         >("/v2/tx/status", {
           chain_id: chainID,
           tx_hash: txHash,
-          client_id: this.clientID,
         });
         return types.txStatusResponseFromJSON(response);
       } catch (error) {
@@ -1183,9 +1172,7 @@ export class SkipRouter {
   async venues(): Promise<types.SwapVenue[]> {
     const response = await this.requestClient.get<{
       venues: types.SwapVenueJSON[];
-    }>("/v1/fungible/venues", {
-      client_id: this.clientID,
-    });
+    }>("/v1/fungible/venues");
 
     return response.venues.map((venue) => types.swapVenueFromJSON(venue));
   }
