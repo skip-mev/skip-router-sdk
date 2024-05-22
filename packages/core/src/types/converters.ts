@@ -943,7 +943,7 @@ export function routeResponseFromJSON(
 
     warning: routeResponseJSON.warning,
     estimatedFees: routeResponseJSON.estimated_fees?.length
-      ? routeResponseJSON.estimated_fees.map(i => estimatedFeeFromJSON(i))
+      ? routeResponseJSON.estimated_fees.map((i) => estimatedFeeFromJSON(i))
       : [],
   };
 }
@@ -976,7 +976,9 @@ export function routeResponseToJSON(
     swap_price_impact_percent: routeResponse.swapPriceImpactPercent,
 
     warning: routeResponse.warning,
-    estimated_fees: routeResponse.estimatedFees.map(i => estimatedFeeToJSON(i)),
+    estimated_fees: routeResponse.estimatedFees.map((i) =>
+      estimatedFeeToJSON(i),
+    ),
     // estimated_fees: routeResponse.estimatedFees?.length
     //   ? routeResponse.estimatedFees.map((i) => estimatedFeeToJSON(i))
     //   : [],
@@ -1510,6 +1512,7 @@ export function svmTxFromJSON(svmTxJSON: SvmTxJSON): SvmTx {
   return {
     chainID: svmTxJSON.chain_id,
     tx: svmTxJSON.tx,
+    signerAddress: svmTxJSON.signer_address,
   };
 }
 
@@ -1517,6 +1520,7 @@ export function svmTxToJSON(svmTx: SvmTx): SvmTxJSON {
   return {
     chain_id: svmTx.chainID,
     tx: svmTx.tx,
+    signer_address: svmTx.signerAddress,
   };
 }
 
@@ -1529,6 +1533,7 @@ export function evmTxFromJSON(evmTxJSON: EvmTxJSON): EvmTx {
     requiredERC20Approvals: evmTxJSON.required_erc20_approvals.map(
       erc20ApprovalFromJSON,
     ),
+    signerAddress: evmTxJSON.signer_address,
   };
 }
 
@@ -1538,9 +1543,9 @@ export function evmTxToJSON(evmTx: EvmTx): EvmTxJSON {
     to: evmTx.to,
     value: evmTx.value,
     data: evmTx.data,
-    required_erc20_approvals: evmTx.requiredERC20Approvals.map(
-      erc20ApprovalToJSON,
-    ),
+    required_erc20_approvals:
+      evmTx.requiredERC20Approvals.map(erc20ApprovalToJSON),
+    signer_address: evmTx.signerAddress,
   };
 }
 
@@ -1549,6 +1554,7 @@ export function cosmosTxFromJSON(cosmosTxJSON: CosmosTxJSON): CosmosTx {
     chainID: cosmosTxJSON.chain_id,
     path: cosmosTxJSON.path,
     msgs: cosmosTxJSON.msgs.map(cosmosMsgFromJSON),
+    signerAddress: cosmosTxJSON.signer_address,
   };
 }
 
@@ -1557,6 +1563,7 @@ export function cosmosTxToJSON(cosmosTx: CosmosTx): CosmosTxJSON {
     chain_id: cosmosTx.chainID,
     path: cosmosTx.path,
     msgs: cosmosTx.msgs.map(cosmosMsgToJSON),
+    signer_address: cosmosTx.signerAddress,
   };
 }
 
@@ -1638,11 +1645,11 @@ export function messageResponseFromJSON(
   response: MsgsResponseJSON,
 ): MsgsResponse {
   return {
-    estimatedFees: response.estimated_fees?.map(fee =>
+    estimatedFees: response.estimated_fees?.map((fee) =>
       estimatedFeeFromJSON(fee),
     ),
-    msgs: response.msgs.map(msg => msgFromJSON(msg)),
-    txs: response.txs?.map(tx => txFromJSON(tx)),
+    msgs: response.msgs.map((msg) => msgFromJSON(msg)),
+    txs: response.txs?.map((tx) => txFromJSON(tx)),
   };
 }
 

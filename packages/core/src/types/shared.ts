@@ -193,12 +193,14 @@ export type CosmosTxJSON = {
   chain_id: string;
   path: string[];
   msgs: CosmosMsgJSON[];
+  signer_address: string;
 };
 
 export type CosmosTx = {
   chainID: string;
   path: string[];
   msgs: CosmosMsg[];
+  signerAddress: string;
 };
 
 export type CCTPTransferJSON = {
@@ -411,11 +413,13 @@ export type ERC20Approval = {
 export type SvmTxJSON = {
   chain_id: string;
   tx: string;
+  signer_address: string;
 };
 
 export type SvmTx = {
   chainID: string;
   tx: string;
+  signerAddress: string;
 };
 
 export type EvmTxJSON = {
@@ -424,6 +428,7 @@ export type EvmTxJSON = {
   value: string;
   data: string;
   required_erc20_approvals: ERC20ApprovalJSON[];
+  signer_address: string;
 };
 
 export type EvmTx = {
@@ -432,6 +437,7 @@ export type EvmTx = {
   value: string;
   data: string;
   requiredERC20Approvals: ERC20Approval[];
+  signerAddress: string;
 };
 
 export type DenomWithChainIDJSON = {
