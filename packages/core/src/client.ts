@@ -393,7 +393,7 @@ export class SkipRouter {
     );
 
     // @note: reusing the stargate client here and for broadcast 👍
-    const fee = await this.estimateGasForCosmosMessage(
+    const fee = await this.simulateGasForCosmosMessage(
       stargateClient,
       chainID,
       signerAddress,
@@ -455,7 +455,7 @@ export class SkipRouter {
     messages?: types.CosmosMsg[],
     encodedMsgs?: EncodeObject[],
   ) {
-    return this.estimateGasForCosmosMessage(
+    return this.simulateGasForCosmosMessage(
       stargateClient,
       chainID,
       signerAddress,
@@ -466,7 +466,7 @@ export class SkipRouter {
     );
   }
 
-  async estimateGasForCosmosMessage(
+  async simulateGasForCosmosMessage(
     stargateClient: SigningStargateClient,
     chainID: string,
     signerAddress: string,
@@ -1691,7 +1691,7 @@ export class SkipRouter {
     getGasPrice?: (chainID: string) => Promise<GasPrice | undefined>,
     gasAmountMultiplier?: number,
   ) {
-    const fee = await this.estimateGasForCosmosMessage(
+    const fee = await this.simulateGasForCosmosMessage(
       client,
       chainID,
       signerAddress,
@@ -1719,7 +1719,7 @@ export class SkipRouter {
     if (!signer.account)
       throw new Error("validateEVMBalance: No account found");
     const extendedSigner = signer.extend(publicActions);
-    const requiredGas = await this.estimateGasForEvmTx(extendedSigner, tx);
+    const requiredGas = await this.simulateGasForEvmTx(extendedSigner, tx);
 
     const balance = await extendedSigner.getBalance({
       address: signer.account.address,
@@ -1731,7 +1731,7 @@ export class SkipRouter {
     }
   }
 
-  async estimateGasForEvmTx(signer: WalletClient, tx: types.EvmTx) {
+  async simulateGasForEvmTx(signer: WalletClient, tx: types.EvmTx) {
     const { to, data, value } = tx;
     if (!signer.account)
       throw new Error("estimateGasForEvmTx: No account found");
@@ -1754,7 +1754,7 @@ export class SkipRouter {
     if (!signer.publicKey)
       raise("validateSVMGasBalance error: 'signer.publicKey' is null");
     const solBalance = await connection.getBalance(signer.publicKey);
-    const gas = await this.estimateGasForSVMTx(connection, tx);
+    const gas = await this.simulateGasForSVMTx(connection, tx);
     if (!gas) {
       raise(
         `validateSVMGasBalance error: unable to get gas for transaction on ${tx.chainID}`,
@@ -1767,7 +1767,7 @@ export class SkipRouter {
     }
   }
 
-  async estimateGasForSVMTx(connection: Connection, tx: types.SvmTx) {
+  async simulateGasForSVMTx(connection: Connection, tx: types.SvmTx) {
     const _tx = Buffer.from(tx.tx, "base64");
     const transaction = Transaction.from(_tx);
     const gas = await connection.getFeeForMessage(
@@ -1782,7 +1782,7 @@ export class SkipRouter {
     return gas.value;
   }
 
-  async estimateGasTxs({
+  async simulateGasTxs({
     txs,
     userAddresses,
     getCosmosSigner,
@@ -1809,93 +1809,140 @@ export class SkipRouter {
         raise(`estimateGasTxs error: invalid tx at index ${i}`);
       }
       if ("cosmosTx" in tx) {
-        const msgs = tx.cosmosTx.msgs;
-        if (!msgs) {
-          raise(`estimateGasTxs error: invalid msgs ${msgs}`);
+        try {
+          const msgs = tx.cosmosTx.msgs;
+          if (!msgs) {
+            raise(`estimateGasTxs error: invalid msgs ${msgs}`);
+          }
+          getCosmosSigner = getCosmosSigner || this.getCosmosSigner;
+          if (!getCosmosSigner)
+            raise(
+              "estimateGasTxs error: 'getCosmosSigner' is not provided or configured in skip router",
+            );
+          const signer = await getCosmosSigner(tx.cosmosTx.chainID);
+
+          const endpoint = await this.getRpcEndpointForChain(
+            tx.cosmosTx.chainID,
+          );
+          const client = await SigningStargateClient.connectWithSigner(
+            endpoint,
+            signer,
+            {
+              aminoTypes: this.aminoTypes,
+              registry: this.registry,
+              accountParser,
+            },
+          );
+
+          const currentAddress =
+            userAddresses.find(
+              (address) => address.chainID === tx.cosmosTx.chainID,
+            )?.address ||
+            raise(
+              `validateGasBalance error: invalid address for chain '${tx.cosmosTx.chainID}'`,
+            );
+          const gas = await this.simulateGasForCosmosMessage(
+            client,
+            tx.cosmosTx.chainID,
+            currentAddress,
+            gasAmountMultiplier,
+            getGasPrice,
+            msgs,
+          );
+          if (!gas.amount[0])
+            raise(`estimateGasTxs (cosmosTx) error: unable to get fee amount`);
+          const result = {
+            chainID: tx.cosmosTx.chainID,
+            signerAddress: tx.cosmosTx.signerAddress,
+            amount: gas.amount[0].amount,
+            denom: gas.amount[0].denom,
+            operationsIndices: tx.operationsIndices,
+            error: null,
+          };
+          fees.push(result);
+        } catch (error) {
+          console.error("cosmosTxError", error);
+          const result = {
+            chainID: tx.cosmosTx.chainID,
+            signerAddress: tx.cosmosTx.signerAddress,
+            amount: null,
+            denom: null,
+            operationsIndices: tx.operationsIndices,
+            // @ts-expect-error - error is not a property of Error
+            error: error?.message || "Unknown error",
+          };
+          fees.push(result);
         }
-        getCosmosSigner = getCosmosSigner || this.getCosmosSigner;
-        if (!getCosmosSigner)
-          raise(
-            "estimateGasTxs error: 'getCosmosSigner' is not provided or configured in skip router",
-          );
-        const signer = await getCosmosSigner(tx.cosmosTx.chainID);
-
-        const endpoint = await this.getRpcEndpointForChain(tx.cosmosTx.chainID);
-        const client = await SigningStargateClient.connectWithSigner(
-          endpoint,
-          signer,
-          {
-            aminoTypes: this.aminoTypes,
-            registry: this.registry,
-            accountParser,
-          },
-        );
-
-        const currentAddress =
-          userAddresses.find(
-            (address) => address.chainID === tx.cosmosTx.chainID,
-          )?.address ||
-          raise(
-            `validateGasBalance error: invalid address for chain '${tx.cosmosTx.chainID}'`,
-          );
-        const gas = await this.estimateGasForCosmosMessage(
-          client,
-          tx.cosmosTx.chainID,
-          currentAddress,
-          gasAmountMultiplier,
-          getGasPrice,
-          msgs,
-        );
-        if (!gas.amount[0])
-          raise(`estimateGasTxs (cosmosTx) error: unable to get fee amount`);
-        const result = {
-          chainID: tx.cosmosTx.chainID,
-          signerAddress: tx.cosmosTx.signerAddress,
-          amount: gas.amount[0].amount,
-          denom: gas.amount[0].denom,
-          operationsIndices: tx.operationsIndices,
-        };
-        fees.push(result);
       }
       if ("evmTx" in tx) {
-        getEVMSigner = getEVMSigner || this.getEVMSigner;
-        if (!getEVMSigner)
-          raise(
-            "estimateGasTxs error: 'getCosmosSigner' is not provided or configured in skip router",
-          );
-        const signer = await getEVMSigner(tx.evmTx.chainID);
-        const gas = await this.estimateGasForEvmTx(signer, tx.evmTx);
-        const result = {
-          chainID: tx.evmTx.chainID,
-          signerAddress: tx.evmTx.signerAddress,
-          amount: gas,
-          // based on the api response, ETH denom is "ethereum-native"
-          denom: "ethereum-native",
-          operationsIndices: tx.operationsIndices,
-        };
-        fees.push(result);
+        try {
+          getEVMSigner = getEVMSigner || this.getEVMSigner;
+          if (!getEVMSigner)
+            raise(
+              "estimateGasTxs error: 'getCosmosSigner' is not provided or configured in skip router",
+            );
+          const signer = await getEVMSigner(tx.evmTx.chainID);
+          const gas = await this.simulateGasForEvmTx(signer, tx.evmTx);
+          const result = {
+            chainID: tx.evmTx.chainID,
+            signerAddress: tx.evmTx.signerAddress,
+            amount: gas,
+            // based on the api response, ETH denom is "ethereum-native"
+            denom: "ethereum-native",
+            operationsIndices: tx.operationsIndices,
+            error: null,
+          };
+          fees.push(result);
+        } catch (error) {
+          console.error("evmTxError", error);
+          const result = {
+            chainID: tx.evmTx.chainID,
+            signerAddress: tx.evmTx.signerAddress,
+            amount: null,
+            denom: null,
+            operationsIndices: tx.operationsIndices,
+            // @ts-expect-error - error is not a property of Error
+            error: error?.message || "Unknown error",
+          };
+          fees.push(result);
+        }
       }
       if ("svmTx" in tx) {
-        getSVMSigner = getSVMSigner || this.getSVMSigner;
-        if (!getSVMSigner)
-          raise(
-            "estimateGasTxs error: 'getSVMSigner' is not provided or configured in skip router",
-          );
-        const rpc = await this.getRpcEndpointForChain(tx.svmTx.chainID);
-        const connection = new Connection(rpc);
-        const signer = await getSVMSigner(tx.svmTx.chainID);
-        if (!signer.publicKey)
-          raise("estimateGasTxs error: 'signer.publicKey' is null");
-        const gas = await this.estimateGasForSVMTx(connection, tx.svmTx);
-        const result = {
-          chainID: tx.svmTx.chainID,
-          signerAddress: tx.svmTx.signerAddress,
-          amount: gas,
-          // based on the api response, SOL denom is "solana-native"
-          denom: "solana-native",
-          operationsIndices: tx.operationsIndices,
-        };
-        fees.push(result);
+        try {
+          getSVMSigner = getSVMSigner || this.getSVMSigner;
+          if (!getSVMSigner)
+            raise(
+              "estimateGasTxs error: 'getSVMSigner' is not provided or configured in skip router",
+            );
+          const rpc = await this.getRpcEndpointForChain(tx.svmTx.chainID);
+          const connection = new Connection(rpc);
+          const signer = await getSVMSigner(tx.svmTx.chainID);
+          if (!signer.publicKey)
+            raise("estimateGasTxs error: 'signer.publicKey' is null");
+          const gas = await this.simulateGasForSVMTx(connection, tx.svmTx);
+          const result = {
+            chainID: tx.svmTx.chainID,
+            signerAddress: tx.svmTx.signerAddress,
+            amount: gas,
+            // based on the api response, SOL denom is "solana-native"
+            denom: "solana-native",
+            operationsIndices: tx.operationsIndices,
+            error: null,
+          };
+          fees.push(result);
+        } catch (error) {
+          console.error("svmTxError", error);
+          const result = {
+            chainID: tx.svmTx.chainID,
+            signerAddress: tx.svmTx.signerAddress,
+            amount: null,
+            denom: null,
+            operationsIndices: tx.operationsIndices,
+            // @ts-expect-error - error is not a property of Error
+            error: error?.message || "Unknown error",
+          };
+          fees.push(result);
+        }
       }
     }
     return fees;
