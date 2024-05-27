@@ -66,6 +66,9 @@ export type ExecuteRouteOptions = {
   validateGasBalance?: boolean;
   slippageTolerancePercent?: string;
   /**
+   * currently only used for Cosmos transactions
+   *
+   *
    * If `getGasPrice` is undefined, or returns undefined, the router will attempt to set the recommended gas price
    **/
   getGasPrice?: (chainID: string) => Promise<GasPrice | undefined>;
