@@ -482,6 +482,11 @@ export class SkipRouter {
             chainID,
             "cosmos",
           );
+          if (!fallbackGasAmount) {
+            raise(
+              `executeRoute error: unable to estimate gas for message(s) ${messages || encodedMsgs}`,
+            );
+          }
           return String(fallbackGasAmount);
         }
         raise(

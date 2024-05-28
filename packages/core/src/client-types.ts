@@ -120,7 +120,7 @@ export type SignCosmosMessageAminoOptions = {
 export type GetFallbackGasAmount = (
   chainID: string,
   chainType: "cosmos" | "evm" | "svm",
-) => Promise<number>;
+) => Promise<number | undefined>;
 
 export type GetGasPrice = (
   chainID: string,
