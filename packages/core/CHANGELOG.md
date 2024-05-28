@@ -1,5 +1,11 @@
 # @skip-router/core
 
+## 4.0.2
+
+### Patch Changes
+
+- 08689eb: Updates API types to include signer addresses on CosmosTX, EvmTX, and SvmTx
+
 ## 4.0.1
 
 ### Patch Changes
