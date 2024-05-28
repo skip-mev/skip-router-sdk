@@ -69,6 +69,7 @@ export type ExecuteRouteOptions = {
    * If `getGasPrice` is undefined, or returns undefined, the router will attempt to set the recommended gas price
    **/
   getGasPrice?: (chainID: string) => Promise<GasPrice | undefined>;
+  getFallbackGasAmount?: GetFallbackGasAmount;
   gasAmountMultiplier?: number;
 };
 
@@ -82,7 +83,8 @@ export type ExecuteCosmosMessageOptions = {
 export type ExecuteCosmosMessage = {
   signerAddress: string;
   getCosmosSigner?: (chainID: string) => Promise<OfflineSigner>;
-  getGasPrice?: (chainID: string) => Promise<GasPrice | undefined>;
+  getGasPrice?: GetGasPrice;
+  getFallbackGasAmount?: GetFallbackGasAmount;
   chainID: string;
   messages: types.CosmosMsg[];
   gasAmountMultiplier?: number;
@@ -105,3 +107,13 @@ export type SignCosmosMessageAminoOptions = {
   fee: StdFee;
   signerData: SignerData;
 };
+
+export type GetFallbackGasAmount = (
+  chainID: string,
+  chainType: "cosmos" | "evm" | "svm",
+) => Promise<number>;
+
+export type GetGasPrice = (
+  chainID: string,
+  chainType: "cosmos" | "evm" | "svm",
+) => Promise<GasPrice | undefined>;
