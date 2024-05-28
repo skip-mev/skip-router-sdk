@@ -1,5 +1,6 @@
 {
   "name": "examples",
+  "type": "module",
   "version": "1.0.19",
   "scripts": {
     "start": "npx ts-node src/index.ts"
