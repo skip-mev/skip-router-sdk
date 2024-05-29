@@ -371,6 +371,14 @@ export type Affiliate = {
   address: string;
 };
 
+export type ChainAffiliatesJSON = {
+  affiliates: AffiliateJSON[];
+};
+
+export type ChainAffiliates = {
+  affiliates: Affiliate[];
+};
+
 export type Reason = "UNKNOWN" | "BASE_TOKEN" | "MOST_LIQUID" | "DIRECT";
 
 export type CosmWasmContractMsgJSON = {
