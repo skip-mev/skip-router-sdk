@@ -1,0 +1,29 @@
+{
+  "name": "router-example",
+  "version": "0.1.0",
+  "private": true,
+  "scripts": {
+    "dev": "next dev",
+    "build": "next build",
+    "start": "next start",
+    "lint": "next lint"
+  },
+  "dependencies": {
+    "@skip-router/core": "^4.1.0",
+    "@solana/wallet-adapter-phantom": "^0.9.24",
+    "next": "14.2.3",
+    "react": "^18",
+    "react-dom": "^18",
+    "viem": "^2.13.1"
+  },
+  "devDependencies": {
+    "@keplr-wallet/types": "^0.12.95",
+    "@metamask/providers": "^16.1.0",
+    "@types/node": "^20",
+    "@types/react": "^18",
+    "@types/react-dom": "^18",
+    "eslint": "^8",
+    "eslint-config-next": "14.2.3",
+    "typescript": "^5"
+  }
+}
