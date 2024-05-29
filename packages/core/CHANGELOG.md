@@ -1,5 +1,11 @@
 # @skip-router/core
 
+## 4.1.1
+
+### Patch Changes
+
+- a88619c: format amount gas error
+
 ## 4.1.0
 
 ### Minor Changes
