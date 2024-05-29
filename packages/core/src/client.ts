@@ -475,7 +475,6 @@ export class SkipRouter {
           encodedMsgs,
           gasAmountMultiplier,
         );
-        console.log(estimatedGas);
         return estimatedGas;
       } catch (error) {
         if (getFallbackGasAmount) {
