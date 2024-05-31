@@ -3,7 +3,7 @@
   "type": "module",
   "version": "1.0.21",
   "scripts": {
-    "start": "npx ts-node src/index.ts"
+    "start": "node src/skip-api-quickstart-example.js"
   },
   "dependencies": {
     "@skip-router/core": "4.1.1"
