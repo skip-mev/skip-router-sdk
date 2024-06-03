@@ -109,6 +109,8 @@ import {
   TransferJSON,
   SmartSwapOptions,
   SmartSwapOptionsJSON,
+  ChainAffiliatesJSON,
+  ChainAffiliates,
 } from "./shared";
 import {
   AssetBetweenChains,
@@ -1049,7 +1051,9 @@ export function msgsRequestFromJSON(
     estimatedAmountOut: msgsRequestJSON.estimated_amount_out,
     slippageTolerancePercent: msgsRequestJSON.slippage_tolerance_percent,
     affiliates: msgsRequestJSON.affiliates?.map(affiliateFromJSON),
-
+    chainIDsToAffiliates: msgsRequestJSON.chain_ids_to_affiliates
+      ? chainIDsToAffiliatesMapFromJSON(msgsRequestJSON.chain_ids_to_affiliates)
+      : undefined,
     postRouteHandler:
       msgsRequestJSON.post_route_handler &&
       postHandlerFromJSON(msgsRequestJSON.post_route_handler),
@@ -1070,7 +1074,9 @@ export function msgsRequestToJSON(msgsRequest: MsgsRequest): MsgsRequestJSON {
     estimated_amount_out: msgsRequest.estimatedAmountOut,
     slippage_tolerance_percent: msgsRequest.slippageTolerancePercent,
     affiliates: msgsRequest.affiliates?.map(affiliateToJSON),
-
+    chain_ids_to_affiliates: msgsRequest.chainIDsToAffiliates
+      ? chainIDsToAffiliatesMapToJSON(msgsRequest.chainIDsToAffiliates)
+      : undefined,
     post_route_handler:
       msgsRequest.postRouteHandler &&
       postHandlerToJSON(msgsRequest.postRouteHandler),
@@ -2160,6 +2166,11 @@ export function msgsDirectRequestFromJSON(
     chainIdsToAddresses: msgDirectRequestJSON.chain_ids_to_addresses,
     slippageTolerancePercent: msgDirectRequestJSON.slippage_tolerance_percent,
     affiliates: msgDirectRequestJSON.affiliates?.map(affiliateFromJSON),
+    chainIDsToAffiliates: msgDirectRequestJSON.chain_ids_to_affiliates
+      ? chainIDsToAffiliatesMapFromJSON(
+          msgDirectRequestJSON.chain_ids_to_affiliates,
+        )
+      : undefined,
     timeoutSeconds: msgDirectRequestJSON.timeout_seconds,
     postRouteHandler:
       msgDirectRequestJSON.post_route_handler &&
@@ -2191,6 +2202,9 @@ export function msgsDirectRequestToJSON(
     chain_ids_to_addresses: msgDirectRequest.chainIdsToAddresses,
     slippage_tolerance_percent: msgDirectRequest.slippageTolerancePercent,
     affiliates: msgDirectRequest.affiliates?.map(affiliateToJSON),
+    chain_ids_to_affiliates: msgDirectRequest.chainIDsToAffiliates
+      ? chainIDsToAffiliatesMapToJSON(msgDirectRequest.chainIDsToAffiliates)
+      : undefined,
     allow_multi_tx: msgDirectRequest.allowMultiTx,
     allow_unsafe: msgDirectRequest.allowUnsafe,
     bridges: msgDirectRequest.bridges,
@@ -2225,5 +2239,41 @@ export function smartSwapOptionsToJSON(
 ): SmartSwapOptionsJSON {
   return {
     split_routes: smartSwapOptions.splitRoutes,
+  };
+}
+
+export function chainIDsToAffiliatesMapFromJSON(
+  value: Record<string, ChainAffiliatesJSON>,
+): Record<string, ChainAffiliates> {
+  const result: Record<string, ChainAffiliates> = {};
+  for (const key of Object.keys(value)) {
+    result[key] = chainAffiliatesFromJSON(value[key]!);
+  }
+  return result;
+}
+
+export function chainIDsToAffiliatesMapToJSON(
+  value: Record<string, ChainAffiliates>,
+): Record<string, ChainAffiliatesJSON> {
+  const result: Record<string, ChainAffiliatesJSON> = {};
+  for (const key of Object.keys(value)) {
+    result[key] = chainAffiliatesToJSON(value[key]!);
+  }
+  return result;
+}
+
+export function chainAffiliatesFromJSON(
+  value: ChainAffiliatesJSON,
+): ChainAffiliates {
+  return {
+    affiliates: value.affiliates.map(affiliateFromJSON),
+  };
+}
+
+export function chainAffiliatesToJSON(
+  value: ChainAffiliates,
+): ChainAffiliatesJSON {
+  return {
+    affiliates: value.affiliates.map(affiliateToJSON),
   };
 }

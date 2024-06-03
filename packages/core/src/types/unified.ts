@@ -33,6 +33,8 @@ import {
   SvmTx,
   SmartSwapOptions,
   SmartSwapOptionsJSON,
+  ChainAffiliatesJSON,
+  ChainAffiliates,
 } from "./shared";
 
 export type AssetsRequestJSON = {
@@ -347,7 +349,7 @@ export type MsgsRequestJSON = {
   estimated_amount_out?: string;
   slippage_tolerance_percent?: string;
   affiliates?: AffiliateJSON[];
-
+  chain_ids_to_affiliates?: Record<string, ChainAffiliatesJSON>;
   post_route_handler?: PostHandlerJSON;
 };
 
@@ -367,6 +369,7 @@ export type MsgsRequest = {
   estimatedAmountOut?: string;
   slippageTolerancePercent?: string;
   affiliates?: Affiliate[];
+  chainIDsToAffiliates?: Record<string, ChainAffiliates>;
 
   postRouteHandler?: PostHandler;
 };
@@ -387,6 +390,7 @@ export type MsgsDirectRequestJSON = {
   timeout_seconds?: string;
 
   affiliates?: AffiliateJSON[];
+  chain_ids_to_affiliates?: Record<string, ChainAffiliatesJSON>;
 
   post_route_handler?: PostHandlerJSON;
 
@@ -414,6 +418,7 @@ export type MsgsDirectRequest = {
   slippageTolerancePercent?: string;
   timeoutSeconds?: string;
   affiliates?: Affiliate[];
+  chainIDsToAffiliates?: Record<string, ChainAffiliates>;
 
   postRouteHandler?: PostHandler;
 
