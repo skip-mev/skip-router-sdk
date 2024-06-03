@@ -504,6 +504,7 @@ export function routeRequestFromJSON(
       smartSwapOptions: routeRequestJSON.smart_swap_options
         ? smartSwapOptionsFromJSON(routeRequestJSON.smart_swap_options)
         : undefined,
+      allowSwaps: routeRequestJSON.allow_swaps,
     };
   }
 
@@ -527,6 +528,7 @@ export function routeRequestFromJSON(
     smartSwapOptions: routeRequestJSON.smart_swap_options
       ? smartSwapOptionsFromJSON(routeRequestJSON.smart_swap_options)
       : undefined,
+    allowSwaps: routeRequestJSON.allow_swaps,
   };
 }
 
@@ -558,6 +560,7 @@ export function routeRequestToJSON(
       smart_swap_options: routeRequest.smartSwapOptions
         ? smartSwapOptionsToJSON(routeRequest.smartSwapOptions)
         : undefined,
+      allow_swaps: routeRequest.allowSwaps,
     };
   }
 
@@ -581,6 +584,7 @@ export function routeRequestToJSON(
     smart_swap_options: routeRequest.smartSwapOptions
       ? smartSwapOptionsToJSON(routeRequest.smartSwapOptions)
       : undefined,
+    allow_swaps: routeRequest.allowSwaps,
   };
 }
 
@@ -2170,6 +2174,7 @@ export function msgsDirectRequestFromJSON(
     smartSwapOptions: msgDirectRequestJSON.smart_swap_options
       ? smartSwapOptionsFromJSON(msgDirectRequestJSON.smart_swap_options)
       : undefined,
+    allowSwaps: msgDirectRequestJSON.allow_swaps,
   };
 }
 
@@ -2203,6 +2208,7 @@ export function msgsDirectRequestToJSON(
     smart_swap_options: msgDirectRequest.smartSwapOptions
       ? smartSwapOptionsToJSON(msgDirectRequest.smartSwapOptions)
       : undefined,
+    allow_swaps: msgDirectRequest.allowSwaps,
   };
 }
 

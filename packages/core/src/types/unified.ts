@@ -134,6 +134,7 @@ export type RouteRequestBaseJSON = {
   allow_multi_tx?: boolean;
   smart_relay?: boolean;
   smart_swap_options?: SmartSwapOptionsJSON;
+  allow_swaps?: boolean;
 };
 
 export type RouteRequestGivenInJSON = RouteRequestBaseJSON & {
@@ -177,6 +178,7 @@ export type RouteRequestBase = {
   allowMultiTx?: boolean;
   smartRelay?: boolean;
   smartSwapOptions?: SmartSwapOptions;
+  allowSwaps?: boolean;
 };
 
 export type RouteRequestGivenIn = RouteRequestBase & {
@@ -394,6 +396,7 @@ export type MsgsDirectRequestJSON = {
   allow_multi_tx?: boolean;
   smart_relay?: boolean;
   smart_swap_options?: SmartSwapOptionsJSON;
+  allow_swaps?: boolean;
 };
 
 export type MsgsDirectRequest = {
@@ -420,6 +423,7 @@ export type MsgsDirectRequest = {
   allowMultiTx?: boolean;
   smartRelay?: boolean;
   smartSwapOptions?: SmartSwapOptions;
+  allowSwaps?: boolean;
 };
 
 export type MsgJSON =
