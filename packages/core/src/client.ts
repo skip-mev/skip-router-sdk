@@ -1701,14 +1701,26 @@ export class SkipRouter {
         `validateCosmosGasBalance error: unable to get fee amount`,
       );
     }
-
+    const assets = await this.assets();
+    const assetByChainID = assets[chainID];
+    const asset = assetByChainID?.find(
+      (asset) =>
+        asset.denom.toLowerCase() === fee.amount[0]?.denom.toLowerCase(),
+    );
+    if (!asset || !asset.decimals) {
+      throw new Error(
+        `Insufficient fee token to initiate transfer on ${chainID}.`,
+      );
+    }
     const balance = await client.getBalance(signerAddress, fee.amount[0].denom);
 
     if (parseInt(balance.amount) < parseInt(fee.amount[0].amount)) {
+      const formattedBalance =
+        Number(balance.amount) / Math.pow(10, asset.decimals);
+      const formattedAmount =
+        Number(fee.amount[0].amount) / Math.pow(10, asset.decimals);
       throw new Error(
-        `Insufficient fee token to initiate transfer on ${chainID}. Need ${parseInt(fee.amount[0].amount)} ${
-          fee.amount[0].denom
-        }, but only have ${balance.amount} ${fee.amount[0].denom}.`,
+        `Insufficient fee token to initiate transfer on ${chainID}. Need ${formattedAmount} ${asset.recommendedSymbol || fee.amount[0].denom}, but only have ${formattedBalance} ${asset.recommendedSymbol || fee.amount[0].denom}.`,
       );
     }
   }

@@ -1,5 +1,21 @@
 # @skip-router/core
 
+## 4.1.1
+
+### Patch Changes
+
+- a88619c: format amount gas error
+
+## 4.1.0
+
+### Minor Changes
+
+- 48d998b: - Updated API types to include signer addresses on CosmosTX, EvmTX, and SvmTx
+  - Updated `getGasPrice` param to (chainID: string, chainType: "cosmos" | "evm" | "svm") => Promise<GasPrice | undefined>
+  - Added `getFallbackGasAmount` param in `executeRoute`
+  - Improved jsdoc
+  - Updated `validateGasBalance`, `estimateGasForMessage`, `validateGasBalances` to an object args
+
 ## 4.0.1
 
 ### Patch Changes
