@@ -183,11 +183,11 @@ export class SkipRouter {
     {
       includeEVM,
       includeSVM,
-      includeTestnets,
+      onlyTestnets,
     }: {
       includeEVM?: boolean;
       includeSVM?: boolean;
-      includeTestnets?: boolean;
+      onlyTestnets?: boolean;
     } = { includeEVM: false, includeSVM: false },
   ): Promise<types.Chain[]> {
     const response = await this.requestClient.get<{
@@ -195,7 +195,7 @@ export class SkipRouter {
     }>("/v1/info/chains", {
       include_evm: includeEVM,
       include_svm: includeSVM,
-      include_testnets: includeTestnets,
+      only_testnets: onlyTestnets,
     });
 
     return response.chains.map((chain) => types.chainFromJSON(chain));
@@ -1208,10 +1208,12 @@ export class SkipRouter {
     }
   }
 
-  async venues(): Promise<types.SwapVenue[]> {
+  async venues({onlyTestnets}: {onlyTestnets?: boolean}): Promise<types.SwapVenue[]> {
     const response = await this.requestClient.get<{
       venues: types.SwapVenueJSON[];
-    }>("/v1/fungible/venues");
+    }>("/v1/fungible/venues", {
+      only_testnets: onlyTestnets,
+    });
 
     return response.venues.map((venue) => types.swapVenueFromJSON(venue));
   }
@@ -1471,9 +1473,10 @@ export class SkipRouter {
   async getFeeInfoForChain(
     chainID: string,
   ): Promise<types.FeeAsset | undefined> {
-    const skipChains = await this.chains({
-      includeTestnets: true,
-    });
+    const skipChains = [
+      ...await this.chains({}),
+      ...await this.chains({onlyTestnets: true}),
+    ];
 
     const skipChain = skipChains.find((chain) => chain.chainID === chainID);
 
