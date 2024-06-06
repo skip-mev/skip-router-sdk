@@ -1,5 +1,15 @@
 # @skip-router/core
 
+## 4.2.0
+
+### Minor Changes
+
+- 484387a: Adds support for allow_swaps boolean flag in /route and /msgs_direct, allowing caller to specify to not have swaps in their route search
+
+### Patch Changes
+
+- c3a1a02: Add chain_ids_to_affiliates field to MsgsRequest and MsgsDirectRequest
+
 ## 4.1.1
 
 ### Patch Changes
