@@ -1208,7 +1208,7 @@ export class SkipRouter {
     }
   }
 
-  async venues({onlyTestnets}: {onlyTestnets?: boolean}): Promise<types.SwapVenue[]> {
+  async venues(onlyTestnets?: boolean): Promise<types.SwapVenue[]> {
     const response = await this.requestClient.get<{
       venues: types.SwapVenueJSON[];
     }>("/v1/fungible/venues", {
@@ -1474,8 +1474,8 @@ export class SkipRouter {
     chainID: string,
   ): Promise<types.FeeAsset | undefined> {
     const skipChains = [
-      ...await this.chains({}),
-      ...await this.chains({onlyTestnets: true}),
+      ...(await this.chains({})),
+      ...(await this.chains({ onlyTestnets: true })),
     ];
 
     const skipChain = skipChains.find((chain) => chain.chainID === chainID);
