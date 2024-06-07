@@ -1,5 +1,11 @@
 # @skip-router/core
 
+## 4.2.1
+
+### Patch Changes
+
+- 27b34ff: Added new field onlyTestnets to assets,chains,venues endpoints
+
 ## 4.2.0
 
 ### Minor Changes
