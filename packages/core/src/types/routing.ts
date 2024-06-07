@@ -49,6 +49,12 @@ export type Chain = {
   isTestnet: boolean;
 };
 
+export type Venue = {
+  name: string;
+  chainID: string;
+  logoURI: string;
+};
+
 export type ChainJSON = {
   chain_name: string;
   chain_id: string;

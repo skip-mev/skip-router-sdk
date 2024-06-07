@@ -53,6 +53,7 @@ export type AssetsRequest = {
   includeCW20Assets?: boolean;
   includeEvmAssets?: boolean;
   includeSvmAssets?: boolean;
+  onlyTestnets?: boolean;
 };
 
 export type AssetsFromSourceRequestJSON = {
