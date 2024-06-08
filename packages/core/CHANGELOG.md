@@ -1,5 +1,11 @@
 # @skip-router/core
 
+## 5.0.0
+
+### Major Changes
+
+- 26652d3: Added new field onlyTestnets to assets,chains,venues endpoints. Deprecates isTestnet field from chains endpoint.
+
 ## 4.2.0
 
 ### Minor Changes
