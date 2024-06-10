@@ -205,7 +205,7 @@ export class SkipRouter {
     const { route, userAddresses } = options;
 
     const addressList = userAddresses.map(({ chainID, address }, i) => {
-      if (route.chainIDs[i] !== chainID) {
+      if (route.requiredChainAddresses[i] !== chainID) {
         raise(`executeRoute error: invalid address for chain '${chainID}'`);
       }
 
