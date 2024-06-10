@@ -1,5 +1,11 @@
 # @skip-router/core
 
+## 5.0.1
+
+### Patch Changes
+
+- d226070: Updates address validate logic to check route.requiredChainAddresses instead of route.chainIDs
+
 ## 5.0.0
 
 ### Major Changes
