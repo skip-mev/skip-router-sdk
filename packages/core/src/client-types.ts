@@ -1,4 +1,4 @@
-import { OfflineAminoSigner } from "@cosmjs/amino";
+import { Coin, OfflineAminoSigner } from "@cosmjs/amino";
 import {
   GeneratedType,
   OfflineDirectSigner,
@@ -97,6 +97,7 @@ export type ExecuteCosmosMessage = {
   chainID: string;
   messages: types.CosmosMsg[];
   gasAmountMultiplier?: number;
+  gasTokenUsed?: Coin;
 };
 
 export type SignCosmosMessageDirectOptions = {
