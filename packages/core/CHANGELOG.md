@@ -1,5 +1,11 @@
 # @skip-router/core
 
+## 5.0.2
+
+### Patch Changes
+
+- f17d415: allow stride to check tia balance for gas
+
 ## 5.0.1
 
 ### Patch Changes
