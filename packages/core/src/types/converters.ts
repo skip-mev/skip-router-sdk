@@ -97,6 +97,8 @@ import {
   SmartSwapExactCoinIn,
   SmartSwapExactCoinInJSON,
   SwapJSON,
+  EvmSwap,
+  EvmSwapJSON,
   SwapOperation,
   SwapOperationJSON,
   SwapRoute,
@@ -810,6 +812,32 @@ export function swapToJSON(swap: Swap): SwapJSON {
   };
 }
 
+export function evmSwapFromJSON(evmSwapJSON: EvmSwapJSON): EvmSwap {
+  return {
+    inputToken: evmSwapJSON.input_token,
+    amountIn: evmSwapJSON.amount_in,
+    swapCalldata: evmSwapJSON.swap_calldata,
+    amountOut: evmSwapJSON.amount_out,
+    fromChainID: evmSwapJSON.from_chain_id,
+    denomIn: evmSwapJSON.denom_in,
+    denomOut: evmSwapJSON.denom_out,
+    swapVenues: evmSwapJSON.swap_venues.map(swapVenueFromJSON),
+  };
+}
+
+export function evmSwapToJSON(evmSwap: EvmSwap): EvmSwapJSON {
+  return {
+    input_token: evmSwap.inputToken,
+    amount_in: evmSwap.amountIn,
+    swap_calldata: evmSwap.swapCalldata,
+    amount_out: evmSwap.amountOut,
+    from_chain_id: evmSwap.fromChainID,
+    denom_in: evmSwap.denomIn,
+    denom_out: evmSwap.denomOut,
+    swap_venues: evmSwap.swapVenues.map(swapVenueToJSON),
+  };
+}
+
 export function operationFromJSON(operationJSON: OperationJSON): Operation {
   if ("transfer" in operationJSON) {
     return {
@@ -858,8 +886,17 @@ export function operationFromJSON(operationJSON: OperationJSON): Operation {
     };
   }
 
+  if ("swap" in operationJSON) {
+    return {
+      swap: swapFromJSON(operationJSON.swap),
+      txIndex: operationJSON.tx_index,
+      amountIn: operationJSON.amount_in,
+      amountOut: operationJSON.amount_out,
+    };
+  }
+
   return {
-    swap: swapFromJSON(operationJSON.swap),
+    evmSwap: evmSwapFromJSON(operationJSON.evm_swap),
     txIndex: operationJSON.tx_index,
     amountIn: operationJSON.amount_in,
     amountOut: operationJSON.amount_out,
@@ -912,8 +949,17 @@ export function operationToJSON(operation: Operation): OperationJSON {
     };
   }
 
+  if ("swap" in operation) {
   return {
-    swap: swapToJSON(operation.swap),
+      swap: swapToJSON(operation.swap),
+      tx_index: operation.txIndex,
+      amount_in: operation.amountIn,
+      amount_out: operation.amountOut,
+    };
+  }
+
+  return {
+    evm_swap: evmSwapToJSON(operation.evmSwap),
     tx_index: operation.txIndex,
     amount_in: operation.amountIn,
     amount_out: operation.amountOut,
