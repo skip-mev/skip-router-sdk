@@ -1,4 +1,4 @@
-import { makeSignDoc as makeSignDocAmino } from "@cosmjs/amino";
+import { Coin, makeSignDoc as makeSignDocAmino } from "@cosmjs/amino";
 import { createWasmAminoConverters } from "@cosmjs/cosmwasm-stargate";
 import { fromBase64 } from "@cosmjs/encoding";
 import { Int53 } from "@cosmjs/math";
@@ -237,10 +237,10 @@ export class SkipRouter {
       gasAmountMultiplier = DEFAULT_GAS_MULTIPLIER,
       getFallbackGasAmount,
     } = options;
-
+    let gasTokenUsed: Coin | undefined;
     if (validateGasBalance) {
       // check balances on chains where a tx is initiated
-      await this.validateGasBalances({
+      gasTokenUsed = await this.validateGasBalances({
         txs,
         userAddresses,
         getOfflineSigner: options.getCosmosSigner,
@@ -278,6 +278,7 @@ export class SkipRouter {
           gasAmountMultiplier,
           signerAddress: currentUserAddress,
           getFallbackGasAmount,
+          gasTokenUsed,
         });
 
         txResult = {
@@ -360,6 +361,7 @@ export class SkipRouter {
       getGasPrice,
       gasAmountMultiplier,
       getFallbackGasAmount,
+      gasTokenUsed,
     } = options;
 
     const getOfflineSigner =
@@ -405,6 +407,14 @@ export class SkipRouter {
       getFallbackGasAmount,
     });
 
+    if (gasTokenUsed) {
+      const _fee = fee.amount.find((x) => x.denom === gasTokenUsed.denom);
+
+      if (_fee) {
+        // @ts-expect-error - fee amount is readonly
+        fee.amount = [_fee] as Coin[];
+      }
+    }
     const { accountNumber, sequence } = await this.getAccountNumberAndSequence(
       signerAddress,
       chainID,
@@ -507,6 +517,53 @@ export class SkipRouter {
       Math.ceil(parseFloat(estimatedGasAmount)),
       gasPrice,
     );
+
+    if (chainID === "stride-1") {
+      const chains = await this.chains();
+      const tiaOnStride = chains
+        .find((x) => x.chainID === chainID)
+        ?.feeAssets.find(
+          (item) =>
+            item.denom.toLowerCase() ===
+            "ibc/BF3B4F53F3694B66E13C23107C84B6485BD2B96296BB7EC680EA77BBA75B4801".toLowerCase(),
+        );
+      if (tiaOnStride && tiaOnStride.gasPrice) {
+        // not needed for now
+        // const tiaFeeInfo = {
+        //   denom: tiaOnStride.denom,
+        //   gasPrice: {
+        //     low: tiaOnStride.gasPrice?.low
+        //       ? `${tiaOnStride.gasPrice?.low}`
+        //       : "",
+        //     average: tiaOnStride.gasPrice?.average
+        //       ? `${tiaOnStride.gasPrice?.average}`
+        //       : "",
+        //     high: tiaOnStride.gasPrice?.high
+        //       ? `${tiaOnStride.gasPrice?.high}`
+        //       : "",
+        //   },
+        // };
+
+        let price = tiaOnStride.gasPrice.average;
+        if (price === "") {
+          price = tiaOnStride.gasPrice.high;
+        }
+        if (price === "") {
+          price = tiaOnStride.gasPrice.low;
+        }
+        const tiaOnStrideGasPrice = new GasPrice(
+          Decimal.fromUserInput(price, 18),
+          tiaOnStride.denom,
+        );
+        const tiaOnStrideFee = calculateFee(
+          Math.ceil(parseFloat(estimatedGasAmount)),
+          tiaOnStrideGasPrice,
+        );
+        if (tiaOnStrideFee.amount[0]) {
+          (fee.amount as Coin[]).push(tiaOnStrideFee.amount[0]);
+        }
+      }
+    }
 
     if (!fee) {
       raise(
@@ -1659,7 +1716,7 @@ export class SkipRouter {
             `validateGasBalance error: invalid address for chain '${tx.cosmosTx.chainID}'`,
           );
 
-        await this.validateCosmosGasBalance({
+        return await this.validateCosmosGasBalance({
           client,
           signerAddress: currentAddress,
           chainID: tx.cosmosTx.chainID,
@@ -1706,26 +1763,50 @@ export class SkipRouter {
     }
     const assets = await this.assets();
     const assetByChainID = assets[chainID];
-    const asset = assetByChainID?.find(
-      (asset) =>
-        asset.denom.toLowerCase() === fee.amount[0]?.denom.toLowerCase(),
-    );
-    if (!asset || !asset.decimals) {
-      throw new Error(
-        `Insufficient fee token to initiate transfer on ${chainID}.`,
-      );
-    }
-    const balance = await client.getBalance(signerAddress, fee.amount[0].denom);
 
-    if (parseInt(balance.amount) < parseInt(fee.amount[0].amount)) {
-      const formattedBalance =
-        Number(balance.amount) / Math.pow(10, asset.decimals);
-      const formattedAmount =
-        Number(fee.amount[0].amount) / Math.pow(10, asset.decimals);
+    const result = await Promise.all(
+      fee.amount.map(async (amount) => {
+        const asset = assetByChainID?.find(
+          (asset) => asset.denom.toLowerCase() === amount.denom.toLowerCase(),
+        );
+        if (!asset || !asset.decimals) {
+          return {
+            errMessage: `Insufficient fee token to initiate transfer on ${chainID}.`,
+            amount,
+          };
+        }
+        const balance = await client.getBalance(signerAddress, amount.denom);
+
+        if (parseInt(balance.amount) < parseInt(amount.amount)) {
+          const formattedBalance =
+            Number(balance.amount) / Math.pow(10, asset.decimals);
+          const formattedAmount =
+            Number(amount.amount) / Math.pow(10, asset.decimals);
+          return {
+            errMessage: `Insufficient fee token to initiate transfer on ${chainID}. Need ${formattedAmount} ${asset.recommendedSymbol || amount.denom}, but only have ${formattedBalance} ${asset.recommendedSymbol || amount.denom}.`,
+            amount,
+          };
+        }
+        return {
+          errMessage: null,
+          amount,
+        };
+      }),
+    );
+
+    const successful = result.find((res) => res.errMessage === null);
+    if (!successful) {
+      if (result.length > 1) {
+        throw new Error(
+          `Insufficient fee token to initiate transfer on ${chainID}.`,
+        );
+      }
       throw new Error(
-        `Insufficient fee token to initiate transfer on ${chainID}. Need ${formattedAmount} ${asset.recommendedSymbol || fee.amount[0].denom}, but only have ${formattedBalance} ${asset.recommendedSymbol || fee.amount[0].denom}.`,
+        result[0]?.errMessage ||
+          `Insufficient fee token to initiate transfer on ${chainID}.`,
       );
     }
+    return successful.amount;
   }
 }
 
