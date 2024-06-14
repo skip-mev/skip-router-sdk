@@ -1,5 +1,11 @@
 # @skip-router/core
 
+## 5.0.3
+
+### Patch Changes
+
+- d1d0161: backward compatible addressList
+
 ## 5.0.2
 
 ### Patch Changes
