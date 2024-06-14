@@ -1,12 +1,12 @@
 {
   "name": "examples",
   "type": "module",
-  "version": "1.0.25",
+  "version": "1.0.26",
   "scripts": {
     "start": "node src/skip-api-quickstart-example.js"
   },
   "dependencies": {
-    "@skip-router/core": "5.0.2"
+    "@skip-router/core": "5.0.3"
   },
   "private": true
 }
