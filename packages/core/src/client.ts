@@ -204,13 +204,28 @@ export class SkipRouter {
   async executeRoute(options: clientTypes.ExecuteRouteOptions) {
     const { route, userAddresses } = options;
 
-    const addressList = userAddresses.map(({ chainID, address }, i) => {
-      if (route.requiredChainAddresses[i] !== chainID) {
-        raise(`executeRoute error: invalid address for chain '${chainID}'`);
+    let addressList: string[] = [];
+    let i = 0;
+    for (let j = 0; j < userAddresses.length; j++) {
+      if (route.requiredChainAddresses[i] !== userAddresses[j]?.chainID) {
+        i = j;
+        continue;
       }
+      addressList.push(userAddresses[j]!.address!);
+      i++;
+    }
 
-      return address;
-    });
+    if (addressList.length !== route.requiredChainAddresses.length) {
+      addressList = userAddresses.map((x) => x.address);
+    }
+
+    const validLength =
+      addressList.length === route.requiredChainAddresses.length ||
+      addressList.length === route.chainIDs.length;
+
+    if (!validLength) {
+      raise("executeRoute error: invalid address list");
+    }
 
     const messages = await this.messages({
       sourceAssetDenom: route.sourceAssetDenom,
