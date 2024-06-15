@@ -465,6 +465,12 @@ export class SkipRouter {
         fee.amount = [_fee] as Coin[];
       }
     }
+
+    if (fee.amount.length > 1) {
+      // @ts-expect-error - fee amount is readonly
+      fee.amount = [fee.amount[0]];
+    }
+
     const { accountNumber, sequence } = await this.getAccountNumberAndSequence(
       signerAddress,
       chainID,
