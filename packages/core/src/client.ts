@@ -285,6 +285,41 @@ export class SkipRouter {
             `executeRoute error: invalid address for chain '${cosmosTx.chainID}'`,
           );
         }
+
+        if (cosmosTx.chainID === "stride-1" && !gasTokenUsed) {
+          const getOfflineSigner =
+            options.getCosmosSigner || this.getCosmosSigner;
+          if (!getOfflineSigner) {
+            throw new Error(
+              "executeRoute error: 'getCosmosSigner' is not provided or configured in skip router",
+            );
+          }
+          const signer = await getOfflineSigner(tx.cosmosTx.chainID);
+
+          const endpoint = await this.getRpcEndpointForChain(
+            tx.cosmosTx.chainID,
+          );
+          // @note: A new client is created for both the gasbalance validation here as the execution later...
+          const client = await SigningStargateClient.connectWithSigner(
+            endpoint,
+            signer,
+            {
+              aminoTypes: this.aminoTypes,
+              registry: this.registry,
+              accountParser,
+            },
+          );
+          gasTokenUsed = await this.validateCosmosGasBalance({
+            chainID: cosmosTx.chainID,
+            messages: cosmosTx.msgs,
+            signerAddress: currentUserAddress,
+            getGasPrice,
+            gasAmountMultiplier,
+            getFallbackGasAmount,
+            client,
+          });
+        }
+
         const txResponse = await this.executeCosmosMessage({
           messages: cosmosTx.msgs,
           chainID: cosmosTx.chainID,
