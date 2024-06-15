@@ -1,5 +1,11 @@
 # @skip-router/core
 
+## 5.0.4
+
+### Patch Changes
+
+- a91e0e0: find gasTokenUsed on stride-1 even validateGasBalance off
+
 ## 5.0.3
 
 ### Patch Changes
