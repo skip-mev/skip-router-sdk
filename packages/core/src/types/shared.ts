@@ -361,6 +361,28 @@ export type Swap = (
   swapVenues: SwapVenue[];
 };
 
+export type EvmSwapJSON = {
+  input_token: string;
+  amount_in: string;
+  swap_calldata: string;
+  amount_out: string;
+  from_chain_id: string;
+  denom_in: string;
+  denom_out: string;
+  swap_venues: SwapVenueJSON[];
+}
+
+export type EvmSwap = {
+  inputToken: string;
+  amountIn: string;
+  swapCalldata: string;
+  amountOut: string;
+  fromChainID: string;
+  denomIn: string;
+  denomOut: string;
+  swapVenues: SwapVenue[];
+}
+
 export type AffiliateJSON = {
   basis_points_fee: string;
   address: string;
