@@ -506,8 +506,10 @@ export type OriginAssetsResponse = {
 
 export type SmartSwapOptionsJSON = {
   split_routes: boolean;
+  evm_swaps: boolean;
 };
 
 export type SmartSwapOptions = {
   splitRoutes: boolean;
+  evmSwaps: boolean;
 };
