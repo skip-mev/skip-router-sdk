@@ -950,7 +950,7 @@ export function operationToJSON(operation: Operation): OperationJSON {
   }
 
   if ("swap" in operation) {
-  return {
+    return {
       swap: swapToJSON(operation.swap),
       tx_index: operation.txIndex,
       amount_in: operation.amountIn,
@@ -2276,8 +2276,8 @@ export function smartSwapOptionsFromJSON(
   smartSwapOptionsJSON: SmartSwapOptionsJSON,
 ): SmartSwapOptions {
   return {
-    splitRoutes: smartSwapOptionsJSON.split_routes,
-    evmSwaps: smartSwapOptionsJSON.evm_swaps,
+    splitRoutes: Boolean(smartSwapOptionsJSON.split_routes),
+    evmSwaps: Boolean(smartSwapOptionsJSON.evm_swaps),
   };
 }
 
@@ -2285,8 +2285,8 @@ export function smartSwapOptionsToJSON(
   smartSwapOptions: SmartSwapOptions,
 ): SmartSwapOptionsJSON {
   return {
-    split_routes: smartSwapOptions.splitRoutes,
-    evm_swaps: smartSwapOptions.evmSwaps,
+    split_routes: Boolean(smartSwapOptions.splitRoutes),
+    evm_swaps: Boolean(smartSwapOptions.evmSwaps),
   };
 }
 
