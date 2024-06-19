@@ -278,6 +278,7 @@ export function assetsRequestToJSON(
     include_cw20_assets: assetsRequest.includeCW20Assets,
     include_evm_assets: assetsRequest.includeEvmAssets,
     include_svm_assets: assetsRequest.includeSvmAssets,
+    only_testnets: assetsRequest.onlyTestnets,
   };
 }
 
@@ -950,7 +951,7 @@ export function operationToJSON(operation: Operation): OperationJSON {
   }
 
   if ("swap" in operation) {
-  return {
+    return {
       swap: swapToJSON(operation.swap),
       tx_index: operation.txIndex,
       amount_in: operation.amountIn,
