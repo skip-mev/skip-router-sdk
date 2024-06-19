@@ -1,5 +1,11 @@
 # @skip-router/core
 
+## 5.0.5
+
+### Patch Changes
+
+- 3c47bf1: fix: onlyTestnets not working in assets
+
 ## 5.0.4
 
 ### Patch Changes
