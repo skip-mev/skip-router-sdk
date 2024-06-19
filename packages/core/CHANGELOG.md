@@ -1,5 +1,15 @@
 # @skip-router/core
 
+## 5.1.0
+
+### Minor Changes
+
+- 336e3b8: Add evm swap operation
+
+### Patch Changes
+
+- 3c47bf1: fix: onlyTestnets not working in assets
+
 ## 5.0.4
 
 ### Patch Changes
