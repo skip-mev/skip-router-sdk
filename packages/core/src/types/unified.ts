@@ -46,6 +46,7 @@ export type AssetsRequestJSON = {
   include_cw20_assets?: boolean;
   include_evm_assets?: boolean;
   include_svm_assets?: boolean;
+  only_testnets?: boolean;
 };
 
 export type AssetsRequest = {
