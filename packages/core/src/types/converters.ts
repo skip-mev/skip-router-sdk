@@ -2277,7 +2277,8 @@ export function smartSwapOptionsFromJSON(
   smartSwapOptionsJSON: SmartSwapOptionsJSON,
 ): SmartSwapOptions {
   return {
-    splitRoutes: smartSwapOptionsJSON.split_routes,
+    splitRoutes: Boolean(smartSwapOptionsJSON.split_routes),
+    evmSwaps: Boolean(smartSwapOptionsJSON.evm_swaps),
   };
 }
 
@@ -2285,7 +2286,8 @@ export function smartSwapOptionsToJSON(
   smartSwapOptions: SmartSwapOptions,
 ): SmartSwapOptionsJSON {
   return {
-    split_routes: smartSwapOptions.splitRoutes,
+    split_routes: Boolean(smartSwapOptions.splitRoutes),
+    evm_swaps: Boolean(smartSwapOptions.evmSwaps),
   };
 }
 

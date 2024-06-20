@@ -370,7 +370,7 @@ export type EvmSwapJSON = {
   denom_in: string;
   denom_out: string;
   swap_venues: SwapVenueJSON[];
-}
+};
 
 export type EvmSwap = {
   inputToken: string;
@@ -381,7 +381,7 @@ export type EvmSwap = {
   denomIn: string;
   denomOut: string;
   swapVenues: SwapVenue[];
-}
+};
 
 export type AffiliateJSON = {
   basis_points_fee: string;
@@ -505,9 +505,11 @@ export type OriginAssetsResponse = {
 };
 
 export type SmartSwapOptionsJSON = {
-  split_routes: boolean;
+  split_routes?: boolean;
+  evm_swaps?: boolean;
 };
 
 export type SmartSwapOptions = {
-  splitRoutes: boolean;
+  splitRoutes?: boolean;
+  evmSwaps?: boolean;
 };
