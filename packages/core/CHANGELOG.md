@@ -1,5 +1,11 @@
 # @skip-router/core
 
+## 5.1.0
+
+### Minor Changes
+
+- 05630c1: Add evm_swaps to smart_swap_options
+
 ## 5.0.5
 
 ### Patch Changes
