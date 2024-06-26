@@ -1817,7 +1817,9 @@ export class SkipRouter {
         `validateCosmosGasBalance error: unable to get fee amount`,
       );
     }
-    const assets = await this.assets();
+    const mainnetAssets = await this.assets();
+    const testnetAssets = await this.assets({ onlyTestnets: true });
+    const assets = { ...mainnetAssets, ...testnetAssets };
     const assetByChainID = assets[chainID];
 
     const result = await Promise.all(
@@ -1827,7 +1829,7 @@ export class SkipRouter {
         );
         if (!asset || !asset.decimals) {
           return {
-            errMessage: `Insufficient fee token to initiate transfer on ${chainID}.`,
+            errMessage: `${amount.denom} is not found in assets for ${chainID}.`,
             amount,
           };
         }
@@ -1854,7 +1856,8 @@ export class SkipRouter {
     if (!successful) {
       if (result.length > 1) {
         throw new Error(
-          `Insufficient fee token to initiate transfer on ${chainID}.`,
+          result[0]?.errMessage ||
+            `Insufficient fee token to initiate transfer on ${chainID}.`,
         );
       }
       throw new Error(
