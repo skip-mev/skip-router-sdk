@@ -24,7 +24,8 @@
     "postpublish": "git reset --hard",
     "prepublishOnly": "node scripts/prepublish.js",
     "test": "vitest -c vitest.unit.config.mjs",
-    "watch": "tsup --watch"
+    "watch": "tsup --watch",
+    "watch:link": "tsup --watch --onSuccess \"yalc push\""
   },
   "peerDependencies": {
     "chain-registry": "^1.33.11"
