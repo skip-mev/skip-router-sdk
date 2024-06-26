@@ -1,5 +1,11 @@
 # @skip-router/core
 
+## 5.1.1
+
+### Patch Changes
+
+- f0c663d: fix testnet validate gas balance
+
 ## 5.1.0
 
 ### Minor Changes

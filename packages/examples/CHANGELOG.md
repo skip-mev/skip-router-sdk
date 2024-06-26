@@ -1,5 +1,12 @@
 # examples
 
+## 1.0.30
+
+### Patch Changes
+
+- Updated dependencies [f0c663d]
+  - @skip-router/core@5.1.1
+
 ## 1.0.29
 
 ### Patch Changes
