@@ -1,5 +1,11 @@
 # @skip-router/core
 
+## 5.2.0
+
+### Minor Changes
+
+- d06a1e4: Add evm_slippage_tolerance_percent to smart_swap_options
+
 ## 5.1.1
 
 ### Patch Changes
