@@ -14,6 +14,8 @@ import {
   EvmTxJSON,
   HyperlaneTransfer,
   HyperlaneTransferJSON,
+  OPInitTransfer,
+  OPInitTransferJSON,
   MultiChainMsg,
   MultiChainMsgJSON,
   PostHandler,
@@ -269,6 +271,12 @@ export type OperationJSON =
       tx_index: number;
       amount_in: string;
       amount_out: string;
+    }
+  | {
+      op_init_transfer: OPInitTransferJSON;
+      tx_index: number;
+      amount_in: string;
+      amount_out: string;
     };
 
 export type Operation =
@@ -295,6 +303,12 @@ export type Operation =
     }
   | {
       evmSwap: EvmSwap;
+      txIndex: number;
+      amountIn: string;
+      amountOut: string;
+    }
+  | {
+      opInitTransfer: OPInitTransfer;
       txIndex: number;
       amountIn: string;
       amountOut: string;
