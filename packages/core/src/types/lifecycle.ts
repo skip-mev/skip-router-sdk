@@ -396,9 +396,9 @@ export type HyperlaneTransferInfo = {
 };
 
 export type OPInitTransferState =
-  | "HYPERLANE_TRANSFER_UNKNOWN"
-  | "HYPERLANE_TRANSFER_SENT"
-  | "HYPERLANE_TRANSFER_RECEIVED";
+  | "OPINIT_TRANSFER_UNKNOWN"
+  | "OPINT_TRANSFER_SENT"
+  | "OPINIT_TRANSFER_RECEIVED";
 
 export type OPInitTransferTransactionsJSON = {
   send_tx: ChainTransactionJSON | null;
