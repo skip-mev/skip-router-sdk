@@ -1,5 +1,13 @@
 # @skip-router/core
 
+## 5.2.0
+
+### Minor Changes
+
+- d06a1e4: Add evm_slippage_tolerance_percent to smart_swap_options
+- 7ab600d: Allow multiple chain filtering for chains and assets requests
+- dc5c8f9: Adds support for the op init transfer operation and lifecycle tracking objects
+
 ## 5.1.1
 
 ### Patch Changes
