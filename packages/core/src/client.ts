@@ -184,10 +184,12 @@ export class SkipRouter {
       includeEVM,
       includeSVM,
       onlyTestnets,
+      chainIDs,
     }: {
       includeEVM?: boolean;
       includeSVM?: boolean;
       onlyTestnets?: boolean;
+      chainIDs?: string[];
     } = { includeEVM: false, includeSVM: false },
   ): Promise<types.Chain[]> {
     const response = await this.requestClient.get<{
@@ -196,6 +198,7 @@ export class SkipRouter {
       include_evm: includeEVM,
       include_svm: includeSVM,
       only_testnets: onlyTestnets,
+      chain_ids: chainIDs,
     });
 
     return response.chains.map((chain) => types.chainFromJSON(chain));

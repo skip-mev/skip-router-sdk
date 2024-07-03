@@ -265,6 +265,7 @@ export function assetsRequestFromJSON(
   assetsRequestJSON: AssetsRequestJSON,
 ): AssetsRequest {
   return {
+    chainIDs: assetsRequestJSON.chain_ids,
     chainID: assetsRequestJSON.chain_id,
     nativeOnly: assetsRequestJSON.native_only,
     includeNoMetadataAssets: assetsRequestJSON.include_no_metadata_assets,
@@ -278,6 +279,7 @@ export function assetsRequestToJSON(
   assetsRequest: AssetsRequest,
 ): AssetsRequestJSON {
   return {
+    chain_ids: assetsRequest.chainIDs,
     chain_id: assetsRequest.chainID,
     native_only: assetsRequest.nativeOnly,
     include_no_metadata_assets: assetsRequest.includeNoMetadataAssets,
