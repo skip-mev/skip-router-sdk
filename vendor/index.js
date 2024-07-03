@@ -10,6 +10,7 @@ const protoDirs = [
   path.resolve(__dirname, "noble-cctp/proto"),
   path.resolve(__dirname, "wasmd/proto"),
   path.resolve(__dirname, "../local_vendor/initia/proto"),
+  path.resolve(__dirname, "../local_vendor/OPinit/proto"),
   path.resolve(__dirname, "../local_vendor/cosmos"),
   path.resolve(__dirname, "../local_vendor/cosmos_proto")
 ];

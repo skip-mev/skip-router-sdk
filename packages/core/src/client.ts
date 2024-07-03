@@ -63,6 +63,7 @@ import * as clientTypes from "./client-types";
 import { msgsDirectRequestToJSON } from "./types/converters";
 import { Adapter } from "@solana/wallet-adapter-base";
 import { Connection, Transaction } from "@solana/web3.js";
+import { MsgInitiateTokenDeposit } from "./codegen/opinit/ophost/v1/tx";
 
 export const SKIP_API_URL = "https://api.skip.money";
 
@@ -99,6 +100,7 @@ export class SkipRouter {
       ...defaultRegistryTypes,
       ["/cosmwasm.wasm.v1.MsgExecuteContract", MsgExecuteContract],
       ["/initia.move.v1.MsgExecute", MsgExecute],
+      ["/opinit.ophost.v1.MsgInitiateTokenDeposit", MsgInitiateTokenDeposit],
       ...circleProtoRegistry,
       ...(options.registryTypes ?? []),
     ]);
@@ -1610,6 +1612,9 @@ export class SkipRouter {
       ? skipChain.feeAssets.find((skipFee) => skipFee.denom === defaultGasToken)
       : skipChain.feeAssets[0];
 
+    if (!skipFeeInfo && skipChain.feeAssets?.[0]?.gasPrice !== null) {
+      return skipChain.feeAssets[0];
+    }
     if (skipFeeInfo && skipFeeInfo.gasPrice !== null) {
       return skipFeeInfo;
     }
