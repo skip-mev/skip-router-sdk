@@ -2,4 +2,4 @@
 "@skip-router/core": patch
 ---
 
-Deprecation notice, please us @skip-go/core moving forward
+Deprecation notice, please use @skip-go/core moving forward
