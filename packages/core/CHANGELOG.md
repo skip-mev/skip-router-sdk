@@ -1,5 +1,11 @@
 # @skip-router/core
 
+## 5.2.1
+
+### Patch Changes
+
+- 63a676d: Deprecation notice, please use @skip-go/core moving forward
+
 ## 5.2.0
 
 ### Minor Changes
