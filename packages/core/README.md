@@ -1,3 +1,16 @@
+## Deprecation Notice
+
+**⚠️ This project is deprecated**
+
+This repository is no longer actively maintained and may not receive future updates or bug fixes. Please use the now maintained and developed [@skip-go/core](https://www.npmjs.com/package/@skip-router/core) as a replacement.
+
+### Migration Guide
+@skip-router/core@5.2.0 is the same as @skip-go/core@0.2.0. To migrate packages with minimal disruption, please upgrade to @skip-router/core@5.2.0 and then replace the package with @skip-go/core@0.2.0, then upgrading to the latest version from there.
+
+Thank you for your understanding and for using our software.
+
+For any questions, please reach out to us in our [discord](https://skip.build/discord) if you have any questions and/or need assistance migrating!
+
 ![header](https://files.readme.io/4f92aa7-DALLE_Cover_Photo_1..png)
 
 [![npm/v](https://badgen.net/npm/v/@skip-router/core)](https://www.npmjs.com/package/@skip-router/core)
